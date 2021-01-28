@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">ITLab</string>
+    <string name="app_name" translatable="false">ITLab</string>
+    <string name="events">Events</string>
+    <string name="projects">Projects</string>
+    <string name="devices">Devices</string>
+    <string name="employees">Employees</string>
+    <string name="profile">Profile</string>
 </resources>
