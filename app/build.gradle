@@ -15,6 +15,10 @@ android {
         versionCode 1
         versionName "1.0"
 
+        manifestPlaceholders = [
+                'appAuthRedirectScheme': 'ru.rtuitlab.itlab'
+        ]
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,7 +41,7 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
-        kotlinCompilerVersion '1.4.21-2'
+//        kotlinCompilerVersion '1.4.21-2'
     }
 }
 
@@ -46,6 +50,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-rc01'
+    implementation 'androidx.activity:activity-ktx:1.2.0-rc01'
 
     // Test
     testImplementation 'junit:junit:4.13.1'
@@ -62,4 +67,10 @@ dependencies {
     // Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    // Preferences DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0-alpha06"
+
+    // OpenID auth
+    implementation 'net.openid:appauth:0.7.1'
 }
