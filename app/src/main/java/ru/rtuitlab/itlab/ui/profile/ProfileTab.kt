@@ -3,8 +3,8 @@ package ru.rtuitlab.itlab.ui.profile
 import android.os.Bundle
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.onCommit
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -16,7 +16,7 @@ import ru.rtuitlab.itlab.utils.RunnableHolder
 fun ProfileTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
     val navController = rememberNavController()
 
-    onCommit {
+    DisposableEffect(null) {
         val callback = NavController.OnDestinationChangedListener { controller, _, _ ->
             navState.value = controller.saveState() ?: Bundle()
         }

@@ -55,7 +55,7 @@ fun ITLabApp() {
 								AppTab.Profile
 							).forEach { screen ->
 								BottomNavigationItem(
-										icon = { Icon(screen.icon) },
+										icon = { Icon(screen.icon, null) },
 										label = { Text(stringResource(id = screen.resourceId)) },
 										selected = currentTab == screen,
 										alwaysShowLabels = false,
