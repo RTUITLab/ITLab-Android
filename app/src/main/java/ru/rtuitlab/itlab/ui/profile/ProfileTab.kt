@@ -1,22 +1,24 @@
 package ru.rtuitlab.itlab.ui.profile
 
 import android.os.Bundle
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.onCommit
-import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.utils.RunnableHolder
+import ru.rtuitlab.itlab.utils.viewModel
+import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
 
 @Composable
-fun ProfileTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
+fun ProfileTab(
+    navState: MutableState<Bundle>,
+    resetTabTask: RunnableHolder,
+    onLogoutEvent: () -> Unit
+) {
     val navController = rememberNavController()
 
-    onCommit {
+    DisposableEffect(null) {
         val callback = NavController.OnDestinationChangedListener { controller, _, _ ->
             navState.value = controller.saveState() ?: Bundle()
         }
@@ -36,11 +38,10 @@ fun ProfileTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
     }
 
     NavHost(navController, startDestination = "profile") {
-        composable("profile") { Profile() }
+        composable("profile") {
+            val profileViewModel: ProfileViewModel = viewModel(navController.currentBackStackEntry!!)
+            val userModel by profileViewModel.userModelFlow.collectAsState()
+            Profile(userModel, onLogoutEvent)
+        }
     }
-}
-
-@Composable
-fun Profile() {
-    Text(text = "PROFILE", fontSize = 36.sp)
 }
