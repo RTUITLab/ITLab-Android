@@ -23,7 +23,29 @@ android {
     }
 
     buildTypes {
+        def API_URI = "API_URI"
+        def ISSUER_URI = "ISSUER_URI"
+        def CLIENT_ID = "CLIENT_ID"
+        def REDIRECT_URI = "REDIRECT_URI"
+        def API_SCOPES = "SCOPES"
+
+        def CONFIG = { k -> "\"${project.properties.get(k)}\"" }
+        def CONFIG_RAW = { k -> "${project.properties.get(k)}" }
+
+        debug {
+            buildConfigField ("String", API_URI, CONFIG("debug.api.uri"))
+            buildConfigField ("String", ISSUER_URI, CONFIG("debug.issuer.uri"))
+            buildConfigField ("String", CLIENT_ID, CONFIG("client.id"))
+            buildConfigField ("String", REDIRECT_URI, CONFIG("redirect.uri"))
+            buildConfigField ("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
+        }
         release {
+            buildConfigField ("String", API_URI, CONFIG("release.api.uri"))
+            buildConfigField ("String", ISSUER_URI, CONFIG("release.issuer.uri"))
+            buildConfigField ("String", CLIENT_ID, CONFIG("client.id"))
+            buildConfigField ("String", REDIRECT_URI, CONFIG("redirect.uri"))
+            buildConfigField ("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -62,10 +84,12 @@ dependencies {
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation "androidx.navigation:navigation-compose:1.0.0-alpha06"
 
     // Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "androidx.hilt:hilt-navigation:1.0.0-alpha03"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     // Preferences DataStore
@@ -73,4 +97,9 @@ dependencies {
 
     // OpenID auth
     implementation 'net.openid:appauth:0.7.1'
+
+    // Retrofit
+    def retrofit_version = "2.6.2"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 }

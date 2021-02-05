@@ -1,22 +1,21 @@
 package ru.rtuitlab.itlab.ui.profile
 
 import android.os.Bundle
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import net.openid.appauth.AuthState
 import ru.rtuitlab.itlab.utils.RunnableHolder
-import java.text.SimpleDateFormat
-import java.util.*
+import ru.rtuitlab.itlab.utils.viewModel
+import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
 
 @Composable
-fun ProfileTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, authState: AuthState) {
+fun ProfileTab(
+    navState: MutableState<Bundle>,
+    resetTabTask: RunnableHolder,
+    onLogoutEvent: () -> Unit
+) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -39,33 +38,10 @@ fun ProfileTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, aut
     }
 
     NavHost(navController, startDestination = "profile") {
-        composable("profile") { Profile(authState) }
-    }
-}
-
-@Composable
-fun Profile(authState: AuthState) {
-    Column {
-        Text(text = authState.refreshToken?.let {
-            "refresh_token_returned"
-        } ?: "no_refresh_token_returned")
-        Text(text = authState.idToken?.let {
-            "id_token_returned"
-        } ?: "no_id_token_returned")
-        val accessTokenText =
-        if (authState.accessToken == null) {
-            "no_access_token_returned"
-        } else {
-            val expiresAt: Long? = authState.accessTokenExpirationTime
-            when {
-                expiresAt == null -> "no_access_token_expiry"
-                expiresAt < System.currentTimeMillis() -> "access_token_expired"
-                else -> {
-                    val expireDate = SimpleDateFormat.getDateTimeInstance().format(Date(expiresAt))
-                    "Access token expires at: $expireDate"
-                }
-            }
+        composable("profile") {
+            val profileViewModel: ProfileViewModel = viewModel(navController.currentBackStackEntry!!)
+            val userModel by profileViewModel.userModelFlow.collectAsState()
+            Profile(userModel, onLogoutEvent)
         }
-        Text(text = accessTokenText)
     }
 }

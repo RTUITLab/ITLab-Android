@@ -7,18 +7,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import net.openid.appauth.AuthState
 import ru.rtuitlab.itlab.ui.devices.DevicesTab
 import ru.rtuitlab.itlab.ui.employees.EmployeesTab
 import ru.rtuitlab.itlab.ui.events.EventsTab
 import ru.rtuitlab.itlab.ui.profile.ProfileTab
 import ru.rtuitlab.itlab.ui.projects.ProjectsTab
-import ru.rtuitlab.itlab.ui.theme.ITLabTheme
 import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.utils.appTabSaver
 
 @Composable
-fun ITLabApp(authState: AuthState) {
+fun ITLabApp(
+		onLogoutEvent: () -> Unit
+) {
 	var currentTab by savedInstanceState(saver = appTabSaver()) { AppTab.Events }
 
 	val eventsResetTask = RunnableHolder()
@@ -41,7 +41,7 @@ fun ITLabApp(authState: AuthState) {
 					AppTab.Projects  -> ProjectsTab(projectsNavState, projectsResetTask)
 					AppTab.Devices   -> DevicesTab(devicesNavState, devicesResetTask)
 					AppTab.Employees -> EmployeesTab(employeesNavState, employeesResetTask)
-					AppTab.Profile   -> ProfileTab(profileNavState, profileResetTask, authState)
+					AppTab.Profile   -> ProfileTab(profileNavState, profileResetTask, onLogoutEvent)
 				}
 			},
 			bottomBar = {
@@ -55,17 +55,17 @@ fun ITLabApp(authState: AuthState) {
 					).forEach { screen ->
 						BottomNavigationItem(
 								icon = { Icon(screen.icon, null) },
-								label = { Text(stringResource(id = screen.resourceId)) },
+								label = { Text(stringResource(screen.resourceId)) },
 								selected = currentTab == screen,
 								alwaysShowLabels = false,
 								onClick = {
 									when {
-										screen != currentTab -> currentTab = screen
-										screen == AppTab.Events -> eventsResetTask.run()
-										screen == AppTab.Projects -> projectsResetTask.run()
-										screen == AppTab.Devices -> devicesResetTask.run()
+										screen != currentTab       -> currentTab = screen
+										screen == AppTab.Events    -> eventsResetTask.run()
+										screen == AppTab.Projects  -> projectsResetTask.run()
+										screen == AppTab.Devices   -> devicesResetTask.run()
 										screen == AppTab.Employees -> employeesResetTask.run()
-										screen == AppTab.Profile -> profileResetTask.run()
+										screen == AppTab.Profile   -> profileResetTask.run()
 									}
 								}
 						)
