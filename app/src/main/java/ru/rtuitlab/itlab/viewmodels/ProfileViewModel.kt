@@ -19,15 +19,19 @@ class ProfileViewModel @Inject constructor(
 		private val authStateStorage: AuthStateStorage
 ) : ViewModel() {
 
-	private val _userModelFlow = MutableStateFlow<Resource<UserModel>>(Resource.Loading)
-	val userModelFlow = _userModelFlow.asStateFlow()
+	private val _userCredentialsFlow = MutableStateFlow<Resource<UserModel>>(Resource.Loading)
+	val userCredentialsFlow = _userCredentialsFlow.asStateFlow()
 
 	init {
+		loadUserCredentials()
+	}
+
+	private fun loadUserCredentials() {
 		viewModelScope.launch {
 			val response = withContext(Dispatchers.IO) {
 				userRepo.getUser(authStateStorage.userIdFlow.first())
 			}
-			_userModelFlow.emit(response)
+			_userCredentialsFlow.emit(response)
 		}
 	}
 }

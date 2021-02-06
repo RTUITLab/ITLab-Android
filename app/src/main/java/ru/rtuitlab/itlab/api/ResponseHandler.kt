@@ -23,13 +23,13 @@ class ResponseHandler {
 
     private fun getErrorMessage(code: Int): String {
         return when (code) {
-            ErrorCodes.UnknownHost.code -> "Check your internet connection"
+            ErrorCodes.UnknownHost.code   -> "No connection"
             ErrorCodes.SocketTimeOut.code -> "Timeout"
-            401 -> "Unauthorized"
-            404 -> "Not found"
-            in 400..499 -> "Check entered data"
-            in 500..599 -> "Error with connecting to server. Code: $code"
-            else -> "Something went wrong"
+            401                           -> "Unauthorized"
+            404                           -> "Not found"
+            in 400..499                   -> "Check entered data"
+            in 500..599                   -> "Error with connecting to server. Code: $code"
+            else                          -> "Something went wrong"
         }
     }
 

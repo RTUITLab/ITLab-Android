@@ -52,6 +52,14 @@ class AuthStateStorage(context: Context) {
         }
     }
 
+    suspend fun updateAuthState(
+        authState: AuthState
+    ) {
+        dataStore.edit { prefs ->
+            prefs[AUTH_STATE_KEY] = authState.jsonSerializeString()
+        }
+    }
+
     val userIdFlow = dataStore.data.map { it[USER_ID_KEY] ?: "" }
 
     suspend fun updateUserId(userId: String) {

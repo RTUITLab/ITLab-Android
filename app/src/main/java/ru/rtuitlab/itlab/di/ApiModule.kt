@@ -13,7 +13,7 @@ import retrofit2.create
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.api.ResponseHandler
-import ru.rtuitlab.itlab.api.users.UserApi
+import ru.rtuitlab.itlab.api.users.UsersApi
 import ru.rtuitlab.itlab.api.TokenInterceptor
 import javax.inject.Singleton
 
@@ -54,5 +54,5 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun provideUserApi(retrofit: Retrofit): UserApi = retrofit.create()
+    fun provideUserApi(retrofit: Retrofit): UsersApi = retrofit.create()
 }
