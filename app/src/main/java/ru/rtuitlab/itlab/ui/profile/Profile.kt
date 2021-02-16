@@ -1,8 +1,9 @@
 package ru.rtuitlab.itlab.ui.profile
 
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
@@ -11,11 +12,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.android.material.datepicker.MaterialDatePicker
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.api.Resource
+import ru.rtuitlab.itlab.api.devices.models.DeviceModel
+import ru.rtuitlab.itlab.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.api.users.models.UserModel
 import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
 
@@ -25,58 +30,129 @@ fun Profile(
 	onLogoutEvent: () -> Unit
 ) {
 	val userCredentialsResource by profileViewModel.userCredentialsFlow.collectAsState()
+	val userDevicesResource by profileViewModel.userDevicesFlow.collectAsState()
+	val userEventsResource by profileViewModel.userEventsFlow.collectAsState()
 
 	Column(
 		modifier = Modifier
-				.fillMaxWidth()
-				.verticalScroll(rememberScrollState())
+			.fillMaxSize()
+//			.verticalScroll(rememberScrollState())
 	) {
 		Box(
 			modifier = Modifier
-					.padding(16.dp)
-					.fillMaxSize(),
+				.padding(16.dp),
 			contentAlignment = Alignment.Center
 		) {
 			Text(
-					text = stringResource(R.string.profile),
-					fontSize = 36.sp
+				text = stringResource(R.string.profile),
+				fontSize = 36.sp
 			)
 		}
-		ProfileCredentials(userCredentialsResource)
+
+		UserCredentials(userCredentialsResource)
+		UserDevices(userDevicesResource)
+		UserEvents(userEventsResource)
 	}
 }
 
 @Composable
-private fun ProfileCredentials(
-	userCredentialsResource: Resource<UserModel>
-) {
-	Card(
-		modifier = Modifier
-				.fillMaxSize()
-				.padding(16.dp)
-	) {
-		userCredentialsResource.handle(
-				onSuccess = { userCredentials ->
-					Column(
-							modifier = Modifier
-									.padding(16.dp)
-					) {
-						Text("${stringResource(R.string.last_name)}: ${userCredentials.lastName}")
-						Text("${stringResource(R.string.first_name)}: ${userCredentials.firstName}")
-						Text("${stringResource(R.string.middle_name)}: ${userCredentials.middleName}")
-						Text("${stringResource(R.string.phone_number)}: ${userCredentials.phoneNumber}")
-						Text("${stringResource(R.string.email)}: ${userCredentials.email}")
-						userCredentials.properties.forEach {
-							Text("${it.userPropertyType.title}: ${it.value}")
-						}
+private fun UserCredentials(userCredentialsResource: Resource<UserModel>) {
+	userCredentialsResource.handle(
+		onLoading = {
+			CircularProgressIndicator()
+		},
+		onError = { msg ->
+			Text(text = msg)
+		},
+		onSuccess = { user ->
+			Card(
+				modifier = Modifier
+					.fillMaxWidth()
+					.padding(16.dp)
+			) {
+				Column(
+					modifier = Modifier
+						.padding(16.dp)
+				) {
+					Text("${stringResource(R.string.last_name)}: ${user.lastName}")
+					Text("${stringResource(R.string.first_name)}: ${user.firstName}")
+					Text("${stringResource(R.string.middle_name)}: ${user.middleName}")
+					Text("${stringResource(R.string.phone_number)}: ${user.phoneNumber}")
+					Text("${stringResource(R.string.email)}: ${user.email}")
+					user.properties?.forEach {
+						Text("${it.userPropertyType.title}: ${it.value}")
 					}
-				},
-				onError = { msg ->
-					Text(text = msg)
-				},
-				onLoading = {
-					CircularProgressIndicator()
 				}
-		)
+			}
+		}
+	)
+}
+
+@Composable
+private fun UserDevices(userDevicesResource: Resource<List<DeviceModel>>) {
+	userDevicesResource.handle(
+		onLoading = {
+			CircularProgressIndicator()
+		},
+		onError = { msg ->
+			Text(text = msg)
+		},
+		onSuccess = { devices ->
+			Card(
+				modifier = Modifier
+					.fillMaxWidth()
+					.padding(16.dp)
+			) {
+				Column(
+					modifier = Modifier
+						.padding(16.dp)
+				) {
+					Text(stringResource(R.string.devices), fontSize = 20.sp)
+					devices.forEachIndexed { index, device ->
+						Text("$index: ${device.equipmentType.title}")
+					}
+				}
+			}
+		}
+	)
+}
+
+@Composable
+fun UserEvents(userEventsResource: Resource<List<UserEventModel>>) {
+	val activity = (AmbientContext.current as AppCompatActivity)
+	Button(onClick = {
+		MaterialDatePicker.Builder.dateRangePicker().build().apply {
+			show(activity.supportFragmentManager, null)
+			addOnPositiveButtonClickListener {
+				Log.wtf("hey", it.toString())
+			}
+		}
+	}) {
+
 	}
+	userEventsResource.handle(
+		onLoading = {
+			CircularProgressIndicator()
+		},
+		onError = { msg ->
+			Text(text = msg)
+		},
+		onSuccess = { events ->
+			Card(
+				modifier = Modifier
+					.fillMaxWidth()
+					.padding(16.dp)
+			) {
+				Column(
+					modifier = Modifier
+						.padding(16.dp)
+				) {
+					Text(stringResource(R.string.events), fontSize = 20.sp)
+					events.forEachIndexed { index, event ->
+						Text("$index: ${event.title}")
+					}
+				}
+			}
+		}
+	)
 }

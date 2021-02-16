@@ -1,11 +1,12 @@
 package ru.rtuitlab.itlab.api.users.models
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class UserPropertyTypeModel (
-		@SerializedName("id") val id : String,
-		@SerializedName("title") val title : String?,
-		@SerializedName("description") val description : String?,
-		@SerializedName("instancesCount") val instancesCount : Int,
-		@SerializedName("isLocked") val isLocked : Boolean
+	val id : String,
+	val title : String? = null,
+	val description : String? = null,
+	val instancesCount : Int,
+	val isLocked : Boolean
 )

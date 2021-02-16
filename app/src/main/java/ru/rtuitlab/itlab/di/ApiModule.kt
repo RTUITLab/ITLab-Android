@@ -1,20 +1,23 @@
 package ru.rtuitlab.itlab.di
 
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
 import net.openid.appauth.AuthorizationService
+import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import retrofit2.Converter
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import ru.rtuitlab.itlab.BuildConfig
-import ru.rtuitlab.itlab.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.api.ResponseHandler
-import ru.rtuitlab.itlab.api.users.UsersApi
 import ru.rtuitlab.itlab.api.TokenInterceptor
+import ru.rtuitlab.itlab.api.users.UsersApi
+import ru.rtuitlab.itlab.persistence.AuthStateStorage
 import javax.inject.Singleton
 
 @Module
@@ -35,9 +38,10 @@ object ApiModule {
             .addInterceptor(interceptor)
             .build()
 
+    @ExperimentalSerializationApi
     @Singleton
     @Provides
-    fun provideConverterFactory(): Converter.Factory = GsonConverterFactory.create()
+    fun provideConverterFactory(): Converter.Factory = Json.asConverterFactory(MediaType.get("application/json"))
 
     @Singleton
     @Provides

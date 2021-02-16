@@ -6,9 +6,9 @@ sealed class Resource<out T> {
     object Loading: Resource<Nothing>()
 
     inline fun handle(
-            onSuccess: (data: T) -> Unit = {},
-            onError: (msg: String) -> Unit = {},
-            onLoading: () -> Unit = {},
+        onSuccess: (data: T) -> Unit = {},
+        onError: (msg: String) -> Unit = {},
+        onLoading: () -> Unit = {},
     ) {
         when(this) {
             is Success -> onSuccess(data)

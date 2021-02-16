@@ -1,17 +1,33 @@
 package ru.rtuitlab.itlab.api.users
 
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
-import retrofit2.http.Url
+import retrofit2.http.*
+import ru.rtuitlab.itlab.api.devices.models.DeviceModel
+import ru.rtuitlab.itlab.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.api.users.models.UserInfoModel
 import ru.rtuitlab.itlab.api.users.models.UserModel
 
 interface UsersApi {
 
     @GET
-    suspend fun getUserInfo(@Url url: String, @Header("Authorization") token: String): UserInfoModel
+    suspend fun getUserInfo(
+            @Url url: String,
+            @Header("Authorization") token: String
+    ): UserInfoModel
 
     @GET("User/{id}")
-    suspend fun getUser(@Path("id") userId: String): UserModel
+    suspend fun getUser(
+            @Path("id") userId: String
+    ): UserModel
+
+    @GET("/api/equipment/user/{id}")
+    suspend fun getUserDevices(
+            @Path("id") userId: String
+    ): List<DeviceModel>
+
+    @GET("/api/Event/user/{id}")
+    suspend fun getUserEvents(
+            @Path("id") userId: String,
+            @Query("begin") beginTime: String,
+            @Query("end") endTime: String
+    ): List<UserEventModel>
 }
