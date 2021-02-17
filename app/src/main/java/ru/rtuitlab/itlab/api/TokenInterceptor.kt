@@ -1,8 +1,8 @@
 package ru.rtuitlab.itlab.api
 
+import android.util.Log
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationService
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -17,26 +17,39 @@ class TokenInterceptor @Inject constructor(
         private val authService: AuthorizationService
 ): Interceptor {
     private companion object {
+        const val TAG = "TokenInterceptor"
         const val AUTH_HEADER = "Authorization"
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
         request.header(AUTH_HEADER) ?: run {
-            val accessToken = runBlocking { getAccessToken(authStateStorage.authStateFlow.first()) }
             request = chain.request()
                     .newBuilder()
-                    .addHeader(AUTH_HEADER, "Bearer $accessToken")
+                    .addHeader(AUTH_HEADER, "Bearer ${getAccessToken()}")
                     .build()
         }
         return chain.proceed(request)
     }
 
-    private suspend fun getAccessToken(authState: AuthState): String = suspendCoroutine { continuation ->
-        authState.performActionWithFreshTokens(authService) { accessToken, _, exception ->
-            exception?.let {
-                continuation.resumeWithException(it)
-            } ?: continuation.resume(accessToken!!)
+    private fun getAccessToken(): String = runBlocking {
+        val authState = authStateStorage.authStateFlow.first()
+        val isNeedToUpdateToken = authState.needsTokenRefresh
+
+        suspendCoroutine { continuation ->
+            authState.performActionWithFreshTokens(authService) { accessToken, _, exception ->
+                exception?.let {
+                    Log.e(TAG, "Exception in token process: ", it)
+                    continuation.resumeWithException(it)
+                } ?: run {
+                    if (isNeedToUpdateToken) {
+                        runBlocking {
+                            authStateStorage.updateAuthState(authState)
+                        }
+                    }
+                    continuation.resume(accessToken!!)
+                }
+            }
         }
     }
 }

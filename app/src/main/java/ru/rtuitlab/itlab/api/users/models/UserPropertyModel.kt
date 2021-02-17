@@ -1,9 +1,10 @@
 package ru.rtuitlab.itlab.api.users.models
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class UserPropertyModel (
-		@SerializedName("value") val value : String,
-		@SerializedName("status") val status : String,
-		@SerializedName("userPropertyType") val userPropertyType : UserPropertyTypeModel
+	val value : String? = null,
+	val status : String? = null,
+	val userPropertyType : UserPropertyTypeModel
 )

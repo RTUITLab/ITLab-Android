@@ -5,4 +5,11 @@
     <string name="devices">Техника</string>
     <string name="employees">Сотрудники</string>
     <string name="profile">Профиль</string>
+    <string name="login">Войти</string>
+    <string name="logout">Выйти</string>
+    <string name="first_name">Имя</string>
+    <string name="middle_name">Отчество</string>
+    <string name="last_name">Фамилия</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="email">Почта</string>
 </resources>

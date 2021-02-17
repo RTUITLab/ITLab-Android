@@ -15,24 +15,20 @@ import kotlinx.coroutines.launch
 import net.openid.appauth.*
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.api.Resource
-import ru.rtuitlab.itlab.api.users.models.UserInfo
+import ru.rtuitlab.itlab.api.users.models.UserInfoModel
 import ru.rtuitlab.itlab.persistence.AuthStateStorage
-import ru.rtuitlab.itlab.repositories.UserRepository
+import ru.rtuitlab.itlab.repositories.UsersRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
         private val authStateStorage: AuthStateStorage,
         private val authService: AuthorizationService,
-        private val userRepo: UserRepository
+        private val usersRepo: UsersRepository
 ) : ViewModel() {
 
     private companion object {
         const val TAG = "AuthViewModel"
-    }
-
-    init {
-        Log.wtf("asd", "init")
     }
 
     val authStateFlow = authStateStorage.authStateFlow
@@ -117,7 +113,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private val _userIdFlow = MutableSharedFlow<Resource<UserInfo>>()
+    private val _userIdFlow = MutableSharedFlow<Resource<UserInfoModel>>()
     val userIdFlow = _userIdFlow.asSharedFlow()
 
     private suspend fun obtainUserId(accessToken: String) {
@@ -125,7 +121,7 @@ class AuthViewModel @Inject constructor(
 
         val config = authStateFlow.first().authorizationServiceConfiguration!!
         val userInfoEndpoint = config.discoveryDoc!!.userinfoEndpoint!!.toString()
-        when (val userInfoResource = userRepo.getUserInfo(userInfoEndpoint, accessToken)) {
+        when (val userInfoResource = usersRepo.loadUserInfo(userInfoEndpoint, accessToken)) {
             is Resource.Success -> authStateStorage.updateUserId(userInfoResource.data.sub)
             is Resource.Error -> _userIdFlow.emit(userInfoResource)
             Resource.Loading -> {}

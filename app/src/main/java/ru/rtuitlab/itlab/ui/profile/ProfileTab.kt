@@ -39,9 +39,7 @@ fun ProfileTab(
 
     NavHost(navController, startDestination = "profile") {
         composable("profile") {
-            val profileViewModel: ProfileViewModel = viewModel(navController.currentBackStackEntry!!)
-            val userModel by profileViewModel.userModelFlow.collectAsState()
-            Profile(userModel, onLogoutEvent)
+            Profile(viewModel(navController.currentBackStackEntry!!), onLogoutEvent)
         }
     }
 }
