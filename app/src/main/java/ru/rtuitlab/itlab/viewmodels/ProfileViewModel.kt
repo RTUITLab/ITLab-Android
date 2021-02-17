@@ -34,15 +34,10 @@ class ProfileViewModel @Inject constructor(
 	private val _userEventsFlow = MutableStateFlow<Resource<List<UserEventModel>>>(Resource.Loading)
 	val userEventsFlow = _userEventsFlow.asStateFlow()
 
-	val beginEventsDate: String
-		get() {
-			val today = Clock.System.now()
-			val weekAgo = today.minus(2, DateTimeUnit.YEAR)
-			return weekAgo.toMoscowDateTime().date.toString()
-		}
-
-	val endEventsDate: String
-		get() = Clock.System.now().toMoscowDateTime().toString()
+	var beginEventsDate = Clock.System.now().minus(7, DateTimeUnit.DAY).toEpochMilliseconds()
+		private set
+	var endEventsDate = Clock.System.now().toEpochMilliseconds()
+		private set
 
 	init {
 		loadUserCredentials()
@@ -59,6 +54,16 @@ class ProfileViewModel @Inject constructor(
 	}
 
 	private fun loadUserEvents() = _userEventsFlow.emitInIO(viewModelScope) {
-		usersRepo.loadUserEvents(authStateStorage.userIdFlow.first(), beginEventsDate, endEventsDate)
+		usersRepo.loadUserEvents(
+			authStateStorage.userIdFlow.first(),
+			beginEventsDate.toMoscowDateTime().date.toString(),
+			endEventsDate.toMoscowDateTime().toString()
+		)
+	}
+
+	fun setEventsDates(beginDate: Long, endDate: Long) {
+		beginEventsDate = beginDate
+		endEventsDate = endDate
+		loadUserEvents()
 	}
 }

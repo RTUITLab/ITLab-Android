@@ -1,8 +1,9 @@
 package ru.rtuitlab.itlab.ui.profile
 
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
@@ -16,12 +17,14 @@ import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.util.Pair
 import com.google.android.material.datepicker.MaterialDatePicker
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.devices.models.DeviceModel
 import ru.rtuitlab.itlab.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.api.users.models.UserModel
+import ru.rtuitlab.itlab.utils.toClientDate
 import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
 
 @Composable
@@ -36,7 +39,7 @@ fun Profile(
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
-//			.verticalScroll(rememberScrollState())
+			.verticalScroll(rememberScrollState())
 	) {
 		Box(
 			modifier = Modifier
@@ -51,7 +54,8 @@ fun Profile(
 
 		UserCredentials(userCredentialsResource)
 		UserDevices(userDevicesResource)
-		UserEvents(userEventsResource)
+		UserEvents(profileViewModel, userEventsResource)
+		LogoutButton(onLogoutEvent)
 	}
 }
 
@@ -118,18 +122,10 @@ private fun UserDevices(userDevicesResource: Resource<List<DeviceModel>>) {
 }
 
 @Composable
-fun UserEvents(userEventsResource: Resource<List<UserEventModel>>) {
-	val activity = (AmbientContext.current as AppCompatActivity)
-	Button(onClick = {
-		MaterialDatePicker.Builder.dateRangePicker().build().apply {
-			show(activity.supportFragmentManager, null)
-			addOnPositiveButtonClickListener {
-				Log.wtf("hey", it.toString())
-			}
-		}
-	}) {
-
-	}
+private fun UserEvents(
+	profileViewModel: ProfileViewModel,
+	userEventsResource: Resource<List<UserEventModel>>
+) {
 	userEventsResource.handle(
 		onLoading = {
 			CircularProgressIndicator()
@@ -148,6 +144,7 @@ fun UserEvents(userEventsResource: Resource<List<UserEventModel>>) {
 						.padding(16.dp)
 				) {
 					Text(stringResource(R.string.events), fontSize = 20.sp)
+					DateSelection(profileViewModel)
 					events.forEachIndexed { index, event ->
 						Text("$index: ${event.title}")
 					}
@@ -155,4 +152,35 @@ fun UserEvents(userEventsResource: Resource<List<UserEventModel>>) {
 			}
 		}
 	)
+}
+
+@Composable
+private fun DateSelection(profileViewModel: ProfileViewModel) {
+	val activity = (AmbientContext.current as AppCompatActivity)
+	Button(onClick = {
+		MaterialDatePicker
+			.Builder
+			.dateRangePicker()
+			.setSelection(
+				Pair(profileViewModel.beginEventsDate, profileViewModel.endEventsDate)
+			)
+			.build()
+			.apply {
+				show(activity.supportFragmentManager, null)
+				addOnPositiveButtonClickListener {
+					profileViewModel.setEventsDates(it.first!!, it.second!!)
+				}
+			}
+	}) {
+		profileViewModel.run {
+			Text("${beginEventsDate.toClientDate()} -> ${endEventsDate.toClientDate()}")
+		}
+	}
+}
+
+@Composable
+private fun LogoutButton(onLogoutEvent: () -> Unit) {
+	Button(onClick = onLogoutEvent) {
+		Text(stringResource(R.string.logout))
+	}
 }
