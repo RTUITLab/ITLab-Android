@@ -7,11 +7,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EmployeeViewModel @Inject constructor(
-	private val usersRepo: UsersRepository,
-	private val state: SavedStateHandle
+	usersRepo: UsersRepository,
+	state: SavedStateHandle
 ) : UserViewModel(
 	usersRepo,
 	state.get<String>("userId")!!
-) {
-
-}
+)

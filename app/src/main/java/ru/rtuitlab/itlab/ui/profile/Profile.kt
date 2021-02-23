@@ -1,12 +1,11 @@
 package ru.rtuitlab.itlab.ui.profile
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,7 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.components.UserCredentials
+import ru.rtuitlab.itlab.api.Resource
+import ru.rtuitlab.itlab.api.users.models.UserModel
 import ru.rtuitlab.itlab.components.UserDevices
 import ru.rtuitlab.itlab.components.UserEvents
 import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
@@ -47,11 +47,44 @@ fun Profile(
 			)
 		}
 
-		UserCredentials(userCredentialsResource)
+		ProfileCredentials(userCredentialsResource)
 		UserDevices(userDevicesResource)
 		UserEvents(profileViewModel, userEventsResource)
 		LogoutButton(onLogoutEvent)
 	}
+}
+
+@Composable
+private fun ProfileCredentials(userCredentialsResource: Resource<UserModel>) {
+	userCredentialsResource.handle(
+		onLoading = {
+			CircularProgressIndicator()
+		},
+		onError = { msg ->
+			Text(text = msg)
+		},
+		onSuccess = { user ->
+			Card(
+				modifier = Modifier
+					.fillMaxWidth()
+					.padding(16.dp)
+			) {
+				Column(
+					modifier = Modifier
+						.padding(16.dp)
+				) {
+					Text("${stringResource(R.string.last_name)}: ${user.lastName}")
+					Text("${stringResource(R.string.first_name)}: ${user.firstName}")
+					Text("${stringResource(R.string.middle_name)}: ${user.middleName}")
+					Text("${stringResource(R.string.phone_number)}: ${user.phoneNumber}")
+					Text("${stringResource(R.string.email)}: ${user.email}")
+					user.properties?.forEach {
+						Text("${it.userPropertyType.title}: ${it.value}")
+					}
+				}
+			}
+		}
+	)
 }
 
 @Composable

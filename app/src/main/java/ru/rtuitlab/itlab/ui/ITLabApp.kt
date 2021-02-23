@@ -17,14 +17,14 @@ import ru.rtuitlab.itlab.ui.employees.EmployeesTab
 import ru.rtuitlab.itlab.ui.events.EventsTab
 import ru.rtuitlab.itlab.ui.profile.ProfileTab
 import ru.rtuitlab.itlab.ui.projects.ProjectsTab
+import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.utils.RunnableHolder
-import ru.rtuitlab.itlab.utils.appTabSaver
 
 @Composable
 fun ITLabApp(
 	onLogoutEvent: () -> Unit
 ) {
-	var currentTab by rememberSaveable(stateSaver = appTabSaver()) { mutableStateOf(AppTab.Events) }
+	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) { mutableStateOf(AppTab.Events) }
 
 	val eventsResetTask = RunnableHolder()
 	val projectsResetTask = RunnableHolder()

@@ -20,6 +20,11 @@ abstract class UserViewModel (
 	private val userId: String
 ) : ViewModel() {
 
+	var beginEventsDate = Clock.System.now().minus(7, DateTimeUnit.DAY).toEpochMilliseconds()
+		private set
+	var endEventsDate = Clock.System.now().toEpochMilliseconds()
+		private set
+
 	private val _userCredentialsFlow = MutableStateFlow<Resource<UserModel>>(Resource.Loading)
 	val userCredentialsFlow = _userCredentialsFlow.asStateFlow().also { fetchUserCredentials() }
 
@@ -28,11 +33,6 @@ abstract class UserViewModel (
 
 	private val _userEventsFlow = MutableStateFlow<Resource<List<UserEventModel>>>(Resource.Loading)
 	val userEventsFlow = _userEventsFlow.asStateFlow().also { fetchUserEvents() }
-
-	var beginEventsDate = Clock.System.now().minus(7, DateTimeUnit.DAY).toEpochMilliseconds()
-		private set
-	var endEventsDate = Clock.System.now().toEpochMilliseconds()
-		private set
 
 	private fun fetchUserCredentials() = _userCredentialsFlow.emitInIO(viewModelScope) {
 		usersRepo.fetchUserCredentials(userId)

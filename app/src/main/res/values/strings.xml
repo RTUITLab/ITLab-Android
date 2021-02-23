@@ -13,4 +13,7 @@
     <string name="phone_number">Phone number</string>
     <string name="email">Email</string>
     <string name="employee">Employee</string>
+    <string name="rtuitlab" translatable="false">RTUITLab</string>
+    <string name="dial">Dial</string>
+    <string name="save">Save</string>
 </resources>

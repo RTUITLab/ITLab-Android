@@ -12,11 +12,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-	private val usersRepo: UsersRepository,
-	private val authStateStorage: AuthStateStorage
+	usersRepo: UsersRepository,
+	authStateStorage: AuthStateStorage
 ) : UserViewModel(
 	usersRepo,
 	runBlocking { authStateStorage.userIdFlow.first() }
-) {
-
-}
+)
