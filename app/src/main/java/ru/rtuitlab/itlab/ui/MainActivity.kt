@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.ui
 
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +9,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.setContent
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rtuitlab.itlab.ui.theme.ITLabTheme
 import ru.rtuitlab.itlab.viewmodels.AuthViewModel

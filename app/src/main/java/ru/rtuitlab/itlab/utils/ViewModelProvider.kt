@@ -1,15 +1,20 @@
 package ru.rtuitlab.itlab.utils
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.AmbientContext
-import androidx.lifecycle.ViewModel
-import androidx.compose.ui.viewinterop.viewModel
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.HiltViewModelFactory
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavBackStackEntry
 
 @Composable
-inline fun <reified T : ViewModel> viewModel(
-    navBackStackEntry: NavBackStackEntry,
-    key: String? = null
-) = viewModel<T>(key, HiltViewModelFactory(AmbientContext.current, navBackStackEntry))
-//(AmbientContext.current as ComponentActivity).defaultViewModelProviderFactory
+internal inline fun <reified T : ViewModel> NavBackStackEntry.hiltViewModel() =
+    ViewModelProvider(
+        this.viewModelStore,
+        HiltViewModelFactory(LocalContext.current, this)
+    ).get(T::class.java)
+
+//@Composable
+//internal inline fun <reified T : ViewModel> NavBackStackEntry.hiltViewModel(key: String? = null) =
+//  viewModel<T>(key, HiltViewModelFactory(LocalContext.current, this))
+//(LocalContext.current as ComponentActivity).defaultViewModelProviderFactory

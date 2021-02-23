@@ -1,17 +1,14 @@
-package ru.rtuitlab.itlab.ui.profile
+package ru.rtuitlab.itlab.ui.employees
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,16 +17,17 @@ import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.users.models.UserModel
 import ru.rtuitlab.itlab.components.UserDevices
 import ru.rtuitlab.itlab.components.UserEvents
-import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
+import ru.rtuitlab.itlab.utils.EmployeePhoneAction
+import ru.rtuitlab.itlab.utils.doPhoneAction
+import ru.rtuitlab.itlab.viewmodels.EmployeeViewModel
 
 @Composable
-fun Profile(
-	profileViewModel: ProfileViewModel,
-	onLogoutEvent: () -> Unit
+fun Employee(
+	employeeViewModel: EmployeeViewModel
 ) {
-	val userCredentialsResource by profileViewModel.userCredentialsFlow.collectAsState()
-	val userDevicesResource by profileViewModel.userDevicesFlow.collectAsState()
-	val userEventsResource by profileViewModel.userEventsFlow.collectAsState()
+	val userCredentialsResource by employeeViewModel.userCredentialsFlow.collectAsState()
+	val userDevicesResource by employeeViewModel.userDevicesFlow.collectAsState()
+	val userEventsResource by employeeViewModel.userEventsFlow.collectAsState()
 
 	Column(
 		modifier = Modifier
@@ -42,20 +40,19 @@ fun Profile(
 			contentAlignment = Alignment.Center
 		) {
 			Text(
-				text = stringResource(R.string.profile),
+				text = stringResource(R.string.employee),
 				fontSize = 36.sp
 			)
 		}
 
-		ProfileCredentials(userCredentialsResource)
+		EmployeeCredentials(userCredentialsResource)
 		UserDevices(userDevicesResource)
-		UserEvents(profileViewModel, userEventsResource)
-		LogoutButton(onLogoutEvent)
+		UserEvents(employeeViewModel, userEventsResource)
 	}
 }
 
 @Composable
-private fun ProfileCredentials(userCredentialsResource: Resource<UserModel>) {
+private fun EmployeeCredentials(userCredentialsResource: Resource<UserModel>) {
 	userCredentialsResource.handle(
 		onLoading = {
 			CircularProgressIndicator()
@@ -76,7 +73,7 @@ private fun ProfileCredentials(userCredentialsResource: Resource<UserModel>) {
 					Text("${stringResource(R.string.last_name)}: ${user.lastName}")
 					Text("${stringResource(R.string.first_name)}: ${user.firstName}")
 					Text("${stringResource(R.string.middle_name)}: ${user.middleName}")
-					Text("${stringResource(R.string.phone_number)}: ${user.phoneNumber}")
+					PhoneField(user)
 					Text("${stringResource(R.string.email)}: ${user.email}")
 					user.properties?.forEach {
 						Text("${it.userPropertyType.title}: ${it.value}")
@@ -88,8 +85,29 @@ private fun ProfileCredentials(userCredentialsResource: Resource<UserModel>) {
 }
 
 @Composable
-private fun LogoutButton(onLogoutEvent: () -> Unit) {
-	Button(onClick = onLogoutEvent) {
-		Text(stringResource(R.string.logout))
+private fun PhoneField(user: UserModel) {
+	user.phoneNumber ?: return
+
+	val context = LocalContext.current
+	var expanded by remember { mutableStateOf(false) }
+
+	Box {
+		Text(
+			modifier = Modifier.clickable { expanded = true },
+			text = "${stringResource(R.string.phone_number)}: ${user.phoneNumber}"
+		)
+		DropdownMenu(
+			expanded = expanded,
+			onDismissRequest = { expanded = false }
+		) {
+			listOf(EmployeePhoneAction.DIAL, EmployeePhoneAction.SAVE).forEach {
+				DropdownMenuItem(onClick = {
+					expanded = false
+					context.doPhoneAction(it, user)
+				}) {
+					Text(stringResource(it.resourceId))
+				}
+			}
+		}
 	}
 }

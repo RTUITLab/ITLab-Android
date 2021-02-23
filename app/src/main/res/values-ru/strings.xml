@@ -12,4 +12,7 @@
     <string name="last_name">Фамилия</string>
     <string name="phone_number">Номер телефона</string>
     <string name="email">Почта</string>
+    <string name="employee">Сотрудник</string>
+    <string name="dial">Позвонить</string>
+    <string name="save">Сохранить</string>
 </resources>

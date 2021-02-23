@@ -14,7 +14,7 @@ interface UsersApi {
             @Header("Authorization") token: String
     ): UserInfoModel
 
-    @GET("User/{id}")
+    @GET("user/{id}")
     suspend fun getUser(
             @Path("id") userId: String
     ): UserModel
@@ -24,10 +24,13 @@ interface UsersApi {
             @Path("id") userId: String
     ): List<DeviceModel>
 
-    @GET("/api/Event/user/{id}")
+    @GET("/api/event/user/{id}")
     suspend fun getUserEvents(
             @Path("id") userId: String,
             @Query("begin") beginTime: String,
             @Query("end") endTime: String
     ): List<UserEventModel>
+
+    @GET("user?count=-1")
+    suspend fun getUsers() : List<UserModel>
 }

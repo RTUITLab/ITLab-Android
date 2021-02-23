@@ -121,7 +121,7 @@ class AuthViewModel @Inject constructor(
 
         val config = authStateFlow.first().authorizationServiceConfiguration!!
         val userInfoEndpoint = config.discoveryDoc!!.userinfoEndpoint!!.toString()
-        when (val userInfoResource = usersRepo.loadUserInfo(userInfoEndpoint, accessToken)) {
+        when (val userInfoResource = usersRepo.fetchUserInfo(userInfoEndpoint, accessToken)) {
             is Resource.Success -> authStateStorage.updateUserId(userInfoResource.data.sub)
             is Resource.Error -> _userIdFlow.emit(userInfoResource)
             Resource.Loading -> {}

@@ -1,14 +1,15 @@
 package ru.rtuitlab.itlab.ui.profile
 
 import android.os.Bundle
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.utils.RunnableHolder
-import ru.rtuitlab.itlab.utils.viewModel
-import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
+import ru.rtuitlab.itlab.utils.hiltViewModel
 
 @Composable
 fun ProfileTab(
@@ -39,7 +40,7 @@ fun ProfileTab(
 
     NavHost(navController, startDestination = "profile") {
         composable("profile") {
-            Profile(viewModel(navController.currentBackStackEntry!!), onLogoutEvent)
+            Profile(it.hiltViewModel(), onLogoutEvent)
         }
     }
 }
