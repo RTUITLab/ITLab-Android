@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.utils.RunnableHolder
-import ru.rtuitlab.itlab.utils.viewModel
+import ru.rtuitlab.itlab.utils.hiltViewModel
 
 @Composable
 fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
@@ -35,6 +35,7 @@ fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
     }
 
     NavHost(navController, startDestination = "employees") {
-        composable("employees") { Employees(viewModel(it)) }
+        composable("employees") { Employees(it.hiltViewModel(), navController) }
+        composable("employee/{userId}") { Employee(it.hiltViewModel()) }
     }
 }

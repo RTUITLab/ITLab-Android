@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.utils.RunnableHolder
-import ru.rtuitlab.itlab.utils.viewModel
+import ru.rtuitlab.itlab.utils.hiltViewModel
 
 @Composable
 fun ProfileTab(
@@ -40,7 +40,7 @@ fun ProfileTab(
 
     NavHost(navController, startDestination = "profile") {
         composable("profile") {
-            Profile(viewModel(it), onLogoutEvent)
+            Profile(it.hiltViewModel(), onLogoutEvent)
         }
     }
 }

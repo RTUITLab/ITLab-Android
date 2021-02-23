@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.ui.employees
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.users.models.UserModel
@@ -21,7 +24,8 @@ import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
 
 @Composable
 fun Employees(
-	employeesViewModel: EmployeesViewModel
+	employeesViewModel: EmployeesViewModel,
+	navController: NavController
 ) {
 	val usersResource by employeesViewModel.userFlow.collectAsState()
 
@@ -39,12 +43,12 @@ fun Employees(
 				fontSize = 36.sp
 			)
 		}
-		EmployeeList(usersResource)
+		EmployeeList(usersResource, navController)
 	}
 }
 
 @Composable
-private fun EmployeeList(usersResource: Resource<List<UserModel>>) {
+private fun EmployeeList(usersResource: Resource<List<UserModel>>, navController: NavController) {
 	usersResource.handle(
 		onLoading = {
 			CircularProgressIndicator()
@@ -59,6 +63,9 @@ private fun EmployeeList(usersResource: Resource<List<UserModel>>) {
 						modifier = Modifier
 							.padding(16.dp)
 							.fillMaxWidth()
+							.clickable {
+								navController.navigate("employee/${user.id}")
+							}
 					) {
 						user.run {
 							Text(

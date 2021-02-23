@@ -4,14 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.devices.models.DeviceModel
 import ru.rtuitlab.itlab.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.api.users.models.UserModel
-import ru.rtuitlab.itlab.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.repositories.UsersRepository
 import ru.rtuitlab.itlab.utils.emitInIO
 import ru.rtuitlab.itlab.utils.minus
@@ -19,7 +17,7 @@ import ru.rtuitlab.itlab.utils.toMoscowDateTime
 
 abstract class UserViewModel (
 	private val usersRepo: UsersRepository,
-	private val authStateStorage: AuthStateStorage
+	private val userId: String
 ) : ViewModel() {
 
 	private val _userCredentialsFlow = MutableStateFlow<Resource<UserModel>>(Resource.Loading)
@@ -37,18 +35,18 @@ abstract class UserViewModel (
 		private set
 
 	private fun fetchUserCredentials() = _userCredentialsFlow.emitInIO(viewModelScope) {
-		usersRepo.fetchUserCredentials(authStateStorage.userIdFlow.first())
+		usersRepo.fetchUserCredentials(userId)
 	}
 
 	private fun fetchUserDevices() = _userDevicesFlow.emitInIO(viewModelScope) {
-		usersRepo.fetchUserDevices(authStateStorage.userIdFlow.first())
+		usersRepo.fetchUserDevices(userId)
 	}
 
 	private fun fetchUserEvents() = _userEventsFlow.emitInIO(viewModelScope) {
 		usersRepo.fetchUserEvents(
-				authStateStorage.userIdFlow.first(),
-				beginEventsDate.toMoscowDateTime().date.toString(),
-				endEventsDate.toMoscowDateTime().toString()
+			userId,
+			beginEventsDate.toMoscowDateTime().date.toString(),
+			endEventsDate.toMoscowDateTime().toString()
 		)
 	}
 

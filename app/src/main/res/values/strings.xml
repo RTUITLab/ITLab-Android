@@ -12,4 +12,5 @@
     <string name="last_name">Last name</string>
     <string name="phone_number">Phone number</string>
     <string name="email">Email</string>
+    <string name="employee">Employee</string>
 </resources>
