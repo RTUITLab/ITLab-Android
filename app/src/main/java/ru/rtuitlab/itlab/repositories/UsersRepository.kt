@@ -8,19 +8,23 @@ class UsersRepository @Inject constructor(
     private val usersApi: UsersApi,
     private val handler: ResponseHandler
 ) {
-    suspend fun loadUserInfo(url: String, accessToken: String) = handler {
+    suspend fun fetchUserInfo(url: String, accessToken: String) = handler {
         usersApi.getUserInfo(url, "Bearer $accessToken")
     }
 
-    suspend fun loadUserCredentials(userId: String) = handler {
+    suspend fun fetchUserCredentials(userId: String) = handler {
         usersApi.getUser(userId)
     }
 
-    suspend fun loadUserDevices(userId: String) = handler {
+    suspend fun fetchUserDevices(userId: String) = handler {
         usersApi.getUserDevices(userId)
     }
 
-    suspend fun loadUserEvents(userId: String, beginTime: String, endTime: String) = handler {
+    suspend fun fetchUserEvents(userId: String, beginTime: String, endTime: String) = handler {
         usersApi.getUserEvents(userId, beginTime, endTime)
+    }
+
+    suspend fun fetchUsers() = handler {
+        usersApi.getUsers()
     }
 }

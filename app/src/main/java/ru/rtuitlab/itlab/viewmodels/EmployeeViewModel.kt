@@ -6,7 +6,7 @@ import ru.rtuitlab.itlab.repositories.UsersRepository
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
+class EmployeeViewModel @Inject constructor(
 	private val usersRepo: UsersRepository,
 	private val authStateStorage: AuthStateStorage
 ) : UserViewModel(usersRepo, authStateStorage) {

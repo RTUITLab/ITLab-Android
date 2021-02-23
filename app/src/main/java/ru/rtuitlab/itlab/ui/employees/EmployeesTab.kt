@@ -1,16 +1,15 @@
 package ru.rtuitlab.itlab.ui.employees
 
 import android.os.Bundle
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.utils.RunnableHolder
+import ru.rtuitlab.itlab.utils.viewModel
 
 @Composable
 fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
@@ -36,11 +35,6 @@ fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
     }
 
     NavHost(navController, startDestination = "employees") {
-        composable("employees") { Employees() }
+        composable("employees") { Employees(viewModel(it)) }
     }
-}
-
-@Composable
-fun Employees() {
-    Text(text = "EMPLOYEES", fontSize = 36.sp)
 }

@@ -13,7 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.AmbientContext
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -156,7 +156,7 @@ private fun UserEvents(
 
 @Composable
 private fun DateSelection(profileViewModel: ProfileViewModel) {
-	val activity = (AmbientContext.current as AppCompatActivity)
+	val activity = (LocalContext.current as AppCompatActivity)
 	Button(onClick = {
 		MaterialDatePicker
 			.Builder
