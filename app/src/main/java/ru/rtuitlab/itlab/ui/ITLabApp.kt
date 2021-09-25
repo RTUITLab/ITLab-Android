@@ -66,7 +66,11 @@ fun ITLabApp(
 				).forEach { screen ->
 					BottomNavigationItem(
 						icon = { Icon(screen.icon, null) },
-						label = { Text(stringResource(screen.resourceId)) },
+						label = { Text(
+							text = stringResource(screen.resourceId),
+							fontSize = 9.sp,
+							lineHeight = 16.sp
+						) },
 						selected = currentTab == screen,
 						alwaysShowLabels = false,
 						onClick = {
