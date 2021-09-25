@@ -1,8 +1,10 @@
 package ru.rtuitlab.itlab.ui
 
 import android.os.Bundle
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.ui.devices.DevicesTab
 import ru.rtuitlab.itlab.ui.employees.EmployeesTab
 import ru.rtuitlab.itlab.ui.events.EventsTab
@@ -41,15 +44,16 @@ fun ITLabApp(
 			val employeesNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val profileNavState = rememberSaveable { mutableStateOf(Bundle()) }
 
-
-			when (currentTab) {
-				AppTab.Events    -> EventsTab(eventsNavState, eventsResetTask)
-				AppTab.Projects  -> ProjectsTab(projectsNavState, projectsResetTask)
-				AppTab.Devices   -> DevicesTab(devicesNavState, devicesResetTask)
-				AppTab.Employees -> EmployeesTab(employeesNavState, employeesResetTask)
-				AppTab.Profile   -> ProfileTab(profileNavState, profileResetTask, onLogoutEvent)
+			Box(modifier = Modifier.padding(bottom = it.calculateBottomPadding())) {
+				when (currentTab) {
+					AppTab.Events    -> EventsTab(eventsNavState, eventsResetTask)
+					AppTab.Projects  -> ProjectsTab(projectsNavState, projectsResetTask)
+					AppTab.Devices   -> DevicesTab(devicesNavState, devicesResetTask)
+					AppTab.Employees -> EmployeesTab(employeesNavState, employeesResetTask)
+					AppTab.Profile   -> ProfileTab(profileNavState, profileResetTask, onLogoutEvent)
+				}
 			}
-			Spacer(modifier = Modifier.height(124.dp))
+
 		},
 		bottomBar = {
 			BottomNavigation {
