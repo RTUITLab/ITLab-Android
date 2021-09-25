@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.ui.employees
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,8 +16,7 @@ import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.users.models.UserModel
 import ru.rtuitlab.itlab.components.UserDevices
 import ru.rtuitlab.itlab.components.UserEvents
-import ru.rtuitlab.itlab.utils.EmployeePhoneAction
-import ru.rtuitlab.itlab.utils.doPhoneAction
+import ru.rtuitlab.itlab.ui.employees.components.PhoneField
 import ru.rtuitlab.itlab.viewmodels.EmployeeViewModel
 
 @Composable
@@ -61,6 +59,7 @@ private fun EmployeeCredentials(userCredentialsResource: Resource<UserModel>) {
 			Text(text = msg)
 		},
 		onSuccess = { user ->
+			val context = LocalContext.current
 			Card(
 				modifier = Modifier
 					.fillMaxWidth()
@@ -73,7 +72,10 @@ private fun EmployeeCredentials(userCredentialsResource: Resource<UserModel>) {
 					Text("${stringResource(R.string.last_name)}: ${user.lastName}")
 					Text("${stringResource(R.string.first_name)}: ${user.firstName}")
 					Text("${stringResource(R.string.middle_name)}: ${user.middleName}")
-					PhoneField(user)
+					PhoneField(
+						user = user,
+						context = context
+					)
 					Text("${stringResource(R.string.email)}: ${user.email}")
 					user.properties?.forEach {
 						Text("${it.userPropertyType.title}: ${it.value}")
@@ -84,30 +86,3 @@ private fun EmployeeCredentials(userCredentialsResource: Resource<UserModel>) {
 	)
 }
 
-@Composable
-private fun PhoneField(user: UserModel) {
-	user.phoneNumber ?: return
-
-	val context = LocalContext.current
-	var expanded by remember { mutableStateOf(false) }
-
-	Box {
-		Text(
-			modifier = Modifier.clickable { expanded = true },
-			text = "${stringResource(R.string.phone_number)}: ${user.phoneNumber}"
-		)
-		DropdownMenu(
-			expanded = expanded,
-			onDismissRequest = { expanded = false }
-		) {
-			listOf(EmployeePhoneAction.DIAL, EmployeePhoneAction.SAVE).forEach {
-				DropdownMenuItem(onClick = {
-					expanded = false
-					context.doPhoneAction(it, user)
-				}) {
-					Text(stringResource(it.resourceId))
-				}
-			}
-		}
-	}
-}

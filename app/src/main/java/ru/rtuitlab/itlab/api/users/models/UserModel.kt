@@ -10,5 +10,5 @@ data class UserModel (
 	val middleName : String? = null,
 	val phoneNumber : String? = null,
 	val email : String? = null,
-	val properties : List<UserPropertyModel>? = null
+	val properties : List<UserPropertyModel> = listOf()
 )

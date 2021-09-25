@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.rtuitlab.itlab.ui.theme.ITLabTheme
 import ru.rtuitlab.itlab.viewmodels.AuthViewModel
 
+@ExperimentalStdlibApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 

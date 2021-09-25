@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +19,7 @@ import androidx.navigation.compose.navigate
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.users.models.UserModel
+import ru.rtuitlab.itlab.ui.employees.components.EmployeeCard
 import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
 
 @Composable
@@ -51,30 +51,32 @@ fun Employees(
 private fun EmployeeList(usersResource: Resource<List<UserModel>>, navController: NavController) {
 	usersResource.handle(
 		onLoading = {
-			CircularProgressIndicator()
+			Box(
+				modifier = Modifier
+					.fillMaxWidth()
+					.fillMaxHeight(),
+				contentAlignment = Alignment.Center
+			) {
+				CircularProgressIndicator()
+			}
 		},
 		onError = { msg ->
 			Text(text = msg)
 		},
 		onSuccess = { users ->
-			LazyColumn {
+			LazyColumn(
+				verticalArrangement = Arrangement.spacedBy(10.dp),
+				contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
+			) {
 				items(users) { user ->
-					Card(
+					EmployeeCard(
+						user = user,
 						modifier = Modifier
-							.padding(16.dp)
 							.fillMaxWidth()
 							.clickable {
 								navController.navigate("employee/${user.id}")
 							}
-					) {
-						user.run {
-							Text(
-								modifier = Modifier
-									.padding(16.dp),
-								text = "$lastName $firstName $middleName"
-							)
-						}
-					}
+					)
 				}
 			}
 		}
