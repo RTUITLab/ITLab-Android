@@ -3,11 +3,8 @@ package ru.rtuitlab.itlab.ui
 import android.os.Bundle
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -15,12 +12,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.ui.screens.devices.DevicesTab
 import ru.rtuitlab.itlab.ui.screens.employees.EmployeesTab
 import ru.rtuitlab.itlab.ui.screens.events.EventsTab
 import ru.rtuitlab.itlab.ui.screens.profile.ProfileTab
 import ru.rtuitlab.itlab.ui.screens.projects.ProjectsTab
+import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.utils.RunnableHolder
 
@@ -28,7 +25,12 @@ import ru.rtuitlab.itlab.utils.RunnableHolder
 fun ITLabApp(
 	onLogoutEvent: () -> Unit
 ) {
-	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) { mutableStateOf(AppTab.Events) }
+	val defaultTab = AppTab.Events
+	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) { mutableStateOf(defaultTab) }
+
+	var currentScreen by remember { mutableStateOf(defaultTab.asScreen()) }
+
+	val currentScreenHandler: (AppScreen) -> Unit = {navigatedScreen -> currentScreen = navigatedScreen}
 
 	val eventsResetTask = RunnableHolder()
 	val projectsResetTask = RunnableHolder()
@@ -52,13 +54,7 @@ fun ITLabApp(
 					verticalAlignment = Alignment.CenterVertically
 				) {
 					Text(
-						text = stringResource(when(currentTab) {
-							AppTab.Events    -> R.string.events
-							AppTab.Projects  -> R.string.projects
-							AppTab.Devices   -> R.string.devices
-							AppTab.Employees -> R.string.employees
-							AppTab.Profile   -> R.string.profile
-						}),
+						text = stringResource(currentScreen.screenNameResource),
 						fontSize = 20.sp,
 						fontWeight = FontWeight(500),
 						textAlign = TextAlign.Start,
@@ -81,10 +77,10 @@ fun ITLabApp(
 				)
 			) {
 				when (currentTab) {
-					AppTab.Events    -> EventsTab(eventsNavState, eventsResetTask)
+					AppTab.Events    -> EventsTab(eventsNavState, eventsResetTask, currentScreenHandler)
 					AppTab.Projects  -> ProjectsTab(projectsNavState, projectsResetTask)
 					AppTab.Devices   -> DevicesTab(devicesNavState, devicesResetTask)
-					AppTab.Employees -> EmployeesTab(employeesNavState, employeesResetTask)
+					AppTab.Employees -> EmployeesTab(employeesNavState, employeesResetTask, currentScreenHandler)
 					AppTab.Profile   -> ProfileTab(profileNavState, profileResetTask, onLogoutEvent)
 				}
 			}
@@ -109,7 +105,7 @@ fun ITLabApp(
 							lineHeight = 16.sp
 						) },
 						selected = currentTab == screen,
-						alwaysShowLabels = false,
+						alwaysShowLabels = true,
 						onClick = {
 							when {
 								screen != currentTab       -> currentTab = screen
@@ -119,6 +115,7 @@ fun ITLabApp(
 								screen == AppTab.Employees -> employeesResetTask.run()
 								screen == AppTab.Profile   -> profileResetTask.run()
 							}
+							currentScreen = currentTab.asScreen()
 						}
 					)
 				}

@@ -15,4 +15,6 @@
     <string name="employee">Сотрудник</string>
     <string name="dial">Позвонить</string>
     <string name="save">Сохранить</string>
+    <string name="event">%1$s</string>
+    <string name="event_new">Новое событие</string>
 </resources>

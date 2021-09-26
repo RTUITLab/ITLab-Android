@@ -16,4 +16,6 @@
     <string name="rtuitlab" translatable="false">RTUITLab</string>
     <string name="dial">Dial</string>
     <string name="save">Save</string>
+    <string name="event">%1$s</string>
+    <string name="event_new">New event</string>
 </resources>
