@@ -1,20 +1,21 @@
 package ru.rtuitlab.itlab.ui
 
 import android.os.Bundle
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.ui.devices.DevicesTab
 import ru.rtuitlab.itlab.ui.employees.EmployeesTab
 import ru.rtuitlab.itlab.ui.events.EventsTab
@@ -36,7 +37,36 @@ fun ITLabApp(
 	val profileResetTask = RunnableHolder()
 
 	Scaffold(
-		topBar = {},
+		topBar = {
+			TopAppBar(
+				elevation = 10.dp
+			) {
+				Row(
+					modifier = Modifier
+						.fillMaxWidth()
+						.height(54.dp)
+						.padding(
+							start = 15.dp,
+							end = 15.dp
+						),
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					Text(
+						text = stringResource(when(currentTab) {
+							AppTab.Events    -> R.string.events
+							AppTab.Projects  -> R.string.projects
+							AppTab.Devices   -> R.string.devices
+							AppTab.Employees -> R.string.employees
+							AppTab.Profile   -> R.string.profile
+						}),
+						fontSize = 20.sp,
+						fontWeight = FontWeight(500),
+						textAlign = TextAlign.Start,
+
+					)
+				}
+			}
+		},
 		bodyContent = {
 			val eventsNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val projectsNavState = rememberSaveable { mutableStateOf(Bundle()) }
@@ -44,7 +74,12 @@ fun ITLabApp(
 			val employeesNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val profileNavState = rememberSaveable { mutableStateOf(Bundle()) }
 
-			Box(modifier = Modifier.padding(bottom = it.calculateBottomPadding())) {
+			Box(
+				modifier = Modifier.padding(
+					bottom = it.calculateBottomPadding(),
+					top = it.calculateTopPadding()
+				)
+			) {
 				when (currentTab) {
 					AppTab.Events    -> EventsTab(eventsNavState, eventsResetTask)
 					AppTab.Projects  -> ProjectsTab(projectsNavState, projectsResetTask)
@@ -56,7 +91,9 @@ fun ITLabApp(
 
 		},
 		bottomBar = {
-			BottomNavigation {
+			BottomNavigation(
+				elevation = 10.dp
+			) {
 				listOf(
 					AppTab.Events,
 					AppTab.Projects,

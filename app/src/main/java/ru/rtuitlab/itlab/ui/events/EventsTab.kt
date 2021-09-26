@@ -42,5 +42,5 @@ fun EventsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
 
 @Composable
 fun Events() {
-    Text(text = "EVENTS", fontSize = 36.sp)
+    //Text(text = "EVENTS", fontSize = 36.sp)
 }

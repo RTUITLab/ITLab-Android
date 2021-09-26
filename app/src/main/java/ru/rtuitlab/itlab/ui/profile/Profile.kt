@@ -36,17 +36,6 @@ fun Profile(
 			.fillMaxSize()
 			.verticalScroll(rememberScrollState())
 	) {
-		Box(
-			modifier = Modifier
-				.padding(16.dp),
-			contentAlignment = Alignment.Center
-		) {
-			Text(
-				text = stringResource(R.string.profile),
-				fontSize = 36.sp
-			)
-		}
-
 		ProfileCredentials(userCredentialsResource)
 		UserDevices(userDevicesResource)
 		UserEvents(profileViewModel, userEventsResource)

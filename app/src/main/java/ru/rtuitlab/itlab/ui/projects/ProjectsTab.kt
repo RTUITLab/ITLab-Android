@@ -42,5 +42,5 @@ fun ProjectsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
 
 @Composable
 fun Projects() {
-    Text(text = "PROJECTS", fontSize = 36.sp)
+    //Text(text = "PROJECTS", fontSize = 36.sp)
 }

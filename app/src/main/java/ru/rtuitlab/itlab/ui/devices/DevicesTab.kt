@@ -42,5 +42,5 @@ fun DevicesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
 
 @Composable
 fun Devices() {
-    Text(text = "DEVICES", fontSize = 36.sp)
+    //Text(text = "DEVICES", fontSize = 36.sp)
 }

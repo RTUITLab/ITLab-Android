@@ -1,16 +1,12 @@
 package ru.rtuitlab.itlab.ui.employees.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +18,7 @@ import ru.rtuitlab.itlab.R
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.ui.platform.LocalContext
 
 
@@ -100,13 +97,12 @@ fun ContactMethodRow(
 	content: @Composable RowScope.() -> Unit
 ) {
 	Row(verticalAlignment = Alignment.CenterVertically) {
-		Image(
+		Icon(
 			modifier = Modifier
 				.width(16.dp)
 				.height(12.dp),
 			painter = painter,
-			contentDescription = contentDescription,
-			contentScale = ContentScale.Fit
+			contentDescription = contentDescription
 		)
 		Spacer(Modifier.width(8.dp))
 		content()

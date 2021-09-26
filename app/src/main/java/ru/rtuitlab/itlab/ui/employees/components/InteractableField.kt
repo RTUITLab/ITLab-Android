@@ -4,8 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
-import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.ui.theme.AppColors
 
 @Composable
 fun InteractableField(
@@ -15,6 +14,6 @@ fun InteractableField(
 	Text(
 		modifier = Modifier.clickable { onClick() },
 		text = value,
-		color = colorResource(R.color.accent)
+		color = AppColors.accent
 	)
 }
