@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.ui.employees
+package ru.rtuitlab.itlab.ui.screens.employees
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable

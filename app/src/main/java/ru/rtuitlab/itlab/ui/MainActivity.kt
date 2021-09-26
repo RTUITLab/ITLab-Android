@@ -10,6 +10,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import dagger.hilt.android.AndroidEntryPoint
+import ru.rtuitlab.itlab.ui.screens.AuthScreen
 import ru.rtuitlab.itlab.ui.theme.ITLabTheme
 import ru.rtuitlab.itlab.viewmodels.AuthViewModel
 

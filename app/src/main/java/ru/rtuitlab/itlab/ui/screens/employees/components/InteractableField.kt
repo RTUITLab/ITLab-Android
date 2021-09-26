@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.ui.employees.components
+package ru.rtuitlab.itlab.ui.screens.employees.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material.Text

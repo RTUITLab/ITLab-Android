@@ -1,11 +1,9 @@
-package ru.rtuitlab.itlab.ui.devices
+package ru.rtuitlab.itlab.ui.screens.projects
 
 import android.os.Bundle
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,7 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.utils.RunnableHolder
 
 @Composable
-fun DevicesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
+fun ProjectsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -35,12 +33,12 @@ fun DevicesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
         navController.popBackStack(navController.graph.startDestination, false)
     }
 
-    NavHost(navController, startDestination = "devices") {
-        composable("devices") { Devices() }
+    NavHost(navController, startDestination = "projects") {
+        composable("projects") { Projects() }
     }
 }
 
 @Composable
-fun Devices() {
-    //Text(text = "DEVICES", fontSize = 36.sp)
+fun Projects() {
+    //Text(text = "PROJECTS", fontSize = 36.sp)
 }

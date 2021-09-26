@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.ui.profile
+package ru.rtuitlab.itlab.ui.screens.devices
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
@@ -9,14 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.utils.RunnableHolder
-import ru.rtuitlab.itlab.utils.hiltViewModel
 
 @Composable
-fun ProfileTab(
-    navState: MutableState<Bundle>,
-    resetTabTask: RunnableHolder,
-    onLogoutEvent: () -> Unit
-) {
+fun DevicesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -38,9 +33,12 @@ fun ProfileTab(
         navController.popBackStack(navController.graph.startDestination, false)
     }
 
-    NavHost(navController, startDestination = "profile") {
-        composable("profile") {
-            Profile(it.hiltViewModel(), onLogoutEvent)
-        }
+    NavHost(navController, startDestination = "devices") {
+        composable("devices") { Devices() }
     }
+}
+
+@Composable
+fun Devices() {
+    //Text(text = "DEVICES", fontSize = 36.sp)
 }

@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.ui.employees.components
+package ru.rtuitlab.itlab.ui.screens.employees.components
 
 import android.content.Context
 import androidx.compose.foundation.layout.Box

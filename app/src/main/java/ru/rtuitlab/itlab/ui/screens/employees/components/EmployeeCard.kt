@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.ui.employees.components
+package ru.rtuitlab.itlab.ui.screens.employees.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow

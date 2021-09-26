@@ -16,11 +16,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.ui.devices.DevicesTab
-import ru.rtuitlab.itlab.ui.employees.EmployeesTab
-import ru.rtuitlab.itlab.ui.events.EventsTab
-import ru.rtuitlab.itlab.ui.profile.ProfileTab
-import ru.rtuitlab.itlab.ui.projects.ProjectsTab
+import ru.rtuitlab.itlab.ui.screens.devices.DevicesTab
+import ru.rtuitlab.itlab.ui.screens.employees.EmployeesTab
+import ru.rtuitlab.itlab.ui.screens.events.EventsTab
+import ru.rtuitlab.itlab.ui.screens.profile.ProfileTab
+import ru.rtuitlab.itlab.ui.screens.projects.ProjectsTab
 import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.utils.RunnableHolder
 

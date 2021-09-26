@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.ui.employees
+package ru.rtuitlab.itlab.ui.screens.employees
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,7 +16,7 @@ import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.users.models.UserModel
 import ru.rtuitlab.itlab.components.UserDevices
 import ru.rtuitlab.itlab.components.UserEvents
-import ru.rtuitlab.itlab.ui.employees.components.PhoneField
+import ru.rtuitlab.itlab.ui.screens.employees.components.PhoneField
 import ru.rtuitlab.itlab.viewmodels.EmployeeViewModel
 
 @Composable
