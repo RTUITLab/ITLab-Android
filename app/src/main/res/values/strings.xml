@@ -16,4 +16,8 @@
     <string name="rtuitlab" translatable="false">RTUITLab</string>
     <string name="dial">Dial</string>
     <string name="save">Save</string>
+    <string name="study_group">Study group</string>
+    <string name="vk_id">ID VK</string>
+    <string name="discord_id">Discord ID</string>
+    <string name="skype_id">Skype ID</string>
 </resources>

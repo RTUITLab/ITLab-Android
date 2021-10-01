@@ -1,16 +1,12 @@
-package ru.rtuitlab.itlab.ui.employees.components
+package ru.rtuitlab.itlab.ui.screens.employees.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +19,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.platform.LocalContext
+import ru.rtuitlab.itlab.ui.shared.ContactMethodRow
 
 
 @Composable
@@ -57,7 +54,9 @@ fun EmployeeCard(
 				if (email != null) {
 					ContactMethodRow(
 						painter = painterResource(R.drawable.ic_mail),
-						contentDescription = stringResource(R.string.email)
+						contentDescription = stringResource(R.string.email),
+						imageWidth = 16.dp,
+						imageHeight = 12.dp
 					) {
 						InteractableField(value = email) {
 							val intent = Intent(Intent.ACTION_SENDTO).apply {
@@ -71,7 +70,9 @@ fun EmployeeCard(
 				if (phoneNumber != null) {
 					ContactMethodRow(
 						painter = painterResource(R.drawable.ic_phone),
-						contentDescription = stringResource(R.string.phone_number)
+						contentDescription = stringResource(R.string.phone_number),
+						imageWidth = 16.dp,
+						imageHeight = 12.dp
 					) {
 						PhoneField(user = this@run, context = context)
 					}
@@ -93,23 +94,3 @@ fun EmployeeCard(
 	}
 }
 
-@Composable
-fun ContactMethodRow(
-	painter: Painter,
-	contentDescription: String,
-	content: @Composable RowScope.() -> Unit
-) {
-	Row(verticalAlignment = Alignment.CenterVertically) {
-		Image(
-			modifier = Modifier
-				.width(16.dp)
-				.height(12.dp),
-			painter = painter,
-			contentDescription = contentDescription,
-			contentScale = ContentScale.Fit
-		)
-		Spacer(Modifier.width(8.dp))
-		content()
-	}
-	Spacer(Modifier.height(8.dp))
-}

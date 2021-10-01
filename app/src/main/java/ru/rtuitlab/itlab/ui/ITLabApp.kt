@@ -2,8 +2,6 @@ package ru.rtuitlab.itlab.ui
 
 import android.os.Bundle
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -13,13 +11,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.rtuitlab.itlab.ui.devices.DevicesTab
-import ru.rtuitlab.itlab.ui.employees.EmployeesTab
-import ru.rtuitlab.itlab.ui.events.EventsTab
-import ru.rtuitlab.itlab.ui.profile.ProfileTab
-import ru.rtuitlab.itlab.ui.projects.ProjectsTab
+import ru.rtuitlab.itlab.ui.screens.devices.DevicesTab
+import ru.rtuitlab.itlab.ui.screens.employees.EmployeesTab
+import ru.rtuitlab.itlab.ui.screens.events.EventsTab
+import ru.rtuitlab.itlab.ui.screens.profile.ProfileTab
+import ru.rtuitlab.itlab.ui.screens.projects.ProjectsTab
 import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.utils.RunnableHolder
 
@@ -37,7 +34,7 @@ fun ITLabApp(
 
 	Scaffold(
 		topBar = {},
-		bodyContent = {
+		content = {
 			val eventsNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val projectsNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val devicesNavState = rememberSaveable { mutableStateOf(Bundle()) }
@@ -72,7 +69,7 @@ fun ITLabApp(
 							lineHeight = 16.sp
 						) },
 						selected = currentTab == screen,
-						alwaysShowLabels = false,
+						alwaysShowLabel = false,
 						onClick = {
 							when {
 								screen != currentTab       -> currentTab = screen

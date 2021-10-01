@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.ui.profile
+package ru.rtuitlab.itlab.ui.screens.profile
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState

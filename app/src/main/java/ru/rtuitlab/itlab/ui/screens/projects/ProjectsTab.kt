@@ -1,22 +1,19 @@
-package ru.rtuitlab.itlab.ui.profile
+package ru.rtuitlab.itlab.ui.screens.projects
 
 import android.os.Bundle
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.utils.RunnableHolder
-import ru.rtuitlab.itlab.utils.hiltViewModel
 
 @Composable
-fun ProfileTab(
-    navState: MutableState<Bundle>,
-    resetTabTask: RunnableHolder,
-    onLogoutEvent: () -> Unit
-) {
+fun ProjectsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -35,12 +32,15 @@ fun ProfileTab(
     }
 
     resetTabTask.runnable = Runnable {
-        navController.popBackStack(navController.graph.startDestination, false)
+        navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
-    NavHost(navController, startDestination = "profile") {
-        composable("profile") {
-            Profile(it.hiltViewModel(), onLogoutEvent)
-        }
+    NavHost(navController, startDestination = "projects") {
+        composable("projects") { Projects() }
     }
+}
+
+@Composable
+fun Projects() {
+    Text(text = "PROJECTS", fontSize = 36.sp)
 }

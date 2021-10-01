@@ -1,19 +1,18 @@
-package ru.rtuitlab.itlab.ui.devices
+package ru.rtuitlab.itlab.ui.screens.employees
 
 import android.os.Bundle
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.utils.RunnableHolder
+import ru.rtuitlab.itlab.utils.hiltViewModel
 
 @Composable
-fun DevicesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
+fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -32,15 +31,11 @@ fun DevicesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
     }
 
     resetTabTask.runnable = Runnable {
-        navController.popBackStack(navController.graph.startDestination, false)
+        navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
-    NavHost(navController, startDestination = "devices") {
-        composable("devices") { Devices() }
+    NavHost(navController, startDestination = "employees") {
+        composable("employees") { Employees(it.hiltViewModel(), navController) }
+        composable("employee/{userId}") { Employee(it.hiltViewModel()) }
     }
-}
-
-@Composable
-fun Devices() {
-    Text(text = "DEVICES", fontSize = 36.sp)
 }

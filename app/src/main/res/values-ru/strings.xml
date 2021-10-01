@@ -15,4 +15,8 @@
     <string name="employee">Сотрудник</string>
     <string name="dial">Позвонить</string>
     <string name="save">Сохранить</string>
+    <string name="study_group">Учебная группа</string>
+    <string name="vk_id">ID Вконтакте</string>
+    <string name="discord_id">ID Дискорд</string>
+    <string name="skype_id">ID Скайп</string>
 </resources>

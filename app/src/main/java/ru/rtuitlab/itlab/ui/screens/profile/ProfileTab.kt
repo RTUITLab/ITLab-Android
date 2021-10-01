@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.ui.employees
+package ru.rtuitlab.itlab.ui.screens.profile
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
@@ -12,7 +12,11 @@ import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.utils.hiltViewModel
 
 @Composable
-fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
+fun ProfileTab(
+    navState: MutableState<Bundle>,
+    resetTabTask: RunnableHolder,
+    onLogoutEvent: () -> Unit
+) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -31,11 +35,12 @@ fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
     }
 
     resetTabTask.runnable = Runnable {
-        navController.popBackStack(navController.graph.startDestination, false)
+        navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
-    NavHost(navController, startDestination = "employees") {
-        composable("employees") { Employees(it.hiltViewModel(), navController) }
-        composable("employee/{userId}") { Employee(it.hiltViewModel()) }
+    NavHost(navController, startDestination = "profile") {
+        composable("profile") {
+            Profile(it.hiltViewModel(), onLogoutEvent)
+        }
     }
 }

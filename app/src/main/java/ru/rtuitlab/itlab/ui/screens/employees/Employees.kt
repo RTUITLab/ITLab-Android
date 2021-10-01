@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.ui.employees
+package ru.rtuitlab.itlab.ui.screens.employees
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,11 +15,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.users.models.UserModel
-import ru.rtuitlab.itlab.ui.employees.components.EmployeeCard
+import ru.rtuitlab.itlab.ui.screens.employees.components.EmployeeCard
 import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
 
 @Composable
