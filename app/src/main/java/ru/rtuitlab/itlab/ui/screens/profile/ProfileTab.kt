@@ -35,7 +35,7 @@ fun ProfileTab(
     }
 
     resetTabTask.runnable = Runnable {
-        navController.popBackStack(navController.graph.startDestination, false)
+        navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
     NavHost(navController, startDestination = "profile") {

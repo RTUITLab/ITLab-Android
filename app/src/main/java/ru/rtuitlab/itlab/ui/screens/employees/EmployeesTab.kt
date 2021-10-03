@@ -33,7 +33,7 @@ fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, a
     }
 
     resetTabTask.runnable = Runnable {
-        navController.popBackStack(navController.graph.startDestination, false)
+        navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
     NavHost(navController, startDestination = "employees") {

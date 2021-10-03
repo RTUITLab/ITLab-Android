@@ -9,10 +9,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.ui.theme.ITLabTheme
 
 @Composable
 fun UserTagComponent(
@@ -32,7 +34,8 @@ fun UserTagComponent(
 		Text(
 			text = tag,
 			textAlign = TextAlign.Center,
-			style = MaterialTheme.typography.body2
+			style = MaterialTheme.typography.body2,
+			color = Color.Black
 		)
 	}
 }

@@ -78,7 +78,7 @@ fun ITLabApp(
 				else -> BasicTopAppBar(text = stringResource(currentScreen.screenNameResource))
 			}
 		},
-		bodyContent = {
+		content = {
 			val eventsNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val projectsNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val devicesNavState = rememberSaveable { mutableStateOf(Bundle()) }
@@ -133,12 +133,12 @@ fun ITLabApp(
 						alwaysShowLabels = true,
 						onClick = {
 							when {
-								screen != currentTab -> currentTab = screen
-								screen == AppTab.Events -> eventsResetTask.run()
-								screen == AppTab.Projects -> projectsResetTask.run()
-								screen == AppTab.Devices -> devicesResetTask.run()
+								screen != currentTab       -> currentTab = screen
+								screen == AppTab.Events    -> eventsResetTask.run()
+								screen == AppTab.Projects  -> projectsResetTask.run()
+								screen == AppTab.Devices   -> devicesResetTask.run()
 								screen == AppTab.Employees -> employeesResetTask.run()
-								screen == AppTab.Profile -> profileResetTask.run()
+								screen == AppTab.Profile   -> profileResetTask.run()
 							}
 							appBarViewModel.onNavigate(currentTab.asScreen())
 						}

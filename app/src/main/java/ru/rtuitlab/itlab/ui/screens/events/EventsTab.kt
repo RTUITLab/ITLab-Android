@@ -32,7 +32,7 @@ fun EventsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, appB
     }
 
     resetTabTask.runnable = Runnable {
-        navController.popBackStack(navController.graph.startDestination, false)
+        navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
     NavHost(navController, startDestination = "events") {

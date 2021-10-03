@@ -30,7 +30,7 @@ fun ProjectsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
     }
 
     resetTabTask.runnable = Runnable {
-        navController.popBackStack(navController.graph.startDestination, false)
+        navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
     NavHost(navController, startDestination = "projects") {

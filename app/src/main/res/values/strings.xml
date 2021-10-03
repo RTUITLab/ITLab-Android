@@ -18,4 +18,8 @@
     <string name="save">Save</string>
     <string name="event">%1$s</string>
     <string name="event_new">New event</string>
+    <string name="study_group">Study group</string>
+    <string name="vk_id">ID VK</string>
+    <string name="discord_id">Discord ID</string>
+    <string name="skype_id">Skype ID</string>
 </resources>
