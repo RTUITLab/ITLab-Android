@@ -130,7 +130,7 @@ fun ITLabApp(
 							)
 						},
 						selected = currentTab == screen,
-						alwaysShowLabels = true,
+						alwaysShowLabel = true,
 						onClick = {
 							when {
 								screen != currentTab       -> currentTab = screen

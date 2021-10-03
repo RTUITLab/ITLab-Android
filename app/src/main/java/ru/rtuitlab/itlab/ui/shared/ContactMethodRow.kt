@@ -2,6 +2,7 @@ package ru.rtuitlab.itlab.ui.shared
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,13 +20,12 @@ fun ContactMethodRow(
 	content: @Composable RowScope.() -> Unit
 ) {
 	Row(verticalAlignment = Alignment.CenterVertically) {
-		Image(
+		Icon(
 			modifier = Modifier
 				.width(imageWidth)
 				.height(imageHeight),
 			painter = painter,
-			contentDescription = contentDescription,
-			contentScale = ContentScale.Fit
+			contentDescription = contentDescription
 		)
 		Spacer(Modifier.width(8.dp))
 		content()

@@ -39,17 +39,6 @@ fun Employee(
 			.fillMaxSize()
 			.verticalScroll(rememberScrollState())
 	) {
-		Box(
-			modifier = Modifier
-				.padding(16.dp),
-			contentAlignment = Alignment.Center
-		) {
-			Text(
-				text = stringResource(R.string.employee),
-				fontSize = 36.sp
-			)
-		}
-
 		EmployeeCredentials(userCredentialsResource)
 		UserDevices(userDevicesResource)
 		UserEvents(employeeViewModel, userEventsResource)

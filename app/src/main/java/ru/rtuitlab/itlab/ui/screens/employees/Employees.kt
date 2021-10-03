@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.users.models.UserModel
@@ -34,16 +33,6 @@ fun Employees(
 		modifier = Modifier
 			.fillMaxSize()
 	) {
-		Box(
-			modifier = Modifier
-				.padding(16.dp),
-			contentAlignment = Alignment.Center
-		) {
-			Text(
-				text = stringResource(R.string.employees),
-				fontSize = 36.sp
-			)
-		}
 		EmployeeList(usersResource, navController)
 	}
 }
