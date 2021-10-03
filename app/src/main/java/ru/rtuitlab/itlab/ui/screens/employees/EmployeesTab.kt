@@ -11,9 +11,10 @@ import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.utils.hiltViewModel
+import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
 
 @Composable
-fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, onNavigate: (AppScreen) -> Unit) {
+fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, appBarViewModel: AppBarViewModel) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -37,14 +38,12 @@ fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, o
 
     NavHost(navController, startDestination = "employees") {
         composable("employees") {
-            onNavigate(AppScreen.Employees)
+            appBarViewModel.onNavigate(AppScreen.Employees, navController)
             Employees(it.hiltViewModel(), navController)
         }
         composable("employee/{userId}") {
-            onNavigate.invoke(AppScreen.EmployeeDetails)
+            appBarViewModel.onNavigate(AppScreen.EmployeeDetails, navController)
             Employee(it.hiltViewModel())
         }
     }
-
-    //navController.setOnBackPressedDispatcher()
 }

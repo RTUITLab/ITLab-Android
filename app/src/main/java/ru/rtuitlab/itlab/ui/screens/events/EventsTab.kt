@@ -10,9 +10,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.RunnableHolder
+import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
 
 @Composable
-fun EventsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, onNavigate: (AppScreen) -> Unit) {
+fun EventsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, appBarViewModel: AppBarViewModel) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -36,7 +37,7 @@ fun EventsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, onNa
 
     NavHost(navController, startDestination = "events") {
         composable("events") {
-            onNavigate(AppScreen.Events)
+            appBarViewModel.onNavigate(AppScreen.Events, navController)
             Events()
         }
     }

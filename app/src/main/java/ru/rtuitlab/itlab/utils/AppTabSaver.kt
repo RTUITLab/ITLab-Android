@@ -50,12 +50,12 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
 sealed class AppScreen(@StringRes val screenNameResource: Int) {
     // Employee-related
     object Employees: AppScreen(R.string.employees)
-    object EmployeeDetails: AppScreen(R.string.profile)
+    object EmployeeDetails: AppScreen(R.string.profile) // Has back button
 
     // Events-related
     object Events: AppScreen(R.string.events)
-    object EventDetails: AppScreen(R.string.event)
-    object EventNew: AppScreen(R.string.event_new)
+    object EventDetails: AppScreen(R.string.event) // Has back button
+    object EventNew: AppScreen(R.string.event_new) // Has back button
 
     // Projects-related
     object Projects: AppScreen(R.string.projects)

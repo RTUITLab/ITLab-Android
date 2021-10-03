@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rtuitlab.itlab.ui.screens.AuthScreen
 import ru.rtuitlab.itlab.ui.theme.ITLabTheme
+import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
 import ru.rtuitlab.itlab.viewmodels.AuthViewModel
 
 @ExperimentalStdlibApi
@@ -19,6 +20,7 @@ import ru.rtuitlab.itlab.viewmodels.AuthViewModel
 class MainActivity : AppCompatActivity() {
 
 	private val authViewModel: AuthViewModel by viewModels()
+	private val appBarViewModel: AppBarViewModel by viewModels()
 
 	private val authPageLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -33,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 			ITLabTheme {
 				Surface(color = MaterialTheme.colors.background) {
 					when (authState?.isAuthorized) {
-						true -> ITLabApp(authViewModel::onLogoutEvent)
+						true -> ITLabApp(appBarViewModel, authViewModel::onLogoutEvent)
 						false -> AuthScreen { authViewModel.onLoginEvent(authPageLauncher) }
 						null -> {}
 					}
