@@ -12,9 +12,10 @@ import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.utils.hiltViewModel
 import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
+import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
 
 @Composable
-fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, appBarViewModel: AppBarViewModel) {
+fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, appBarViewModel: AppBarViewModel, employeesViewModel: EmployeesViewModel) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -39,7 +40,7 @@ fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, a
     NavHost(navController, startDestination = "employees") {
         composable("employees") {
             appBarViewModel.onNavigate(AppScreen.Employees, navController)
-            Employees(it.hiltViewModel(), navController)
+            Employees(employeesViewModel, navController)
         }
         composable("employee/{userId}") {
             appBarViewModel.onNavigate(AppScreen.EmployeeDetails, navController)

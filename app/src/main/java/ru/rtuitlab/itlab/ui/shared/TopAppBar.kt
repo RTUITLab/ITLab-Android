@@ -28,10 +28,10 @@ fun BasicTopAppBar(
 		Row(
 			modifier = Modifier
 				.fillMaxWidth()
-				.height(54.dp)
+				.height(56.dp)
 				.padding(
-					start = if (onBackAction == emptyBackAction) 15.dp else 0.dp,
-					end = 15.dp
+					start = if (onBackAction == emptyBackAction) 16.dp else 0.dp,
+					end = 16.dp
 				),
 			verticalAlignment = Alignment.CenterVertically,
 			horizontalArrangement = Arrangement.SpaceBetween
@@ -44,6 +44,7 @@ fun BasicTopAppBar(
 					IconButton(onClick = onBackAction) {
 						Icon(Icons.Default.ArrowBack, contentDescription = null)
 					}
+					Spacer(modifier = Modifier.width(24.dp))
 				}
 				
 				Text(
@@ -54,22 +55,18 @@ fun BasicTopAppBar(
 				)
 			}
 
-			Row(
-				horizontalArrangement = Arrangement.End,
-				verticalAlignment = Alignment.CenterVertically
-			) {
-				options.forEach { option ->
-					IconButton(onClick = option.onClick) {
-						Icon(imageVector = option.icon, contentDescription = option.contentDescription)
-					}
-				}
-			}
+			OptionsRow(options)
 		}
 	}
 }
 
 @Composable
-fun ExtendedTopAppBar(content: @Composable () -> Unit
+fun ExtendedTopAppBar(
+	options: List<AppBarOption> = emptyList(),
+	onBackAction: () -> Unit = emptyBackAction,
+	hideBackButton: Boolean = false,
+	hideOptions: Boolean = false,
+	content: @Composable () -> Unit
 ) {
 	TopAppBar(
 		elevation = 10.dp
@@ -77,15 +74,38 @@ fun ExtendedTopAppBar(content: @Composable () -> Unit
 		Row(
 			modifier = Modifier
 				.fillMaxWidth()
-				.height(54.dp)
+				.height(56.dp)
 				.padding(
-					start = 15.dp,
-					end = 15.dp
+					start = if (hideBackButton) 16.dp else 0.dp,
+					end = 16.dp
 				),
 			verticalAlignment = Alignment.CenterVertically,
 			horizontalArrangement = Arrangement.SpaceBetween
 		) {
+			if (onBackAction != emptyBackAction && !hideBackButton) {
+				IconButton(onClick = onBackAction) {
+					Icon(Icons.Default.ArrowBack, contentDescription = null)
+				}
+				Spacer(modifier = Modifier.width(24.dp))
+			}
 			content()
+			if (!hideOptions) OptionsRow(options)
+		}
+	}
+}
+
+@Composable
+fun OptionsRow(
+	options: List<AppBarOption>
+) {
+	Row(
+		horizontalArrangement = Arrangement.End,
+		verticalAlignment = Alignment.CenterVertically
+	) {
+		options.forEach { option ->
+			IconButton(onClick = option.onClick) {
+				Icon(imageVector = option.icon, contentDescription = option.contentDescription)
+			}
 		}
 	}
 }

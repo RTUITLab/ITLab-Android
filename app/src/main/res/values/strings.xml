@@ -22,4 +22,5 @@
     <string name="vk_id">ID VK</string>
     <string name="discord_id">Discord ID</string>
     <string name="skype_id">Skype ID</string>
+    <string name="search">Search</string>
 </resources>

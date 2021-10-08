@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -14,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.ui.screens.devices.DevicesTab
 import ru.rtuitlab.itlab.ui.screens.employees.EmployeesTab
+import ru.rtuitlab.itlab.ui.screens.employees.components.EmployeesTopAppBar
 import ru.rtuitlab.itlab.ui.screens.events.EventsTab
 import ru.rtuitlab.itlab.ui.screens.profile.ProfileTab
 import ru.rtuitlab.itlab.ui.screens.projects.ProjectsTab
@@ -24,10 +24,12 @@ import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
+import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
 
 @Composable
 fun ITLabApp(
 	appBarViewModel: AppBarViewModel,
+	employeesViewModel: EmployeesViewModel,
 	onLogoutEvent: () -> Unit
 ) {
 	val defaultTab = AppTab.Employees
@@ -66,15 +68,7 @@ fun ITLabApp(
 						onClick = {}
 					))
 				)
-				AppScreen.Employees -> BasicTopAppBar(
-					text = stringResource(currentScreen.screenNameResource),
-					options = listOf(
-						AppBarOption(
-							icon = Icons.Default.Search,
-							onClick = {}
-						)
-					)
-				)
+				AppScreen.Employees -> EmployeesTopAppBar { employeesViewModel.onSearch(it) }
 				else -> BasicTopAppBar(text = stringResource(currentScreen.screenNameResource))
 			}
 		},
@@ -102,7 +96,8 @@ fun ITLabApp(
 					AppTab.Employees -> EmployeesTab(
 						employeesNavState,
 						employeesResetTask,
-						appBarViewModel
+						appBarViewModel,
+						employeesViewModel
 					)
 					AppTab.Profile -> ProfileTab(profileNavState, profileResetTask, onLogoutEvent)
 				}
