@@ -9,12 +9,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.os.bundleOf
 import ru.rtuitlab.itlab.R
 
-sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon: ImageVector) {
-    object Events: AppTab("events_tab", R.string.events, Icons.Default.EventNote)
-    object Projects: AppTab("projects_tab", R.string.projects, Icons.Default.Widgets)
-    object Devices: AppTab("devices_tab", R.string.devices, Icons.Default.DevicesOther)
+sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon: ImageVector, val accessible: Boolean = true) {
+    object Events: AppTab("events_tab", R.string.events, Icons.Default.EventNote, false)
+    object Projects: AppTab("projects_tab", R.string.projects, Icons.Default.Widgets, false)
+    object Devices: AppTab("devices_tab", R.string.devices, Icons.Default.DevicesOther, false)
     object Employees: AppTab("employees_tab", R.string.employees, Icons.Default.People)
-    object Profile: AppTab("profile_tab", R.string.profile, Icons.Default.AccountCircle)
+    object Profile: AppTab("profile_tab", R.string.profile, Icons.Default.AccountCircle, false)
 
     fun saveState() = bundleOf(SCREEN_KEY to route)
 

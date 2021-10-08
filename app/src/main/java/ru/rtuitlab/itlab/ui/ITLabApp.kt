@@ -30,7 +30,7 @@ fun ITLabApp(
 	appBarViewModel: AppBarViewModel,
 	onLogoutEvent: () -> Unit
 ) {
-	val defaultTab = AppTab.Events
+	val defaultTab = AppTab.Employees
 	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) { mutableStateOf(defaultTab) }
 
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
@@ -119,7 +119,7 @@ fun ITLabApp(
 					AppTab.Devices,
 					AppTab.Employees,
 					AppTab.Profile
-				).forEach { screen ->
+				).filter { it.accessible }.forEach { screen ->
 					BottomNavigationItem(
 						icon = { Icon(screen.icon, null) },
 						label = {
