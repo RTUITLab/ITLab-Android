@@ -9,7 +9,7 @@ import kotlinx.datetime.DateTimeUnit
 import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.devices.models.DeviceModel
 import ru.rtuitlab.itlab.api.users.models.UserEventModel
-import ru.rtuitlab.itlab.api.users.models.UserModel
+import ru.rtuitlab.itlab.api.users.models.UserResponse
 import ru.rtuitlab.itlab.repositories.UsersRepository
 import ru.rtuitlab.itlab.utils.emitInIO
 import ru.rtuitlab.itlab.utils.minus
@@ -25,7 +25,7 @@ abstract class UserViewModel (
 	var endEventsDate = Clock.System.now().toEpochMilliseconds()
 		private set
 
-	private val _userCredentialsFlow = MutableStateFlow<Resource<UserModel>>(Resource.Loading)
+	private val _userCredentialsFlow = MutableStateFlow<Resource<UserResponse>>(Resource.Loading)
 	val userCredentialsFlow = _userCredentialsFlow.asStateFlow().also { fetchUserCredentials() }
 
 	private val _userDevicesFlow = MutableStateFlow<Resource<List<DeviceModel>>>(Resource.Loading)

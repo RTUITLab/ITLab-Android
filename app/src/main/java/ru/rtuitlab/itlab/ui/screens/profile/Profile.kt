@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.api.Resource
-import ru.rtuitlab.itlab.api.users.models.UserModel
+import ru.rtuitlab.itlab.api.users.models.UserResponse
 import ru.rtuitlab.itlab.components.UserDevices
 import ru.rtuitlab.itlab.components.UserEvents
 import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
@@ -42,7 +42,7 @@ fun Profile(
 }
 
 @Composable
-private fun ProfileCredentials(userCredentialsResource: Resource<UserModel>) {
+private fun ProfileCredentials(userCredentialsResource: Resource<UserResponse>) {
 	userCredentialsResource.handle(
 		onLoading = {
 			CircularProgressIndicator()
@@ -65,7 +65,7 @@ private fun ProfileCredentials(userCredentialsResource: Resource<UserModel>) {
 					Text("${stringResource(R.string.middle_name)}: ${user.middleName}")
 					Text("${stringResource(R.string.phone_number)}: ${user.phoneNumber}")
 					Text("${stringResource(R.string.email)}: ${user.email}")
-					user.properties?.forEach {
+					user.properties.forEach {
 						Text("${it.userPropertyType.title}: ${it.value}")
 					}
 				}

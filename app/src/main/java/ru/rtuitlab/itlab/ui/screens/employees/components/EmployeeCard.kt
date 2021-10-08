@@ -7,12 +7,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,13 +17,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.api.users.models.UserModel
+import ru.rtuitlab.itlab.api.users.models.UserResponse
 import androidx.compose.material.*
+import ru.rtuitlab.itlab.api.users.models.User
 import ru.rtuitlab.itlab.ui.shared.ContactMethodRow
 
 @Composable
 fun EmployeeCard(
-	user: UserModel,
+	user: User,
 	modifier: Modifier
 ) {
 	val context = LocalContext.current
@@ -79,7 +77,7 @@ fun EmployeeCard(
 						PhoneField(user = this@run, context = context)
 					}
 				}
-				if (properties.isNotEmpty()) {
+				/*if (properties.isNotEmpty()) {
 					Spacer(modifier = Modifier.height(14.dp))
 					LazyRow {
 						items(properties) { prop ->
@@ -89,7 +87,7 @@ fun EmployeeCard(
 							}
 						}
 					}
-				}
+				}*/
 			}
 
 		}

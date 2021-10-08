@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.ui.screens.employees
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,13 +12,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.api.Resource
-import ru.rtuitlab.itlab.api.users.models.UserModel
+import ru.rtuitlab.itlab.api.users.models.UserResponse
 import ru.rtuitlab.itlab.ui.screens.employees.components.EmployeeCard
 import ru.rtuitlab.itlab.ui.theme.AppColors
 import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
@@ -38,7 +36,7 @@ fun Employees(
 }
 
 @Composable
-private fun EmployeeList(usersResource: Resource<List<UserModel>>, navController: NavController) {
+private fun EmployeeList(usersResource: Resource<List<UserResponse>>, navController: NavController) {
 	usersResource.handle(
 		onLoading = {
 			Box(
@@ -60,13 +58,13 @@ private fun EmployeeList(usersResource: Resource<List<UserModel>>, navController
 				verticalArrangement = Arrangement.spacedBy(10.dp),
 				contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
 			) {
-				items(users) { user ->
+				items(users) { response ->
 					EmployeeCard(
-						user = user,
+						user = response.toUser(),
 						modifier = Modifier
 							.fillMaxWidth()
 							.clickable {
-								navController.navigate("employee/${user.id}")
+								navController.navigate("employee/${response.id}")
 							}
 					)
 				}
