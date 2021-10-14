@@ -24,7 +24,6 @@ fun Employees(
 	navController: NavController
 ) {
 	val usersResource by employeesViewModel.userResponsesFlow.collectAsState()
-	val users by employeesViewModel.usersFlow.collectAsState()
 
 	Column(
 		modifier = Modifier
@@ -47,7 +46,8 @@ fun Employees(
 				Text(text = msg)
 			},
 			onSuccess = {
-				EmployeeList(users, navController)
+				employeesViewModel.onResourceSuccess(it)
+				EmployeeList(employeesViewModel, navController)
 			}
 		)
 	}
@@ -55,9 +55,10 @@ fun Employees(
 
 @Composable
 private fun EmployeeList(
-	users: List<User>,
+	employeesViewModel: EmployeesViewModel,
 	navController: NavController
 ) {
+	val users by employeesViewModel.usersFlow.collectAsState()
 	LazyColumn(
 		verticalArrangement = Arrangement.spacedBy(10.dp),
 		contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)

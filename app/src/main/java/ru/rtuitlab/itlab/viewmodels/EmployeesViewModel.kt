@@ -35,19 +35,13 @@ class EmployeesViewModel @Inject constructor(
 		}
 	}
 
-	private fun fetchUsers() = viewModelScope.launch(Dispatchers.IO) {
-		try {
-			val users = usersRepo.getUsers()
-			cachedUsers = users.map { it.toUser() }
-			_usersFlow.value = cachedUsers
-
-			_userResponsesFlow.emitInIO(viewModelScope) {
-				handler { users }
-			}
-		} catch (e: Exception) {
-			_userResponsesFlow.emitInIO(viewModelScope) {
-				usersRepo.fetchUsers()
-			}
-		}
+	fun onResourceSuccess(users: List<UserResponse>) {
+		cachedUsers = users.map { it.toUser() }
+		_usersFlow.value = cachedUsers
 	}
+
+	private fun fetchUsers() =
+		_userResponsesFlow.emitInIO(viewModelScope) {
+			usersRepo.fetchUsers()
+		}
 }
