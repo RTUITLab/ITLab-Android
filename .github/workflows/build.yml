@@ -35,6 +35,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
       - name: Assemble Debug
         run: ./gradlew assembleDebug
 
