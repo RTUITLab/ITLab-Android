@@ -8,8 +8,9 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import net.openid.appauth.AuthorizationService
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.create
@@ -34,9 +35,23 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(interceptor: TokenInterceptor): OkHttpClient =
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor =
+    HttpLoggingInterceptor().apply {
+        level = if (BuildConfig.DEBUG)
+            HttpLoggingInterceptor.Level.BODY
+        else
+            HttpLoggingInterceptor.Level.NONE
+    }
+
+    @Singleton
+    @Provides
+    fun provideOkHttpClient(
+        tokenInterceptor: TokenInterceptor,
+        loggingInterceptor: HttpLoggingInterceptor
+    ): OkHttpClient =
         OkHttpClient().newBuilder()
-            .addInterceptor(interceptor)
+            .addInterceptor(tokenInterceptor)
+            .addInterceptor(loggingInterceptor)
             .build()
 
     @ExperimentalSerializationApi
