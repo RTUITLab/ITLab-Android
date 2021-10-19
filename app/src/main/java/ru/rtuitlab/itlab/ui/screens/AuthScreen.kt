@@ -1,13 +1,11 @@
 package ru.rtuitlab.itlab.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -27,13 +25,13 @@ fun AuthScreen(onLoginEvent: () -> Unit) {
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.Center
 	) {
-		Image(
+		Icon(
 			painter = painterResource(R.drawable.ic_itlab),
 			contentDescription = null,
 			modifier = Modifier
 				.height(110.dp)
 				.width(120.dp),
-			contentScale = ContentScale.Fit
+			tint = MaterialTheme.colors.onBackground
 		)
 
 		Spacer(modifier = Modifier.padding(11.dp))

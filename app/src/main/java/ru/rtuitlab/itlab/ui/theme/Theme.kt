@@ -47,6 +47,7 @@ onSurface = Color.Black,
 
 @Composable
 fun ITLabTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+	AppColors.isLightTheme = !darkTheme
 	val colors = if (darkTheme) {
 		DarkColorPalette
 	} else {

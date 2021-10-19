@@ -3,8 +3,6 @@ package ru.rtuitlab.itlab.ui.screens.employees.components
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -17,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.api.users.models.UserResponse
 import androidx.compose.material.*
 import ru.rtuitlab.itlab.api.users.models.User
 import ru.rtuitlab.itlab.ui.shared.ContactMethodRow
@@ -30,7 +27,7 @@ fun EmployeeCard(
 	val context = LocalContext.current
 	Card(
 		modifier = modifier,
-		elevation = 16.dp,
+		elevation = 2.dp,
 		shape = RoundedCornerShape(5.dp)
 	) {
 		user.run {
