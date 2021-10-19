@@ -4,6 +4,7 @@
     <string name="projects">Projects</string>
     <string name="devices">Devices</string>
     <string name="employees">Employees</string>
+    <string name="feedback">Feedback</string>
     <string name="profile">Profile</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
@@ -23,4 +24,11 @@
     <string name="discord_id">Discord ID</string>
     <string name="skype_id">Skype ID</string>
     <string name="search">Search</string>
+    <string name="at">at</string>
+    <string name="mark_as_read">Mark as read</string>
+    <string name="mark_as_unread">Mark as unread</string>
+    <string name="feedback_incoming">Incoming</string>
+    <string name="feedback_read">Read</string>
+    <string name="feedback_read_at">Read at %1$s</string>
+    <string name="delete">Delete</string>
 </resources>

@@ -14,6 +14,7 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
     object Projects: AppTab("projects_tab", R.string.projects, Icons.Default.Widgets, false)
     object Devices: AppTab("devices_tab", R.string.devices, Icons.Default.DevicesOther, false)
     object Employees: AppTab("employees_tab", R.string.employees, Icons.Default.People)
+    object Feedback: AppTab("feedback_tab", R.string.feedback, Icons.Default.Feedback)
     object Profile: AppTab("profile_tab", R.string.profile, Icons.Default.AccountCircle, false)
 
     fun saveState() = bundleOf(SCREEN_KEY to route)
@@ -23,6 +24,7 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
         Projects -> AppScreen.Projects
         Devices -> AppScreen.Devices
         Employees -> AppScreen.Employees
+        Feedback -> AppScreen.Feedback
         Profile -> AppScreen.Profile
     }
 
@@ -40,7 +42,8 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
             Devices.route   -> Devices
             Employees.route -> Employees
             Profile.route   -> Profile
-            else            -> Events
+            Feedback.route  -> Feedback
+            else            -> {throw IllegalArgumentException("Invalid route. Maybe you forgot to add a new screen to AppTabSaver.kt?")}
         }
     }
 }
@@ -51,6 +54,9 @@ sealed class AppScreen(@StringRes val screenNameResource: Int) {
     // Employee-related
     object Employees: AppScreen(R.string.employees)
     object EmployeeDetails: AppScreen(R.string.profile) // Has back button
+
+    // Feedback-related
+    object Feedback: AppScreen(R.string.feedback)
 
     // Events-related
     object Events: AppScreen(R.string.events)

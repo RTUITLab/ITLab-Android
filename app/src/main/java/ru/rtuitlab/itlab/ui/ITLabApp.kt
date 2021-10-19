@@ -1,6 +1,8 @@
 package ru.rtuitlab.itlab.ui
 
 import android.os.Bundle
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -11,10 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.ui.screens.devices.DevicesTab
 import ru.rtuitlab.itlab.ui.screens.employees.EmployeesTab
 import ru.rtuitlab.itlab.ui.screens.employees.components.EmployeesTopAppBar
 import ru.rtuitlab.itlab.ui.screens.events.EventsTab
+import ru.rtuitlab.itlab.ui.screens.feedback.FeedbackTab
+import ru.rtuitlab.itlab.ui.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.ui.screens.profile.ProfileTab
 import ru.rtuitlab.itlab.ui.screens.projects.ProjectsTab
 import ru.rtuitlab.itlab.ui.shared.AppBarOption
@@ -25,11 +30,16 @@ import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
 import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
+import ru.rtuitlab.itlab.viewmodels.FeedbackViewModel
 
+@ExperimentalTransitionApi
+@ExperimentalAnimationApi
+@ExperimentalPagerApi
 @Composable
 fun ITLabApp(
 	appBarViewModel: AppBarViewModel,
 	employeesViewModel: EmployeesViewModel,
+	feedbackViewModel: FeedbackViewModel,
 	onLogoutEvent: () -> Unit
 ) {
 	val defaultTab = AppTab.Employees
@@ -44,6 +54,7 @@ fun ITLabApp(
 	val projectsResetTask = RunnableHolder()
 	val devicesResetTask = RunnableHolder()
 	val employeesResetTask = RunnableHolder()
+	val feedbackResetTask = RunnableHolder()
 	val profileResetTask = RunnableHolder()
 
 	Scaffold(
@@ -69,6 +80,10 @@ fun ITLabApp(
 					))
 				)
 				AppScreen.Employees -> EmployeesTopAppBar { employeesViewModel.onSearch(it) }
+				AppScreen.Feedback -> FeedbackTopAppBar(
+					pagerState = feedbackViewModel.pagerState,
+					onSearch = { feedbackViewModel.onSearch(it) }
+				)
 				else -> BasicTopAppBar(text = stringResource(currentScreen.screenNameResource))
 			}
 		},
@@ -77,6 +92,7 @@ fun ITLabApp(
 			val projectsNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val devicesNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val employeesNavState = rememberSaveable { mutableStateOf(Bundle()) }
+			val feedbackNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val profileNavState = rememberSaveable { mutableStateOf(Bundle()) }
 
 			Box(
@@ -99,6 +115,12 @@ fun ITLabApp(
 						appBarViewModel,
 						employeesViewModel
 					)
+					AppTab.Feedback -> FeedbackTab(
+						navState = feedbackNavState,
+						resetTabTask = feedbackResetTask,
+						appBarViewModel = appBarViewModel,
+						feedbackViewModel = feedbackViewModel
+					)
 					AppTab.Profile -> ProfileTab(profileNavState, profileResetTask, onLogoutEvent)
 				}
 			}
@@ -113,6 +135,7 @@ fun ITLabApp(
 					AppTab.Projects,
 					AppTab.Devices,
 					AppTab.Employees,
+					AppTab.Feedback,
 					AppTab.Profile
 				).filter { it.accessible }.forEach { screen ->
 					BottomNavigationItem(
@@ -133,6 +156,7 @@ fun ITLabApp(
 								screen == AppTab.Projects  -> projectsResetTask.run()
 								screen == AppTab.Devices   -> devicesResetTask.run()
 								screen == AppTab.Employees -> employeesResetTask.run()
+								screen == AppTab.Feedback  -> feedbackResetTask.run()
 								screen == AppTab.Profile   -> profileResetTask.run()
 							}
 							appBarViewModel.onNavigate(currentTab.asScreen())

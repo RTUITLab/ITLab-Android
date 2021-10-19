@@ -1,20 +1,25 @@
 package ru.rtuitlab.itlab.ui.shared
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.pagerTabIndicatorOffset
+import kotlinx.coroutines.launch
+import ru.rtuitlab.itlab.ui.theme.AppColors
+import ru.rtuitlab.itlab.utils.AppBarTab
 
 @Composable
 fun BasicTopAppBar(
@@ -22,9 +27,7 @@ fun BasicTopAppBar(
 	onBackAction: () -> Unit = emptyBackAction,
 	options: List<AppBarOption> = emptyList()
 ) {
-	TopAppBar(
-		elevation = 10.dp
-	) {
+	TopAppBar {
 		Row(
 			modifier = Modifier
 				.fillMaxWidth()
@@ -46,7 +49,7 @@ fun BasicTopAppBar(
 					}
 					Spacer(modifier = Modifier.width(24.dp))
 				}
-				
+
 				Text(
 					text = text,
 					fontSize = 20.sp,
@@ -68,28 +71,89 @@ fun ExtendedTopAppBar(
 	hideOptions: Boolean = false,
 	content: @Composable () -> Unit
 ) {
-	TopAppBar(
-		elevation = 10.dp
+	TopAppBar {
+		ExtendedTopAppBarBody(
+			options, onBackAction, hideBackButton, hideOptions, content
+		)
+	}
+}
+
+@Composable
+fun ExtendedTopAppBarBody(
+	options: List<AppBarOption> = emptyList(),
+	onBackAction: () -> Unit = emptyBackAction,
+	hideBackButton: Boolean = false,
+	hideOptions: Boolean = false,
+	content: @Composable () -> Unit
+) {
+	Row(
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(
+				start = if (hideBackButton) 16.dp else 0.dp,
+				end = 16.dp
+			),
+		verticalAlignment = Alignment.CenterVertically,
+		horizontalArrangement = Arrangement.SpaceBetween
 	) {
-		Row(
+		if (onBackAction != emptyBackAction && !hideBackButton) {
+			IconButton(onClick = onBackAction) {
+				Icon(Icons.Default.ArrowBack, contentDescription = null)
+			}
+			Spacer(modifier = Modifier.width(24.dp))
+		}
+		content()
+		if (!hideOptions) OptionsRow(options)
+	}
+}
+
+@ExperimentalPagerApi
+@Composable
+fun TabbedTopAppBar(
+	pagerState: PagerState,
+	tabs: List<AppBarTab>,
+	content: @Composable () -> Unit
+) {
+	val coroutineScope = rememberCoroutineScope()
+
+	Surface(
+		color = MaterialTheme.colors.primarySurface,
+		contentColor = contentColorFor(MaterialTheme.colors.primarySurface),
+		elevation = AppBarDefaults.TopAppBarElevation,
+		shape = RectangleShape
+	) {
+		Column(
 			modifier = Modifier
 				.fillMaxWidth()
-				.height(56.dp)
-				.padding(
-					start = if (hideBackButton) 16.dp else 0.dp,
-					end = 16.dp
-				),
-			verticalAlignment = Alignment.CenterVertically,
-			horizontalArrangement = Arrangement.SpaceBetween
+				.padding(AppBarDefaults.ContentPadding),
 		) {
-			if (onBackAction != emptyBackAction && !hideBackButton) {
-				IconButton(onClick = onBackAction) {
-					Icon(Icons.Default.ArrowBack, contentDescription = null)
-				}
-				Spacer(modifier = Modifier.width(24.dp))
-			}
 			content()
-			if (!hideOptions) OptionsRow(options)
+			TabRow(
+				selectedTabIndex = pagerState.currentPage,
+				indicator = { tabPositions ->
+					TabRowDefaults.Indicator(
+						Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+					)
+				},
+				contentColor = AppColors.accent
+			) {
+				tabs.forEachIndexed { index, it ->
+					Tab(
+						text = {
+							Text(
+								text = stringResource(it.title),
+								fontSize = 14.sp
+							)
+						},
+						selected = pagerState.currentPage == index,
+						onClick = {
+							coroutineScope.launch {
+								pagerState.animateScrollToPage(index)
+							}
+						}
+					)
+				}
+			}
 		}
 	}
 }
@@ -99,6 +163,7 @@ fun OptionsRow(
 	options: List<AppBarOption>
 ) {
 	Row(
+		modifier = Modifier.fillMaxWidth(),
 		horizontalArrangement = Arrangement.End,
 		verticalAlignment = Alignment.CenterVertically
 	) {

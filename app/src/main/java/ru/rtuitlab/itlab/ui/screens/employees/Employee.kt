@@ -5,7 +5,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -14,7 +13,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.flowlayout.FlowRow
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.users.models.UserResponse
@@ -22,8 +20,8 @@ import ru.rtuitlab.itlab.components.UserDevices
 import ru.rtuitlab.itlab.components.UserEvents
 import ru.rtuitlab.itlab.ui.screens.employees.components.EmailField
 import ru.rtuitlab.itlab.ui.screens.employees.components.PhoneField
-import ru.rtuitlab.itlab.ui.screens.employees.components.UserTagComponent
 import ru.rtuitlab.itlab.ui.shared.ContactMethodRow
+import ru.rtuitlab.itlab.ui.shared.LoadingIndicator
 import ru.rtuitlab.itlab.viewmodels.EmployeeViewModel
 
 @Composable
@@ -49,14 +47,7 @@ fun Employee(
 private fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 	userCredentialsResource.handle(
 		onLoading = {
-			Box(
-				modifier = Modifier
-					.fillMaxWidth()
-					.fillMaxHeight(),
-				contentAlignment = Alignment.Center
-			) {
-				CircularProgressIndicator()
-			}
+			LoadingIndicator()
 		},
 		onError = { msg ->
 			Text(text = msg)
