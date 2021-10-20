@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.ui
 
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,6 +15,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rtuitlab.itlab.ui.screens.AuthScreen
 import ru.rtuitlab.itlab.ui.theme.ITLabTheme
+import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
 import ru.rtuitlab.itlab.viewmodels.AuthViewModel
 import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
@@ -45,12 +45,17 @@ class MainActivity : AppCompatActivity() {
 			ITLabTheme {
 				Surface(color = MaterialTheme.colors.background) {
 					when (authState?.isAuthorized) {
-						true -> ITLabApp(
-							appBarViewModel,
-							employeesViewModel,
-							feedbackViewModel,
-							authViewModel::onLogoutEvent
-						)
+						true -> {
+							val claims = authViewModel.userClaimsFlow.collectAsState(emptyList())
+							AppTab.applyClaims(claims.value)
+
+							ITLabApp(
+								appBarViewModel,
+								employeesViewModel,
+								feedbackViewModel,
+								authViewModel::onLogoutEvent
+							)
+						}
 						false -> AuthScreen { authViewModel.onLoginEvent(authPageLauncher) }
 						null -> {}
 					}

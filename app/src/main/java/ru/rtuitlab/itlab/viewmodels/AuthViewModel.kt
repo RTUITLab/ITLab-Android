@@ -33,6 +33,8 @@ class AuthViewModel @Inject constructor(
 
     val authStateFlow = authStateStorage.authStateFlow
 
+    val userClaimsFlow = authStateStorage.userClaimsFlow
+
     fun onLoginEvent(authPageLauncher: ActivityResultLauncher<Intent>) {
         processWithAuthIntent {
             authPageLauncher.launch(it)
@@ -106,6 +108,7 @@ class AuthViewModel @Inject constructor(
                 if (tokenResponse != null) {
                     obtainUserId(tokenResponse.accessToken!!)
                     authStateStorage.updateAuthState(tokenResponse, tokenException)
+                    authStateStorage.updateUserPayload(tokenResponse.accessToken!!)
                 } else {
                     Log.e(TAG, "Exception in exchange process: ", tokenException)
                 }
@@ -117,8 +120,6 @@ class AuthViewModel @Inject constructor(
     val userIdFlow = _userIdFlow.asSharedFlow()
 
     private suspend fun obtainUserId(accessToken: String) {
-        authStateFlow.first()
-
         val config = authStateFlow.first().authorizationServiceConfiguration!!
         val userInfoEndpoint = config.discoveryDoc!!.userinfoEndpoint!!.toString()
         when (val userInfoResource = usersRepo.fetchUserInfo(userInfoEndpoint, accessToken)) {
