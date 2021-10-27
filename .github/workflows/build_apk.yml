@@ -55,6 +55,7 @@ jobs:
         run: ./gradlew assembleDebug
 
   publish_artifacts:
+    needs: [build_release_apk, build_debug_apk]
     name: Publish artifacts to Github
     runs-on: ubuntu-latest
     steps:
@@ -67,6 +68,7 @@ jobs:
             app/build/outputs/apk/release/**.apk
 
   slack_publish:
+    needs: [publish_artifacts]
     runs-on: ubuntu-latest
     name: Upload APK to Slack
     steps:
