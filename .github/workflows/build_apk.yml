@@ -88,5 +88,6 @@ jobs:
           filetype: apk
           filename: ITLab-Mobile-Release.apk
           initial_comment: |
-            Use https://github.com/RTUITLab/ITLab-Android/actions page to download Debug version of this app
+            <https://api.github.com/repos/${{ github.repository }}/actions/artifacts|Debug version of app>
+            <https://github.com/actions/upload-artifact/issues/50|Чтобы нормально скачивать артифакты надо следить за этим issue>
           title: ITLab-Mobile-Release
