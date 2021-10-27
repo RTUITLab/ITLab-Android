@@ -29,7 +29,15 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Assemble Release
-        run: ./gradlew assembleRelease
+        run: |
+          ./gradlew assembleRelease
+          mv app/build/outputs/apk/release/*.apk app/build/outputs/apk/release/app-release.apk
+        
+      - name: Upload APKs
+        uses: actions/upload-artifact@v2
+        with:
+          name: Release_Build
+          path: app/build/outputs/apk/release/app-release.apk
 
   build_debug_apk:
     name: Generate Debug APK
@@ -54,32 +62,31 @@ jobs:
       - name: Assemble Debug
         run: ./gradlew assembleDebug
 
-  publish_artifacts:
-    needs: [build_release_apk, build_debug_apk]
-    name: Publish artifacts to Github
-    runs-on: ubuntu-latest
-    steps:
-      - name: Upload APKs
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v2
         with:
-          name: ITLab-Modile-Android_Build
-          path: |
-            app/build/outputs/apk/debug/**.apk
-            app/build/outputs/apk/release/**.apk
+          name: Debug_Build
+          path: app/build/outputs/apk/debug/**.apk
 
   slack_publish:
-    needs: [publish_artifacts]
+    needs: [build_release_apk]
     runs-on: ubuntu-latest
     name: Upload APK to Slack
     steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: Release_Build
+          path: app/artifacts
+
       - name: Upload to slack
         uses: adrey/slack-file-upload-action@master
         with:
           token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-          path: app/build/outputs/apk/release/**.apk
+          path: ./app/artifacts/app-release.apk
           channel: itlab-mobile-apks
-          filename: ITLab-Mobile-Release
           filetype: apk
+          filename: ITLab-Mobile-Release.apk
           initial_comment: |
             Use https://github.com/RTUITLab/ITLab-Android/actions page to download Debug version of this app
           title: ITLab-Mobile-Release
