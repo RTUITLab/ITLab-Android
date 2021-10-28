@@ -1,0 +1,85 @@
+name: Create prerelease of app
+
+on:
+  push:
+    tags:
+      - v*-dev
+
+jobs:
+  build_release_apk:
+    name: Generate Release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Restore Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Assemble Release
+        run: |
+          ./gradlew assembleRelease
+          mv app/build/outputs/apk/release/*.apk app/build/outputs/apk/release/app-release.apk
+
+      - name: Sign app APK
+        uses: r0adkll/sign-android-release@v1
+        # ID used to access action output
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.KEYSTORE }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            To see change log
+            Developer must ask DevOps about this 2 fields:
+            - body -- Text describing the contents of the release. Optional, and not needed if using body_path.
+            - body_path -- A file with contents describing the release. Optional, and not needed if using body.
+            Hint for DevOps:
+            - (README of this action) https://github.com/actions/create-release
+          draft: false
+          prerelease: true
+
+      - name: Upload our Artifact Assets
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app/build/outputs/apk/release/app-release.apk
+          asset_name: RTUITLab.apk
+          asset_content_type: application/vnd.android.package-archive
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: itlab-mobile-apks
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://files.rtuitlab.dev/logo/logo.png
+          SLACK_TITLE: |
+            :tada: New prerelease is already available! :tada:
+          SLACK_MESSAGE: Visit <${{ steps.create_release.outputs.html_url }}|this page> to see what's new
+          SLACK_FOOTER: 
+          SLACK_USERNAME: RTUITLab
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
