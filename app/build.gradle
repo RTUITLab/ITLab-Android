@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.30'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -113,4 +114,9 @@ dependencies {
 
     // Time
     implementation 'org.jetbrains.kotlinx:kotlinx-datetime:0.3.0'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:28.4.2')
+    implementation 'com.google.firebase:firebase-messaging-ktx:22.0.0'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 }

@@ -18,6 +18,7 @@ import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.api.ResponseHandler
 import ru.rtuitlab.itlab.api.TokenInterceptor
 import ru.rtuitlab.itlab.api.feedback.FeedbackApi
+import ru.rtuitlab.itlab.api.notifications.NotificationsApi
 import ru.rtuitlab.itlab.api.users.UsersApi
 import ru.rtuitlab.itlab.persistence.AuthStateStorage
 import javax.inject.Singleton
@@ -79,4 +80,8 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideFeedbackApi(retrofit: Retrofit): FeedbackApi = retrofit.create()
+
+    @Singleton
+    @Provides
+    fun provideNotificationsApi(retrofit: Retrofit): NotificationsApi = retrofit.create()
 }
