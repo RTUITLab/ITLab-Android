@@ -31,6 +31,7 @@ import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
 import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
 import ru.rtuitlab.itlab.viewmodels.FeedbackViewModel
+import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
 
 @ExperimentalTransitionApi
 @ExperimentalAnimationApi
@@ -40,6 +41,7 @@ fun ITLabApp(
 	appBarViewModel: AppBarViewModel,
 	employeesViewModel: EmployeesViewModel,
 	feedbackViewModel: FeedbackViewModel,
+	profileViewModel: ProfileViewModel,
 	onLogoutEvent: () -> Unit
 ) {
 	val defaultTab = AppTab.Employees
@@ -73,11 +75,17 @@ fun ITLabApp(
 				}
 				AppScreen.Profile -> BasicTopAppBar(
 					text = stringResource(currentScreen.screenNameResource),
-					options = listOf(AppBarOption(
-						icon = Icons.Default.Settings,
-						contentDescription = null,
-						onClick = {}
-					))
+					options = listOf(
+						// ITLab v2
+						/*AppBarOption(
+							icon = Icons.Default.Settings,
+							contentDescription = null,
+							onClick = {
+								profileViewModel.onOptionsClick()
+							}
+						)*/
+					),
+					onBackAction = onBackAction
 				)
 				AppScreen.Employees -> EmployeesTopAppBar { employeesViewModel.onSearch(it) }
 				AppScreen.Feedback -> FeedbackTopAppBar(
@@ -113,7 +121,9 @@ fun ITLabApp(
 						employeesNavState,
 						employeesResetTask,
 						appBarViewModel,
-						employeesViewModel
+						employeesViewModel,
+						profileViewModel,
+						onLogoutEvent
 					)
 					AppTab.Feedback -> FeedbackTab(
 						navState = feedbackNavState,

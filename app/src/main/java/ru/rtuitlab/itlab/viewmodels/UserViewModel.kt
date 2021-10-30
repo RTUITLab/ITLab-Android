@@ -17,7 +17,7 @@ import ru.rtuitlab.itlab.utils.toMoscowDateTime
 
 abstract class UserViewModel (
 	private val usersRepo: UsersRepository,
-	private val userId: String
+	val userId: String
 ) : ViewModel() {
 
 	var beginEventsDate = Clock.System.now().minus(7, DateTimeUnit.DAY).toEpochMilliseconds()

@@ -38,13 +38,14 @@ fun Employee(
 			.verticalScroll(rememberScrollState())
 	) {
 		EmployeeCredentials(userCredentialsResource)
-		UserDevices(userDevicesResource)
-		UserEvents(employeeViewModel, userEventsResource)
+		// ITLab v2
+		//UserDevices(userDevicesResource)
+		//UserEvents(employeeViewModel, userEventsResource)
 	}
 }
 
 @Composable
-private fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
+fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 	userCredentialsResource.handle(
 		onLoading = {
 			LoadingIndicator()

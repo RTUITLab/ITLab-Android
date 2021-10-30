@@ -8,14 +8,23 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import ru.rtuitlab.itlab.ui.screens.profile.Profile
 import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.utils.hiltViewModel
 import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
 import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
+import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
 
 @Composable
-fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, appBarViewModel: AppBarViewModel, employeesViewModel: EmployeesViewModel) {
+fun EmployeesTab(
+    navState: MutableState<Bundle>,
+    resetTabTask: RunnableHolder,
+    appBarViewModel: AppBarViewModel,
+    employeesViewModel: EmployeesViewModel,
+    profileViewModel: ProfileViewModel,
+    onLogoutEvent: () -> Unit
+) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -40,11 +49,15 @@ fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, a
     NavHost(navController, startDestination = AppScreen.Employees.route) {
         composable(AppScreen.Employees.route) {
             appBarViewModel.onNavigate(AppScreen.Employees, navController)
-            Employees(employeesViewModel, navController)
+            Employees(employeesViewModel, profileViewModel, navController)
         }
         composable(AppScreen.EmployeeDetails.route) {
             appBarViewModel.onNavigate(AppScreen.EmployeeDetails, navController)
             Employee(it.hiltViewModel())
+        }
+        composable(AppScreen.Profile.route) {
+            appBarViewModel.onNavigate(AppScreen.Profile, navController)
+            Profile(profileViewModel, onLogoutEvent)
         }
     }
 }

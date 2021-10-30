@@ -55,10 +55,14 @@ object ApiModule {
             .addInterceptor(loggingInterceptor)
             .build()
 
+    private val defaultJson = Json {
+        ignoreUnknownKeys = true
+    }
+
     @ExperimentalSerializationApi
     @Singleton
     @Provides
-    fun provideConverterFactory(): Converter.Factory = Json.asConverterFactory("application/json".toMediaType())
+    fun provideConverterFactory(): Converter.Factory = defaultJson.asConverterFactory("application/json".toMediaType())
 
     @Singleton
     @Provides

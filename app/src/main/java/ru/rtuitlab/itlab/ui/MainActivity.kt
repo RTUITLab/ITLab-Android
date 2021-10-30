@@ -16,10 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.rtuitlab.itlab.ui.screens.AuthScreen
 import ru.rtuitlab.itlab.ui.theme.ITLabTheme
 import ru.rtuitlab.itlab.utils.AppTab
-import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
-import ru.rtuitlab.itlab.viewmodels.AuthViewModel
-import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
-import ru.rtuitlab.itlab.viewmodels.FeedbackViewModel
+import ru.rtuitlab.itlab.viewmodels.*
 
 @ExperimentalTransitionApi
 @ExperimentalAnimationApi
@@ -32,6 +29,7 @@ class MainActivity : AppCompatActivity() {
 	private val appBarViewModel: AppBarViewModel by viewModels()
 	private val employeesViewModel: EmployeesViewModel by viewModels()
 	private val feedbackViewModel: FeedbackViewModel by viewModels()
+	private val profileViewModel: ProfileViewModel by viewModels()
 
 	private val authPageLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -53,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 								appBarViewModel,
 								employeesViewModel,
 								feedbackViewModel,
+								profileViewModel,
 								authViewModel::onLogoutEvent
 							)
 						}
