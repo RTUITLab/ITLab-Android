@@ -55,25 +55,25 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
 
 // This class represents any screen - tabs and their subscreens.
 // It is needed to appropriately change top app bar behavior
-sealed class AppScreen(@StringRes val screenNameResource: Int) {
+sealed class AppScreen(@StringRes val screenNameResource: Int, val route: String) {
     // Employee-related
-    object Employees: AppScreen(R.string.employees)
-    object EmployeeDetails: AppScreen(R.string.profile) // Has back button
+    object Employees: AppScreen(R.string.employees, "employees")
+    object EmployeeDetails: AppScreen(R.string.profile, "employee/{userId}") // Has back button
 
     // Feedback-related
-    object Feedback: AppScreen(R.string.feedback)
+    object Feedback: AppScreen(R.string.feedback, "feedback")
 
     // Events-related
-    object Events: AppScreen(R.string.events)
-    object EventDetails: AppScreen(R.string.event) // Has back button
-    object EventNew: AppScreen(R.string.event_new) // Has back button
+    object Events: AppScreen(R.string.events, "events")
+    object EventDetails: AppScreen(R.string.event, "event/{eventId}") // Has back button
+    object EventNew: AppScreen(R.string.event_new, "event/new") // Has back button
 
     // Projects-related
-    object Projects: AppScreen(R.string.projects)
+    object Projects: AppScreen(R.string.projects, "projects")
 
     // Devices-related
-    object Devices: AppScreen(R.string.devices)
+    object Devices: AppScreen(R.string.devices, "devices")
 
     // Profile-related
-    object Profile: AppScreen(R.string.profile)
+    object Profile: AppScreen(R.string.profile, "profile")
 }

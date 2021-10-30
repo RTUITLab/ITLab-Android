@@ -47,8 +47,8 @@ fun FeedbackTab(
 		navController.popBackStack(navController.graph.startDestinationId, false)
 	}
 
-	NavHost(navController, startDestination = "feedback") {
-		composable("feedback") {
+	NavHost(navController, startDestination = AppScreen.Feedback.route) {
+		composable(AppScreen.Feedback.route) {
 			appBarViewModel.onNavigate(AppScreen.Feedback, navController)
 			Feedback(feedbackViewModel)
 		}

@@ -35,8 +35,8 @@ fun EventsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, appB
         navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
-    NavHost(navController, startDestination = "events") {
-        composable("events") {
+    NavHost(navController, startDestination = AppScreen.Events.route) {
+        composable(AppScreen.Events.route) {
             appBarViewModel.onNavigate(AppScreen.Events, navController)
             Events()
         }

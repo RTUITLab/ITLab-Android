@@ -37,12 +37,12 @@ fun EmployeesTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, a
         navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
-    NavHost(navController, startDestination = "employees") {
-        composable("employees") {
+    NavHost(navController, startDestination = AppScreen.Employees.route) {
+        composable(AppScreen.Employees.route) {
             appBarViewModel.onNavigate(AppScreen.Employees, navController)
             Employees(employeesViewModel, navController)
         }
-        composable("employee/{userId}") {
+        composable(AppScreen.EmployeeDetails.route) {
             appBarViewModel.onNavigate(AppScreen.EmployeeDetails, navController)
             Employee(it.hiltViewModel())
         }

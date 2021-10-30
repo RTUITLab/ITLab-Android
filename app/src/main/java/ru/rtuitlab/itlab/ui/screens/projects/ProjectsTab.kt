@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.RunnableHolder
 
 @Composable
@@ -33,8 +34,8 @@ fun ProjectsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder) {
         navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
-    NavHost(navController, startDestination = "projects") {
-        composable("projects") { Projects() }
+    NavHost(navController, startDestination = AppScreen.Projects.route) {
+        composable(AppScreen.Projects.route) { Projects() }
     }
 }
 
