@@ -88,7 +88,7 @@ fun FeedbackCard(
 					modifier = Modifier.fillMaxWidth(),
 					text = stringResource(
 						R.string.feedback_read_at,
-						feedback.doneTime.fromIso8601(LocalContext.current)
+						feedback.doneTime!!.fromIso8601(LocalContext.current)
 					),
 					textAlign = TextAlign.Center
 				)

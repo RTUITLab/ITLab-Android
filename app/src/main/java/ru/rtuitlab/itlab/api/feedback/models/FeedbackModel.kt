@@ -8,7 +8,7 @@ data class FeedbackModel(
     val name: String,
     val email: String,
     val message: String,
-    val doneTime: String,
+    val doneTime: String?,
     val sendTime: String,
     val senderIp: String,
     val answered: Boolean
