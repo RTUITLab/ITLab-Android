@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.ui.screens.employees.components
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -52,6 +53,7 @@ fun EmployeesTopAppBar(
 				fontSize = 20.sp,
 				fontWeight = FontWeight(500),
 				textAlign = TextAlign.Start,
+				color = MaterialTheme.colors.onSurface
 			)
 		}
 

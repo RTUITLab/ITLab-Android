@@ -16,8 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EmployeesViewModel @Inject constructor(
-	private val usersRepo: UsersRepository,
-	private val handler: ResponseHandler
+	private val usersRepo: UsersRepository
 ) : ViewModel() {
 
 	private val _userResponsesFlow =
@@ -39,6 +38,8 @@ class EmployeesViewModel @Inject constructor(
 		cachedUsers = users.map { it.toUser() }
 		_usersFlow.value = cachedUsers
 	}
+
+	fun onRefresh() = fetchUsers()
 
 	private fun fetchUsers() =
 		_userResponsesFlow.emitInIO(viewModelScope) {

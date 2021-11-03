@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,8 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.api.feedback.models.FeedbackModel
 import ru.rtuitlab.itlab.ui.screens.feedback.components.FeedbackCard
+import ru.rtuitlab.itlab.ui.shared.LoadingError
 import ru.rtuitlab.itlab.ui.shared.LoadingIndicator
 import ru.rtuitlab.itlab.utils.*
 import ru.rtuitlab.itlab.viewmodels.FeedbackViewModel
@@ -34,6 +36,7 @@ fun Feedback(feedbackViewModel: FeedbackViewModel) {
 	val incomingFeedbackResource by feedbackViewModel.incomingFeedbackResponsesFlow.collectAsState()
 	val readFeedbackResource by feedbackViewModel.readFeedbackResponsesFlow.collectAsState()
 
+	var isRefreshing by remember { mutableStateOf(false) }
 
 	val pagerState = feedbackViewModel.pagerState
 	val tabs = listOf(
@@ -50,34 +53,47 @@ fun Feedback(feedbackViewModel: FeedbackViewModel) {
 			count = tabs.size,
 			state = pagerState
 		) { index ->
-			when (tabs[index]) {
-				FeedbackTab.Incoming -> {
-					incomingFeedbackResource.handle(
-						onLoading = {
-							LoadingIndicator()
-						},
-						onError = { msg ->
-							Text(text = msg)
-						},
-						onSuccess = {
-							feedbackViewModel.onResourceSuccess(it, false)
-							IncomingFeedbackList(feedbackViewModel)
-						}
-					)
-				}
-				FeedbackTab.Read -> {
-					readFeedbackResource.handle(
-						onLoading = {
-							LoadingIndicator()
-						},
-						onError = { msg ->
-							Text(text = msg)
-						},
-						onSuccess = {
-							feedbackViewModel.onResourceSuccess(it, true)
-							ReadFeedbackList(feedbackViewModel)
-						}
-					)
+			SwipeRefresh(
+				modifier = Modifier
+					.fillMaxSize(),
+				state = rememberSwipeRefreshState(isRefreshing),
+				onRefresh = feedbackViewModel::onRefresh
+			) {
+				when (tabs[index]) {
+					FeedbackTab.Incoming -> {
+
+						incomingFeedbackResource.handle(
+							onLoading = {
+								isRefreshing = true
+							},
+							onError = { msg ->
+								isRefreshing = false
+								LoadingError(msg = msg)
+							},
+							onSuccess = {
+								isRefreshing = false
+								feedbackViewModel.onResourceSuccess(it, false)
+								IncomingFeedbackList(feedbackViewModel)
+							}
+						)
+					}
+					FeedbackTab.Read -> {
+						readFeedbackResource.handle(
+							onLoading = {
+								LoadingIndicator()
+								isRefreshing = true
+							},
+							onError = { msg ->
+								isRefreshing = false
+								LoadingError(msg = msg)
+							},
+							onSuccess = {
+								isRefreshing = false
+								feedbackViewModel.onResourceSuccess(it, true)
+								ReadFeedbackList(feedbackViewModel)
+							}
+						)
+					}
 				}
 			}
 		}
@@ -96,7 +112,7 @@ fun IncomingFeedbackList(feedbackViewModel: FeedbackViewModel) {
 		feedback = feedback,
 		feedbackViewModel = feedbackViewModel,
 		enterTransition = slideInVertically(
-			initialOffsetY = {it}
+			initialOffsetY = { it }
 		) + fadeIn(),
 		exitTransition = slideOutHorizontally(
 			targetOffsetX = { it + 100 },
@@ -164,7 +180,7 @@ fun AnimatedFeedbackList(
 				mutableStateOf(TransitionState.Invisible)
 			}
 
-			when(
+			when (
 				animationState.transitionState(
 					lastTransitionState,
 					onUpdate = {

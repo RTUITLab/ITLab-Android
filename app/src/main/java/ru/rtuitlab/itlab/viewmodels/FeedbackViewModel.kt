@@ -129,6 +129,11 @@ class FeedbackViewModel @Inject constructor(
 		onSearch(searchQuery)
 	}
 
+	fun onRefresh() {
+		fetchFeedback(true)
+		fetchFeedback(false)
+	}
+
 	private fun fetchFeedback(isAnswered: Boolean) =
 		(if (isAnswered) _readFeedbackResponsesFlow
 		else _incomingFeedbackResponsesFlow)

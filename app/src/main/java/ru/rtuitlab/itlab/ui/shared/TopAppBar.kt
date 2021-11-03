@@ -55,6 +55,7 @@ fun BasicTopAppBar(
 					fontSize = 20.sp,
 					fontWeight = FontWeight(500),
 					textAlign = TextAlign.Start,
+					color = MaterialTheme.colors.onSurface
 				)
 			}
 
@@ -169,7 +170,11 @@ fun OptionsRow(
 	) {
 		options.forEach { option ->
 			IconButton(onClick = option.onClick) {
-				Icon(imageVector = option.icon, contentDescription = option.contentDescription)
+				Icon(
+					imageVector = option.icon,
+					contentDescription = option.contentDescription,
+					tint = MaterialTheme.colors.onSurface
+				)
 			}
 		}
 	}
