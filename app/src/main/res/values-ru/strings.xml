@@ -29,5 +29,6 @@
     <string name="feedback_incoming">Входящие</string>
     <string name="feedback_read">Прочитанные</string>
     <string name="feedback_read_at">Прочитано %1$s</string>
+    <string name="feedback_read_just_now">Прочитано только что</string>
     <string name="delete">Удалить</string>
 </resources>
