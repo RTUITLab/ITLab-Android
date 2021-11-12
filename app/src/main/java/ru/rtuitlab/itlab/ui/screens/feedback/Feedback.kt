@@ -21,7 +21,6 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.api.feedback.models.FeedbackModel
 import ru.rtuitlab.itlab.ui.screens.feedback.components.FeedbackCard
 import ru.rtuitlab.itlab.ui.shared.LoadingError
-import ru.rtuitlab.itlab.ui.shared.LoadingIndicator
 import ru.rtuitlab.itlab.utils.*
 import ru.rtuitlab.itlab.viewmodels.FeedbackViewModel
 
@@ -49,7 +48,8 @@ fun Feedback(feedbackViewModel: FeedbackViewModel) {
 			modifier = Modifier.fillMaxSize(),
 			verticalAlignment = Alignment.Top,
 			count = tabs.size,
-			state = pagerState
+			state = pagerState,
+			itemSpacing = 1.dp // Causes pager to lazy-load pages. Why? Who knows.
 		) { index ->
 			SwipeRefresh(
 				modifier = Modifier
@@ -59,7 +59,6 @@ fun Feedback(feedbackViewModel: FeedbackViewModel) {
 			) {
 				when (tabs[index]) {
 					FeedbackTab.Incoming -> {
-
 						incomingFeedbackResource.handle(
 							onLoading = {
 								isRefreshing = true
@@ -78,7 +77,6 @@ fun Feedback(feedbackViewModel: FeedbackViewModel) {
 					FeedbackTab.Read -> {
 						readFeedbackResource.handle(
 							onLoading = {
-								LoadingIndicator()
 								isRefreshing = true
 							},
 							onError = { msg ->
