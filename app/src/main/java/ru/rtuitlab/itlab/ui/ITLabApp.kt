@@ -44,8 +44,10 @@ fun ITLabApp(
 	profileViewModel: ProfileViewModel,
 	onLogoutEvent: () -> Unit
 ) {
-	val defaultTab = AppTab.Employees
-	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) { mutableStateOf(defaultTab) }
+	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) {
+		mutableStateOf(appBarViewModel.defaultTab)
+	}
+
 
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
 
