@@ -31,8 +31,6 @@ import ru.rtuitlab.itlab.viewmodels.FeedbackViewModel
 @Composable
 fun Feedback(feedbackViewModel: FeedbackViewModel) {
 
-	feedbackViewModel.init()
-
 	val incomingFeedbackResource by feedbackViewModel.incomingFeedbackResponsesFlow.collectAsState()
 	val readFeedbackResource by feedbackViewModel.readFeedbackResponsesFlow.collectAsState()
 

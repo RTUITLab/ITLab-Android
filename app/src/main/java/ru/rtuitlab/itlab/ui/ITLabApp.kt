@@ -5,14 +5,13 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.ui.screens.devices.DevicesTab
 import ru.rtuitlab.itlab.ui.screens.employees.EmployeesTab
@@ -22,27 +21,20 @@ import ru.rtuitlab.itlab.ui.screens.feedback.FeedbackTab
 import ru.rtuitlab.itlab.ui.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.ui.screens.profile.ProfileTab
 import ru.rtuitlab.itlab.ui.screens.projects.ProjectsTab
-import ru.rtuitlab.itlab.ui.shared.AppBarOption
 import ru.rtuitlab.itlab.ui.shared.BasicTopAppBar
 import ru.rtuitlab.itlab.ui.shared.ExtendedTopAppBar
 import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
-import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
-import ru.rtuitlab.itlab.viewmodels.FeedbackViewModel
-import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
 
 @ExperimentalTransitionApi
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
 @Composable
 fun ITLabApp(
-	appBarViewModel: AppBarViewModel,
-	employeesViewModel: EmployeesViewModel,
-	feedbackViewModel: FeedbackViewModel,
-	profileViewModel: ProfileViewModel,
-	onLogoutEvent: () -> Unit
+	onLogoutEvent: () -> Unit,
+	appBarViewModel: AppBarViewModel = viewModel()
 ) {
 	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) {
 		mutableStateOf(appBarViewModel.defaultTab)
@@ -89,11 +81,8 @@ fun ITLabApp(
 					),
 					onBackAction = onBackAction
 				)
-				AppScreen.Employees -> EmployeesTopAppBar { employeesViewModel.onSearch(it) }
-				AppScreen.Feedback -> FeedbackTopAppBar(
-					pagerState = feedbackViewModel.pagerState,
-					onSearch = { feedbackViewModel.onSearch(it) }
-				)
+				AppScreen.Employees -> EmployeesTopAppBar()
+				AppScreen.Feedback -> FeedbackTopAppBar()
 				else -> BasicTopAppBar(text = stringResource(currentScreen.screenNameResource))
 			}
 		},
@@ -114,24 +103,18 @@ fun ITLabApp(
 				when (currentTab) {
 					AppTab.Events -> EventsTab(
 						eventsNavState,
-						eventsResetTask,
-						appBarViewModel
+						eventsResetTask
 					)
 					AppTab.Projects -> ProjectsTab(projectsNavState, projectsResetTask)
 					AppTab.Devices -> DevicesTab(devicesNavState, devicesResetTask)
 					AppTab.Employees -> EmployeesTab(
 						employeesNavState,
 						employeesResetTask,
-						appBarViewModel,
-						employeesViewModel,
-						profileViewModel,
 						onLogoutEvent
 					)
 					AppTab.Feedback -> FeedbackTab(
 						navState = feedbackNavState,
-						resetTabTask = feedbackResetTask,
-						appBarViewModel = appBarViewModel,
-						feedbackViewModel = feedbackViewModel
+						resetTabTask = feedbackResetTask
 					)
 					AppTab.Profile -> ProfileTab(profileNavState, profileResetTask, onLogoutEvent)
 				}

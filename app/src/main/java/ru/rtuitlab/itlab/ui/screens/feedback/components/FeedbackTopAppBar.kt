@@ -15,17 +15,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.PagerState
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.ui.shared.*
 import ru.rtuitlab.itlab.utils.FeedbackTab
+import ru.rtuitlab.itlab.viewmodels.FeedbackViewModel
 
 @ExperimentalPagerApi
 @Composable
 fun FeedbackTopAppBar(
-	pagerState: PagerState,
-	onSearch: (String) -> Unit
+	feedbackViewModel: FeedbackViewModel = viewModel()
 ) {
 	var searchActivated by rememberSaveable { mutableStateOf(false) }
 
@@ -35,7 +35,7 @@ fun FeedbackTopAppBar(
 		}
 
 	TabbedTopAppBar(
-		pagerState = pagerState,
+		pagerState = feedbackViewModel.pagerState,
 		tabs = listOf(FeedbackTab.Incoming, FeedbackTab.Read)
 	) {
 		Column(
@@ -59,12 +59,12 @@ fun FeedbackTopAppBar(
 				hideOptions = searchActivated,
 				onBackAction = {
 					searchActivated = false
-					onSearch("")
+					feedbackViewModel.onSearch("")
 				}
 			) {
 				if (searchActivated) {
 					SearchBar(
-						onSearch = onSearch
+						onSearch = feedbackViewModel::onSearch
 					)
 				} else {
 					Text(

@@ -9,6 +9,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -26,10 +27,6 @@ import ru.rtuitlab.itlab.viewmodels.*
 class MainActivity : AppCompatActivity() {
 
 	private val authViewModel: AuthViewModel by viewModels()
-	private val appBarViewModel: AppBarViewModel by viewModels()
-	private val employeesViewModel: EmployeesViewModel by viewModels()
-	private val feedbackViewModel: FeedbackViewModel by viewModels()
-	private val profileViewModel: ProfileViewModel by viewModels()
 
 	private val authPageLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -45,15 +42,10 @@ class MainActivity : AppCompatActivity() {
 					when (authState?.isAuthorized) {
 						true -> {
 							val claims = authViewModel.userClaimsFlow.collectAsState(emptyList())
-							AppTab.applyClaims(claims.value)
-
-							ITLabApp(
-								appBarViewModel,
-								employeesViewModel,
-								feedbackViewModel,
-								profileViewModel,
-								authViewModel::onLogoutEvent
-							)
+							LaunchedEffect(key1 = claims) {
+								AppTab.applyClaims(claims.value)
+							}
+							ITLabApp(authViewModel::onLogoutEvent)
 						}
 						false -> AuthScreen { authViewModel.onLoginEvent(authPageLauncher) }
 						null -> {}

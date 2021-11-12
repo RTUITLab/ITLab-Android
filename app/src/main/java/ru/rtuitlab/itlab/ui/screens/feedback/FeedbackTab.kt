@@ -6,6 +6,7 @@ import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,8 +24,8 @@ import ru.rtuitlab.itlab.viewmodels.FeedbackViewModel
 fun FeedbackTab(
 	navState: MutableState<Bundle>,
 	resetTabTask: RunnableHolder,
-	appBarViewModel: AppBarViewModel,
-	feedbackViewModel: FeedbackViewModel
+	appBarViewModel: AppBarViewModel = viewModel(),
+	feedbackViewModel: FeedbackViewModel = viewModel()
 ) {
 	val navController = rememberNavController()
 

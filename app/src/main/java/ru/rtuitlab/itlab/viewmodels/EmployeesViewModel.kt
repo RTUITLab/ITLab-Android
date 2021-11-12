@@ -19,25 +19,21 @@ class EmployeesViewModel @Inject constructor(
 	private val authStateStorage: AuthStateStorage
 ) : ViewModel() {
 
-	private var initiated = false
-	fun init() {
-		if (initiated) return
-		fetchUsers()
+	private var _userIdFlow = MutableStateFlow("")
+	val userIdFlow = _userIdFlow.asStateFlow()
+
+	init {
 		viewModelScope.launch {
 			authStateStorage.userIdFlow.collect {
 				_userIdFlow.value = it
 			}
 		}
-		initiated = true
 	}
-
-	private var _userIdFlow = MutableStateFlow("")
-	val userIdFlow = _userIdFlow.asStateFlow()
 
 	private val _userResponsesFlow =
 		MutableStateFlow<Resource<List<UserResponse>>>(Resource.Loading)
 
-	val userResponsesFlow = _userResponsesFlow.asStateFlow()//.also { fetchUsers() }
+	val userResponsesFlow = _userResponsesFlow.asStateFlow().also { fetchUsers() }
 	var cachedUsers = emptyList<User>()
 
 	private val _usersFlow = MutableStateFlow(cachedUsers)

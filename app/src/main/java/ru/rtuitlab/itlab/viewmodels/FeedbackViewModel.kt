@@ -24,24 +24,13 @@ class FeedbackViewModel @Inject constructor(
 	val pagerState = PagerState()
 	val snackbarHostState = SnackbarHostState()
 
-	private var initiated = false
-	private var incomingInitiated = false
-	private var readInitiated = false
-
-	fun init() {
-		if (initiated) return
-		fetchFeedback(false)
-		fetchFeedback(true)
-		initiated = true
-	}
+	private val _incomingFeedbackResponsesFlow =
+		MutableStateFlow<Resource<List<FeedbackModel>>>(Resource.Loading)
+	val incomingFeedbackResponsesFlow = _incomingFeedbackResponsesFlow.asStateFlow().also { fetchFeedback(false) }
 
 	private val _readFeedbackResponsesFlow =
 		MutableStateFlow<Resource<List<FeedbackModel>>>(Resource.Loading)
-	val readFeedbackResponsesFlow = _readFeedbackResponsesFlow.asStateFlow()
-
-	private val _incomingFeedbackResponsesFlow =
-		MutableStateFlow<Resource<List<FeedbackModel>>>(Resource.Loading)
-	val incomingFeedbackResponsesFlow = _incomingFeedbackResponsesFlow.asStateFlow()
+	val readFeedbackResponsesFlow = _readFeedbackResponsesFlow.asStateFlow().also { fetchFeedback(true) }
 
 	private var cachedIncomingFeedback = listOf<FeedbackModel>()
 	private var cachedReadFeedback = listOf<FeedbackModel>()
@@ -49,18 +38,16 @@ class FeedbackViewModel @Inject constructor(
 	private val _incomingFeedbackFlow = MutableStateFlow(cachedIncomingFeedback)
 	val incomingFeedbackFlow = _incomingFeedbackFlow.asStateFlow()
 
-	private val _readFeedbackFlow = MutableStateFlow(cachedIncomingFeedback)
+	private val _readFeedbackFlow = MutableStateFlow(cachedReadFeedback)
 	val readFeedbackFlow = _readFeedbackFlow.asStateFlow()
 
 	fun onResourceSuccess(feedback: List<FeedbackModel>, isAnswered: Boolean) {
-		if (isAnswered && !readInitiated) {
+		if (isAnswered) {
 			cachedReadFeedback = feedback
 			_readFeedbackFlow.value = feedback
-			readInitiated = true
-		} else if (!incomingInitiated) {
+		} else {
 			cachedIncomingFeedback = feedback
 			_incomingFeedbackFlow.value = feedback
-			incomingInitiated = true
 		}
 	}
 

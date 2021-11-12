@@ -11,14 +11,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.ui.shared.AppBarOption
 import ru.rtuitlab.itlab.ui.shared.ExtendedTopAppBar
 import ru.rtuitlab.itlab.ui.shared.SearchBar
+import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
 
 @Composable
 fun EmployeesTopAppBar(
-	onSearch: (String) -> Unit
+	employeesViewModel: EmployeesViewModel = viewModel()
 ) {
 	var searchActivated by rememberSaveable { mutableStateOf(false) }
 
@@ -40,12 +42,12 @@ fun EmployeesTopAppBar(
 		hideOptions = searchActivated,
 		onBackAction = {
 			searchActivated = false
-			onSearch("")
+			employeesViewModel.onSearch("")
 		}
 	) {
 		if (searchActivated) {
 			SearchBar(
-				onSearch = onSearch
+				onSearch = employeesViewModel::onSearch
 			)
 		} else {
 			Text(

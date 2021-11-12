@@ -14,12 +14,10 @@ import ru.rtuitlab.itlab.ui.screens.employees.components.EmployeeCard
 import ru.rtuitlab.itlab.ui.shared.LoadingError
 import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
-import ru.rtuitlab.itlab.viewmodels.ProfileViewModel
 
 @Composable
 fun Employees(
 	employeesViewModel: EmployeesViewModel,
-	profileViewModel: ProfileViewModel,
 	navController: NavController
 ) {
 	val usersResource by employeesViewModel.userResponsesFlow.collectAsState()
@@ -42,7 +40,7 @@ fun Employees(
 			onSuccess = {
 				isRefreshing = false
 				employeesViewModel.onResourceSuccess(it)
-				EmployeeList(employeesViewModel, profileViewModel, navController)
+				EmployeeList(employeesViewModel, navController)
 			}
 		)
 	}
@@ -51,7 +49,6 @@ fun Employees(
 @Composable
 private fun EmployeeList(
 	employeesViewModel: EmployeesViewModel,
-	profileViewModel: ProfileViewModel,
 	navController: NavController
 ) {
 	val users by employeesViewModel.usersFlow.collectAsState()
