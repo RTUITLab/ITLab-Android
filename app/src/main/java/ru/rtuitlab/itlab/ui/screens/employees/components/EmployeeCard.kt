@@ -35,7 +35,7 @@ fun EmployeeCard(
 				modifier = Modifier
 					.padding(
 						top = 10.dp,
-						bottom = 15.dp,
+						bottom = 8.dp,
 						start = 15.dp,
 						end = 15.dp
 					)
