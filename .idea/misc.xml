@@ -3,9 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/semyo/StudioProjects/ITLab-Android/app/src/main/res/drawable-anydpi/ic_notification_default.xml" value="0.2015625" />
+        <entry key="..\:/Users/semyo/StudioProjects/ITLab-Android/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.24635416666666668" />
         <entry key="..\:/Users/semyo/StudioProjects/ITLab-Android/app/src/main/res/drawable/ic_mail.xml" value="0.20104166666666667" />
+        <entry key="..\:/Users/semyo/StudioProjects/ITLab-Android/app/src/main/res/drawable/ic_notification.xml" value="0.2015625" />
         <entry key="..\:/Users/semyo/StudioProjects/ITLab-Android/app/src/main/res/drawable/ic_phone.xml" value="0.20104166666666667" />
         <entry key="..\:/Users/semyo/StudioProjects/ITLab-Android/app/src/main/res/drawable/ic_vk.xml" value="0.21041666666666667" />
+        <entry key="..\:/Users/semyo/StudioProjects/ITLab-Android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.24635416666666668" />
+        <entry key="..\:/Users/semyo/StudioProjects/ITLab-Android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2015625" />
       </map>
     </option>
   </component>
