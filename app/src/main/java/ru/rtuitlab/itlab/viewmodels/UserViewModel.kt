@@ -29,10 +29,10 @@ abstract class UserViewModel (
 	val userCredentialsFlow = _userCredentialsFlow.asStateFlow().also { fetchUserCredentials() }
 
 	private val _userDevicesFlow = MutableStateFlow<Resource<List<DeviceModel>>>(Resource.Loading)
-	val userDevicesFlow = _userDevicesFlow.asStateFlow().also { fetchUserDevices() }
+	val userDevicesFlow = _userDevicesFlow.asStateFlow()//.also { fetchUserDevices() }
 
 	private val _userEventsFlow = MutableStateFlow<Resource<List<UserEventModel>>>(Resource.Loading)
-	val userEventsFlow = _userEventsFlow.asStateFlow().also { fetchUserEvents() }
+	val userEventsFlow = _userEventsFlow.asStateFlow()//.also { fetchUserEvents() }
 
 	private fun fetchUserCredentials() = _userCredentialsFlow.emitInIO(viewModelScope) {
 		usersRepo.fetchUserCredentials(userId)
