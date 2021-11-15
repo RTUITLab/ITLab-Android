@@ -33,6 +33,10 @@ fun SearchBar(
 	}
 	val focusRequester = remember { FocusRequester() }
 
+	SideEffect {
+		onSearch(text)
+	}
+
 	Box(
 		modifier = modifier,
 		contentAlignment = Alignment.CenterStart
@@ -41,7 +45,6 @@ fun SearchBar(
 			value = text,
 			onValueChange = {
 				text = it
-				onSearch(it)
 				isHintDisplayed = it.isEmpty()
 			},
 			textStyle = TextStyle(
