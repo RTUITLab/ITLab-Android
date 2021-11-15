@@ -27,6 +27,7 @@ import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
+import ru.rtuitlab.itlab.viewmodels.AppTabsViewModel
 
 @ExperimentalTransitionApi
 @ExperimentalAnimationApi
@@ -34,12 +35,14 @@ import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
 @Composable
 fun ITLabApp(
 	onLogoutEvent: () -> Unit,
-	appBarViewModel: AppBarViewModel = viewModel()
+	appBarViewModel: AppBarViewModel = viewModel(),
+	appTabsViewModel: AppTabsViewModel = viewModel()
 ) {
 	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) {
 		mutableStateOf(appBarViewModel.defaultTab)
 	}
 
+	val appTabs by appTabsViewModel.appTabs.collectAsState()
 
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
 
@@ -125,14 +128,9 @@ fun ITLabApp(
 			BottomNavigation(
 				elevation = 10.dp
 			) {
-				listOf(
-					AppTab.Events,
-					AppTab.Projects,
-					AppTab.Devices,
-					AppTab.Employees,
-					AppTab.Feedback,
-					AppTab.Profile
-				).filter { it.accessible }.forEach { screen ->
+				appTabs
+					.filter { it.accessible }
+					.forEach { screen ->
 					BottomNavigationItem(
 						icon = { Icon(screen.icon, null) },
 						label = {

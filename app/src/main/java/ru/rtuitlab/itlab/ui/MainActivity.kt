@@ -41,10 +41,10 @@ class MainActivity : AppCompatActivity() {
 				Surface(color = MaterialTheme.colors.background) {
 					when (authState?.isAuthorized) {
 						true -> {
-							val claims = authViewModel.userClaimsFlow.collectAsState(emptyList())
+							/*val claims = authViewModel.userClaimsFlow.collectAsState(emptyList())
 							LaunchedEffect(key1 = claims) {
 								AppTab.applyClaims(claims.value)
-							}
+							}*/
 							ITLabApp(authViewModel::onLogoutEvent)
 						}
 						false -> AuthScreen { authViewModel.onLoginEvent(authPageLauncher) }

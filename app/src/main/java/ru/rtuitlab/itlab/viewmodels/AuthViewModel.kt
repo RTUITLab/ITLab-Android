@@ -36,8 +36,6 @@ class AuthViewModel @Inject constructor(
 
     val authStateFlow = authStateStorage.authStateFlow
 
-    val userClaimsFlow = authStateStorage.userClaimsFlow
-
     fun onLoginEvent(authPageLauncher: ActivityResultLauncher<Intent>) {
         processWithAuthIntent {
             authPageLauncher.launch(it)
