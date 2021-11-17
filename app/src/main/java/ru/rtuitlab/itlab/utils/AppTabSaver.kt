@@ -32,6 +32,16 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
     companion object {
         const val SCREEN_KEY = "SCREEN_KEY"
 
+        val all
+            get() = listOf(
+                Events,
+                Projects,
+                Devices,
+                Employees,
+                Feedback,
+                Profile
+            )
+
         fun saver() = Saver<AppTab, Bundle>(
             save = { it.saveState() },
             restore = { restoreState(it) }

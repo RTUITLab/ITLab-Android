@@ -37,6 +37,12 @@ class AuthStateStorage(context: Context) {
         }
     }
 
+    suspend fun resetUserClaims() {
+        dataStore.edit { prefs ->
+            prefs.remove(USER_PAYLOAD_KEY)
+        }
+    }
+
     suspend fun updateAuthState(
         authResponse: AuthorizationResponse,
         authException: AuthorizationException?

@@ -46,6 +46,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val config = authStateFlow.first().authorizationServiceConfiguration
             authStateStorage.resetAuthStateWithConfig(config)
+            authStateStorage.resetUserClaims()
         }
     }
 

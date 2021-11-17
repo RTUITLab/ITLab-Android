@@ -17,16 +17,7 @@ class AppTabsViewModel @Inject constructor(
 ): ViewModel() {
 	private val userClaimsFlow = authStateStorage.userClaimsFlow
 
-	private val _appTabs = MutableStateFlow(
-		listOf(
-			AppTab.Events,
-			AppTab.Projects,
-			AppTab.Devices,
-			AppTab.Employees,
-			AppTab.Feedback,
-			AppTab.Profile
-		)
-	)
+	private val _appTabs = MutableStateFlow(AppTab.all)
 
 	val appTabs = _appTabs.asStateFlow()
 
@@ -34,17 +25,7 @@ class AppTabsViewModel @Inject constructor(
 		viewModelScope.launch {
 			userClaimsFlow.collect {
 				AppTab.applyClaims(it)
-
-				_appTabs.emit(
-					listOf(
-						AppTab.Events,
-						AppTab.Projects,
-						AppTab.Devices,
-						AppTab.Employees,
-						AppTab.Feedback,
-						AppTab.Profile
-					)
-				)
+				_appTabs.emit(AppTab.all.toList())
 			}
 		}
 	}
