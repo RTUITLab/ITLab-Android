@@ -12,15 +12,14 @@ jobs:
     name: Generate Release APK
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Decode Keystore
         id: decode_keystore
         uses: timheuer/base64-to-file@v1
         with:
           fileName: 'keystore.jks'
           encodedString: ${{ secrets.KEYSTORE }}
-
-      - name: Checkout
-        uses: actions/checkout@v2
 
       - name: Restore Cache
         uses: actions/cache@v2
