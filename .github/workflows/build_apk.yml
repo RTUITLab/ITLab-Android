@@ -37,8 +37,8 @@ jobs:
 
       - name: Assemble Release
         run: |
-          ./gradlew assembleRelease
-          mv app/build/outputs/apk/release/*.apk app/build/outputs/apk/release/app-release.apk
+          ./gradlew :app:validateSigningRelease
+          ./gradlew :app:assembleRelease
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
