@@ -31,11 +31,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Assemble Release
-        run: |
-          ls -l
-          ./gradlew :app:assembleRelease
-          ls -l app/build/outputs/apk/release/
-          mv app/build/outputs/apk/release/*.apk app/build/outputs/apk/release/app-release.apk
+        run: ./gradlew :app:assembleRelease
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
