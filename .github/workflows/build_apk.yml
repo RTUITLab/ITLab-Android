@@ -37,7 +37,8 @@ jobs:
 
       - name: Assemble Release
         run: |
-          ./gradlew :app:validateSigningRelease
+          ls
+          ls keystore
           ./gradlew :app:assembleRelease
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.ALIAS }}
