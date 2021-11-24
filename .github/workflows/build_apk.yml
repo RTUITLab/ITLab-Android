@@ -15,11 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Decode Keystore
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: 'keystore.jks'
-          encodedString: ${{ secrets.KEYSTORE }}
+        run: echo ${{ secrets.KEYSTORE }} | base64 --decode > keystore.jks
 
       - name: Restore Cache
         uses: actions/cache@v2
@@ -38,6 +34,8 @@ jobs:
         run: |
           ls -l
           ./gradlew :app:assembleRelease
+          ls -l app/build/outputs/apk/release/
+          mv app/build/outputs/apk/release/*.apk app/build/outputs/apk/release/app-release.apk
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
