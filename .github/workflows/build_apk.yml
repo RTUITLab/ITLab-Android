@@ -16,7 +16,7 @@ jobs:
         id: decode_keystore
         uses: timheuer/base64-to-file@v1
         with:
-          fileName: 'keystore/keystore.jks'
+          fileName: 'keystore.jks'
           encodedString: ${{ secrets.KEYSTORE }}
 
       - name: Checkout
@@ -37,8 +37,7 @@ jobs:
 
       - name: Assemble Release
         run: |
-          ls
-          ls keystore
+          ls -l
           ./gradlew :app:assembleRelease
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.ALIAS }}
