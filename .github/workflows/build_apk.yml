@@ -12,6 +12,13 @@ jobs:
     name: Generate Release APK
     runs-on: ubuntu-latest
     steps:
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore/keystore.jks'
+          encodedString: ${{ secrets.KEYSTORE }}
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -32,42 +39,16 @@ jobs:
         run: |
           ./gradlew assembleRelease
           mv app/build/outputs/apk/release/*.apk app/build/outputs/apk/release/app-release.apk
-        
-      - name: Upload APKs
+        env:
+          SIGNING_KEY_ALIAS: ${{ secrets.ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+
+      - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: Release_Build
           path: app/build/outputs/apk/release/app-release.apk
-
-  build_debug_apk:
-    name: Generate Debug APK
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Restore Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Change wrapper permissions
-        run: chmod +x ./gradlew
-
-      - name: Assemble Debug
-        run: ./gradlew assembleDebug
-
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: Debug_Build
-          path: app/build/outputs/apk/debug/**.apk
-
   slack_publish:
     needs: [build_release_apk]
     runs-on: ubuntu-latest
@@ -87,7 +68,4 @@ jobs:
           channel: itlab-mobile-apks
           filetype: apk
           filename: ITLab-Mobile-Release.apk
-          initial_comment: |
-            <https://api.github.com/repos/${{ github.repository }}/actions/artifacts|Debug version of app>
-            <https://github.com/actions/upload-artifact/issues/50|Чтобы нормально скачивать артифакты надо следить за этим issue>
           title: ITLab-Mobile-Release
