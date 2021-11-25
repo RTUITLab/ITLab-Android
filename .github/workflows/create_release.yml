@@ -1,9 +1,9 @@
-name: Create prerelease of app
+name: Create release of app
 
 on:
   push:
     tags:
-      - v[0-9]+.[0-9]+.[0-9]+-dev
+      - v[0-9]+.[0-9]+.[0-9]+
 
 jobs:
   build_release_apk:
@@ -62,7 +62,7 @@ jobs:
             Hint for DevOps:
             - (README of this action) https://github.com/actions/create-release
           draft: false
-          prerelease: true
+          prerelease: false
 
       - name: Download Artifacts
         uses: actions/download-artifact@v2
