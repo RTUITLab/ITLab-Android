@@ -4,6 +4,7 @@
     <string name="projects">Проекты</string>
     <string name="devices">Техника</string>
     <string name="employees">Сотрудники</string>
+    <string name="feedback">Обратная связь</string>
     <string name="profile">Профиль</string>
     <string name="login">Войти</string>
     <string name="logout">Выйти</string>
@@ -21,4 +22,13 @@
     <string name="vk_id">ID Вконтакте</string>
     <string name="discord_id">ID Дискорд</string>
     <string name="skype_id">ID Скайп</string>
+    <string name="search">Поиск</string>
+    <string name="at">в</string>
+    <string name="mark_as_read">Пометить как прочитанное</string>
+    <string name="mark_as_unread">Пометить как непрочитанное</string>
+    <string name="feedback_incoming">Входящие</string>
+    <string name="feedback_read">Прочитанные</string>
+    <string name="feedback_read_at">Прочитано %1$s</string>
+    <string name="feedback_read_just_now">Прочитано только что</string>
+    <string name="delete">Удалить</string>
 </resources>

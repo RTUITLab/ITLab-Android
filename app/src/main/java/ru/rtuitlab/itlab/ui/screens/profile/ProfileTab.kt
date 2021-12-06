@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.utils.hiltViewModel
 
@@ -38,8 +39,8 @@ fun ProfileTab(
         navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
-    NavHost(navController, startDestination = "profile") {
-        composable("profile") {
+    NavHost(navController, startDestination = AppScreen.Profile.route) {
+        composable(AppScreen.Profile.route) {
             Profile(it.hiltViewModel(), onLogoutEvent)
         }
     }

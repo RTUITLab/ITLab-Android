@@ -27,4 +27,6 @@ class UsersRepository @Inject constructor(
     suspend fun fetchUsers() = handler {
         usersApi.getUsers()
     }
+
+    suspend fun getUsers() = usersApi.getUsers()
 }

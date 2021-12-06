@@ -17,14 +17,17 @@ import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.users.models.UserInfoModel
 import ru.rtuitlab.itlab.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.repositories.NotificationsRepository
 import ru.rtuitlab.itlab.repositories.UsersRepository
+import ru.rtuitlab.itlab.services.firebase.FirebaseTokenUtils
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
         private val authStateStorage: AuthStateStorage,
         private val authService: AuthorizationService,
-        private val usersRepo: UsersRepository
+        private val usersRepo: UsersRepository,
+        private val notificationsRepo: NotificationsRepository
 ) : ViewModel() {
 
     private companion object {
@@ -43,6 +46,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val config = authStateFlow.first().authorizationServiceConfiguration
             authStateStorage.resetAuthStateWithConfig(config)
+            authStateStorage.resetUserClaims()
         }
     }
 
@@ -106,6 +110,8 @@ class AuthViewModel @Inject constructor(
                 if (tokenResponse != null) {
                     obtainUserId(tokenResponse.accessToken!!)
                     authStateStorage.updateAuthState(tokenResponse, tokenException)
+                    authStateStorage.updateUserPayload(tokenResponse.accessToken!!)
+                    addFirebaseToken()
                 } else {
                     Log.e(TAG, "Exception in exchange process: ", tokenException)
                 }
@@ -117,8 +123,6 @@ class AuthViewModel @Inject constructor(
     val userIdFlow = _userIdFlow.asSharedFlow()
 
     private suspend fun obtainUserId(accessToken: String) {
-        authStateFlow.first()
-
         val config = authStateFlow.first().authorizationServiceConfiguration!!
         val userInfoEndpoint = config.discoveryDoc!!.userinfoEndpoint!!.toString()
         when (val userInfoResource = usersRepo.fetchUserInfo(userInfoEndpoint, accessToken)) {
@@ -127,4 +131,11 @@ class AuthViewModel @Inject constructor(
             Resource.Loading -> {}
         }
     }
+
+    private fun addFirebaseToken() =
+        FirebaseTokenUtils.getToken {
+            viewModelScope.launch(Dispatchers.IO) {
+                notificationsRepo.addFirebaseToken(it)
+            }
+        }
 }

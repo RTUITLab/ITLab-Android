@@ -9,7 +9,7 @@ import kotlinx.datetime.DateTimeUnit
 import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.devices.models.DeviceModel
 import ru.rtuitlab.itlab.api.users.models.UserEventModel
-import ru.rtuitlab.itlab.api.users.models.UserModel
+import ru.rtuitlab.itlab.api.users.models.UserResponse
 import ru.rtuitlab.itlab.repositories.UsersRepository
 import ru.rtuitlab.itlab.utils.emitInIO
 import ru.rtuitlab.itlab.utils.minus
@@ -17,7 +17,7 @@ import ru.rtuitlab.itlab.utils.toMoscowDateTime
 
 abstract class UserViewModel (
 	private val usersRepo: UsersRepository,
-	private val userId: String
+	val userId: String
 ) : ViewModel() {
 
 	var beginEventsDate = Clock.System.now().minus(7, DateTimeUnit.DAY).toEpochMilliseconds()
@@ -25,14 +25,14 @@ abstract class UserViewModel (
 	var endEventsDate = Clock.System.now().toEpochMilliseconds()
 		private set
 
-	private val _userCredentialsFlow = MutableStateFlow<Resource<UserModel>>(Resource.Loading)
+	private val _userCredentialsFlow = MutableStateFlow<Resource<UserResponse>>(Resource.Loading)
 	val userCredentialsFlow = _userCredentialsFlow.asStateFlow().also { fetchUserCredentials() }
 
 	private val _userDevicesFlow = MutableStateFlow<Resource<List<DeviceModel>>>(Resource.Loading)
-	val userDevicesFlow = _userDevicesFlow.asStateFlow().also { fetchUserDevices() }
+	val userDevicesFlow = _userDevicesFlow.asStateFlow()//.also { fetchUserDevices() }
 
 	private val _userEventsFlow = MutableStateFlow<Resource<List<UserEventModel>>>(Resource.Loading)
-	val userEventsFlow = _userEventsFlow.asStateFlow().also { fetchUserEvents() }
+	val userEventsFlow = _userEventsFlow.asStateFlow()//.also { fetchUserEvents() }
 
 	private fun fetchUserCredentials() = _userCredentialsFlow.emitInIO(viewModelScope) {
 		usersRepo.fetchUserCredentials(userId)

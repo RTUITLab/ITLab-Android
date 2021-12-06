@@ -8,13 +8,15 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.os.bundleOf
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.api.users.models.UserClaimCategories
 
-sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon: ImageVector) {
-    object Events: AppTab("events_tab", R.string.events, Icons.Default.EventNote)
-    object Projects: AppTab("projects_tab", R.string.projects, Icons.Default.Widgets)
-    object Devices: AppTab("devices_tab", R.string.devices, Icons.Default.DevicesOther)
+sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon: ImageVector, var accessible: Boolean = true) {
+    object Events: AppTab("events_tab", R.string.events, Icons.Default.EventNote, false)
+    object Projects: AppTab("projects_tab", R.string.projects, Icons.Default.Widgets, false)
+    object Devices: AppTab("devices_tab", R.string.devices, Icons.Default.DevicesOther, false)
     object Employees: AppTab("employees_tab", R.string.employees, Icons.Default.People)
-    object Profile: AppTab("profile_tab", R.string.profile, Icons.Default.AccountCircle)
+    object Feedback: AppTab("feedback_tab", R.string.feedback, Icons.Default.Feedback)
+    object Profile: AppTab("profile_tab", R.string.profile, Icons.Default.AccountCircle, false)
 
     fun saveState() = bundleOf(SCREEN_KEY to route)
 
@@ -23,11 +25,22 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
         Projects -> AppScreen.Projects
         Devices -> AppScreen.Devices
         Employees -> AppScreen.Employees
+        Feedback -> AppScreen.Feedback
         Profile -> AppScreen.Profile
     }
 
     companion object {
         const val SCREEN_KEY = "SCREEN_KEY"
+
+        val all
+            get() = listOf(
+                Events,
+                Projects,
+                Devices,
+                Employees,
+                Feedback,
+                Profile
+            )
 
         fun saver() = Saver<AppTab, Bundle>(
             save = { it.saveState() },
@@ -40,29 +53,37 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
             Devices.route   -> Devices
             Employees.route -> Employees
             Profile.route   -> Profile
-            else            -> Events
+            Feedback.route  -> Feedback
+            else            -> {throw IllegalArgumentException("Invalid route. Maybe you forgot to add a new screen to AppTabSaver.kt?")}
+        }
+
+        fun applyClaims(claims: List<Any>) {
+            Feedback.accessible = claims.contains(UserClaimCategories.FEEDBACK.ADMIN)
         }
     }
 }
 
 // This class represents any screen - tabs and their subscreens.
 // It is needed to appropriately change top app bar behavior
-sealed class AppScreen(@StringRes val screenNameResource: Int) {
+sealed class AppScreen(@StringRes val screenNameResource: Int, val route: String) {
     // Employee-related
-    object Employees: AppScreen(R.string.employees)
-    object EmployeeDetails: AppScreen(R.string.profile) // Has back button
+    object Employees: AppScreen(R.string.employees, "employees")
+    object EmployeeDetails: AppScreen(R.string.profile, "employee/{userId}") // Has back button
+
+    // Feedback-related
+    object Feedback: AppScreen(R.string.feedback, "feedback")
 
     // Events-related
-    object Events: AppScreen(R.string.events)
-    object EventDetails: AppScreen(R.string.event) // Has back button
-    object EventNew: AppScreen(R.string.event_new) // Has back button
+    object Events: AppScreen(R.string.events, "events")
+    object EventDetails: AppScreen(R.string.event, "event/{eventId}") // Has back button
+    object EventNew: AppScreen(R.string.event_new, "event/new") // Has back button
 
     // Projects-related
-    object Projects: AppScreen(R.string.projects)
+    object Projects: AppScreen(R.string.projects, "projects")
 
     // Devices-related
-    object Devices: AppScreen(R.string.devices)
+    object Devices: AppScreen(R.string.devices, "devices")
 
     // Profile-related
-    object Profile: AppScreen(R.string.profile)
+    object Profile: AppScreen(R.string.profile, "profile")
 }

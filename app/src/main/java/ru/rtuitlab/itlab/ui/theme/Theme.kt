@@ -6,6 +6,7 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
 	/*primary = purple200,
@@ -47,11 +48,18 @@ onSurface = Color.Black,
 
 @Composable
 fun ITLabTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+	AppColors.isLightTheme = !darkTheme
 	val colors = if (darkTheme) {
 		DarkColorPalette
 	} else {
 		LightColorPalette
 	}
+
+	val systemUiController = rememberSystemUiController()
+	systemUiController.setStatusBarColor(
+		color = Color.Transparent,
+		darkIcons = !darkTheme
+	)
 
 	MaterialTheme(
 		colors = colors,

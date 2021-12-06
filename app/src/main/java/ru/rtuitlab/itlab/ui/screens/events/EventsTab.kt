@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,7 +14,11 @@ import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
 
 @Composable
-fun EventsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, appBarViewModel: AppBarViewModel) {
+fun EventsTab(
+    navState: MutableState<Bundle>,
+    resetTabTask: RunnableHolder,
+    appBarViewModel: AppBarViewModel = viewModel()
+) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -35,8 +40,8 @@ fun EventsTab(navState: MutableState<Bundle>, resetTabTask: RunnableHolder, appB
         navController.popBackStack(navController.graph.startDestinationId, false)
     }
 
-    NavHost(navController, startDestination = "events") {
-        composable("events") {
+    NavHost(navController, startDestination = AppScreen.Events.route) {
+        composable(AppScreen.Events.route) {
             appBarViewModel.onNavigate(AppScreen.Events, navController)
             Events()
         }

@@ -1,37 +1,48 @@
 package ru.rtuitlab.itlab.ui
 
 import android.os.Bundle
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.ui.screens.devices.DevicesTab
 import ru.rtuitlab.itlab.ui.screens.employees.EmployeesTab
+import ru.rtuitlab.itlab.ui.screens.employees.components.EmployeesTopAppBar
 import ru.rtuitlab.itlab.ui.screens.events.EventsTab
+import ru.rtuitlab.itlab.ui.screens.feedback.FeedbackTab
+import ru.rtuitlab.itlab.ui.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.ui.screens.profile.ProfileTab
 import ru.rtuitlab.itlab.ui.screens.projects.ProjectsTab
-import ru.rtuitlab.itlab.ui.shared.AppBarOption
 import ru.rtuitlab.itlab.ui.shared.BasicTopAppBar
 import ru.rtuitlab.itlab.ui.shared.ExtendedTopAppBar
 import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
+import ru.rtuitlab.itlab.viewmodels.AppTabsViewModel
 
+@ExperimentalTransitionApi
+@ExperimentalAnimationApi
+@ExperimentalPagerApi
 @Composable
 fun ITLabApp(
-	appBarViewModel: AppBarViewModel,
-	onLogoutEvent: () -> Unit
+	onLogoutEvent: () -> Unit,
+	appBarViewModel: AppBarViewModel = viewModel(),
+	appTabsViewModel: AppTabsViewModel = viewModel()
 ) {
-	val defaultTab = AppTab.Events
-	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) { mutableStateOf(defaultTab) }
+	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) {
+		mutableStateOf(appBarViewModel.defaultTab)
+	}
+
+	val appTabs by appTabsViewModel.appTabs.collectAsState()
 
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
 
@@ -42,6 +53,7 @@ fun ITLabApp(
 	val projectsResetTask = RunnableHolder()
 	val devicesResetTask = RunnableHolder()
 	val employeesResetTask = RunnableHolder()
+	val feedbackResetTask = RunnableHolder()
 	val profileResetTask = RunnableHolder()
 
 	Scaffold(
@@ -60,21 +72,20 @@ fun ITLabApp(
 				}
 				AppScreen.Profile -> BasicTopAppBar(
 					text = stringResource(currentScreen.screenNameResource),
-					options = listOf(AppBarOption(
-						icon = Icons.Default.Settings,
-						contentDescription = null,
-						onClick = {}
-					))
-				)
-				AppScreen.Employees -> BasicTopAppBar(
-					text = stringResource(currentScreen.screenNameResource),
 					options = listOf(
-						AppBarOption(
-							icon = Icons.Default.Search,
-							onClick = {}
-						)
-					)
+						// ITLab v2
+						/*AppBarOption(
+							icon = Icons.Default.Settings,
+							contentDescription = null,
+							onClick = {
+								profileViewModel.onOptionsClick()
+							}
+						)*/
+					),
+					onBackAction = onBackAction
 				)
+				AppScreen.Employees -> EmployeesTopAppBar()
+				AppScreen.Feedback -> FeedbackTopAppBar()
 				else -> BasicTopAppBar(text = stringResource(currentScreen.screenNameResource))
 			}
 		},
@@ -83,6 +94,7 @@ fun ITLabApp(
 			val projectsNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val devicesNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val employeesNavState = rememberSaveable { mutableStateOf(Bundle()) }
+			val feedbackNavState = rememberSaveable { mutableStateOf(Bundle()) }
 			val profileNavState = rememberSaveable { mutableStateOf(Bundle()) }
 
 			Box(
@@ -94,15 +106,18 @@ fun ITLabApp(
 				when (currentTab) {
 					AppTab.Events -> EventsTab(
 						eventsNavState,
-						eventsResetTask,
-						appBarViewModel
+						eventsResetTask
 					)
 					AppTab.Projects -> ProjectsTab(projectsNavState, projectsResetTask)
 					AppTab.Devices -> DevicesTab(devicesNavState, devicesResetTask)
 					AppTab.Employees -> EmployeesTab(
 						employeesNavState,
 						employeesResetTask,
-						appBarViewModel
+						onLogoutEvent
+					)
+					AppTab.Feedback -> FeedbackTab(
+						navState = feedbackNavState,
+						resetTabTask = feedbackResetTask
 					)
 					AppTab.Profile -> ProfileTab(profileNavState, profileResetTask, onLogoutEvent)
 				}
@@ -113,13 +128,9 @@ fun ITLabApp(
 			BottomNavigation(
 				elevation = 10.dp
 			) {
-				listOf(
-					AppTab.Events,
-					AppTab.Projects,
-					AppTab.Devices,
-					AppTab.Employees,
-					AppTab.Profile
-				).forEach { screen ->
+				appTabs
+					.filter { it.accessible }
+					.forEach { screen ->
 					BottomNavigationItem(
 						icon = { Icon(screen.icon, null) },
 						label = {
@@ -138,6 +149,7 @@ fun ITLabApp(
 								screen == AppTab.Projects  -> projectsResetTask.run()
 								screen == AppTab.Devices   -> devicesResetTask.run()
 								screen == AppTab.Employees -> employeesResetTask.run()
+								screen == AppTab.Feedback  -> feedbackResetTask.run()
 								screen == AppTab.Profile   -> profileResetTask.run()
 							}
 							appBarViewModel.onNavigate(currentTab.asScreen())

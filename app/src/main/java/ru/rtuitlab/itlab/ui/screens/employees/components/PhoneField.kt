@@ -7,12 +7,13 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
-import ru.rtuitlab.itlab.api.users.models.UserModel
+import ru.rtuitlab.itlab.api.users.models.User
+import ru.rtuitlab.itlab.api.users.models.UserResponse
 import ru.rtuitlab.itlab.utils.EmployeePhoneAction
 import ru.rtuitlab.itlab.utils.doPhoneAction
 
 @Composable
-fun PhoneField(user: UserModel, context: Context) {
+fun PhoneField(user: User, context: Context) {
 	user.phoneNumber ?: return
 	var expanded by remember { mutableStateOf(false) }
 

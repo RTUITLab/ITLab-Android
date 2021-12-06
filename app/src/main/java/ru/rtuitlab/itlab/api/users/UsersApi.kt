@@ -4,7 +4,7 @@ import retrofit2.http.*
 import ru.rtuitlab.itlab.api.devices.models.DeviceModel
 import ru.rtuitlab.itlab.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.api.users.models.UserInfoModel
-import ru.rtuitlab.itlab.api.users.models.UserModel
+import ru.rtuitlab.itlab.api.users.models.UserResponse
 
 interface UsersApi {
 
@@ -17,7 +17,7 @@ interface UsersApi {
     @GET("user/{id}")
     suspend fun getUser(
             @Path("id") userId: String
-    ): UserModel
+    ): UserResponse
 
     @GET("/api/equipment/user/{id}")
     suspend fun getUserDevices(
@@ -32,5 +32,5 @@ interface UsersApi {
     ): List<UserEventModel>
 
     @GET("user?count=-1")
-    suspend fun getUsers() : List<UserModel>
+    suspend fun getUsers() : List<UserResponse>
 }
