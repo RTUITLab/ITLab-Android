@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "472708309191",
+    "project_id": "it-lab-f9fd7",
+    "storage_bucket": "it-lab-f9fd7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472708309191:android:bf83de8a68465699475ee2",
+        "android_client_info": {
+          "package_name": "ru.rtuitlab.firebasenotifier"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472708309191-ruc7ok3q0kmtvq1b80ei23lqi42hdisa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpXZmxOSz35sKs7FHn7Df4ycyaRv2sQ4M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472708309191-ruc7ok3q0kmtvq1b80ei23lqi42hdisa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472708309191:android:914803c9f6877c26475ee2",
+        "android_client_info": {
+          "package_name": "ru.rtuitlab.itlab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472708309191-ruc7ok3q0kmtvq1b80ei23lqi42hdisa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpXZmxOSz35sKs7FHn7Df4ycyaRv2sQ4M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472708309191-ruc7ok3q0kmtvq1b80ei23lqi42hdisa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
