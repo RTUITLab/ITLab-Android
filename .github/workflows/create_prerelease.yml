@@ -44,23 +44,20 @@ jobs:
   create_release:
     needs: [build_release_apk]
     runs-on: ubuntu-latest
-    name: Create Release
+    name: Create Pre Release
     steps:
-      - name: Create Release
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create Pre Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            To see change log
-            Developer must ask DevOps about this 2 fields:
-            - body -- Text describing the contents of the release. Optional, and not needed if using body_path.
-            - body_path -- A file with contents describing the release. Optional, and not needed if using body.
-            Hint for DevOps:
-            - (README of this action) https://github.com/actions/create-release
+          release_name: Release ${{ github.ref_name }}
+          body_path: ./.github/contents/release.md
           draft: false
           prerelease: true
 
@@ -88,8 +85,36 @@ jobs:
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://files.rtuitlab.dev/logo/logo.png
           SLACK_TITLE: |
-            :tada: New release ${{ github.ref }} is already available! :tada:
+            :tada: New release ${{ github.ref_name }} is already available! :tada:
           SLACK_MESSAGE: Visit <${{ steps.create_release.outputs.html_url }}|this page> to see what's new
           SLACK_FOOTER: 
           SLACK_USERNAME: RTUITLab
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  build_debug_apk:
+    name: Generate Debug APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Restore Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Assemble Debug
+        run: ./gradlew :app:assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: Debug_Build
+          path: app/build/outputs/apk/debug/app-debug.apk
