@@ -44,16 +44,19 @@ jobs:
   create_release:
     needs: [build_release_apk]
     runs-on: ubuntu-latest
-    name: Create Release
+    name: Create Pre Release
     steps:
-      - name: Create Release
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create Pre Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          release_name: Release ${{ github.ref_name }}
           body_path: ./.github/contents/release.md
           draft: false
           prerelease: true
@@ -88,7 +91,7 @@ jobs:
           SLACK_USERNAME: RTUITLab
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   build_debug_apk:
-    name: Generate Release APK
+    name: Generate Debug APK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
