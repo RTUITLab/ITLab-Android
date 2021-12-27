@@ -34,6 +34,7 @@ private val LightColorPalette = lightColors(
 	secondaryVariant = AppColors.accent,
 	surface = Color.White,
 	onSurface = Color.Black,
+	background = AppColors.background
 
 
 	/* Other default colors to override

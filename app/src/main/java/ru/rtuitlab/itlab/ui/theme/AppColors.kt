@@ -17,5 +17,6 @@ open class AppColors {
 		val tag = Color(0xFFE0E0E0)
 		val appBarsLight = Color.White
 		val appBarsDark = Color.Black
+		val background = Color(0xFFF5F5F5)
 	}
 }
