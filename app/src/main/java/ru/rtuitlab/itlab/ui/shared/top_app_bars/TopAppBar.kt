@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.ui.shared
+package ru.rtuitlab.itlab.ui.shared.top_app_bars
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -47,7 +48,7 @@ fun BasicTopAppBar(
 					IconButton(onClick = onBackAction) {
 						Icon(Icons.Default.ArrowBack, contentDescription = null)
 					}
-					Spacer(modifier = Modifier.width(24.dp))
+					Spacer(modifier = Modifier.width(16.dp))
 				}
 
 				Text(
@@ -55,7 +56,9 @@ fun BasicTopAppBar(
 					fontSize = 20.sp,
 					fontWeight = FontWeight(500),
 					textAlign = TextAlign.Start,
-					color = MaterialTheme.colors.onSurface
+					color = MaterialTheme.colors.onSurface,
+					maxLines = 1,
+					overflow = TextOverflow.Ellipsis
 				)
 			}
 
@@ -101,7 +104,7 @@ fun ExtendedTopAppBarBody(
 			IconButton(onClick = onBackAction) {
 				Icon(Icons.Default.ArrowBack, contentDescription = null)
 			}
-			Spacer(modifier = Modifier.width(24.dp))
+			Spacer(modifier = Modifier.width(16.dp))
 		}
 		content()
 		if (!hideOptions) OptionsRow(options)
@@ -115,7 +118,6 @@ fun TabbedTopAppBar(
 	tabs: List<AppBarTab>,
 	content: @Composable () -> Unit
 ) {
-	val coroutineScope = rememberCoroutineScope()
 
 	Surface(
 		color = MaterialTheme.colors.primarySurface,
@@ -126,50 +128,74 @@ fun TabbedTopAppBar(
 		Column(
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(AppBarDefaults.ContentPadding),
 		) {
-			content()
-			TabRow(
-				selectedTabIndex = pagerState.currentPage,
-				indicator = { tabPositions ->
-					TabRowDefaults.Indicator(
-						Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+			Column(
+				modifier = Modifier
+					.fillMaxWidth()
+					.padding(AppBarDefaults.ContentPadding),
+			) {
+				content()
+			}
+			AppBarTabRow(pagerState, tabs)
+		}
+	}
+}
+
+
+@ExperimentalPagerApi
+@Composable
+fun AppBarTabRow(
+	pagerState: PagerState,
+	tabs: List<AppBarTab>,
+	modifier: Modifier = Modifier
+) {
+	val coroutineScope = rememberCoroutineScope()
+	TabRow(
+		modifier = modifier,
+		selectedTabIndex = pagerState.currentPage,
+		indicator = { tabPositions ->
+			TabRowDefaults.Indicator(
+				Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+			)
+		},
+		contentColor = AppColors.accent
+	) {
+		tabs.forEachIndexed { index, it ->
+			Tab(
+				text = {
+					Text(
+						text = stringResource(it.title),
+						fontSize = 14.sp
 					)
 				},
-				contentColor = AppColors.accent
-			) {
-				tabs.forEachIndexed { index, it ->
-					Tab(
-						text = {
-							Text(
-								text = stringResource(it.title),
-								fontSize = 14.sp
-							)
-						},
-						selected = pagerState.currentPage == index,
-						onClick = {
-							coroutineScope.launch {
-								pagerState.animateScrollToPage(index)
-							}
-						}
-					)
+				selected = pagerState.currentPage == index,
+				onClick = {
+					coroutineScope.launch {
+						pagerState.animateScrollToPage(index)
+					}
 				}
-			}
+			)
 		}
 	}
 }
 
 @Composable
 fun OptionsRow(
-	options: List<AppBarOption>
+	options: List<AppBarOption>,
+	modifier: Modifier = Modifier
 ) {
 	Row(
-		modifier = Modifier.fillMaxWidth(),
+		modifier = modifier,
 		horizontalArrangement = Arrangement.End,
-		verticalAlignment = Alignment.CenterVertically
+		verticalAlignment = Alignment.CenterVertically,
 	) {
 		options.forEach { option ->
-			IconButton(onClick = option.onClick) {
+			IconButton(
+				modifier = Modifier
+					.height(36.dp)
+					.width(36.dp),
+				onClick = option.onClick
+			) {
 				Icon(
 					imageVector = option.icon,
 					contentDescription = option.contentDescription,
@@ -186,4 +212,4 @@ data class AppBarOption(
 	val onClick: () -> Unit
 )
 
-private val emptyBackAction: () -> Unit = {}
+val emptyBackAction: () -> Unit = {}

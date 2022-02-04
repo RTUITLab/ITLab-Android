@@ -2,6 +2,7 @@ package ru.rtuitlab.itlab.ui.screens.feedback.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -19,6 +20,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.ui.shared.*
+import ru.rtuitlab.itlab.ui.shared.top_app_bars.AppBarOption
+import ru.rtuitlab.itlab.ui.shared.top_app_bars.ExtendedTopAppBarBody
+import ru.rtuitlab.itlab.ui.shared.top_app_bars.TabbedTopAppBar
 import ru.rtuitlab.itlab.utils.FeedbackTab
 import ru.rtuitlab.itlab.viewmodels.FeedbackViewModel
 
@@ -40,10 +44,8 @@ fun FeedbackTopAppBar(
 	) {
 		Column(
 			modifier = Modifier
-				.height(56.dp)
-				.padding(
-					top = 4.dp
-				)
+				.height(56.dp),
+			verticalArrangement = Arrangement.Center
 		) {
 
 			ExtendedTopAppBarBody(
@@ -72,6 +74,7 @@ fun FeedbackTopAppBar(
 						fontSize = 20.sp,
 						fontWeight = FontWeight(500),
 						textAlign = TextAlign.Start,
+						color = MaterialTheme.colors.onSurface
 					)
 				}
 

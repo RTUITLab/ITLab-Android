@@ -13,9 +13,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.ui.shared.AppBarOption
-import ru.rtuitlab.itlab.ui.shared.ExtendedTopAppBar
 import ru.rtuitlab.itlab.ui.shared.SearchBar
+import ru.rtuitlab.itlab.ui.shared.top_app_bars.AppBarOption
+import ru.rtuitlab.itlab.ui.shared.top_app_bars.ExtendedTopAppBar
 import ru.rtuitlab.itlab.viewmodels.EmployeesViewModel
 
 @Composable
