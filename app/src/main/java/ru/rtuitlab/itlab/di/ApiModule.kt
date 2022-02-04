@@ -17,6 +17,7 @@ import retrofit2.create
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.api.ResponseHandler
 import ru.rtuitlab.itlab.api.TokenInterceptor
+import ru.rtuitlab.itlab.api.events.EventsApi
 import ru.rtuitlab.itlab.api.feedback.FeedbackApi
 import ru.rtuitlab.itlab.api.notifications.NotificationsApi
 import ru.rtuitlab.itlab.api.users.UsersApi
@@ -88,4 +89,8 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideNotificationsApi(retrofit: Retrofit): NotificationsApi = retrofit.create()
+
+    @Singleton
+    @Provides
+    fun provideEventsApi(retrofit: Retrofit): EventsApi = retrofit.create()
 }

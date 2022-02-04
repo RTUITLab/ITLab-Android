@@ -1,35 +1,52 @@
 <resources>
+<!--    General    -->
     <string name="app_name" translatable="false">ITLab</string>
-    <string name="events">Events</string>
-    <string name="projects">Projects</string>
-    <string name="devices">Devices</string>
-    <string name="employees">Employees</string>
-    <string name="feedback">Feedback</string>
-    <string name="profile">Profile</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
+    <string name="rtuitlab" translatable="false">RTUITLab</string>
+    <string name="search">Search</string>
+    <string name="delete">Delete</string>
+
+    <!--    Events    -->
+    <string name="events">Events</string>
+    <string name="event">%1$s</string>
+    <string name="event_new">New event</string>
+    <string name="events_all">All</string>
+    <string name="events_my">My</string>
+    <string name="feedback_read_just_now">Read just now</string>
+    <string name="event_no_description">No description</string>
+    <string name="no_pending_events">No pending events</string>
+    <string name="no_user_events">No events in selected period</string>
+
+    <!--    Projects     -->
+    <string name="projects">Projects</string>
+
+
+    <!--    Employees     -->
+    <string name="employees">Employees</string>
+    <string name="profile">Profile</string>
     <string name="first_name">First name</string>
     <string name="middle_name">Middle name</string>
     <string name="last_name">Last name</string>
     <string name="phone_number">Phone number</string>
     <string name="email">Email</string>
     <string name="employee">Employee</string>
-    <string name="rtuitlab" translatable="false">RTUITLab</string>
     <string name="dial">Dial</string>
     <string name="save">Save</string>
-    <string name="event">%1$s</string>
-    <string name="event_new">New event</string>
     <string name="study_group">Study group</string>
     <string name="vk_id">ID VK</string>
     <string name="discord_id">Discord ID</string>
     <string name="skype_id">Skype ID</string>
-    <string name="search">Search</string>
+
+    <!--    Devices    -->
+    <string name="devices">Devices</string>
+
+    <!--    Feedback    -->
+    <string name="feedback">Feedback</string>
     <string name="at">at</string>
     <string name="mark_as_read">Mark as read</string>
     <string name="mark_as_unread">Mark as unread</string>
     <string name="feedback_incoming">Incoming</string>
     <string name="feedback_read">Read</string>
     <string name="feedback_read_at">Read at %1$s</string>
-    <string name="feedback_read_just_now">Read just now</string>
-    <string name="delete">Delete</string>
 </resources>

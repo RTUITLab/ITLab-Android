@@ -31,4 +31,9 @@
     <string name="feedback_read_at">Прочитано %1$s</string>
     <string name="feedback_read_just_now">Прочитано только что</string>
     <string name="delete">Удалить</string>
+    <string name="events_all">Все</string>
+    <string name="events_my">Мои</string>
+    <string name="event_no_description">No description</string>
+    <string name="no_pending_events">Нет новых событий</string>
+    <string name="no_user_events">Нет событий за выбранный период</string>
 </resources>

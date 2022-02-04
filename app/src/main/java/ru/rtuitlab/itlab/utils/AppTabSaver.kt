@@ -11,7 +11,7 @@ import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.api.users.models.UserClaimCategories
 
 sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon: ImageVector, var accessible: Boolean = true) {
-    object Events: AppTab("events_tab", R.string.events, Icons.Default.EventNote, false)
+    object Events: AppTab("events_tab", R.string.events, Icons.Default.EventNote)
     object Projects: AppTab("projects_tab", R.string.projects, Icons.Default.Widgets, false)
     object Devices: AppTab("devices_tab", R.string.devices, Icons.Default.DevicesOther, false)
     object Employees: AppTab("employees_tab", R.string.employees, Icons.Default.People)

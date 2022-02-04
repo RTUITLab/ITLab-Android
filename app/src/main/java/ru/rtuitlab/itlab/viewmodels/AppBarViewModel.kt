@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppBarViewModel @Inject constructor() : ViewModel() {
-	val defaultTab = AppTab.Employees
+	val defaultTab = AppTab.Events
 	private val _currentScreen = MutableStateFlow(defaultTab.asScreen())
 	val currentScreen: StateFlow<AppScreen> = _currentScreen
 

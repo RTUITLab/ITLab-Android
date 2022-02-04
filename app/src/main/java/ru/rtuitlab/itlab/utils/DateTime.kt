@@ -32,3 +32,5 @@ fun String.fromIso8601(context: Context) =
 		val minute = minute.toString().padStart(2, '0')
 		"$day.$month.$year ${context.getString(R.string.at)} $hour:$minute"
 	}
+
+fun nowAsIso8601() = java.time.Instant.now().toString()

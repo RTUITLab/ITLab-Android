@@ -9,10 +9,6 @@ import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
-	/*primary = purple200,
-	primaryVariant = purple700,
-	secondary = teal200*/
-
 	// Experimental
 	primary = AppColors.appBarsDark,
 	onPrimary = Color.White,
@@ -22,10 +18,6 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
-	/*primary = purple500,
-	primaryVariant = purple700,
-	secondary = teal200*/
-
 	// Experimental
 	primary = AppColors.appBarsLight,
 	onPrimary = Color.Black,
