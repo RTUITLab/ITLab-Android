@@ -76,7 +76,7 @@ private fun EmployeeList(
 				modifier = Modifier
 					.fillMaxWidth()
 					.clickable {
-						navController.navigate("employee/${user.id}")
+						navController.navigate("${AppScreen.EmployeeDetails.navLink}/${user.id}")
 					}
 			)
 		}

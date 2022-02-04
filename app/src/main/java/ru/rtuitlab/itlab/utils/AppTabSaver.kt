@@ -65,7 +65,11 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
 
 // This class represents any screen - tabs and their subscreens.
 // It is needed to appropriately change top app bar behavior
-sealed class AppScreen(@StringRes val screenNameResource: Int, val route: String) {
+sealed class AppScreen(
+    @StringRes val screenNameResource: Int,
+    val route: String,
+    val navLink: String = route.substringBefore("/{")
+) {
     // Employee-related
     object Employees: AppScreen(R.string.employees, "employees")
     object EmployeeDetails: AppScreen(R.string.profile, "employee/{userId}") // Has back button
@@ -75,7 +79,12 @@ sealed class AppScreen(@StringRes val screenNameResource: Int, val route: String
 
     // Events-related
     object Events: AppScreen(R.string.events, "events")
-    object EventDetails: AppScreen(R.string.event, "event/{eventId}") // Has back button
+    class  EventDetails(val title: String): AppScreen(R.string.event, "event/{eventId}") { // Has back button
+        companion object {
+            const val route = "event/{eventId}"
+            val navLink: String = route.substringBefore("/{")
+        }
+    }
     object EventNew: AppScreen(R.string.event_new, "event/new") // Has back button
 
     // Projects-related
