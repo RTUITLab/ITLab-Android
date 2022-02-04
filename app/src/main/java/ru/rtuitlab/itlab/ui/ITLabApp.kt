@@ -11,24 +11,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.ui.screens.devices.DevicesTab
 import ru.rtuitlab.itlab.ui.screens.employees.EmployeesTab
 import ru.rtuitlab.itlab.ui.screens.employees.components.EmployeesTopAppBar
 import ru.rtuitlab.itlab.ui.screens.events.EventsTab
+import ru.rtuitlab.itlab.ui.screens.events.components.EventsTopAppBar
 import ru.rtuitlab.itlab.ui.screens.feedback.FeedbackTab
 import ru.rtuitlab.itlab.ui.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.ui.screens.profile.ProfileTab
 import ru.rtuitlab.itlab.ui.screens.projects.ProjectsTab
-import ru.rtuitlab.itlab.ui.shared.BasicTopAppBar
-import ru.rtuitlab.itlab.ui.shared.ExtendedTopAppBar
+import ru.rtuitlab.itlab.ui.shared.top_app_bars.BasicTopAppBar
 import ru.rtuitlab.itlab.utils.AppScreen
 import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.utils.RunnableHolder
 import ru.rtuitlab.itlab.viewmodels.AppBarViewModel
 import ru.rtuitlab.itlab.viewmodels.AppTabsViewModel
 
+@ExperimentalMotionApi
+@ExperimentalMaterialApi
 @ExperimentalTransitionApi
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
@@ -59,17 +62,19 @@ fun ITLabApp(
 	Scaffold(
 		topBar = {
 			when (currentScreen) {
-				AppScreen.Events -> ExtendedTopAppBar {
-					Text(text = stringResource(currentScreen.screenNameResource))
-				}
-				AppScreen.EventDetails,
+				AppScreen.Events -> EventsTopAppBar()
+				is AppScreen.EventDetails -> BasicTopAppBar(
+					text = stringResource(
+						currentScreen.screenNameResource,
+						(currentScreen as AppScreen.EventDetails).title
+					),
+					onBackAction = onBackAction
+				)
 				AppScreen.EventNew,
-				AppScreen.EmployeeDetails -> {
-					BasicTopAppBar(
-						text = stringResource(currentScreen.screenNameResource),
-						onBackAction = onBackAction
-					)
-				}
+				AppScreen.EmployeeDetails -> BasicTopAppBar(
+					text = stringResource(currentScreen.screenNameResource),
+					onBackAction = onBackAction
+				)
 				AppScreen.Profile -> BasicTopAppBar(
 					text = stringResource(currentScreen.screenNameResource),
 					options = listOf(
@@ -145,12 +150,12 @@ fun ITLabApp(
 						onClick = {
 							when {
 								screen != currentTab       -> currentTab = screen
-								screen == AppTab.Events    -> eventsResetTask.run()
+								/*screen == AppTab.Events    -> eventsResetTask.run()
 								screen == AppTab.Projects  -> projectsResetTask.run()
 								screen == AppTab.Devices   -> devicesResetTask.run()
 								screen == AppTab.Employees -> employeesResetTask.run()
 								screen == AppTab.Feedback  -> feedbackResetTask.run()
-								screen == AppTab.Profile   -> profileResetTask.run()
+								screen == AppTab.Profile   -> profileResetTask.run()*/
 							}
 							appBarViewModel.onNavigate(currentTab.asScreen())
 						}

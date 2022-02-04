@@ -7,11 +7,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.constraintlayout.compose.ExperimentalMotionApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rtuitlab.itlab.ui.screens.AuthScreen
@@ -19,6 +21,8 @@ import ru.rtuitlab.itlab.ui.theme.ITLabTheme
 import ru.rtuitlab.itlab.utils.AppTab
 import ru.rtuitlab.itlab.viewmodels.*
 
+@ExperimentalMaterialApi
+@ExperimentalMotionApi
 @ExperimentalTransitionApi
 @ExperimentalAnimationApi
 @ExperimentalPagerApi

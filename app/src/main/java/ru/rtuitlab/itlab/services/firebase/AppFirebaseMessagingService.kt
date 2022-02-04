@@ -15,10 +15,14 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.constraintlayout.compose.ExperimentalMotionApi
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.ui.MainActivity
 
+@ExperimentalMotionApi
+@ExperimentalMaterialApi
 @ExperimentalStdlibApi
 @ExperimentalPagerApi
 @ExperimentalAnimationApi
