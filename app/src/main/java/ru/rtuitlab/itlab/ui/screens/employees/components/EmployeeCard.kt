@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.R
 import androidx.compose.material.*
 import ru.rtuitlab.itlab.api.users.models.User
-import ru.rtuitlab.itlab.ui.shared.ContactMethodRow
+import ru.rtuitlab.itlab.ui.shared.IconizedRow
 
 @Composable
 fun EmployeeCard(
@@ -49,7 +49,7 @@ fun EmployeeCard(
 				)
 				Spacer(Modifier.height(10.dp))
 				if (email != null) {
-					ContactMethodRow(
+					IconizedRow(
 						painter = painterResource(R.drawable.ic_mail),
 						contentDescription = stringResource(R.string.email),
 						imageWidth = 16.dp,
@@ -62,10 +62,11 @@ fun EmployeeCard(
 							context.startActivity(intent)
 						}
 					}
+					Spacer(Modifier.height(8.dp))
 				}
 
 				if (phoneNumber != null) {
-					ContactMethodRow(
+					IconizedRow(
 						painter = painterResource(R.drawable.ic_phone),
 						contentDescription = stringResource(R.string.phone_number),
 						imageWidth = 16.dp,
@@ -73,6 +74,7 @@ fun EmployeeCard(
 					) {
 						PhoneField(user = this@run, context = context)
 					}
+					Spacer(Modifier.height(8.dp))
 				}
 				/*if (properties.isNotEmpty()) {
 					Spacer(modifier = Modifier.height(14.dp))

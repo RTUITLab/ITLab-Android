@@ -16,11 +16,9 @@ import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.api.Resource
 import ru.rtuitlab.itlab.api.users.models.UserResponse
-import ru.rtuitlab.itlab.components.UserDevices
-import ru.rtuitlab.itlab.components.UserEvents
 import ru.rtuitlab.itlab.ui.screens.employees.components.EmailField
 import ru.rtuitlab.itlab.ui.screens.employees.components.PhoneField
-import ru.rtuitlab.itlab.ui.shared.ContactMethodRow
+import ru.rtuitlab.itlab.ui.shared.IconizedRow
 import ru.rtuitlab.itlab.ui.shared.LoadingIndicator
 import ru.rtuitlab.itlab.viewmodels.EmployeeViewModel
 
@@ -70,48 +68,55 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 				)
 				Spacer(modifier = Modifier.height(10.dp))
 
-				ContactMethodRow(
+				IconizedRow(
 					painter = painterResource(R.drawable.ic_mail),
 					contentDescription = stringResource(R.string.email)
 				) {
 					EmailField(value = user.email, context = context)
 				}
+				Spacer(Modifier.height(8.dp))
 
-				ContactMethodRow(
+				IconizedRow(
 					painter = painterResource(R.drawable.ic_phone),
 					contentDescription = stringResource(R.string.phone_number)
 				) {
 					PhoneField(user = user, context = context)
 				}
+				Spacer(Modifier.height(8.dp))
 
 				// Not implemented at API level?
 
-				if (user.group != null)
-					ContactMethodRow(
+				if (user.group != null) {
+					IconizedRow(
 						painter = painterResource(R.drawable.ic_hat),
 						contentDescription = stringResource(R.string.study_group)
 					) {
 						Text(text = user.group)
 					}
-
-				if (user.vkId != null)
-					ContactMethodRow(
+					Spacer(Modifier.height(8.dp))
+				}
+				if (user.vkId != null) {
+					IconizedRow(
 						painter = painterResource(R.drawable.ic_vk),
 						contentDescription = stringResource(R.string.vk_id)
 					) {
 						Text(text = user.vkId)
 					}
+					Spacer(Modifier.height(8.dp))
+				}
 
-				if (user.discordId != null)
-					ContactMethodRow(
+				if (user.discordId != null) {
+					IconizedRow(
 						painter = painterResource(R.drawable.ic_discord),
 						contentDescription = stringResource(R.string.discord_id)
 					) {
 						Text(text = user.discordId)
 					}
+					Spacer(Modifier.height(8.dp))
+				}
 
-				if (user.skypeId != null)
-					ContactMethodRow(
+				if (user.skypeId != null) {
+					IconizedRow(
 						painter = painterResource(R.drawable.ic_skype),
 						contentDescription = stringResource(R.string.skype_id)
 					) {
@@ -119,6 +124,8 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 							text = user.skypeId
 						)
 					}
+					Spacer(Modifier.height(8.dp))
+				}
 
 				Divider(color = Color.Gray, thickness = 1.dp)
 				Spacer(modifier = Modifier.height(8.dp))
