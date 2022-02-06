@@ -70,7 +70,7 @@ fun FeedbackCard(
 					fontSize = 14.sp
 				)
 			}
-			EmailField(value = feedback.email, context = LocalContext.current)
+			EmailField(value = feedback.email, context = LocalContext.current, hasPadding = false)
 			Text(
 				text = feedback.message,
 				fontSize = 18.sp

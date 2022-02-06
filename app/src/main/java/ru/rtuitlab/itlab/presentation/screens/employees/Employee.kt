@@ -69,7 +69,8 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 
 				IconizedRow(
 					painter = painterResource(R.drawable.ic_mail),
-					contentDescription = stringResource(R.string.email)
+					contentDescription = stringResource(R.string.email),
+					spacing = 0.dp
 				) {
 					EmailField(value = user.email, context = context)
 				}
@@ -77,7 +78,8 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 
 				IconizedRow(
 					painter = painterResource(R.drawable.ic_phone),
-					contentDescription = stringResource(R.string.phone_number)
+					contentDescription = stringResource(R.string.phone_number),
+					spacing = 0.dp
 				) {
 					PhoneField(user = user, context = context)
 				}
@@ -88,7 +90,8 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 				if (user.group != null) {
 					IconizedRow(
 						painter = painterResource(R.drawable.ic_hat),
-						contentDescription = stringResource(R.string.study_group)
+						contentDescription = stringResource(R.string.study_group),
+						spacing = 0.dp
 					) {
 						Text(text = user.group)
 					}
@@ -97,7 +100,8 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 				if (user.vkId != null) {
 					IconizedRow(
 						painter = painterResource(R.drawable.ic_vk),
-						contentDescription = stringResource(R.string.vk_id)
+						contentDescription = stringResource(R.string.vk_id),
+						spacing = 0.dp
 					) {
 						Text(text = user.vkId)
 					}
@@ -107,7 +111,8 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 				if (user.discordId != null) {
 					IconizedRow(
 						painter = painterResource(R.drawable.ic_discord),
-						contentDescription = stringResource(R.string.discord_id)
+						contentDescription = stringResource(R.string.discord_id),
+						spacing = 0.dp
 					) {
 						Text(text = user.discordId)
 					}
@@ -117,7 +122,8 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 				if (user.skypeId != null) {
 					IconizedRow(
 						painter = painterResource(R.drawable.ic_skype),
-						contentDescription = stringResource(R.string.skype_id)
+						contentDescription = stringResource(R.string.skype_id),
+						spacing = 0.dp
 					) {
 						Text(
 							text = user.skypeId

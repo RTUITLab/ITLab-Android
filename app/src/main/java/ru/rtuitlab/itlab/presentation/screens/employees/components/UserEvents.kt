@@ -19,7 +19,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
-import ru.rtuitlab.itlab.utils.toClientDate
+import ru.rtuitlab.itlab.presentation.ui.extensions.toClientDate
 import ru.rtuitlab.itlab.presentation.UserViewModel
 
 @Composable

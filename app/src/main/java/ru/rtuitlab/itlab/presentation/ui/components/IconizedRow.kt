@@ -18,6 +18,7 @@ fun IconizedRow(
 	imageWidth: Dp = 24.dp,
 	imageHeight: Dp = 24.dp,
 	contentDescription: String,
+	spacing: Dp = 8.dp,
 	content: @Composable RowScope.() -> Unit
 ) {
 	Row(verticalAlignment = Alignment.CenterVertically) {
@@ -30,7 +31,7 @@ fun IconizedRow(
 			painter = painter,
 			contentDescription = contentDescription
 		)
-		Spacer(Modifier.width(8.dp))
+		Spacer(Modifier.width(spacing))
 		if (imagePosition == ImagePosition.LEFT)
 			content()
 	}
@@ -43,23 +44,29 @@ fun IconizedRow(
 	imageWidth: Dp = 24.dp,
 	imageHeight: Dp = 24.dp,
 	spacing: Dp = 4.dp,
-	opacity: Float = 0f,
+	opacity: Float = .6f,
 	contentDescription: String? = null,
+	verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
 	content: @Composable RowScope.() -> Unit
 ) {
-	Row(verticalAlignment = Alignment.CenterVertically) {
+	Row(verticalAlignment = verticalAlignment) {
 		if (imagePosition == ImagePosition.RIGHT) {
 			content()
 			Spacer(modifier = Modifier.width(spacing))
 		}
-		Icon(
+		Box(
 			modifier = Modifier
-				.width(imageWidth)
-				.height(imageHeight),
-			imageVector = imageVector,
-			contentDescription = contentDescription,
-			tint = LocalContentColor.current.copy(opacity)
-		)
+				.padding(top = if (verticalAlignment == Alignment.Top) 4.dp else 0.dp)
+		) {
+			Icon(
+				modifier = Modifier
+					.width(imageWidth)
+					.height(imageHeight),
+				imageVector = imageVector,
+				contentDescription = contentDescription,
+				tint = LocalContentColor.current.copy(opacity)
+			)
+		}
 		if (imagePosition == ImagePosition.LEFT) {
 			Spacer(Modifier.width(spacing))
 			content()

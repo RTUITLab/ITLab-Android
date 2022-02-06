@@ -4,11 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
+import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
 
 @Composable
-fun EmailField(value: String?, context: Context) {
+fun EmailField(
+	value: String?,
+	hasPadding: Boolean = true,
+	context: Context
+) {
 	if (value == null) return
-	InteractableField(value = value) {
+	InteractiveField(value = value, hasPadding = hasPadding) {
 		val intent = Intent(Intent.ACTION_SENDTO).apply {
 			data = Uri.parse("mailto:$value")
 		}

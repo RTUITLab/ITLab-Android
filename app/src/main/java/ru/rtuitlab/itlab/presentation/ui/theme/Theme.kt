@@ -12,8 +12,6 @@ private val DarkColorPalette = darkColors(
 	// Experimental
 	primary = AppColors.appBarsDark,
 	onPrimary = Color.White,
-	primaryVariant = AppColors.purple700,
-	secondary = AppColors.teal200,
 	onSecondary = AppColors.accent
 )
 

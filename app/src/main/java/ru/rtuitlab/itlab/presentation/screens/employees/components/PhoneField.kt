@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
+import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
 import ru.rtuitlab.itlab.presentation.utils.EmployeePhoneAction
 import ru.rtuitlab.itlab.presentation.utils.doPhoneAction
 
@@ -17,7 +18,7 @@ fun PhoneField(user: User, context: Context) {
 	var expanded by remember { mutableStateOf(false) }
 
 	Box {
-		InteractableField(value = user.phoneNumber) {
+		InteractiveField(value = user.phoneNumber) {
 			expanded = true
 		}
 		DropdownMenu(

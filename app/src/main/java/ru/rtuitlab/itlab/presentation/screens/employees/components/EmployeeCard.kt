@@ -18,6 +18,7 @@ import ru.rtuitlab.itlab.R
 import androidx.compose.material.*
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
+import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
 
 @Composable
 fun EmployeeCard(
@@ -53,9 +54,10 @@ fun EmployeeCard(
 						painter = painterResource(R.drawable.ic_mail),
 						contentDescription = stringResource(R.string.email),
 						imageWidth = 16.dp,
-						imageHeight = 12.dp
+						imageHeight = 12.dp,
+						spacing = 0.dp
 					) {
-						InteractableField(value = email) {
+						InteractiveField(value = email) {
 							val intent = Intent(Intent.ACTION_SENDTO).apply {
 								data = Uri.parse("mailto:$email")
 							}
@@ -70,7 +72,8 @@ fun EmployeeCard(
 						painter = painterResource(R.drawable.ic_phone),
 						contentDescription = stringResource(R.string.phone_number),
 						imageWidth = 16.dp,
-						imageHeight = 12.dp
+						imageHeight = 12.dp,
+						spacing = 0.dp
 					) {
 						PhoneField(user = this@run, context = context)
 					}

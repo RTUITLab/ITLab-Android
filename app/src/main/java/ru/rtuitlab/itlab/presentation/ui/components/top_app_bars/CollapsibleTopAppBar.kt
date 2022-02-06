@@ -177,6 +177,8 @@ private fun EndConstraintSet() = ConstraintSet(
 @Composable
 fun CollapsibleScrollArea(
 	swipingState: SwipeableState<SwipingStates>,
+	heightDelta: Int,
+	modifier: Modifier = Modifier,
 	content: @Composable () -> Unit
 ) {
 
@@ -217,7 +219,7 @@ fun CollapsibleScrollArea(
 	}
 
 	Box(
-		modifier = Modifier
+		modifier = modifier
 			.fillMaxSize()
 			.swipeable(
 				state = swipingState,
