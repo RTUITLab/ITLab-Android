@@ -22,7 +22,7 @@ import ru.rtuitlab.itlab.data.remote.api.feedback.models.FeedbackModel
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmailField
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingIndicator
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
-import ru.rtuitlab.itlab.utils.fromIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.screens.feedback.FeedbackViewModel
 
 @ExperimentalTransitionApi

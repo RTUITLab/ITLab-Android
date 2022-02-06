@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,6 +25,7 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventCard
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CollapsibleScrollArea
+import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.heightDelta
 import ru.rtuitlab.itlab.presentation.utils.EventTab
 
 @ExperimentalMaterialApi
@@ -37,7 +39,7 @@ fun Events(
 	val userEventsResource by eventsViewModel.userEventsListResponsesFlow.collectAsState()
 
 	var isRefreshing by remember { mutableStateOf(false) }
-	var secondPageVisited by remember { mutableStateOf(false) }
+	var secondPageVisited by rememberSaveable { mutableStateOf(false) }
 
 	val pagerState = eventsViewModel.pagerState
 	val swipingState = eventsViewModel.swipingState
@@ -45,10 +47,10 @@ fun Events(
 
 	LaunchedEffect(pagerState) {
 		snapshotFlow { pagerState.currentPage }.collect { page ->
+			if (secondPageVisited) cancel()
 			if (page == 1 && !secondPageVisited) {
 				secondPageVisited = true
 				eventsViewModel.fetchUserEvents()
-				cancel()
 			}
 		}
 
@@ -67,7 +69,10 @@ fun Events(
 			state = rememberSwipeRefreshState(isRefreshing),
 			onRefresh = eventsViewModel::fetchPendingEvents
 		) {
-			CollapsibleScrollArea(swipingState) {
+			CollapsibleScrollArea(
+				swipingState = swipingState,
+				heightDelta = heightDelta
+			) {
 				when (tabs[index]) {
 					EventTab.All -> {
 						eventsResource.handle(
@@ -85,7 +90,7 @@ fun Events(
 								else
 									EventsList(
 										events = it,
-										listState = eventsViewModel.listState,
+										listState = eventsViewModel.allEventsListState,
 										onNavigate = onNavigate
 									)
 							}
@@ -107,7 +112,7 @@ fun Events(
 								else
 									EventsList(
 										events = it,
-										listState = eventsViewModel.listState,
+										listState = eventsViewModel.userEventsListState,
 										onNavigate = onNavigate
 									)
 							}
@@ -129,6 +134,7 @@ fun EventsList(
 	onNavigate: (event: EventModel) -> Unit
 ) {
 	LazyColumn(
+		modifier = Modifier.fillMaxSize(),
 		state = listState,
 		verticalArrangement = Arrangement.spacedBy(10.dp),
 		contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)

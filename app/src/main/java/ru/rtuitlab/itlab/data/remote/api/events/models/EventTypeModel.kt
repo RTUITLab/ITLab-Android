@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EventTypeModel(
     val id: String,
-    val title: String? = null,
+    val title: String,
     val description: String? = null
 )

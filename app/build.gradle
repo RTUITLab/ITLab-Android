@@ -24,14 +24,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
-        release {
-            storeFile file("../keystore.jks")
-            storePassword System.getenv("SIGNING_STORE_PASSWORD")
-            keyAlias System.getenv("SIGNING_KEY_ALIAS")
-            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
-        }
-    }
     buildTypes {
         def API_URI = "API_URI"
         def ISSUER_URI = "ISSUER_URI"
@@ -113,6 +105,9 @@ dependencies {
 
     // Preferences DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0-alpha06"
+
+    // Markdown
+    implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
 
     // OpenID auth
     implementation 'net.openid:appauth:0.7.1'

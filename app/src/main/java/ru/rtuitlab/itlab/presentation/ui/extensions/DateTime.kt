@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.utils
+package ru.rtuitlab.itlab.presentation.ui.extensions
 
 import android.content.Context
 import kotlinx.datetime.*
@@ -22,15 +22,21 @@ fun Long.toClientDate() = toMoscowDateTime().run {
 	"$day.$month.$year"
 }
 
-fun String.fromIso8601(context: Context) =
-	java.time.Instant.from(
-		DateTimeFormatter.ISO_DATE_TIME.parse(this)
-	).toKotlinInstant().toMoscowDateTime().run {
+fun String.fromIso8601(
+	context: Context,
+	dateTimeDelimiter: String = " ${context.resources.getString(R.string.at)}"
+) =
+	fromIso8601ToInstant().run {
 		val day = dayOfMonth.toString().padStart(2, '0')
 		val month = monthNumber.toString().padStart(2, '0')
 		val hour = hour.toString().padStart(2, '0')
 		val minute = minute.toString().padStart(2, '0')
-		"$day.$month.$year ${context.getString(R.string.at)} $hour:$minute"
+		"$day.$month.$year$dateTimeDelimiter $hour:$minute"
 	}
+
+fun String.fromIso8601ToInstant() =
+	java.time.Instant.from(
+		DateTimeFormatter.ISO_DATE_TIME.parse(this)
+	).toKotlinInstant().toMoscowDateTime()
 
 fun nowAsIso8601() = java.time.Instant.now().toString()

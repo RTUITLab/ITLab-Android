@@ -12,8 +12,8 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.data.repository.UsersRepository
 import ru.rtuitlab.itlab.common.emitInIO
-import ru.rtuitlab.itlab.utils.minus
-import ru.rtuitlab.itlab.utils.toMoscowDateTime
+import ru.rtuitlab.itlab.presentation.ui.extensions.minus
+import ru.rtuitlab.itlab.presentation.ui.extensions.toMoscowDateTime
 
 abstract class UserViewModel (
 	private val usersRepo: UsersRepository,

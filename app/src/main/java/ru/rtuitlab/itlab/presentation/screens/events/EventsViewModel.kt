@@ -40,7 +40,8 @@ class EventsViewModel @Inject constructor(
 
 	val swipingState = SwipeableState(SwipingStates.EXPANDED)
 
-	val listState = LazyListState()
+	val allEventsListState = LazyListState()
+	val userEventsListState = LazyListState()
 
 	private val _eventsListResponseFlow =
 		MutableStateFlow<Resource<List<EventModel>>>(Resource.Loading)
@@ -49,7 +50,7 @@ class EventsViewModel @Inject constructor(
 	}
 
 	private val _userEventsListResponseFlow =
-		MutableStateFlow<Resource<List<EventModel>>>(Resource.Loading)
+		MutableStateFlow<Resource<List<EventModel>>>(Resource.Empty)
 	val userEventsListResponsesFlow = _userEventsListResponseFlow.asStateFlow()
 
 	fun fetchAllEvents() = _eventsListResponseFlow.emitInIO(viewModelScope) {

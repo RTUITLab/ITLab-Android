@@ -6,6 +6,7 @@
     <string name="rtuitlab" translatable="false">RTUITLab</string>
     <string name="search">Search</string>
     <string name="delete">Delete</string>
+    <string name="more">More</string>
 
     <!--    Events    -->
     <string name="events">Events</string>
@@ -17,6 +18,14 @@
     <string name="event_no_description">No description</string>
     <string name="no_pending_events">No pending events</string>
     <string name="no_user_events">No events in selected period</string>
+    <string name="salary" translatable="false">%1$d ₽</string>
+    <string name="shifts">Shifts</string>
+    <plurals name="n_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <string name="salary_not_specified">Salary not specified</string>
+    <string name="place_number_n">Place #%1$d</string>
 
     <!--    Projects     -->
     <string name="projects">Projects</string>

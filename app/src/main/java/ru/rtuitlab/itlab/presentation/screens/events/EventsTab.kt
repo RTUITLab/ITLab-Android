@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
 import ru.rtuitlab.itlab.presentation.utils.hiltViewModel
@@ -24,7 +25,8 @@ fun EventsTab(
 	navState: MutableState<Bundle>,
 	resetTabTask: RunnableHolder,
 	appBarViewModel: AppBarViewModel = viewModel(),
-	eventsViewModel: EventsViewModel = viewModel()
+	eventsViewModel: EventsViewModel = viewModel(),
+    bottomSheetViewModel: BottomSheetViewModel = viewModel()
 ) {
     val navController = rememberNavController()
 
@@ -60,7 +62,7 @@ fun EventsTab(
         }
 
         composable(AppScreen.EventDetails.route) {
-            Event(it.hiltViewModel())
+            Event(it.hiltViewModel(), bottomSheetViewModel)
         }
     }
 }

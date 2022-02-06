@@ -1,9 +1,8 @@
 package ru.rtuitlab.itlab.data.repository
 
-import android.util.Log
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.data.remote.api.events.EventsApi
-import ru.rtuitlab.itlab.utils.nowAsIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.nowAsIso8601
 import javax.inject.Inject
 
 class EventsRepository @Inject constructor(
@@ -16,7 +15,6 @@ class EventsRepository @Inject constructor(
 
 	suspend fun fetchPendingEvents() = handler {
 		val now = nowAsIso8601()
-		Log.v("DateTime", now)
 		eventsApi.getEvents(begin = now)
 	}
 
@@ -30,5 +28,13 @@ class EventsRepository @Inject constructor(
 		end: String? = null
 	) = handler {
 		eventsApi.getUserEvents(userId, begin, end)
+	}
+
+	suspend fun fetchEvent(eventId: String) = handler {
+		eventsApi.getEvent(eventId)
+	}
+
+	suspend fun fetchEventSalary(eventId: String) = handler {
+		eventsApi.getEventSalary(eventId)
 	}
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.People
@@ -20,7 +21,7 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.ImagePosition
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
-import ru.rtuitlab.itlab.utils.fromIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
 
 @Composable
 fun EventCard(
@@ -52,8 +53,7 @@ fun EventCard(
 				Text(
 					text = if (eventType.title.isNullOrBlank()) stringResource(R.string.event_no_description)
 					       else eventType.title,
-					color = AppColors.greyText,
-					fontSize = 15.sp
+					style = MaterialTheme.typography.subtitle1
 				)
 				Spacer(modifier = Modifier.height(16.dp))
 				RoundedLinearProgressIndicator(
@@ -78,7 +78,7 @@ fun EventCard(
 					) {
 						Text(
 							text = beginTime.fromIso8601(context),
-							color = AppColors.greyText
+							style = MaterialTheme.typography.subtitle1
 						)
 					}
 					
@@ -91,7 +91,7 @@ fun EventCard(
 					) {
 						Text(
 							text = "$currentParticipantsCount/$targetParticipantsCount",
-							color = AppColors.greyText
+							style = MaterialTheme.typography.subtitle1
 						)
 					}
 				}

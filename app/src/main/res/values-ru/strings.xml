@@ -33,7 +33,17 @@
     <string name="delete">Удалить</string>
     <string name="events_all">Все</string>
     <string name="events_my">Мои</string>
-    <string name="event_no_description">No description</string>
+    <string name="event_no_description">Без описания</string>
     <string name="no_pending_events">Нет новых событий</string>
     <string name="no_user_events">Нет событий за выбранный период</string>
+    <string name="more">Подробнее</string>
+    <string name="shifts">Смены</string>
+    <plurals name="n_hours">
+        <item quantity="one">%d час</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+        <item quantity="other">%d часов</item>
+    </plurals>
+    <string name="salary_not_specified">Оплата не указана</string>
+    <string name="place_number_n">Место #%1$d</string>
 </resources>
