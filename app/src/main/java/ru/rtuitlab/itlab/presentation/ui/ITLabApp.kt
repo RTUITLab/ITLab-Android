@@ -65,6 +65,11 @@ fun ITLabApp(
 	val feedbackResetTask = RunnableHolder()
 	val profileResetTask = RunnableHolder()
 
+	LaunchedEffect(bottomSheetViewModel.bottomSheetState.currentValue) {
+		if (bottomSheetViewModel.bottomSheetState.currentValue == ModalBottomSheetValue.Hidden)
+			bottomSheetViewModel.hide(this)
+	}
+
 	ModalBottomSheetLayout(
 		sheetState = bottomSheetViewModel.bottomSheetState,
 		sheetContent = { BottomSheet() },
