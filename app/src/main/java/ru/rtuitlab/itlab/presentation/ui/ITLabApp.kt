@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,7 +71,8 @@ fun ITLabApp(
 		sheetShape = RoundedCornerShape(
 			topStart = 16.dp,
 			topEnd = 16.dp
-		)
+		),
+		scrimColor = Color.Black.copy(.25f)
 	) {
 		Scaffold(
 			topBar = {

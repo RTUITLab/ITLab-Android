@@ -60,7 +60,7 @@ private fun LogoutButton(onLogoutEvent: () -> Unit) {
 	) {
 		Text(
 			text = stringResource(R.string.logout).uppercase(Locale.getDefault()),
-			color = AppColors.accent,
+			color = AppColors.accent.collectAsState().value,
 			fontSize = 14.sp,
 			fontWeight = FontWeight(500),
 			lineHeight = 22.sp

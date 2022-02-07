@@ -119,7 +119,7 @@ private fun IncomingFeedbackButton(
 	Button(
 		modifier = Modifier.fillMaxWidth(),
 		colors = ButtonDefaults.buttonColors(
-			backgroundColor = AppColors.accent
+			backgroundColor = AppColors.accent.collectAsState().value
 		),
 		onClick = {
 			if (!isLoadingState) {
@@ -166,7 +166,7 @@ fun ReadFeedbackButtons(
 			modifier = Modifier
 				.fillMaxWidth(),
 			colors = ButtonDefaults.buttonColors(
-				backgroundColor = AppColors.accent
+				backgroundColor = AppColors.accent.collectAsState().value
 			),
 			onClick = {
 				if (!isLoadingState) {

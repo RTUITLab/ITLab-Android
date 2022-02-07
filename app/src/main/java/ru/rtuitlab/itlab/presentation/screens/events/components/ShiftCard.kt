@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Shift
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
+import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @Composable
 fun ShiftCard(
@@ -52,7 +54,8 @@ fun ShiftCard(
 				Text(
 					text =  if (shift.description.isBlank()) stringResource(R.string.event_no_description)
 							else shift.description,
-					style = MaterialTheme.typography.subtitle1
+					style = MaterialTheme.typography.subtitle1,
+					color = AppColors.greyText.collectAsState().value
 				)
 			}
 			Spacer(Modifier.height(5.dp))
@@ -68,7 +71,8 @@ fun ShiftCard(
 						shift.duration,
 						shift.duration
 					),
-					style = MaterialTheme.typography.subtitle1
+					style = MaterialTheme.typography.subtitle1,
+					color = AppColors.greyText.collectAsState().value
 				)
 			}
 			Spacer(Modifier.height(5.dp))
@@ -80,7 +84,8 @@ fun ShiftCard(
 			) {
 				Text(
 					text = if (salary != null) stringResource(R.string.salary, salary) else stringResource(R.string.salary_not_specified),
-					style = MaterialTheme.typography.subtitle1
+					style = MaterialTheme.typography.subtitle1,
+					color = AppColors.greyText.collectAsState().value
 				)
 			}
 			Spacer(Modifier.height(5.dp))

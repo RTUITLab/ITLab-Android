@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.People
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -84,7 +85,7 @@ private fun ShiftPlaceCard(
 				progress = if (place.targetParticipantsCount != 0)
 					place.participants.size.toFloat() / place.targetParticipantsCount.toFloat()
 				else 1f,
-				color = AppColors.accent,
+				color = AppColors.accent.collectAsState().value,
 
 			)
 			Surface(

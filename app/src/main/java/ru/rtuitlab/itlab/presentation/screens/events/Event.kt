@@ -160,7 +160,7 @@ private fun EventInfo(
 		) {
 			IconizedRow(
 				imageVector = Icons.Default.Schedule,
-				opacity = .3f,
+				opacity = .7f,
 				spacing = 10.dp
 			) {
 				Text(
@@ -175,7 +175,7 @@ private fun EventInfo(
 
 			IconizedRow(
 				imageVector = Icons.Default.Payment,
-				opacity = .3f,
+				opacity = .7f,
 				spacing = 10.dp
 			) {
 				Text(
@@ -185,7 +185,7 @@ private fun EventInfo(
 
 			IconizedRow(
 				imageVector = Icons.Default.LocationOn,
-				opacity = .3f,
+				opacity = .7f,
 				spacing = 10.dp
 			) {
 				Text(
@@ -195,7 +195,7 @@ private fun EventInfo(
 
 			IconizedRow(
 				imageVector = Icons.Default.People,
-				opacity = .3f,
+				opacity = .7f,
 				spacing = 10.dp
 			) {
 				Text(
@@ -205,7 +205,7 @@ private fun EventInfo(
 
 			IconizedRow(
 				imageVector = Icons.Default.Info,
-				opacity = .3f,
+				opacity = .7f,
 				spacing = 10.dp
 			) {
 				Row(

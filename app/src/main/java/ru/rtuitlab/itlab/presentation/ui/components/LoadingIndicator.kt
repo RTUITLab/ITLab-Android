@@ -3,6 +3,7 @@ package ru.rtuitlab.itlab.presentation.ui.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -12,7 +13,7 @@ import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 @Composable
 fun LoadingIndicator(
 	modifier: Modifier = Modifier,
-	color: Color = AppColors.accent,
+	color: Color = AppColors.accent.collectAsState().value,
 	strokeWidth: Dp = ProgressIndicatorDefaults.StrokeWidth
 ) {
 	Box(

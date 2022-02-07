@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,14 +35,14 @@ fun InteractiveField(
 	) {
 		Text(
 			text = value,
-			color = AppColors.accent,
+			color = AppColors.accent.collectAsState().value,
 			fontSize = 16.sp
 		)
 		if (hasArrow)
 			Icon(
 				imageVector = Icons.Default.NavigateNext,
 				contentDescription = null,
-				tint = AppColors.accent
+				tint = AppColors.accent.collectAsState().value
 			)
 	}
 }

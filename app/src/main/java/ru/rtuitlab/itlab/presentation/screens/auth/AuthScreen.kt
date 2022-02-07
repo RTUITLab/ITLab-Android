@@ -3,6 +3,7 @@ package ru.rtuitlab.itlab.presentation.screens.auth
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,7 +58,7 @@ fun AuthScreen(onLoginEvent: () -> Unit) {
 		) {
 			Text(
 				text = stringResource(R.string.login).uppercase(Locale.getDefault()),
-				color = AppColors.accent,
+				color = AppColors.accent.collectAsState().value,
 				fontSize = 14.sp,
 				fontWeight = FontWeight(500),
 				lineHeight = 22.sp

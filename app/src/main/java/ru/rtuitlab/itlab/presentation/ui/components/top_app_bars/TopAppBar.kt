@@ -158,7 +158,7 @@ fun AppBarTabRow(
 				Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
 			)
 		},
-		contentColor = AppColors.accent
+		contentColor = AppColors.accent.collectAsState().value
 	) {
 		tabs.forEachIndexed { index, it ->
 			Tab(
