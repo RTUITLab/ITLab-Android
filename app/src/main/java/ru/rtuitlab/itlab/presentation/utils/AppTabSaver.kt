@@ -1,12 +1,14 @@
 package ru.rtuitlab.itlab.presentation.utils
 
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.os.bundleOf
+import kotlinx.parcelize.Parcelize
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 
@@ -65,11 +67,13 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
 
 // This class represents any screen - tabs and their subscreens.
 // It is needed to appropriately change top app bar behavior
-sealed class AppScreen(
+
+@Parcelize
+open class AppScreen(
     @StringRes val screenNameResource: Int,
     val route: String,
     val navLink: String = route.substringBefore("/{")
-) {
+) : Parcelable {
     // Employee-related
     object Employees: AppScreen(R.string.employees, "employees")
     object EmployeeDetails: AppScreen(R.string.profile, "employee/{userId}") // Has back button
@@ -79,6 +83,7 @@ sealed class AppScreen(
 
     // Events-related
     object Events: AppScreen(R.string.events, "events")
+    @Parcelize
     class  EventDetails(val title: String): AppScreen(R.string.event, "event/{eventId}") { // Has back button
         companion object {
             const val route = "event/{eventId}"
