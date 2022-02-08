@@ -11,7 +11,7 @@ data class Place(
     val description: String,
     val equipment: List<String>? = null,
     val participants: List<Participant>,
-    val invited: List<UserResponse>,
-    val wishers: List<UserResponse>,
-    val unknowns: List<UserResponse>
+    val invited: List<Participant>,
+    val wishers: List<Participant>,
+    val unknowns: List<Participant>
 )

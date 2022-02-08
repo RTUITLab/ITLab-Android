@@ -9,6 +9,6 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 data class Participant(
     val user: UserResponse,
     val eventRole: EventRoleModel,
-    val creationTime: String,
-    val doneTime: String
+    val creationTime: String? = null,
+    val doneTime: String? = null
 )

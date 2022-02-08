@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
+import com.google.accompanist.pager.ExperimentalPagerApi
+import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.domain.model.EventDetail
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftCard
@@ -32,6 +34,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.SwipingStates
 import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
+@ExperimentalPagerApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Event(
@@ -41,30 +44,37 @@ fun Event(
 
 	val eventResource by eventViewModel.eventResourceFlow.collectAsState()
 
-
-	Column(
-		modifier = Modifier
-			.fillMaxWidth()
+	Scaffold(
+		scaffoldState = rememberScaffoldState(snackbarHostState = eventViewModel.snackbarHostState)
 	) {
-		eventResource.handle(
-			onLoading = {
-				LoadingIndicator()
-			},
-			onError = { msg ->
-				LoadingError(msg = msg)
-			},
-			onSuccess = {
-				EventInfoWithList(event = it.first.toEvent(it.second), bottomSheetViewModel = bottomSheetViewModel)
-			}
-		)
+		Column(
+			modifier = Modifier
+				.fillMaxWidth()
+		) {
+			eventResource.handle(
+				onLoading = {
+					LoadingIndicator()
+				},
+				onError = { msg ->
+					LoadingError(msg = msg)
+				},
+				onSuccess = {
+					EventInfoWithList(
+						event = it.first.toEvent(it.second),
+						eventViewModel = eventViewModel,
+						bottomSheetViewModel = bottomSheetViewModel
+					)
+				}
+			)
+		}
 	}
-
 }
 
 @OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun EventInfoWithList(
 	event: EventDetail,
+	eventViewModel: EventViewModel,
 	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val swipingState = rememberSwipeableState(SwipingStates.EXPANDED)
@@ -94,6 +104,7 @@ private fun EventInfoWithList(
 		) {
 			EventShifts(
 				event = event,
+				eventViewModel = eventViewModel,
 				bottomSheetViewModel
 			)
 		}
@@ -179,7 +190,10 @@ private fun EventInfo(
 				spacing = 10.dp
 			) {
 				Text(
-					text = if (event.salary != null) stringResource(R.string.salary, event.salary) else stringResource(R.string.salary_not_specified)
+					text = if (event.salary != null) stringResource(
+						R.string.salary,
+						event.salary
+					) else stringResource(R.string.salary_not_specified)
 				)
 			}
 
@@ -238,6 +252,7 @@ private fun EventInfo(
 @Composable
 private fun EventShifts(
 	event: EventDetail,
+	eventViewModel: EventViewModel,
 	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val coroutineScope = rememberCoroutineScope()
@@ -259,7 +274,7 @@ private fun EventShifts(
 				)
 			}
 			items(
-				items = event.shifts,
+				items = event.shifts.sortedBy { it.beginTime },
 				key = { it.id }
 			) { shift ->
 				ShiftCard(
@@ -271,9 +286,12 @@ private fun EventShifts(
 									shift,
 									salaries = shift.places.mapIndexed { index, _ ->
 										event.placeSalaries.getOrElse(index) {
-											event.shiftSalaries.getOrElse(event.shifts.indexOf(shift)) { event.salary ?: -1 }
+											event.shiftSalaries.getOrElse(event.shifts.indexOf(shift)) {
+												event.salary ?: -1
+											}
 										}
-									}
+									},
+									eventViewModel = eventViewModel
 								),
 								coroutineScope
 							)

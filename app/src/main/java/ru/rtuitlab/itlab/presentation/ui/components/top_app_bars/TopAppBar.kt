@@ -21,6 +21,7 @@ import com.google.accompanist.pager.pagerTabIndicatorOffset
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppBarTab
+import java.util.*
 
 @Composable
 fun BasicTopAppBar(
@@ -164,7 +165,7 @@ fun AppBarTabRow(
 			Tab(
 				text = {
 					Text(
-						text = stringResource(it.title),
+						text = stringResource(it.title).uppercase(Locale.getDefault()),
 						fontSize = 14.sp
 					)
 				},
@@ -173,7 +174,8 @@ fun AppBarTabRow(
 					coroutineScope.launch {
 						pagerState.animateScrollToPage(index)
 					}
-				}
+				},
+				unselectedContentColor = AppColors.greyText.collectAsState().value
 			)
 		}
 	}

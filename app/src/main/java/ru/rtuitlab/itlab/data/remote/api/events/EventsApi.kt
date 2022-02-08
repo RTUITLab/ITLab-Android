@@ -1,10 +1,13 @@
 package ru.rtuitlab.itlab.data.remote.api.events
 
+import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventDetailDto
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
+import ru.rtuitlab.itlab.data.remote.api.events.models.EventRoleModel
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventSalary
 
 interface EventsApi {
@@ -31,4 +34,13 @@ interface EventsApi {
 	suspend fun getEventSalary(
 		@Path("eventId") eventId: String
 	) : EventSalary
+
+	@POST("Event/wish/{placeId}/{roleId}")
+	suspend fun applyForPlace(
+		@Path("placeId") placeId: String,
+		@Path("roleId") roleId: String
+	) : Response<Unit>
+
+	@GET("eventRole")
+	suspend fun getEventRoles() : List<EventRoleModel>
 }

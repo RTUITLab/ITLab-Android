@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation.screens.events.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -10,20 +11,19 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.People
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Place
 import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Shift
-import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
+import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.ImagePosition
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @ExperimentalPagerApi
@@ -32,7 +32,8 @@ import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 fun ShiftBottomSheet(
 	shift: Shift,
 	salaries: List<Int>,
-	eventsViewModel: EventsViewModel = viewModel()
+	eventViewModel: EventViewModel,
+	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	Row(
 		modifier = Modifier.fillMaxWidth(),
@@ -58,20 +59,45 @@ fun ShiftBottomSheet(
 			ShiftPlaceCard(
 				number = index + 1,
 				place = item,
-				salary = salaries[index].takeUnless { it == -1 }
+				salary = salaries[index].takeUnless { it == -1 },
+				eventViewModel = eventViewModel,
+				bottomSheetViewModel = bottomSheetViewModel
 			)
 		}
 	}
 }
 
+@ExperimentalPagerApi
+@ExperimentalMaterialApi
 @Composable
 private fun ShiftPlaceCard(
 	number: Int,
 	place: Place,
-	salary: Int?
+	salary: Int?,
+	eventViewModel: EventViewModel,
+	bottomSheetViewModel: BottomSheetViewModel
 ) {
+	var dialogIsShown by remember { mutableStateOf(false) }
+	val scope = rememberCoroutineScope()
+	if (dialogIsShown)
+		PlaceAlertDialog(
+			number = number,
+			place = place,
+			salary = salary,
+			eventViewModel = eventViewModel,
+			onResult = {
+				dialogIsShown = false
+				bottomSheetViewModel.hide(scope)
+			}
+		) {
+			dialogIsShown = false
+		}
+
 	Card(
 		modifier = Modifier
+			.clickable {
+				dialogIsShown = true
+			}
 			.fillMaxWidth(),
 		shape = RoundedCornerShape(5.dp),
 		elevation = 8.dp
@@ -83,10 +109,9 @@ private fun ShiftPlaceCard(
 			VerticalLinearProgressIndicator(
 				modifier = Modifier.matchParentSize(),
 				progress = if (place.targetParticipantsCount != 0)
-					place.participants.size.toFloat() / place.targetParticipantsCount.toFloat()
+					(place.participants + place.invited + place.wishers).size.toFloat() / place.targetParticipantsCount.toFloat()
 				else 1f,
-				color = AppColors.accent.collectAsState().value,
-
+				color = AppColors.accent.collectAsState().value
 			)
 			Surface(
 				modifier = Modifier
@@ -113,7 +138,7 @@ private fun ShiftPlaceCard(
 							imageHeight = 14.dp
 						) {
 							Text(
-								text = "${place.participants.size}/${place.targetParticipantsCount}"
+								text = "${(place.participants + place.invited + place.wishers).size}/${place.targetParticipantsCount}"
 							)
 						}
 					}
@@ -138,7 +163,10 @@ private fun ShiftPlaceCard(
 						imageWidth = 14.dp
 					) {
 						Text(
-							text = if (salary != null) stringResource(R.string.salary, salary) else stringResource(R.string.salary_not_specified),
+							text = if (salary != null) stringResource(
+								R.string.salary,
+								salary
+							) else stringResource(R.string.salary_not_specified),
 							style = MaterialTheme.typography.subtitle2
 						)
 					}

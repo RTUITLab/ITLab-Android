@@ -26,6 +26,12 @@
     </plurals>
     <string name="salary_not_specified">Salary not specified</string>
     <string name="place_number_n">Place #%1$d</string>
+    <string name="role_organizer">Organizer</string>
+    <string name="role_participant">Participant</string>
+    <string name="role_intern">Intern</string>
+    <string name="role_other">Other</string>
+    <string name="event_apply">Apply</string>
+    <string name="application_successful">Application successful</string>
 
     <!--    Projects     -->
     <string name="projects">Projects</string>

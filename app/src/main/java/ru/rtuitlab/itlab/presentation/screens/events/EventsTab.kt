@@ -62,7 +62,10 @@ fun EventsTab(
         }
 
         composable(AppScreen.EventDetails.route) {
-            Event(it.hiltViewModel(), bottomSheetViewModel)
+            Event(
+                eventViewModel = it.hiltViewModel(),
+                bottomSheetViewModel = bottomSheetViewModel
+            )
         }
     }
 }

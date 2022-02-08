@@ -6,6 +6,7 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
@@ -47,15 +48,20 @@ fun IconizedRow(
 	opacity: Float = .6f,
 	contentDescription: String? = null,
 	verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+	tint: Color? = null,
+	modifier: Modifier = Modifier,
 	content: @Composable RowScope.() -> Unit
 ) {
-	Row(verticalAlignment = verticalAlignment) {
+	Row(
+		modifier = modifier,
+		verticalAlignment = verticalAlignment
+	) {
 		if (imagePosition == ImagePosition.RIGHT) {
 			content()
 			Spacer(modifier = Modifier.width(spacing))
 		}
 		Box(
-			modifier = Modifier
+			modifier = modifier
 				.padding(top = if (verticalAlignment == Alignment.Top) 4.dp else 0.dp)
 		) {
 			Icon(
@@ -64,7 +70,7 @@ fun IconizedRow(
 					.height(imageHeight),
 				imageVector = imageVector,
 				contentDescription = contentDescription,
-				tint = LocalContentColor.current.copy(opacity)
+				tint = tint?.copy(opacity) ?: LocalContentColor.current.copy(opacity)
 			)
 		}
 		if (imagePosition == ImagePosition.LEFT) {

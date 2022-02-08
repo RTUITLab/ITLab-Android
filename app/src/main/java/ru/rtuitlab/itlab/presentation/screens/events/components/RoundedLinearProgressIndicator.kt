@@ -49,8 +49,8 @@ private fun DrawScope.drawLinearIndicator(
 	val yOffset = height / 2
 
 	val isLtr = layoutDirection == LayoutDirection.Ltr
-	val barStart = (if (isLtr) startFraction else 1f - endFraction) * width
-	val barEnd = (if (isLtr) endFraction else 1f - startFraction) * width
+	val barStart = (if (isLtr) startFraction else 1f - endFraction.coerceAtMost(1f)) * width
+	val barEnd = (if (isLtr) endFraction.coerceAtMost(1f) else 1f - startFraction) * width
 
 	// Progress line
 	drawLine(

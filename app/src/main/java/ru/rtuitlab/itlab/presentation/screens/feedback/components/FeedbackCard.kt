@@ -4,9 +4,11 @@ import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,10 +22,10 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.feedback.models.FeedbackModel
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmailField
-import ru.rtuitlab.itlab.presentation.ui.components.LoadingIndicator
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
-import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.screens.feedback.FeedbackViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.ButtonLoadingIndicator
+import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
+import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @ExperimentalTransitionApi
 @ExperimentalPagerApi
@@ -135,7 +137,10 @@ private fun IncomingFeedbackButton(
 		}
 	) {
 		if (isLoadingState) {
-			FeedbackLoadingIndicator()
+			ButtonLoadingIndicator(
+				color = Color.White,
+				strokeWidth = 2.dp
+			)
 		} else {
 			Text(
 				text = stringResource(R.string.mark_as_read),
@@ -182,7 +187,10 @@ fun ReadFeedbackButtons(
 			}
 		) {
 			if (isLoadingState) {
-				FeedbackLoadingIndicator()
+				ButtonLoadingIndicator(
+					color = Color.White,
+					strokeWidth = 2.dp
+				)
 			} else {
 				Text(
 					text = stringResource(R.string.mark_as_unread),
@@ -215,7 +223,10 @@ fun ReadFeedbackButtons(
 			}
 		) {
 			if (isLoadingState) {
-				FeedbackLoadingIndicator()
+				ButtonLoadingIndicator(
+					color = Color.White,
+					strokeWidth = 2.dp
+				)
 			} else {
 				Text(
 					text = stringResource(R.string.delete),
@@ -228,16 +239,4 @@ fun ReadFeedbackButtons(
 		}
 		Spacer(modifier = Modifier.height(8.dp))
 	}
-}
-
-
-@Composable
-private fun FeedbackLoadingIndicator() {
-	LoadingIndicator(
-		modifier = Modifier
-			.width(22.dp)
-			.height(22.dp),
-		color = Color.White,
-		strokeWidth = 2.dp
-	)
 }

@@ -46,7 +46,12 @@ fun BottomSheet(
 		when (currentSheet) {
 			is AppBottomSheet.EventShift -> {
 				val shift = currentSheet as AppBottomSheet.EventShift
-				ShiftBottomSheet(shift = shift.shift, salaries = shift.salaries)
+				ShiftBottomSheet(
+					shift = shift.shift,
+					salaries = shift.salaries,
+					eventViewModel = shift.eventViewModel,
+					bottomSheetViewModel = viewModel
+				)
 			}
 			is AppBottomSheet.EventDescription -> {
 				EventDetailsBottomSheet(markdownText = (currentSheet as AppBottomSheet.EventDescription).markdown)

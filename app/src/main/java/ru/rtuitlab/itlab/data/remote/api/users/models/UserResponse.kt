@@ -23,6 +23,8 @@ data class UserResponse (
 			group = properties.firstOrNull { it.userPropertyType.title == "Учебная группа" }?.value,
 			skypeId = properties.firstOrNull { it.userPropertyType.title == "Skype" }?.value,
 		)
+
+	val fullName = "${firstName ?: ""} ${lastName ?: ""}"
 }
 
 data class User(

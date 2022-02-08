@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
@@ -36,7 +37,9 @@ fun InteractiveField(
 		Text(
 			text = value,
 			color = AppColors.accent.collectAsState().value,
-			fontSize = 16.sp
+			fontSize = 16.sp,
+			maxLines = 1,
+			overflow = TextOverflow.Ellipsis
 		)
 		if (hasArrow)
 			Icon(

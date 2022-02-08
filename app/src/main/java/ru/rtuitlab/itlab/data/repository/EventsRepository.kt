@@ -37,4 +37,12 @@ class EventsRepository @Inject constructor(
 	suspend fun fetchEventSalary(eventId: String) = handler {
 		eventsApi.getEventSalary(eventId)
 	}
+
+	suspend fun applyForPlace(placeId: String, roleId: String) = handler {
+		eventsApi.applyForPlace(placeId, roleId)
+	}
+
+	suspend fun fetchEventRoles() = handler {
+		eventsApi.getEventRoles()
+	}
 }
