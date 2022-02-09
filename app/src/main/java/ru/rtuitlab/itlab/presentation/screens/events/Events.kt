@@ -85,11 +85,13 @@ fun Events(
 							},
 							onSuccess = {
 								isRefreshing = false
+								eventsViewModel.onResourceSuccess(it, false)
 								if (it.isEmpty())
 									LoadingError(msg = stringResource(R.string.no_pending_events))
 								else
 									EventsList(
-										events = it,
+										eventsViewModel = eventsViewModel,
+										isUserEvents = false,
 										listState = eventsViewModel.allEventsListState,
 										onNavigate = onNavigate
 									)
@@ -107,11 +109,13 @@ fun Events(
 							},
 							onSuccess = {
 								isRefreshing = false
+								eventsViewModel.onResourceSuccess(it, true)
 								if (it.isEmpty())
 									LoadingError(msg = stringResource(R.string.no_user_events))
 								else
 									EventsList(
-										events = it,
+										eventsViewModel = eventsViewModel,
+										isUserEvents = true,
 										listState = eventsViewModel.userEventsListState,
 										onNavigate = onNavigate
 									)
@@ -127,12 +131,17 @@ fun Events(
 
 }
 
+@ExperimentalPagerApi
+@ExperimentalMaterialApi
 @Composable
 fun EventsList(
-	events: List<EventModel>,
+	eventsViewModel: EventsViewModel,
+	isUserEvents: Boolean,
 	listState: LazyListState,
 	onNavigate: (event: EventModel) -> Unit
 ) {
+	val events by if (isUserEvents) eventsViewModel.userEventsFlow.collectAsState()
+					else eventsViewModel.eventsFlow.collectAsState()
 	LazyColumn(
 		modifier = Modifier.fillMaxSize(),
 		state = listState,

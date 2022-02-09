@@ -53,6 +53,15 @@ class EventsViewModel @Inject constructor(
 		MutableStateFlow<Resource<List<EventModel>>>(Resource.Empty)
 	val userEventsListResponsesFlow = _userEventsListResponseFlow.asStateFlow()
 
+	private var cachedEventList = emptyList<EventModel>()
+	private var cachedUserEventList = emptyList<EventModel>()
+
+	private var _eventsFlow = MutableStateFlow(cachedEventList)
+	val eventsFlow = _eventsFlow.asStateFlow()
+
+	private var _userEventsFlow = MutableStateFlow(cachedUserEventList)
+	val userEventsFlow = _userEventsFlow.asStateFlow()
+
 	fun fetchAllEvents() = _eventsListResponseFlow.emitInIO(viewModelScope) {
 		repository.fetchAllEvents()
 	}
@@ -69,5 +78,22 @@ class EventsViewModel @Inject constructor(
 
 	fun onSearch(query: String) {
 		searchQuery = query
+		_eventsFlow.value = cachedEventList.filter { filterSearchResult(it, query) }
+		_userEventsFlow.value = cachedUserEventList.filter { filterSearchResult(it, query) }
+	}
+
+	fun onResourceSuccess(events: List<EventModel>, isUserEvents: Boolean) {
+		if (isUserEvents) {
+			cachedUserEventList = events
+			_userEventsFlow.value = events
+			return
+		}
+		cachedEventList = events
+		_eventsFlow.value = events
+	}
+
+	private fun filterSearchResult(event: EventModel, query: String) = event.run {
+		title.contains(query.trim(), ignoreCase = true) ||
+		eventType.title.contains(query.trim(), ignoreCase = true)
 	}
 }
