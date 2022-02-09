@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
+import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.R
@@ -39,7 +40,8 @@ import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 @Composable
 fun Event(
 	eventViewModel: EventViewModel,
-	bottomSheetViewModel: BottomSheetViewModel
+	bottomSheetViewModel: BottomSheetViewModel,
+	navController: NavHostController
 ) {
 
 	val eventResource by eventViewModel.eventResourceFlow.collectAsState()
@@ -62,7 +64,8 @@ fun Event(
 					EventInfoWithList(
 						event = it.first.toEvent(it.second),
 						eventViewModel = eventViewModel,
-						bottomSheetViewModel = bottomSheetViewModel
+						bottomSheetViewModel = bottomSheetViewModel,
+						navController = navController
 					)
 				}
 			)
@@ -75,7 +78,8 @@ fun Event(
 private fun EventInfoWithList(
 	event: EventDetail,
 	eventViewModel: EventViewModel,
-	bottomSheetViewModel: BottomSheetViewModel
+	bottomSheetViewModel: BottomSheetViewModel,
+	navController: NavHostController
 ) {
 	val swipingState = rememberSwipeableState(SwipingStates.EXPANDED)
 
@@ -105,7 +109,8 @@ private fun EventInfoWithList(
 			EventShifts(
 				event = event,
 				eventViewModel = eventViewModel,
-				bottomSheetViewModel
+				bottomSheetViewModel = bottomSheetViewModel,
+				navController = navController
 			)
 		}
 	}
@@ -253,7 +258,8 @@ private fun EventInfo(
 private fun EventShifts(
 	event: EventDetail,
 	eventViewModel: EventViewModel,
-	bottomSheetViewModel: BottomSheetViewModel
+	bottomSheetViewModel: BottomSheetViewModel,
+	navController: NavHostController
 ) {
 	val coroutineScope = rememberCoroutineScope()
 	Column(
@@ -291,7 +297,8 @@ private fun EventShifts(
 											}
 										}
 									},
-									eventViewModel = eventViewModel
+									eventViewModel = eventViewModel,
+									navController = navController
 								),
 								coroutineScope
 							)

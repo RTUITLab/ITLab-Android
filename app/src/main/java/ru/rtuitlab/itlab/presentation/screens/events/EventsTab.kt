@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
+import ru.rtuitlab.itlab.presentation.screens.employees.Employee
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
@@ -64,8 +65,16 @@ fun EventsTab(
         composable(AppScreen.EventDetails.route) {
             Event(
                 eventViewModel = it.hiltViewModel(),
-                bottomSheetViewModel = bottomSheetViewModel
+                bottomSheetViewModel = bottomSheetViewModel,
+                navController = navController
             )
+        }
+
+        composable(AppScreen.EmployeeDetails.route) {
+            LaunchedEffect(navController) {
+                appBarViewModel.onNavigate(AppScreen.EmployeeDetails, navController)
+            }
+            Employee(employeeViewModel = it.hiltViewModel())
         }
     }
 }

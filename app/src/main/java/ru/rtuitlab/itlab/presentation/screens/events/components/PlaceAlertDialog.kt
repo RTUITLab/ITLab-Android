@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventRole
@@ -32,6 +33,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.ImagePosition
 import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
 import ru.rtuitlab.itlab.presentation.ui.components.LoadableButtonContent
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
+import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import java.util.*
 
 @ExperimentalPagerApi
@@ -43,6 +45,7 @@ fun PlaceAlertDialog(
 	salary: Int?,
 	eventViewModel: EventViewModel,
 	onResult: () -> Unit,
+	navController: NavHostController,
 	onDismissRequest: () -> Unit
 ) {
 
@@ -148,7 +151,8 @@ fun PlaceAlertDialog(
 									spacing = 0.dp
 								) {
 									InteractiveField(value = it.user.fullName) {
-
+										navController.navigate("${AppScreen.EmployeeDetails.navLink}/${it.user.id}")
+										onResult()
 									}
 								}
 

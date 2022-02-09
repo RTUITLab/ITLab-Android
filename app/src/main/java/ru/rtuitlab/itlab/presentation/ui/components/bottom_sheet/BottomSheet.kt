@@ -50,7 +50,8 @@ fun BottomSheet(
 					shift = shift.shift,
 					salaries = shift.salaries,
 					eventViewModel = shift.eventViewModel,
-					bottomSheetViewModel = viewModel
+					bottomSheetViewModel = viewModel,
+					navController = shift.navController
 				)
 			}
 			is AppBottomSheet.EventDescription -> {
