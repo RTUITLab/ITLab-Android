@@ -118,8 +118,8 @@ class EventsViewModel @Inject constructor(
 	}
 
 	fun onPastResourceSuccess(events: List<EventModel>) {
-		cachedPastEventList = events
-		_pastEventsFlow.value = events.filterNot { cachedEventList.contains(it) }
+		cachedPastEventList = events.filterNot { cachedEventList.contains(it) }
+		_pastEventsFlow.value = cachedPastEventList
 	}
 
 	private fun filterSearchResult(event: EventModel, query: String) = event.run {
