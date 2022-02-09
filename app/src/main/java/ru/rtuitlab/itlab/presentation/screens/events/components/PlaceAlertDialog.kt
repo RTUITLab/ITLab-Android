@@ -119,8 +119,8 @@ fun PlaceAlertDialog(
 				}
 				Spacer(modifier = Modifier.height(10.dp))
 				Divider()
-
-				if ((place.participants + place.invited + place.wishers).isNotEmpty()) {
+				val entireList = place.participants + place.invited + place.wishers
+				if (entireList.isNotEmpty()) {
 					Spacer(modifier = Modifier.height(10.dp))
 
 					LazyColumn(
@@ -128,7 +128,7 @@ fun PlaceAlertDialog(
 						verticalArrangement = Arrangement.spacedBy(5.dp)
 					) {
 						items(
-							items = place.participants + place.invited + place.wishers,
+							items = entireList,
 							key = { it.user.id }
 						) {
 							val role = it.eventRole.toUiRole()
@@ -142,10 +142,10 @@ fun PlaceAlertDialog(
 									imageWidth = 14.dp,
 									imageHeight = 14.dp,
 									opacity = 1f,
-									tint = when (role) {
-										is EventRole.Participant -> Color(0xFF44B90D)
-										is EventRole.Organizer -> Color(0xFFE4A400)
-										else -> Color.Gray
+									tint = when (place.participants.contains(it)) {
+										true -> Color(0xFF44B90D)
+										false -> Color(0xFFE4A400)
+//										else -> Color.Gray
 									},
 									verticalAlignment = Alignment.CenterVertically,
 									spacing = 0.dp

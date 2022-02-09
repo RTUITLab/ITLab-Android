@@ -149,7 +149,7 @@ fun EventsList(
 		contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
 	) {
 		items(
-			items = events,
+			items = events.sortedByDescending { it.beginTime },
 			key = { it.id }
 		) {
 			EventCard(
