@@ -50,7 +50,7 @@ fun FeedbackTopAppBar(
 
 			ExtendedTopAppBarBody(
 				options = listOf(
-					AppBarOption(
+					AppBarOption.Clickable(
 						icon = Icons.Default.Search,
 						onClick = {
 							searchActivated = true

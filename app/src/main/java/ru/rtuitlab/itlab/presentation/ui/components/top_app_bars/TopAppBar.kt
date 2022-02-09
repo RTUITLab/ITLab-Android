@@ -19,6 +19,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import kotlinx.coroutines.launch
+import ru.rtuitlab.itlab.presentation.ui.components.AppDropdownMenu
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppBarTab
 import java.util.*
@@ -192,26 +193,63 @@ fun OptionsRow(
 		verticalAlignment = Alignment.CenterVertically,
 	) {
 		options.forEach { option ->
-			IconButton(
-				modifier = Modifier
-					.height(36.dp)
-					.width(36.dp),
-				onClick = option.onClick
-			) {
-				Icon(
-					imageVector = option.icon,
-					contentDescription = option.contentDescription,
-					tint = MaterialTheme.colors.onSurface
-				)
+			when (option) {
+				is AppBarOption.Clickable -> {
+					IconButton(
+						modifier = Modifier
+							.height(36.dp)
+							.width(36.dp),
+						onClick = option.onClick
+					) {
+						Icon(
+							imageVector = option.icon,
+							contentDescription = option.contentDescription,
+							tint = MaterialTheme.colors.onSurface
+						)
+					}
+				}
+				is AppBarOption.Dropdown -> {
+					AppDropdownMenu(
+						anchor = {
+							IconButton(
+								modifier = Modifier
+									.height(36.dp)
+									.width(36.dp),
+								onClick = it
+							) {
+								Icon(
+									imageVector = option.icon,
+									contentDescription = option.contentDescription,
+									tint = MaterialTheme.colors.onSurface
+								)
+							}
+						},
+						content = {
+							option.dropdownMenuContent(it)
+						}
+					)
+				}
 			}
+
 		}
 	}
 }
 
-data class AppBarOption(
-	val icon: ImageVector,
-	val contentDescription: String? = null,
-	val onClick: () -> Unit
-)
+sealed class AppBarOption(
+	open val icon: ImageVector,
+	open val contentDescription: String? = null
+) {
+	class Clickable(
+		override val icon: ImageVector,
+		override val contentDescription: String? = null,
+		val onClick: () -> Unit
+	) : AppBarOption(icon, contentDescription)
+
+	class Dropdown(
+		override val icon: ImageVector,
+		override val contentDescription: String? = null,
+		val dropdownMenuContent: @Composable (collapseAction: () -> Unit) -> Unit
+	) : AppBarOption(icon, contentDescription)
+}
 
 val emptyBackAction: () -> Unit = {}

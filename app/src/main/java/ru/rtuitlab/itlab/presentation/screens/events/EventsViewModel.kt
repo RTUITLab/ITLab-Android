@@ -18,6 +18,7 @@ import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.repository.EventsRepository
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.SwipingStates
 import ru.rtuitlab.itlab.common.emitInIO
+import ru.rtuitlab.itlab.presentation.ui.extensions.nowAsIso8601
 import javax.inject.Inject
 
 @ExperimentalMaterialApi
@@ -53,14 +54,36 @@ class EventsViewModel @Inject constructor(
 		MutableStateFlow<Resource<List<EventModel>>>(Resource.Empty)
 	val userEventsListResponsesFlow = _userEventsListResponseFlow.asStateFlow()
 
+	private val _pastEventsListResponseFlow =
+		MutableStateFlow<Resource<List<EventModel>>>(Resource.Empty)
+	val pastEventsListResponseFlow = _pastEventsListResponseFlow.asStateFlow()
+
 	private var cachedEventList = emptyList<EventModel>()
 	private var cachedUserEventList = emptyList<EventModel>()
+	private var cachedPastEventList = emptyList<EventModel>()
 
 	private var _eventsFlow = MutableStateFlow(cachedEventList)
 	val eventsFlow = _eventsFlow.asStateFlow()
 
 	private var _userEventsFlow = MutableStateFlow(cachedUserEventList)
 	val userEventsFlow = _userEventsFlow.asStateFlow()
+
+	private var _pastEventsFlow = MutableStateFlow(cachedPastEventList)
+	val pastEventsFlow = _pastEventsFlow.asStateFlow()
+
+	private var _showPastEvents = MutableStateFlow(false)
+	val showPastEvents = _showPastEvents.asStateFlow()
+
+	fun toggleShowPastEvents(show: Boolean) = viewModelScope.launch {
+		_showPastEvents.value = show
+	}.also {
+		if (!show) return@also
+		_pastEventsListResponseFlow.emitInIO(viewModelScope) {
+			repository.fetchAllEvents(
+				end = nowAsIso8601()
+			)
+		}
+	}
 
 	fun fetchAllEvents() = _eventsListResponseFlow.emitInIO(viewModelScope) {
 		repository.fetchAllEvents()
@@ -80,6 +103,8 @@ class EventsViewModel @Inject constructor(
 		searchQuery = query
 		_eventsFlow.value = cachedEventList.filter { filterSearchResult(it, query) }
 		_userEventsFlow.value = cachedUserEventList.filter { filterSearchResult(it, query) }
+		if (showPastEvents.value)
+			_pastEventsFlow.value = cachedPastEventList.filter { filterSearchResult(it, query) }
 	}
 
 	fun onResourceSuccess(events: List<EventModel>, isUserEvents: Boolean) {
@@ -90,6 +115,11 @@ class EventsViewModel @Inject constructor(
 		}
 		cachedEventList = events
 		_eventsFlow.value = events
+	}
+
+	fun onPastResourceSuccess(events: List<EventModel>) {
+		cachedPastEventList = events
+		_pastEventsFlow.value = events.filterNot { cachedEventList.contains(it) }
 	}
 
 	private fun filterSearchResult(event: EventModel, query: String) = event.run {

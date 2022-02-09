@@ -31,7 +31,7 @@ fun EmployeesTopAppBar(
 
 	ExtendedTopAppBar(
 		options = listOf(
-			AppBarOption(
+			AppBarOption.Clickable(
 				icon = Icons.Default.Search,
 				onClick = {
 					searchActivated = true

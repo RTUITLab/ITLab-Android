@@ -13,7 +13,7 @@ private val DarkColorPalette = darkColors(
 	// Experimental
 	primary = AppColors.appBarsDark,
 	onPrimary = Color.White,
-	onSecondary = AppColors.accent.value
+	secondary = AppColors.accent.value
 )
 
 private val LightColorPalette = lightColors(

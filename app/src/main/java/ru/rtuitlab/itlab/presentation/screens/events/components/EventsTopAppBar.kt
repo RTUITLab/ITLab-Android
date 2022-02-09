@@ -1,28 +1,24 @@
 package ru.rtuitlab.itlab.presentation.screens.events.components
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.LabelledCheckBox
 import ru.rtuitlab.itlab.presentation.ui.components.SearchBar
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarOption
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarTabRow
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CollapsibleTopAppBar
 import ru.rtuitlab.itlab.presentation.utils.EventTab
-import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 
 @ExperimentalMaterialApi
 @ExperimentalMotionApi
@@ -39,23 +35,25 @@ fun EventsTopAppBar(
 			searchActivated = false
 		}
 
+	val showPastEventsChecked by eventsViewModel.showPastEvents.collectAsState()
 
 	CollapsibleTopAppBar(
 		title = stringResource(R.string.events),
 		options = listOf(
-			AppBarOption(
-				icon = Icons.Default.Settings,
-				onClick = {}
-			),
-			AppBarOption(
-				icon = Icons.Default.Notifications,
-				onClick = {}
-			),
-			AppBarOption(
+			AppBarOption.Dropdown(
 				icon = Icons.Default.FilterList,
-				onClick = {}
+				dropdownMenuContent = { collapseAction ->
+					LabelledCheckBox(
+						checked = showPastEventsChecked,
+						onCheckedChange = {
+							eventsViewModel.toggleShowPastEvents(it)
+							collapseAction()
+						},
+						label = stringResource(R.string.events_show_past)
+					)
+				}
 			),
-			AppBarOption(
+			AppBarOption.Clickable(
 				icon = Icons.Default.Search,
 				onClick = {
 					searchActivated = true

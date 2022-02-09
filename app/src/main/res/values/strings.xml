@@ -32,6 +32,7 @@
     <string name="role_other">Other</string>
     <string name="event_apply">Apply</string>
     <string name="application_successful">Application successful</string>
+    <string name="events_show_past">Show past events</string>
 
     <!--    Projects     -->
     <string name="projects">Projects</string>

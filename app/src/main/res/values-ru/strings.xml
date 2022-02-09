@@ -52,4 +52,5 @@
     <string name="event_apply">Подать заявку</string>
     <string name="application_successful">Заявка подана</string>
     <string name="role_other">Другое</string>
+    <string name="events_show_past">Показать прошедшие события</string>
 </resources>

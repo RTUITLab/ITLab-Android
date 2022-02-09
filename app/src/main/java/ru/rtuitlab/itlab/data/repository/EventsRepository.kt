@@ -9,16 +9,16 @@ class EventsRepository @Inject constructor(
 	private val eventsApi: EventsApi,
 	private val handler: ResponseHandler
 ) {
-	suspend fun fetchAllEvents() = handler {
-		eventsApi.getEvents()
-	}
 
 	suspend fun fetchPendingEvents() = handler {
 		val now = nowAsIso8601()
 		eventsApi.getEvents(begin = now)
 	}
 
-	suspend fun fetchAllEvents(begin: String, end: String) = handler {
+	suspend fun fetchAllEvents(
+		begin: String? = null,
+		end: String? = null
+	) = handler {
 		eventsApi.getEvents(begin, end)
 	}
 

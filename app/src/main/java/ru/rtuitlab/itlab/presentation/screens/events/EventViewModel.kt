@@ -67,7 +67,7 @@ class EventViewModel @Inject constructor(
 		eventsRepository.applyForPlace(placeId, roleId).handle(
 			onSuccess = {
 				onFinish()
-				showSnackbar(successMessage)
+				showSnackbar(it.errorBody()?.string() ?: successMessage)
 			},
 			onError = {
 				onFinish()

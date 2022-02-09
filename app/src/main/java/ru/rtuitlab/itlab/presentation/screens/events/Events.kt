@@ -1,9 +1,7 @@
 package ru.rtuitlab.itlab.presentation.screens.events
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -37,6 +35,7 @@ fun Events(
 ) {
 	val eventsResource by eventsViewModel.eventsListResponsesFlow.collectAsState()
 	val userEventsResource by eventsViewModel.userEventsListResponsesFlow.collectAsState()
+	val pastEventsResource by eventsViewModel.pastEventsListResponseFlow.collectAsState()
 
 	var isRefreshing by remember { mutableStateOf(false) }
 	var secondPageVisited by rememberSaveable { mutableStateOf(false) }
@@ -97,6 +96,13 @@ fun Events(
 									)
 							}
 						)
+						pastEventsResource.handle(
+							onLoading = { isRefreshing = true },
+							onSuccess = {
+								isRefreshing = false
+								eventsViewModel.onPastResourceSuccess(it)
+							}
+						)
 					}
 					EventTab.My -> {
 						userEventsResource.handle(
@@ -141,7 +147,9 @@ fun EventsList(
 	onNavigate: (event: EventModel) -> Unit
 ) {
 	val events by if (isUserEvents) eventsViewModel.userEventsFlow.collectAsState()
-					else eventsViewModel.eventsFlow.collectAsState()
+	else eventsViewModel.eventsFlow.collectAsState()
+	val pastEvents by eventsViewModel.pastEventsFlow.collectAsState()
+	val showPastEvents by eventsViewModel.showPastEvents.collectAsState()
 	LazyColumn(
 		modifier = Modifier.fillMaxSize(),
 		state = listState,
@@ -158,6 +166,23 @@ fun EventsList(
 				},
 				event = it
 			)
+		}
+		if (showPastEvents && !isUserEvents) {
+			if (events.isNotEmpty())
+				item {
+					Spacer(modifier = Modifier.height(16.dp))
+				}
+			items(
+				items = pastEvents.sortedByDescending { it.beginTime },
+				key = { it.id }
+			) {
+				EventCard(
+					modifier = Modifier.clickable {
+						onNavigate(it)
+					},
+					event = it
+				)
+			}
 		}
 	}
 }
