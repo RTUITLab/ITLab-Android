@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -39,7 +40,9 @@ onSurface = Color.Black,
 
 @Composable
 fun ITLabTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-	AppColors.isLightTheme = !darkTheme
+	LaunchedEffect(darkTheme) {
+		AppColors.isLightTheme = !darkTheme
+	}
 	val colors = if (darkTheme) {
 		DarkColorPalette
 	} else {
