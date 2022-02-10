@@ -8,7 +8,24 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+def keystorePropertiesFile = rootProject.file("keystore.properties");
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 android {
+    signingConfigs {
+        release {
+            storeFile file('../keystore.jks')
+            if (keystorePropertiesFile.exists()) {
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            } else {
+                storePassword System.getenv("SIGNING_STORE_PASSWORD")
+                keyAlias System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+            }
+        }
+    }
     compileSdkVersion 31
 
     defaultConfig {
@@ -23,6 +40,7 @@ android {
         ]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
@@ -36,19 +54,19 @@ android {
         def CONFIG_RAW = { k -> "${project.properties.get(k)}" }
 
         debug {
-            buildConfigField ("String", API_URI, CONFIG("debug.api.uri"))
-            buildConfigField ("String", ISSUER_URI, CONFIG("debug.issuer.uri"))
-            buildConfigField ("String", CLIENT_ID, CONFIG("client.id"))
-            buildConfigField ("String", REDIRECT_URI, CONFIG("redirect.uri"))
-            buildConfigField ("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
+            buildConfigField("String", API_URI, CONFIG("debug.api.uri"))
+            buildConfigField("String", ISSUER_URI, CONFIG("debug.issuer.uri"))
+            buildConfigField("String", CLIENT_ID, CONFIG("client.id"))
+            buildConfigField("String", REDIRECT_URI, CONFIG("redirect.uri"))
+            buildConfigField("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
         }
 
         release {
-            buildConfigField ("String", API_URI, CONFIG("release.api.uri"))
-            buildConfigField ("String", ISSUER_URI, CONFIG("release.issuer.uri"))
-            buildConfigField ("String", CLIENT_ID, CONFIG("client.id"))
-            buildConfigField ("String", REDIRECT_URI, CONFIG("redirect.uri"))
-            buildConfigField ("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
+            buildConfigField("String", API_URI, CONFIG("release.api.uri"))
+            buildConfigField("String", ISSUER_URI, CONFIG("release.issuer.uri"))
+            buildConfigField("String", CLIENT_ID, CONFIG("client.id"))
+            buildConfigField("String", REDIRECT_URI, CONFIG("redirect.uri"))
+            buildConfigField("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
 
             signingConfig signingConfigs.release
             minifyEnabled false
