@@ -7,6 +7,7 @@
     <string name="search">Search</string>
     <string name="delete">Delete</string>
     <string name="more">More</string>
+    <string name="cancel">Cancel</string>
 
     <!--    Events    -->
     <string name="events">Events</string>
@@ -33,6 +34,8 @@
     <string name="event_apply">Apply</string>
     <string name="application_successful">Application successful</string>
     <string name="events_show_past">Show past events</string>
+    <string name="events_choose_period">Choose date period</string>
+    <string name="events_clear_period">Clear date selection</string>
 
     <!--    Projects     -->
     <string name="projects">Projects</string>
@@ -50,9 +53,9 @@
     <string name="dial">Dial</string>
     <string name="save">Save</string>
     <string name="study_group">Study group</string>
-    <string name="vk_id">ID VK</string>
-    <string name="discord_id">Discord ID</string>
-    <string name="skype_id">Skype ID</string>
+    <string name="vk_id">VK id</string>
+    <string name="discord_id" translatable="false">Discord</string>
+    <string name="skype_id" translatable="false">Skype</string>
 
     <!--    Devices    -->
     <string name="devices">Devices</string>

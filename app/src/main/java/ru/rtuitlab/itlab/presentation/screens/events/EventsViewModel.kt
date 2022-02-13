@@ -12,13 +12,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.repository.EventsRepository
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.SwipingStates
 import ru.rtuitlab.itlab.common.emitInIO
+import ru.rtuitlab.itlab.presentation.ui.extensions.minus
 import ru.rtuitlab.itlab.presentation.ui.extensions.nowAsIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.toMoscowDateTime
 import javax.inject.Inject
 
 @ExperimentalMaterialApi
@@ -29,13 +34,13 @@ class EventsViewModel @Inject constructor(
 	private val authStateStorage: AuthStateStorage
 ) : ViewModel() {
 
-	private lateinit var userId: String
+	private var userId = runBlocking { authStateStorage.userIdFlow.first() }
 
-	init {
-		viewModelScope.launch {
-			userId = authStateStorage.userIdFlow.first()
-		}
-	}
+	var beginEventsDate = Clock.System.now().minus(7, DateTimeUnit.DAY).toEpochMilliseconds()
+		private set
+	var endEventsDate = Clock.System.now().toEpochMilliseconds()
+		private set
+
 
 	val pagerState = PagerState()
 
@@ -43,6 +48,10 @@ class EventsViewModel @Inject constructor(
 
 	val allEventsListState = LazyListState()
 	val userEventsListState = LazyListState()
+
+	private var _isDateSelectionMade = MutableStateFlow(false)
+	val isDateSelectionMade = _isDateSelectionMade.asStateFlow()
+
 
 	private val _eventsListResponseFlow =
 		MutableStateFlow<Resource<List<EventModel>>>(Resource.Loading)
@@ -85,16 +94,28 @@ class EventsViewModel @Inject constructor(
 		}
 	}
 
-	fun fetchAllEvents() = _eventsListResponseFlow.emitInIO(viewModelScope) {
-		repository.fetchAllEvents()
+	fun fetchAllEvents(begin: String? = null, end: String? = null) = _eventsListResponseFlow.emitInIO(viewModelScope) {
+		repository.fetchAllEvents(begin, end)
 	}
 
 	fun fetchPendingEvents() = _eventsListResponseFlow.emitInIO(viewModelScope) {
+		_isDateSelectionMade.value = false
 		repository.fetchPendingEvents()
 	}
 
 	fun fetchUserEvents(begin: String? = null, end: String? = null) = _userEventsListResponseFlow.emitInIO(viewModelScope) {
 		repository.fetchUserEvents(userId, begin, end)
+	}
+
+	fun setEventsDates(begin: Long, end: Long) {
+		_showPastEvents.value = false
+		_isDateSelectionMade.value = true
+		beginEventsDate = begin
+		endEventsDate = end
+		fetchAllEvents(
+			begin = beginEventsDate.toMoscowDateTime().date.toString(),
+			end = endEventsDate.toMoscowDateTime().date.toString()
+		)
 	}
 
 	private var searchQuery = ""

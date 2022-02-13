@@ -19,9 +19,7 @@
     <string name="event">%1$s</string>
     <string name="event_new">Новое событие</string>
     <string name="study_group">Учебная группа</string>
-    <string name="vk_id">ID Вконтакте</string>
-    <string name="discord_id">ID Дискорд</string>
-    <string name="skype_id">ID Скайп</string>
+    <string name="vk_id">ВК</string>
     <string name="search">Поиск</string>
     <string name="at">в</string>
     <string name="mark_as_read">Пометить как прочитанное</string>
@@ -53,4 +51,7 @@
     <string name="application_successful">Заявка подана</string>
     <string name="role_other">Другое</string>
     <string name="events_show_past">Показать прошедшие события</string>
+    <string name="cancel">Отмена</string>
+    <string name="events_choose_period">Выбрать диапазон дат</string>
+    <string name="events_clear_period">Очистить диапазон дат</string>
 </resources>
