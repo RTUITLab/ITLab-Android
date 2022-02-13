@@ -38,9 +38,12 @@ fun BottomSheet(
 
 	Column(
 		modifier = Modifier
-			.padding(15.dp)
-			.fillMaxWidth()
-			.fillMaxHeight(.93f),
+			.padding(
+				top = 15.dp,
+				start = 15.dp,
+				end = 15.dp
+			)
+			.fillMaxWidth(),
 		horizontalAlignment = Alignment.CenterHorizontally
 	) {
 		Icon(

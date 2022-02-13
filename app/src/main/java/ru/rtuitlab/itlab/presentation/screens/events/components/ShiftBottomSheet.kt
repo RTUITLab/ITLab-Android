@@ -50,7 +50,7 @@ fun ShiftBottomSheet(
 	}
 	Spacer(Modifier.height(10.dp))
 	LazyColumn(
-		modifier = Modifier.fillMaxSize(),
+		modifier = Modifier.fillMaxWidth(),
 		verticalArrangement = Arrangement.spacedBy(10.dp),
 		contentPadding = PaddingValues(top = 10.dp, bottom = 15.dp)
 	) {
