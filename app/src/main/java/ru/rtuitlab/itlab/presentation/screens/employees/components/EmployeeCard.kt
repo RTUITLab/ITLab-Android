@@ -57,12 +57,7 @@ fun EmployeeCard(
 						imageHeight = 12.dp,
 						spacing = 0.dp
 					) {
-						InteractiveField(value = email) {
-							val intent = Intent(Intent.ACTION_SENDTO).apply {
-								data = Uri.parse("mailto:$email")
-							}
-							context.startActivity(intent)
-						}
+						EmailField(value = email, context = LocalContext.current)
 					}
 					Spacer(Modifier.height(8.dp))
 				}

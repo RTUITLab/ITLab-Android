@@ -54,4 +54,7 @@
     <string name="cancel">Отмена</string>
     <string name="events_choose_period">Выбрать диапазон дат</string>
     <string name="events_clear_period">Очистить диапазон дат</string>
+    <string name="confirm_yes">Да</string>
+    <string name="are_you_sure">Вы уверены?</string>
+    <string name="email_are_you_sure">Вы уверены, что хотите перейти в приложение почты?</string>
 </resources>

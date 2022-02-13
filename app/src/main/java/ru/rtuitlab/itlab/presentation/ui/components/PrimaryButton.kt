@@ -20,7 +20,7 @@ fun PrimaryButton(
 	modifier: Modifier = Modifier,
 	onClick: () -> Unit,
 	text: String,
-	textWrapper: @Composable RowScope.(text :@Composable () -> Unit) -> Unit
+	textWrapper: (@Composable RowScope.(text :@Composable () -> Unit) -> Unit)? = null
 ) {
 	Button(
 		modifier = modifier
@@ -34,14 +34,23 @@ fun PrimaryButton(
 			pressedElevation = 0.dp
 		)
 	) {
-		textWrapper {
+		if (textWrapper != null)
+			textWrapper {
+				Text(
+					text = text.uppercase(Locale.getDefault()),
+					color = AppColors.accent.collectAsState().value,
+					fontSize = 14.sp,
+					fontWeight = FontWeight(500),
+					lineHeight = 22.sp
+				)
+			}
+		else
 			Text(
-				text = text?.uppercase(Locale.getDefault()) ?: "",
+				text = text.uppercase(Locale.getDefault()),
 				color = AppColors.accent.collectAsState().value,
 				fontSize = 14.sp,
 				fontWeight = FontWeight(500),
 				lineHeight = 22.sp
 			)
-		}
 	}
 }
