@@ -18,6 +18,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventDetailsBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftBottomSheet
+import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileSettingsBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
 @ExperimentalPagerApi
@@ -28,6 +29,12 @@ fun BottomSheet(
 ) {
 	val currentSheet by viewModel.currentBottomSheet.collectAsState()
 	val sheetIsVisible by viewModel.visibilityAsState.collectAsState()
+
+	val coroutineScope = rememberCoroutineScope()
+	if (sheetIsVisible)
+		BackHandler {
+			viewModel.hide(coroutineScope)
+		}
 
 	Column(
 		modifier = Modifier
@@ -57,15 +64,11 @@ fun BottomSheet(
 			is AppBottomSheet.EventDescription -> {
 				EventDetailsBottomSheet(markdownText = (currentSheet as AppBottomSheet.EventDescription).markdown)
 			}
+			is AppBottomSheet.ProfileSettings -> {
+				ProfileSettingsBottomSheet()
+			}
 			else -> {}
 		}
 	}
-	val coroutineScope = rememberCoroutineScope()
-	if (sheetIsVisible)
-		BackHandler(
-			enabled = sheetIsVisible
-		) {
-			viewModel.hide(coroutineScope)
-		}
 
 }

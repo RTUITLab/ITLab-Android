@@ -19,7 +19,6 @@ import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 fun EmployeesTab(
 	navState: MutableState<Bundle>,
 	resetTabTask: RunnableHolder,
-	onLogoutEvent: () -> Unit,
 	appBarViewModel: AppBarViewModel = viewModel(),
 	employeesViewModel: EmployeesViewModel = viewModel()
 ) {
@@ -55,7 +54,7 @@ fun EmployeesTab(
         }
         composable(AppScreen.Profile.route) {
             appBarViewModel.onNavigate(AppScreen.Profile, navController)
-            Profile(it.hiltViewModel(), onLogoutEvent)
+            Profile(it.hiltViewModel())
         }
     }
 }

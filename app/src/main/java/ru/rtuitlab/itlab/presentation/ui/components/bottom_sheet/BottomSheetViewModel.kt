@@ -1,16 +1,13 @@
 package ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import javax.inject.Inject
@@ -32,8 +29,8 @@ class BottomSheetViewModel @Inject constructor(
 
 	fun show(sheet: AppBottomSheet, scope: CoroutineScope) = scope.launch {
 		_currentBottomSheet.value = sheet
-		bottomSheetState.show()
 		_visibilityAsState.value = true
+		bottomSheetState.show()
 	}
 
 	fun hide(scope: CoroutineScope) = scope.launch {

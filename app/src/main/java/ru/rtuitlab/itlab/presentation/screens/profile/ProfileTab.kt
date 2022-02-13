@@ -4,19 +4,19 @@ import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
-import ru.rtuitlab.itlab.presentation.utils.hiltViewModel
 
 @Composable
 fun ProfileTab(
 	navState: MutableState<Bundle>,
 	resetTabTask: RunnableHolder,
-	onLogoutEvent: () -> Unit
+    profileViewModel: ProfileViewModel = viewModel()
 ) {
     val navController = rememberNavController()
 
@@ -41,7 +41,7 @@ fun ProfileTab(
 
     NavHost(navController, startDestination = AppScreen.Profile.route) {
         composable(AppScreen.Profile.route) {
-            Profile(it.hiltViewModel(), onLogoutEvent)
+            Profile(profileViewModel)
         }
     }
 }

@@ -19,6 +19,10 @@ val typography = Typography(
 		fontWeight = FontWeight.Medium,
 		fontSize = 32.sp
 	),
+	h4 = TextStyle(
+		fontWeight = FontWeight.Medium,
+		fontSize = 20.sp
+	),
 	h6 = TextStyle(
 		fontWeight = FontWeight.Medium,
 		fontSize = 17.sp
@@ -32,5 +36,9 @@ val typography = Typography(
 		fontWeight = FontWeight.Normal,
 		fontSize = 14.sp,
 		lineHeight = 20.sp
+	),
+	caption = TextStyle(
+		fontSize = 16.sp,
+		lineHeight = 24.sp
 	)
 )

@@ -7,7 +7,7 @@
     <string name="feedback">Обратная связь</string>
     <string name="profile">Профиль</string>
     <string name="login">Войти</string>
-    <string name="logout">Выйти</string>
+    <string name="logout">Выйти из аккаунта</string>
     <string name="first_name">Имя</string>
     <string name="middle_name">Отчество</string>
     <string name="last_name">Фамилия</string>

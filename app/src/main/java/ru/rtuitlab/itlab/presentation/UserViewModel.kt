@@ -7,11 +7,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import ru.rtuitlab.itlab.common.Resource
+import ru.rtuitlab.itlab.common.emitInIO
 import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.data.repository.UsersRepository
-import ru.rtuitlab.itlab.common.emitInIO
 import ru.rtuitlab.itlab.presentation.ui.extensions.minus
 import ru.rtuitlab.itlab.presentation.ui.extensions.toMoscowDateTime
 
@@ -25,7 +26,7 @@ abstract class UserViewModel (
 	var endEventsDate = Clock.System.now().toEpochMilliseconds()
 		private set
 
-	private val _userCredentialsFlow = MutableStateFlow<Resource<UserResponse>>(Resource.Loading)
+	protected val _userCredentialsFlow = MutableStateFlow<Resource<UserResponse>>(Resource.Loading)
 	val userCredentialsFlow = _userCredentialsFlow.asStateFlow().also { fetchUserCredentials() }
 
 	private val _userDevicesFlow = MutableStateFlow<Resource<List<DeviceModel>>>(Resource.Loading)
@@ -33,6 +34,9 @@ abstract class UserViewModel (
 
 	private val _userEventsFlow = MutableStateFlow<Resource<List<UserEventModel>>>(Resource.Loading)
 	val userEventsFlow = _userEventsFlow.asStateFlow()//.also { fetchUserEvents() }
+
+	private val _properties = MutableStateFlow<Resource<List<UserPropertyTypeModel>>>(Resource.Empty)
+	val properties = _properties.asStateFlow().also { fetchPropertyTypes() }
 
 	private fun fetchUserCredentials() = _userCredentialsFlow.emitInIO(viewModelScope) {
 		usersRepo.fetchUserCredentials(userId)
@@ -48,6 +52,10 @@ abstract class UserViewModel (
 			beginEventsDate.toMoscowDateTime().date.toString(),
 			endEventsDate.toMoscowDateTime().toString()
 		)
+	}
+
+	private fun fetchPropertyTypes() = _properties.emitInIO(viewModelScope) {
+		usersRepo.fetchPropertyTypes()
 	}
 
 	fun setEventsDates(beginDate: Long, endDate: Long) {

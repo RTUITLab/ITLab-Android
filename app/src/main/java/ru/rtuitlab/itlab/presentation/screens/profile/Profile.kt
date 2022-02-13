@@ -24,8 +24,7 @@ import java.util.*
 
 @Composable
 fun Profile(
-	profileViewModel: ProfileViewModel,
-	onLogoutEvent: () -> Unit
+	profileViewModel: ProfileViewModel
 ) {
 	val userCredentialsResource by profileViewModel.userCredentialsFlow.collectAsState()
 //	val userDevicesResource by profileViewModel.userDevicesFlow.collectAsState()
@@ -41,7 +40,6 @@ fun Profile(
 			/*ProfileCredentials(userCredentialsResource)
 			UserDevices(userDevicesResource)
 			UserEvents(profileViewModel, userEventsResource)*/
-			LogoutButton(onLogoutEvent)
 	}
 }
 

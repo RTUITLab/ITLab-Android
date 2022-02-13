@@ -22,6 +22,15 @@ data class UserResponse (
 			vkId = properties.firstOrNull { it.userPropertyType.title == "VKID" }?.value,
 			group = properties.firstOrNull { it.userPropertyType.title == "Учебная группа" }?.value,
 			skypeId = properties.firstOrNull { it.userPropertyType.title == "Skype" }?.value,
+			properties = properties
+		)
+
+	fun getEditRequest() =
+		UserEditRequest(
+			firstName = firstName,
+			lastName = lastName,
+			middleName = middleName,
+			phoneNumber = phoneNumber
 		)
 
 	val fullName = "${firstName ?: ""} ${lastName ?: ""}"
@@ -37,5 +46,6 @@ data class User(
 	val vkId : String? = null,
 	val group: String? = null,
 	val discordId: String? = null,
-	val skypeId: String? = null
+	val skypeId: String? = null,
+	val properties: List<UserPropertyModel>? = null
 )

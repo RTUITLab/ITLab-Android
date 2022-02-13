@@ -25,6 +25,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.FeedbackTab
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileTab
+import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.projects.ProjectsTab
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
@@ -42,7 +43,6 @@ import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
 @ExperimentalPagerApi
 @Composable
 fun ITLabApp(
-	onLogoutEvent: () -> Unit,
 	appBarViewModel: AppBarViewModel = viewModel(),
 	appTabsViewModel: AppTabsViewModel = viewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = viewModel()
@@ -95,18 +95,8 @@ fun ITLabApp(
 						text = stringResource(currentScreen.screenNameResource),
 						onBackAction = onBackAction
 					)
-					AppScreen.Profile -> BasicTopAppBar(
+					AppScreen.Profile -> ProfileTopAppBar(
 						text = stringResource(currentScreen.screenNameResource),
-						options = listOf(
-							// ITLab v2
-							/*AppBarOption(
-								icon = Icons.Default.Settings,
-								contentDescription = null,
-								onClick = {
-									profileViewModel.onOptionsClick()
-								}
-							)*/
-						),
 						onBackAction = onBackAction
 					)
 					AppScreen.Employees -> EmployeesTopAppBar()
@@ -137,14 +127,16 @@ fun ITLabApp(
 						AppTab.Devices -> DevicesTab(devicesNavState, devicesResetTask)
 						AppTab.Employees -> EmployeesTab(
 							employeesNavState,
-							employeesResetTask,
-							onLogoutEvent
+							employeesResetTask
 						)
 						AppTab.Feedback -> FeedbackTab(
 							navState = feedbackNavState,
 							resetTabTask = feedbackResetTask
 						)
-						AppTab.Profile -> ProfileTab(profileNavState, profileResetTask, onLogoutEvent)
+						AppTab.Profile -> ProfileTab(
+							navState = profileNavState,
+							resetTabTask = profileResetTask
+						)
 					}
 				}
 

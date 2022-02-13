@@ -13,14 +13,11 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -28,13 +25,9 @@ import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventRole
 import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Place
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
-import ru.rtuitlab.itlab.presentation.ui.components.ImagePosition
-import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
-import ru.rtuitlab.itlab.presentation.ui.components.LoadableButtonContent
+import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
-import java.util.*
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
@@ -190,41 +183,28 @@ fun PlaceAlertDialog(
 
 				Spacer(modifier = Modifier.height(5.dp))
 				val resources = LocalContext.current.resources
-				Button(
+				PrimaryButton(
 					modifier = Modifier
-						.align(Alignment.End)
-						.clipToBounds(),
+						.align(Alignment.End),
 					onClick = {
 						if (!isLoading)
 							isLoading = true
-							eventViewModel.onPlaceApply(
-								place.id,
-								selectedSegment.id,
-								successMessage = resources.getString(R.string.application_successful)
-							) {
-								isLoading = false
-								onResult()
-							}
+						eventViewModel.onPlaceApply(
+							place.id,
+							selectedSegment.id,
+							successMessage = resources.getString(R.string.application_successful)
+						) {
+							isLoading = false
+							onResult()
+						}
 					},
-					colors = ButtonDefaults.buttonColors(
-						backgroundColor = Color.Transparent
-					),
-					elevation = ButtonDefaults.elevation(
-						defaultElevation = 0.dp,
-						pressedElevation = 0.dp
-					)
-				) {
+					text = stringResource(R.string.event_apply)
+				) { text ->
 					LoadableButtonContent(
 						isLoading = isLoading,
 						strokeWidth = 2.dp
 					) {
-						Text(
-							text = stringResource(R.string.event_apply).uppercase(Locale.getDefault()),
-							color = AppColors.accent.collectAsState().value,
-							fontSize = 14.sp,
-							fontWeight = FontWeight(500),
-							lineHeight = 22.sp
-						)
+						text()
 					}
 				}
 			}

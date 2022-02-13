@@ -2,6 +2,8 @@ package ru.rtuitlab.itlab.data.repository
 
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyEditRequest
 import javax.inject.Inject
 
 class UsersRepository @Inject constructor(
@@ -28,5 +30,17 @@ class UsersRepository @Inject constructor(
         usersApi.getUsers()
     }
 
-    suspend fun getUsers() = usersApi.getUsers()
+    suspend fun editUserInfo(info: UserEditRequest) = handler {
+        usersApi.editUserInfo(info)
+    }
+
+    suspend fun fetchPropertyTypes() = handler {
+        usersApi.getPropertyTypes()
+    }
+
+    suspend fun editUserProperty(id: String, value: String) = handler {
+        usersApi.editUserProperty(
+            UserPropertyEditRequest(id, value)
+        )
+    }
 }

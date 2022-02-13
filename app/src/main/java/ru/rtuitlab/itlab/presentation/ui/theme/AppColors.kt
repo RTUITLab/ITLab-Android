@@ -24,7 +24,7 @@ object AppColors {
 		else Color.White.copy(alpha = .6f)
 	)
 	val greyText = _greyText.asStateFlow()
-	val red = Color(0xFFDC3545)
+	val red = Color(0xFFFF3B30)
 	val tag = Color(0xFFE0E0E0)
 	val appBarsLight = Color.White
 	val appBarsDark = Color.Black

@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentColor
@@ -14,15 +15,21 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun IconizedRow(
+	modifier: Modifier = Modifier,
 	painter: Painter,
 	imagePosition: ImagePosition = ImagePosition.LEFT,
 	imageWidth: Dp = 24.dp,
 	imageHeight: Dp = 24.dp,
 	contentDescription: String,
 	spacing: Dp = 8.dp,
-	content: @Composable RowScope.() -> Unit
+	tint: Color? = null,
+	opacity: Float = .3f,
+	content: @Composable () -> Unit
 ) {
-	Row(verticalAlignment = Alignment.CenterVertically) {
+	Row(
+		modifier = modifier,
+		verticalAlignment = Alignment.CenterVertically
+	) {
 		if (imagePosition == ImagePosition.RIGHT)
 			content()
 		Icon(
@@ -30,7 +37,8 @@ fun IconizedRow(
 				.width(imageWidth)
 				.height(imageHeight),
 			painter = painter,
-			contentDescription = contentDescription
+			contentDescription = contentDescription,
+			tint = tint?.copy(opacity) ?: LocalContentColor.current.copy(opacity)
 		)
 		Spacer(Modifier.width(spacing))
 		if (imagePosition == ImagePosition.LEFT)
@@ -50,7 +58,7 @@ fun IconizedRow(
 	verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
 	tint: Color? = null,
 	modifier: Modifier = Modifier,
-	content: @Composable RowScope.() -> Unit
+	content: @Composable () -> Unit
 ) {
 	Row(
 		modifier = modifier,
@@ -60,9 +68,10 @@ fun IconizedRow(
 			content()
 			Spacer(modifier = Modifier.width(spacing))
 		}
-		Box(
-			modifier = modifier
-				.padding(top = if (verticalAlignment == Alignment.Top) 4.dp else 0.dp)
+		Column(
+			modifier = Modifier
+				.padding(top = if (verticalAlignment == Alignment.Top) 4.dp else 0.dp),
+			verticalArrangement = if (verticalAlignment == Alignment.Top) Arrangement.Top else Arrangement.Center
 		) {
 			Icon(
 				modifier = Modifier

@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
 				Surface(color = MaterialTheme.colors.background) {
 					when (authState?.isAuthorized) {
 						true -> {
-							ITLabApp(authViewModel::onLogoutEvent)
+							ITLabApp()
 						}
 						false -> AuthScreen { authViewModel.onLoginEvent(authPageLauncher) }
 						null -> {}

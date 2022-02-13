@@ -90,8 +90,7 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 				if (user.group != null) {
 					IconizedRow(
 						painter = painterResource(R.drawable.ic_hat),
-						contentDescription = stringResource(R.string.study_group),
-						spacing = 0.dp
+						contentDescription = stringResource(R.string.study_group)
 					) {
 						Text(text = user.group)
 					}
@@ -100,8 +99,7 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 				if (user.vkId != null) {
 					IconizedRow(
 						painter = painterResource(R.drawable.ic_vk),
-						contentDescription = stringResource(R.string.vk_id),
-						spacing = 0.dp
+						contentDescription = stringResource(R.string.vk_id)
 					) {
 						Text(text = user.vkId)
 					}
@@ -111,8 +109,7 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 				if (user.discordId != null) {
 					IconizedRow(
 						painter = painterResource(R.drawable.ic_discord),
-						contentDescription = stringResource(R.string.discord_id),
-						spacing = 0.dp
+						contentDescription = stringResource(R.string.discord_id)
 					) {
 						Text(text = user.discordId)
 					}
@@ -122,8 +119,7 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 				if (user.skypeId != null) {
 					IconizedRow(
 						painter = painterResource(R.drawable.ic_skype),
-						contentDescription = stringResource(R.string.skype_id),
-						spacing = 0.dp
+						contentDescription = stringResource(R.string.skype_id)
 					) {
 						Text(
 							text = user.skypeId

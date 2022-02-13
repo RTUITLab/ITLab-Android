@@ -2,9 +2,7 @@ package ru.rtuitlab.itlab.data.remote.api.users
 
 import retrofit2.http.*
 import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceModel
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserInfoModel
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
+import ru.rtuitlab.itlab.data.remote.api.users.models.*
 
 interface UsersApi {
 
@@ -33,4 +31,17 @@ interface UsersApi {
 
     @GET("user?count=-1")
     suspend fun getUsers() : List<UserResponse>
+
+    @PUT("/api/account")
+    suspend fun editUserInfo(
+        @Body info: UserEditRequest
+    ) : UserResponse
+
+    @GET("/api/account/property/type")
+    suspend fun getPropertyTypes() : List<UserPropertyTypeModel>
+
+    @PUT("/api/account/property")
+    suspend fun editUserProperty(
+        @Body property: UserPropertyEditRequest
+    ) : UserPropertyModel
 }
