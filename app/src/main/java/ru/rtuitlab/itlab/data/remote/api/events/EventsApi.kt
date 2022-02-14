@@ -9,6 +9,7 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventDetailDto
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventRoleModel
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventSalary
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 
 interface EventsApi {
 
@@ -23,7 +24,7 @@ interface EventsApi {
 		@Path("userId") userId: String,
 		@Query("begin") begin: String? = null,
 		@Query("end") end: String? = null
-	) : List<EventModel>
+	): List<UserEventModel>
 
 	@GET("Event/{eventId}")
 	suspend fun getEvent(

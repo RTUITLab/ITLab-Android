@@ -19,8 +19,8 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventCard
+import ru.rtuitlab.itlab.presentation.screens.events.components.UserEventCard
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CollapsibleScrollArea
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.heightDelta
@@ -31,7 +31,7 @@ import ru.rtuitlab.itlab.presentation.utils.EventTab
 @Composable
 fun Events(
 	eventsViewModel: EventsViewModel,
-	onNavigate: (event: EventModel) -> Unit
+	onNavigate: (id: String, title: String) -> Unit
 ) {
 	val eventsResource by eventsViewModel.eventsListResponsesFlow.collectAsState()
 	val userEventsResource by eventsViewModel.userEventsListResponsesFlow.collectAsState()
@@ -84,13 +84,12 @@ fun Events(
 							},
 							onSuccess = {
 								isRefreshing = false
-								eventsViewModel.onResourceSuccess(it, false)
+								eventsViewModel.onResourceSuccess(it)
 								if (it.isEmpty())
 									LoadingError(msg = stringResource(R.string.no_pending_events))
 								else
 									EventsList(
 										eventsViewModel = eventsViewModel,
-										isUserEvents = false,
 										listState = eventsViewModel.allEventsListState,
 										onNavigate = onNavigate
 									)
@@ -115,13 +114,12 @@ fun Events(
 							},
 							onSuccess = {
 								isRefreshing = false
-								eventsViewModel.onResourceSuccess(it, true)
+								eventsViewModel.onUserResourceSuccess(it)
 								if (it.isEmpty())
 									LoadingError(msg = stringResource(R.string.no_user_events))
 								else
-									EventsList(
+									UserEventsList(
 										eventsViewModel = eventsViewModel,
-										isUserEvents = true,
 										listState = eventsViewModel.userEventsListState,
 										onNavigate = onNavigate
 									)
@@ -142,12 +140,10 @@ fun Events(
 @Composable
 fun EventsList(
 	eventsViewModel: EventsViewModel,
-	isUserEvents: Boolean,
 	listState: LazyListState,
-	onNavigate: (event: EventModel) -> Unit
+	onNavigate: (id: String, title: String) -> Unit
 ) {
-	val events by if (isUserEvents) eventsViewModel.userEventsFlow.collectAsState()
-	else eventsViewModel.eventsFlow.collectAsState()
+	val events by eventsViewModel.eventsFlow.collectAsState()
 	val pastEvents by eventsViewModel.pastEventsFlow.collectAsState()
 	val showPastEvents by eventsViewModel.showPastEvents.collectAsState()
 	LazyColumn(
@@ -162,12 +158,12 @@ fun EventsList(
 		) {
 			EventCard(
 				modifier = Modifier.clickable {
-					onNavigate(it)
+					onNavigate(it.id, it.title)
 				},
 				event = it
 			)
 		}
-		if (showPastEvents && !isUserEvents) {
+		if (showPastEvents) {
 			if (events.isNotEmpty())
 				item {
 					Spacer(modifier = Modifier.height(16.dp))
@@ -178,11 +174,40 @@ fun EventsList(
 			) {
 				EventCard(
 					modifier = Modifier.clickable {
-						onNavigate(it)
+						onNavigate(it.id, it.title)
 					},
 					event = it
 				)
 			}
+		}
+	}
+}
+
+@ExperimentalPagerApi
+@ExperimentalMaterialApi
+@Composable
+fun UserEventsList(
+	eventsViewModel: EventsViewModel,
+	listState: LazyListState,
+	onNavigate: (id: String, title: String) -> Unit
+) {
+	val events by eventsViewModel.userEventsFlow.collectAsState()
+	LazyColumn(
+		modifier = Modifier.fillMaxSize(),
+		state = listState,
+		verticalArrangement = Arrangement.spacedBy(10.dp),
+		contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
+	) {
+		items(
+			items = events.sortedByDescending { it.beginTime },
+			key = { it.id }
+		) {
+			UserEventCard(
+				modifier = Modifier.clickable {
+					onNavigate(it.id, it.title)
+				},
+				event = it
+			)
 		}
 	}
 }

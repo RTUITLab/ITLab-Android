@@ -55,9 +55,9 @@ fun EventsTab(
             LaunchedEffect(navController) {
                 appBarViewModel.onNavigate(AppScreen.Events, navController)
             }
-            Events(eventsViewModel) { event ->
-                val screen = AppScreen.EventDetails(event.title)
-                navController.navigate("${screen.navLink}/${event.id}")
+            Events(eventsViewModel) { id, title ->
+                val screen = AppScreen.EventDetails(title)
+                navController.navigate("${screen.navLink}/$id")
                 appBarViewModel.onNavigate(screen, navController)
             }
         }
@@ -74,7 +74,14 @@ fun EventsTab(
             LaunchedEffect(navController) {
                 appBarViewModel.onNavigate(AppScreen.EmployeeDetails, navController)
             }
-            Employee(employeeViewModel = it.hiltViewModel())
+            Employee(
+                employeeViewModel = it.hiltViewModel(),
+                bottomSheetViewModel = bottomSheetViewModel
+            ) { id, title ->
+                val screen = AppScreen.EventDetails(title)
+                navController.navigate("${screen.navLink}/$id")
+                appBarViewModel.onNavigate(screen, navController)
+            }
         }
     }
 }

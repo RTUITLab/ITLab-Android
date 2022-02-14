@@ -53,6 +53,10 @@ fun EventsTopAppBar(
 
 	val isDateSelectionMade by eventsViewModel.isDateSelectionMade.collectAsState()
 
+
+	val beginEventsDate by eventsViewModel.beginEventsDate.collectAsState()
+	val endEventsDate by eventsViewModel.endEventsDate.collectAsState()
+
 	CollapsibleTopAppBar(
 		title = stringResource(R.string.events),
 		options = listOf(
@@ -76,7 +80,7 @@ fun EventsTopAppBar(
 									.Builder
 									.dateRangePicker()
 									.setSelection(
-										Pair(eventsViewModel.beginEventsDate, eventsViewModel.endEventsDate)
+										Pair(beginEventsDate, endEventsDate)
 									)
 									.setTheme(R.style.ThemeOverlay_MaterialComponents_MaterialCalendar)
 									.build()

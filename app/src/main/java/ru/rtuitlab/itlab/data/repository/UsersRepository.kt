@@ -18,10 +18,6 @@ class UsersRepository @Inject constructor(
         usersApi.getUser(userId)
     }
 
-    suspend fun fetchUserDevices(userId: String) = handler {
-        usersApi.getUserDevices(userId)
-    }
-
     suspend fun fetchUserEvents(userId: String, beginTime: String, endTime: String) = handler {
         usersApi.getUserEvents(userId, beginTime, endTime)
     }

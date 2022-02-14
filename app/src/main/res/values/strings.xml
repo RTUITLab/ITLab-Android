@@ -39,6 +39,8 @@
     <string name="events_show_past">Show past events</string>
     <string name="events_choose_period">Choose date period</string>
     <string name="events_clear_period">Clear date selection</string>
+    <string name="user_events_participation">Events participation</string>
+    <string name="events_nothing_in_period">No events in selected period</string>
 
     <!--    Projects     -->
     <string name="projects">Projects</string>

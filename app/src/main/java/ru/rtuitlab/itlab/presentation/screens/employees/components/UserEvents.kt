@@ -1,80 +1,65 @@
 package ru.rtuitlab.itlab.presentation.screens.employees.components
 
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EventNote
+import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.util.Pair
-import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.common.Resource
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
-import ru.rtuitlab.itlab.presentation.ui.extensions.toClientDate
-import ru.rtuitlab.itlab.presentation.UserViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
+import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
+@ExperimentalPagerApi
+@ExperimentalMaterialApi
 @Composable
 fun UserEvents(
-	userViewModel: UserViewModel,
-	userEventsResource: Resource<List<UserEventModel>>
+	bottomSheetViewModel: BottomSheetViewModel,
+	onNavigate: (id: String, title: String) -> Unit
 ) {
-	userEventsResource.handle(
-		onLoading = {
-			CircularProgressIndicator()
-		},
-		onError = { msg ->
-			Text(text = msg)
-		},
-		onSuccess = { events ->
-			Card(
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(16.dp)
-			) {
-				Column(
-					modifier = Modifier
-						.padding(16.dp)
-				) {
-					Text(stringResource(R.string.events), fontSize = 20.sp)
-					DateSelection(userViewModel)
-					events.forEachIndexed { index, event ->
-						Text("$index: ${event.title}")
-					}
-				}
+	val scope = rememberCoroutineScope()
+	IconizedRow(
+		modifier = Modifier
+			.clickable {
+				bottomSheetViewModel.show(
+					sheet = AppBottomSheet.ProfileEvents(onNavigate),
+					scope = scope
+				)
 			}
-		}
-	)
-}
-
-@Composable
-private fun DateSelection(userViewModel: UserViewModel) {
-	val activity = (LocalContext.current as AppCompatActivity)
-	Button(onClick = {
-		MaterialDatePicker
-			.Builder
-			.dateRangePicker()
-			.setSelection(
-				Pair(userViewModel.beginEventsDate, userViewModel.endEventsDate)
+			.padding(horizontal = 20.dp)
+			.height(36.dp),
+		imageVector = Icons.Default.EventNote,
+		tint = AppColors.accent.collectAsState().value,
+		opacity = 1f
+	) {
+		Row(
+			modifier = Modifier
+				.fillMaxWidth(),
+			horizontalArrangement = Arrangement.SpaceBetween,
+			verticalAlignment = Alignment.CenterVertically
+		) {
+			Text(
+				text = stringResource(R.string.user_events_participation),
+				style = MaterialTheme.typography.caption
 			)
-			.build()
-			.apply {
-				show(activity.supportFragmentManager, null)
-				addOnPositiveButtonClickListener {
-					userViewModel.setEventsDates(it.first!!, it.second!!)
-				}
-			}
-	}) {
-		userViewModel.run {
-			Text("${beginEventsDate.toClientDate()} -> ${endEventsDate.toClientDate()}")
+			Icon(
+				imageVector = Icons.Default.NavigateNext,
+				contentDescription = null,
+				tint = AppColors.accent.collectAsState().value
+			)
 		}
 	}
 }

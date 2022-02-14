@@ -14,6 +14,12 @@ fun Instant.minus(value: Long, unit: DateTimeUnit) = plus(-value, unit)
 
 fun Instant.toMoscowDateTime() = toLocalDateTime(timeZone)
 
+fun LocalDate.toUiString() = run {
+	val day = dayOfMonth.toString().padStart(2, '0')
+	val month = monthNumber.toString().padStart(2, '0')
+	"$day.$month.$year"
+}
+
 fun Long.toMoscowDateTime() = Instant.fromEpochMilliseconds(this).toMoscowDateTime()
 
 fun Long.toClientDate() = toMoscowDateTime().run {

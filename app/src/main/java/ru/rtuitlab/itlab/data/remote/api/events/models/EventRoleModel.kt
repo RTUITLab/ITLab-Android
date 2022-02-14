@@ -20,7 +20,7 @@ data class EventRoleModel(
 
 
 
-sealed class EventRole(@StringRes val nameResource: Int, open val id: String, open val name: String? = "") {
+sealed class EventRole(@StringRes val nameResource: Int, open val id: String, open val name: String? = null) {
     class Organizer(override val id: String) : EventRole(R.string.role_organizer, id)
     class Participant(override val id: String) : EventRole(R.string.role_participant, id)
     class Intern(override val id: String) : EventRole(R.string.role_intern, id)

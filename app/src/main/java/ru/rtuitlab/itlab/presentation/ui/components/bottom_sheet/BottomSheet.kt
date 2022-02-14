@@ -18,6 +18,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventDetailsBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftBottomSheet
+import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileEventsBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileSettingsBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
@@ -67,9 +68,8 @@ fun BottomSheet(
 			is AppBottomSheet.EventDescription -> {
 				EventDetailsBottomSheet(markdownText = (currentSheet as AppBottomSheet.EventDescription).markdown)
 			}
-			is AppBottomSheet.ProfileSettings -> {
-				ProfileSettingsBottomSheet()
-			}
+			is AppBottomSheet.ProfileSettings -> ProfileSettingsBottomSheet()
+			is AppBottomSheet.ProfileEvents -> ProfileEventsBottomSheet((currentSheet as AppBottomSheet.ProfileEvents).onNavigate)
 			else -> {}
 		}
 	}

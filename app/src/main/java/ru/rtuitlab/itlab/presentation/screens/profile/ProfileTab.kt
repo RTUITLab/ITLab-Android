@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.presentation.screens.profile
 
 import android.os.Bundle
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
@@ -9,14 +10,23 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.pager.ExperimentalPagerApi
+import ru.rtuitlab.itlab.presentation.screens.events.Event
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
+import ru.rtuitlab.itlab.presentation.utils.hiltViewModel
 
+@ExperimentalPagerApi
+@ExperimentalMaterialApi
 @Composable
 fun ProfileTab(
-	navState: MutableState<Bundle>,
-	resetTabTask: RunnableHolder,
-    profileViewModel: ProfileViewModel = viewModel()
+    navState: MutableState<Bundle>,
+    resetTabTask: RunnableHolder,
+    profileViewModel: ProfileViewModel = viewModel(),
+    appBarViewModel: AppBarViewModel = viewModel(),
+    bottomSheetViewModel: BottomSheetViewModel = viewModel()
 ) {
     val navController = rememberNavController()
 
@@ -41,7 +51,22 @@ fun ProfileTab(
 
     NavHost(navController, startDestination = AppScreen.Profile.route) {
         composable(AppScreen.Profile.route) {
-            Profile(profileViewModel)
+            Profile(
+                profileViewModel = profileViewModel,
+                bottomSheetViewModel = bottomSheetViewModel
+            ) { id, title ->
+                val screen = AppScreen.EventDetails(title)
+                navController.navigate("${screen.navLink}/$id")
+                appBarViewModel.onNavigate(screen, navController)
+            }
+        }
+
+        composable(AppScreen.EventDetails.route) {
+            Event(
+                eventViewModel = it.hiltViewModel(),
+                bottomSheetViewModel = bottomSheetViewModel,
+                navController = navController
+            )
         }
     }
 }

@@ -2,24 +2,26 @@ package ru.rtuitlab.itlab.presentation.screens.profile
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyModel
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
+import ru.rtuitlab.itlab.data.repository.EventsRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
 import ru.rtuitlab.itlab.presentation.UserViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-	val usersRepo: UsersRepository,
+	private val usersRepo: UsersRepository,
+	eventsRepo: EventsRepository,
 	authStateStorage: AuthStateStorage
 ) : UserViewModel(
 	usersRepo,
+	eventsRepo,
 	runBlocking { authStateStorage.userIdFlow.first() }
 ) {
 

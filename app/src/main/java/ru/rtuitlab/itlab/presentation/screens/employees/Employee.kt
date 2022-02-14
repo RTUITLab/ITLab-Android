@@ -13,21 +13,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmailField
 import ru.rtuitlab.itlab.presentation.screens.employees.components.PhoneField
+import ru.rtuitlab.itlab.presentation.screens.employees.components.UserEvents
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingIndicator
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 
+@ExperimentalPagerApi
+@ExperimentalMaterialApi
 @Composable
 fun Employee(
-	employeeViewModel: EmployeeViewModel
+	employeeViewModel: EmployeeViewModel,
+	bottomSheetViewModel: BottomSheetViewModel,
+	onNavigate: (id: String, title: String) -> Unit
 ) {
 	val userCredentialsResource by employeeViewModel.userCredentialsFlow.collectAsState()
-	val userDevicesResource by employeeViewModel.userDevicesFlow.collectAsState()
-	val userEventsResource by employeeViewModel.userEventsFlow.collectAsState()
 
 	Column(
 		modifier = Modifier
@@ -35,9 +40,11 @@ fun Employee(
 			.verticalScroll(rememberScrollState())
 	) {
 		EmployeeCredentials(userCredentialsResource)
-		// ITLab v2
 		//UserDevices(userDevicesResource)
-		//UserEvents(employeeViewModel, userEventsResource)
+		UserEvents(
+			bottomSheetViewModel,
+			onNavigate
+		)
 	}
 }
 
@@ -128,6 +135,7 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 					Spacer(Modifier.height(8.dp))
 				}
 
+				Spacer(modifier = Modifier.height(6.dp))
 				Divider(color = Color.Gray, thickness = 1.dp)
 				Spacer(modifier = Modifier.height(8.dp))
 

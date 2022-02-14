@@ -57,4 +57,6 @@
     <string name="confirm_yes">Да</string>
     <string name="are_you_sure">Вы уверены?</string>
     <string name="email_are_you_sure">Вы уверены, что хотите перейти в приложение почты?</string>
+    <string name="user_events_participation">Участие в событиях</string>
+    <string name="events_nothing_in_period">Нет событий за указанный период</string>
 </resources>

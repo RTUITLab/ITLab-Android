@@ -14,7 +14,9 @@ sealed class AppBottomSheet {
 	class EventDescription(val markdown: String): AppBottomSheet()
 	object ProfileEquipment: AppBottomSheet()
 	object ProfileSettings: AppBottomSheet()
-	object ProfileEvents: AppBottomSheet()
+	class ProfileEvents(
+		val onNavigate: (id: String, title: String) -> Unit
+	): AppBottomSheet()
 	object Equipment: AppBottomSheet()
 	object Unspecified: AppBottomSheet()
 

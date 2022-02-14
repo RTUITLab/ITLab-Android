@@ -21,6 +21,7 @@ import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.repository.EventsRepository
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.SwipingStates
 import ru.rtuitlab.itlab.common.emitInIO
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.presentation.ui.extensions.minus
 import ru.rtuitlab.itlab.presentation.ui.extensions.nowAsIso8601
 import ru.rtuitlab.itlab.presentation.ui.extensions.toMoscowDateTime
@@ -34,12 +35,14 @@ class EventsViewModel @Inject constructor(
 	private val authStateStorage: AuthStateStorage
 ) : ViewModel() {
 
-	private var userId = runBlocking { authStateStorage.userIdFlow.first() }
+	private val userId = runBlocking { authStateStorage.userIdFlow.first() }
 
-	var beginEventsDate = Clock.System.now().minus(7, DateTimeUnit.DAY).toEpochMilliseconds()
-		private set
-	var endEventsDate = Clock.System.now().toEpochMilliseconds()
-		private set
+
+
+	private var _beginEventsDate = MutableStateFlow(Clock.System.now().minus(7, DateTimeUnit.DAY).toEpochMilliseconds())
+	val beginEventsDate = _beginEventsDate.asStateFlow()
+	private var _endEventsDate = MutableStateFlow(Clock.System.now().toEpochMilliseconds())
+	val endEventsDate = _endEventsDate.asStateFlow()
 
 
 	val pagerState = PagerState()
@@ -60,7 +63,7 @@ class EventsViewModel @Inject constructor(
 	}
 
 	private val _userEventsListResponseFlow =
-		MutableStateFlow<Resource<List<EventModel>>>(Resource.Empty)
+		MutableStateFlow<Resource<List<UserEventModel>>>(Resource.Empty)
 	val userEventsListResponsesFlow = _userEventsListResponseFlow.asStateFlow()
 
 	private val _pastEventsListResponseFlow =
@@ -68,7 +71,7 @@ class EventsViewModel @Inject constructor(
 	val pastEventsListResponseFlow = _pastEventsListResponseFlow.asStateFlow()
 
 	private var cachedEventList = emptyList<EventModel>()
-	private var cachedUserEventList = emptyList<EventModel>()
+	private var cachedUserEventList = emptyList<UserEventModel>()
 	private var cachedPastEventList = emptyList<EventModel>()
 
 	private var _eventsFlow = MutableStateFlow(cachedEventList)
@@ -110,11 +113,11 @@ class EventsViewModel @Inject constructor(
 	fun setEventsDates(begin: Long, end: Long) {
 		_showPastEvents.value = false
 		_isDateSelectionMade.value = true
-		beginEventsDate = begin
-		endEventsDate = end
+		_beginEventsDate.value = begin
+		_endEventsDate.value = end
 		fetchAllEvents(
-			begin = beginEventsDate.toMoscowDateTime().date.toString(),
-			end = endEventsDate.toMoscowDateTime().date.toString()
+			begin = begin.toMoscowDateTime().date.toString(),
+			end = end.toMoscowDateTime().date.toString()
 		)
 	}
 
@@ -128,14 +131,14 @@ class EventsViewModel @Inject constructor(
 			_pastEventsFlow.value = cachedPastEventList.filter { filterSearchResult(it, query) }
 	}
 
-	fun onResourceSuccess(events: List<EventModel>, isUserEvents: Boolean) {
-		if (isUserEvents) {
-			cachedUserEventList = events
-			_userEventsFlow.value = events
-			return
-		}
+	fun onResourceSuccess(events: List<EventModel>) {
 		cachedEventList = events
 		_eventsFlow.value = events
+	}
+
+	fun onUserResourceSuccess(events: List<UserEventModel>) {
+		cachedUserEventList = events
+		_userEventsFlow.value = events
 	}
 
 	fun onPastResourceSuccess(events: List<EventModel>) {
@@ -147,4 +150,9 @@ class EventsViewModel @Inject constructor(
 		title.contains(query.trim(), ignoreCase = true) ||
 		eventType.title.contains(query.trim(), ignoreCase = true)
 	}
+	private fun filterSearchResult(event: UserEventModel, query: String) = event.run {
+		title.contains(query.trim(), ignoreCase = true) ||
+		eventType.title.contains(query.trim(), ignoreCase = true)
+	}
+
 }
