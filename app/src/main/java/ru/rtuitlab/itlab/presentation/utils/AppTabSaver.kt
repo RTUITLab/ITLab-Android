@@ -91,6 +91,7 @@ open class AppScreen(
         }
     }
     object EventNew: AppScreen(R.string.event_new, "event/new") // Has back button
+    object EventsNotifications: AppScreen(R.string.notifications, "events/notifications") // Has back button
 
     // Projects-related
     object Projects: AppScreen(R.string.projects, "projects")

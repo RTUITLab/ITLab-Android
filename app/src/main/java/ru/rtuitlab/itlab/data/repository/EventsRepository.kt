@@ -45,4 +45,15 @@ class EventsRepository @Inject constructor(
 	suspend fun fetchEventRoles() = handler {
 		eventsApi.getEventRoles()
 	}
+
+	suspend fun fetchInvitations() = handler {
+		eventsApi.getInvitations()
+	}
+
+	suspend fun rejectInvitation(placeId: String) = handler {
+		eventsApi.rejectInvitation(placeId)
+	}
+	suspend fun acceptInvitation(placeId: String) = handler {
+		eventsApi.acceptInvitation(placeId)
+	}
 }

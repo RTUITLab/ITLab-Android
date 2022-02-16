@@ -7,6 +7,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,7 +26,9 @@ import ru.rtuitlab.itlab.presentation.ui.components.LabelledCheckBox
 import ru.rtuitlab.itlab.presentation.ui.components.SearchBar
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarOption
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarTabRow
+import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CollapsibleTopAppBar
+import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.EventTab
 
 @ExperimentalMaterialApi
@@ -33,7 +36,8 @@ import ru.rtuitlab.itlab.presentation.utils.EventTab
 @ExperimentalPagerApi
 @Composable
 fun EventsTopAppBar(
-	eventsViewModel: EventsViewModel = viewModel()
+	eventsViewModel: EventsViewModel = viewModel(),
+	appBarViewModel: AppBarViewModel = viewModel()
 ) {
 
 	var searchActivated by rememberSaveable { mutableStateOf(false) }
@@ -56,6 +60,8 @@ fun EventsTopAppBar(
 
 	val beginEventsDate by eventsViewModel.beginEventsDate.collectAsState()
 	val endEventsDate by eventsViewModel.endEventsDate.collectAsState()
+
+	val navController by appBarViewModel.currentNavHost.collectAsState()
 
 	CollapsibleTopAppBar(
 		title = stringResource(R.string.events),
@@ -100,6 +106,14 @@ fun EventsTopAppBar(
 							overflow = TextOverflow.Ellipsis
 						)
 					}
+				}
+			),
+			AppBarOption.Clickable(
+				icon = Icons.Default.Notifications,
+				onClick = {
+					eventsViewModel.fetchInvitations()
+					appBarViewModel.onNavigate(AppScreen.EventsNotifications)
+					navController?.navigate(AppScreen.EventsNotifications.route)
 				}
 			),
 			AppBarOption.Clickable(

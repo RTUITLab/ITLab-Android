@@ -2,6 +2,7 @@ package ru.rtuitlab.itlab.presentation.screens.events
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SwipeableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,12 +17,13 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import ru.rtuitlab.itlab.common.Resource
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
+import ru.rtuitlab.itlab.common.emitInIO
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.data.remote.api.events.models.EventInvitationDto
+import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.data.repository.EventsRepository
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.SwipingStates
-import ru.rtuitlab.itlab.common.emitInIO
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.presentation.ui.extensions.minus
 import ru.rtuitlab.itlab.presentation.ui.extensions.nowAsIso8601
 import ru.rtuitlab.itlab.presentation.ui.extensions.toMoscowDateTime
@@ -70,6 +72,9 @@ class EventsViewModel @Inject constructor(
 		MutableStateFlow<Resource<List<EventModel>>>(Resource.Empty)
 	val pastEventsListResponseFlow = _pastEventsListResponseFlow.asStateFlow()
 
+	private var _invitations = MutableStateFlow<Resource<List<EventInvitationDto>>>(Resource.Loading)
+	val invitations = _invitations.asStateFlow().also { fetchInvitations() }
+
 	private var cachedEventList = emptyList<EventModel>()
 	private var cachedUserEventList = emptyList<UserEventModel>()
 	private var cachedPastEventList = emptyList<EventModel>()
@@ -110,6 +115,9 @@ class EventsViewModel @Inject constructor(
 		repository.fetchUserEvents(userId, begin, end)
 	}
 
+
+	val snackbarHostState = SnackbarHostState()
+
 	fun setEventsDates(begin: Long, end: Long) {
 		_showPastEvents.value = false
 		_isDateSelectionMade.value = true
@@ -120,6 +128,46 @@ class EventsViewModel @Inject constructor(
 			end = end.toMoscowDateTime().date.toString()
 		)
 	}
+
+	fun fetchInvitations() = _invitations.emitInIO(viewModelScope) {
+		repository.fetchInvitations()
+	}
+
+	fun rejectInvitation(
+		placeId: String,
+		successMessage: String,
+		onFinish: () -> Unit
+	) = viewModelScope.launch {
+		repository.rejectInvitation(placeId).handle(
+			onSuccess = {
+				onFinish()
+				fetchInvitations()
+				snackbarHostState.showSnackbar(it.errorBody()?.string() ?: successMessage)
+			},
+			onError = {
+				onFinish()
+				snackbarHostState.showSnackbar(it)
+			}
+		)
+	}
+	fun acceptInvitation(
+		placeId: String,
+		successMessage: String,
+		onFinish: () -> Unit
+	) = viewModelScope.launch {
+		repository.acceptInvitation(placeId).handle(
+			onSuccess = {
+				onFinish()
+				fetchInvitations()
+				snackbarHostState.showSnackbar(it.errorBody()?.string() ?: successMessage)
+			},
+			onError = {
+				onFinish()
+				snackbarHostState.showSnackbar(it)
+			}
+		)
+	}
+
 
 	private var searchQuery = ""
 

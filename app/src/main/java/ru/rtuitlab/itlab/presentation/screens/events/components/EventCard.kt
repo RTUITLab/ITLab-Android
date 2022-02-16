@@ -143,9 +143,7 @@ fun UserEventCardContent(
 
 		Text(
 			text = title,
-			fontWeight = FontWeight(500),
-			fontSize = 17.sp,
-			lineHeight = 22.sp
+			style = MaterialTheme.typography.h6
 		)
 		IconizedRow(
 			imageVector = Icons.Default.Person,

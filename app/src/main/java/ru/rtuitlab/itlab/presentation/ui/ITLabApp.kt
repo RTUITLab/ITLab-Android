@@ -101,7 +101,10 @@ fun ITLabApp(
 					)
 					AppScreen.Employees -> EmployeesTopAppBar()
 					AppScreen.Feedback -> FeedbackTopAppBar()
-					else -> BasicTopAppBar(text = stringResource(currentScreen.screenNameResource))
+					else -> BasicTopAppBar(
+						text = stringResource(currentScreen.screenNameResource),
+						onBackAction = onBackAction
+					)
 				}
 			},
 			content = {

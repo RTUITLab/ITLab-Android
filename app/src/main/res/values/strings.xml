@@ -11,6 +11,22 @@
     <string name="confirm_yes">Yes</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="email_are_you_sure">Are you sure you want to open Email?</string>
+    <plurals name="n_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="n_months">
+        <item quantity="one">%d month</item>
+        <item quantity="other">%d months</item>
+    </plurals>
+    <plurals name="n_years">
+        <item quantity="one">%d year</item>
+        <item quantity="other">%d years</item>
+    </plurals>
+    <plurals name="n_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
 
     <!--    Events    -->
     <string name="events">Events</string>
@@ -41,6 +57,17 @@
     <string name="events_clear_period">Clear date selection</string>
     <string name="user_events_participation">Events participation</string>
     <string name="events_nothing_in_period">No events in selected period</string>
+    <string name="notifications">Notifications</string>
+    <string name="event_invitation">Invitation</string>
+    <string name="event_beginning">Begins at:</string>
+    <string name="event_duration">Duration:</string>
+    <string name="event_role">Role:</string>
+    <string name="event_place">Place:</string>
+    <string name="event_invitation_accepted">Invitation accepted</string>
+    <string name="event_invitation_rejected">Invitation rejected</string>
+    <string name="event_invitation_accept">Accept</string>
+    <string name="event_invitation_reject">Reject</string>
+    <string name="events_notifications_empty">No new notifications</string>
 
     <!--    Projects     -->
     <string name="projects">Projects</string>

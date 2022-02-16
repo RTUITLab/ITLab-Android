@@ -5,10 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventDetailDto
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventRoleModel
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventSalary
+import ru.rtuitlab.itlab.data.remote.api.events.models.*
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 
 interface EventsApi {
@@ -40,6 +37,19 @@ interface EventsApi {
 	suspend fun applyForPlace(
 		@Path("placeId") placeId: String,
 		@Path("roleId") roleId: String
+	) : Response<Unit>
+
+	@GET("event/applications/invitations")
+	suspend fun getInvitations() : List<EventInvitationDto>
+
+	@POST("/api/Event/invitation/{placeId}/reject")
+	suspend fun rejectInvitation(
+		@Path("placeId") placeId: String
+	) : Response<Unit>
+
+	@POST("/api/Event/invitation/{placeId}/accept")
+	suspend fun acceptInvitation(
+		@Path("placeId") placeId: String
 	) : Response<Unit>
 
 	@GET("eventRole")

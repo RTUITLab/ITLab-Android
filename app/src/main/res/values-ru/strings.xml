@@ -42,6 +42,30 @@
         <item quantity="many">%d часов</item>
         <item quantity="other">%d часов</item>
     </plurals>
+    <plurals name="n_days">
+        <item quantity="one">%d день</item>
+        <item quantity="few">%d дня</item>
+        <item quantity="many">%d дней</item>
+        <item quantity="other">%d дней</item>
+    </plurals>
+    <plurals name="n_months">
+        <item quantity="one">%d месяц</item>
+        <item quantity="few">%d месяца</item>
+        <item quantity="many">%d месяцев</item>
+        <item quantity="other">%d месяцев</item>
+    </plurals>
+    <plurals name="n_years">
+        <item quantity="one">%d год</item>
+        <item quantity="few">%d года</item>
+        <item quantity="many">%d лет</item>
+        <item quantity="other">%d лет</item>
+    </plurals>
+    <plurals name="n_minutes">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минут</item>
+    </plurals>
     <string name="salary_not_specified">Оплата не указана</string>
     <string name="place_number_n">Место #%1$d</string>
     <string name="role_organizer">Организатор</string>
@@ -59,4 +83,15 @@
     <string name="email_are_you_sure">Вы уверены, что хотите перейти в приложение почты?</string>
     <string name="user_events_participation">Участие в событиях</string>
     <string name="events_nothing_in_period">Нет событий за указанный период</string>
+    <string name="notifications">Уведомления</string>
+    <string name="event_invitation">Приглашение</string>
+    <string name="event_beginning">Начало:</string>
+    <string name="event_duration">Длительность:</string>
+    <string name="event_role">Роль:</string>
+    <string name="event_invitation_accepted">Приглашение принято</string>
+    <string name="event_invitation_rejected">Приглашение отклонено</string>
+    <string name="event_invitation_accept">Принять</string>
+    <string name="event_invitation_reject">Отказаться</string>
+    <string name="event_place">Место</string>
+    <string name="events_notifications_empty">Новых уведомлений нет</string>
 </resources>

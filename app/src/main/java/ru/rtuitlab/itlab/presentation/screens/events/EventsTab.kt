@@ -62,6 +62,17 @@ fun EventsTab(
             }
         }
 
+        composable(AppScreen.EventsNotifications.route) {
+            LaunchedEffect(navController) {
+                appBarViewModel.onNavigate(AppScreen.EventsNotifications, navController)
+            }
+            EventsNotifications(eventsViewModel) { id, title ->
+                val screen = AppScreen.EventDetails(title)
+                navController.navigate("${screen.navLink}/$id")
+                appBarViewModel.onNavigate(screen, navController)
+            }
+        }
+
         composable(AppScreen.EventDetails.route) {
             Event(
                 eventViewModel = it.hiltViewModel(),
