@@ -194,8 +194,8 @@ class EventsViewModel @Inject constructor(
 	}
 
 	fun onUserResourceSuccess(events: List<UserEventModel>) {
-		cachedUserEventList = events
-		_userEventsFlow.value = events
+		cachedUserEventList = events.distinctBy { it.id }
+		_userEventsFlow.value = cachedUserEventList
 	}
 
 	fun onPastResourceSuccess(events: List<EventModel>) {
