@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.presentation.UserViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
@@ -27,6 +28,7 @@ import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 @ExperimentalMaterialApi
 @Composable
 fun UserEvents(
+	userViewModel: UserViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
 	onNavigate: (id: String, title: String) -> Unit
 ) {
@@ -35,7 +37,7 @@ fun UserEvents(
 		modifier = Modifier
 			.clickable {
 				bottomSheetViewModel.show(
-					sheet = AppBottomSheet.ProfileEvents(onNavigate),
+					sheet = AppBottomSheet.ProfileEvents(userViewModel, onNavigate),
 					scope = scope
 				)
 			}

@@ -42,6 +42,7 @@ fun Employee(
 		EmployeeCredentials(userCredentialsResource)
 		//UserDevices(userDevicesResource)
 		UserEvents(
+			employeeViewModel,
 			bottomSheetViewModel,
 			onNavigate
 		)

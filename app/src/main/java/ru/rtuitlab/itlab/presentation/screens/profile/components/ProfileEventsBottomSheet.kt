@@ -24,8 +24,8 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.Resource
+import ru.rtuitlab.itlab.presentation.UserViewModel
 import ru.rtuitlab.itlab.presentation.screens.events.components.UserEventCardContent
-import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.extensions.toClientDate
@@ -37,21 +37,21 @@ import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 fun ProfileEventsBottomSheet(
 	onNavigate: (id: String, title: String) -> Unit,
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
-	profileViewModel: ProfileViewModel = viewModel()
+	userViewModel: UserViewModel
 ) {
-	val userEventsResource by profileViewModel.userEventsFlow.collectAsState()
-	val beginEventsDate by profileViewModel.beginEventsDate.collectAsState()
-	val endEventsDate by profileViewModel.endEventsDate.collectAsState()
-	LaunchedEffect(true) {
+	val userEventsResource by userViewModel.userEventsFlow.collectAsState()
+	val beginEventsDate by userViewModel.beginEventsDate.collectAsState()
+	val endEventsDate by userViewModel.endEventsDate.collectAsState()
+	LaunchedEffect(userEventsResource) {
 		if (userEventsResource is Resource.Empty)
-			profileViewModel.setEventsDates(
+			userViewModel.setEventsDates(
 				begin = beginEventsDate,
 				end = endEventsDate
 			)
 	}
 	val scope = rememberCoroutineScope()
 	val listener = MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>> {
-		profileViewModel.setEventsDates(it.first, it.second)
+		userViewModel.setEventsDates(it.first, it.second)
 	}
 	val context = LocalContext.current
 	IconizedRow(
@@ -102,7 +102,7 @@ fun ProfileEventsBottomSheet(
 			else
 				LazyColumn {
 					items(
-						items = events,
+						items = events.distinctBy { it.id },
 						key = { it.id }
 					) {
 						Column(

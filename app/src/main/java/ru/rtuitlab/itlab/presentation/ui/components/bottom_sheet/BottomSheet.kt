@@ -69,7 +69,13 @@ fun BottomSheet(
 				EventDetailsBottomSheet(markdownText = (currentSheet as AppBottomSheet.EventDescription).markdown)
 			}
 			is AppBottomSheet.ProfileSettings -> ProfileSettingsBottomSheet()
-			is AppBottomSheet.ProfileEvents -> ProfileEventsBottomSheet((currentSheet as AppBottomSheet.ProfileEvents).onNavigate)
+			is AppBottomSheet.ProfileEvents -> {
+				val data = currentSheet as AppBottomSheet.ProfileEvents
+				ProfileEventsBottomSheet(
+					userViewModel = data.viewModel,
+					onNavigate = data.onNavigate
+				)
+			}
 			else -> {}
 		}
 	}

@@ -2,6 +2,7 @@ package ru.rtuitlab.itlab.presentation.utils
 
 import androidx.navigation.NavHostController
 import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Shift
+import ru.rtuitlab.itlab.presentation.UserViewModel
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 
 sealed class AppBottomSheet {
@@ -15,6 +16,7 @@ sealed class AppBottomSheet {
 	object ProfileEquipment: AppBottomSheet()
 	object ProfileSettings: AppBottomSheet()
 	class ProfileEvents(
+		val viewModel: UserViewModel,
 		val onNavigate: (id: String, title: String) -> Unit
 	): AppBottomSheet()
 	object Equipment: AppBottomSheet()

@@ -33,8 +33,9 @@ fun Profile(
 			EmployeeCredentials(userCredentialsResource)
 			/*UserDevices(userDevicesResource)*/
 			UserEvents(
-				bottomSheetViewModel,
-				onNavigate
+				userViewModel = profileViewModel,
+				bottomSheetViewModel = bottomSheetViewModel,
+				onNavigate = onNavigate
 			)
 	}
 }
