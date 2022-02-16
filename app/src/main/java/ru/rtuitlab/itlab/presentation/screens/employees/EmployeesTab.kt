@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.presentation.screens.events.Event
 import ru.rtuitlab.itlab.presentation.screens.profile.Profile
+import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
@@ -27,6 +28,7 @@ fun EmployeesTab(
     resetTabTask: RunnableHolder,
     appBarViewModel: AppBarViewModel = viewModel(),
     employeesViewModel: EmployeesViewModel = viewModel(),
+    profileViewModel: ProfileViewModel = viewModel(),
     bottomSheetViewModel: BottomSheetViewModel = viewModel()
 ) {
     val navController = rememberNavController()
@@ -69,7 +71,7 @@ fun EmployeesTab(
         composable(AppScreen.Profile.route) {
             appBarViewModel.onNavigate(AppScreen.Profile, navController)
             Profile(
-                profileViewModel = it.hiltViewModel(),
+                profileViewModel = profileViewModel,
                 bottomSheetViewModel = bottomSheetViewModel
             ) { id, title ->
                 val screen = AppScreen.EventDetails(title)
