@@ -21,6 +21,7 @@ import ru.rtuitlab.itlab.presentation.screens.devices.DevicesTab
 import ru.rtuitlab.itlab.presentation.screens.employees.EmployeesTab
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeesTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.events.EventsTab
+import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.FeedbackTab
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
@@ -32,6 +33,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetView
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
+import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.AppTab
 import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
@@ -45,6 +47,7 @@ import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
 fun ITLabApp(
 	appBarViewModel: AppBarViewModel = viewModel(),
 	appTabsViewModel: AppTabsViewModel = viewModel(),
+	eventsViewModel: EventsViewModel = viewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = viewModel()
 ) {
 	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) {
@@ -148,11 +151,26 @@ fun ITLabApp(
 				BottomNavigation(
 					elevation = 10.dp
 				) {
+					val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
 					appTabs
 						.filter { it.accessible }
 						.forEach { screen ->
 							BottomNavigationItem(
-								icon = { Icon(screen.icon, null) },
+								icon = {
+									BadgedBox(
+										badge = {
+											if (screen is AppTab.Events && invitationsCount > 0)
+												Badge(
+													backgroundColor = AppColors.accent.collectAsState().value,
+													contentColor = Color.White
+												) {
+													Text(invitationsCount.toString())
+												}
+										}
+									) {
+										Icon(screen.icon, null)
+									}
+							    },
 								label = {
 									Text(
 										text = stringResource(screen.resourceId),

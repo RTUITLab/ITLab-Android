@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -201,11 +202,24 @@ fun OptionsRow(
 							.width(36.dp),
 						onClick = option.onClick
 					) {
-						Icon(
-							imageVector = option.icon,
-							contentDescription = option.contentDescription,
-							tint = MaterialTheme.colors.onSurface
-						)
+						BadgedBox(
+							badge = {
+								if (option.badgeCount > 0)
+									Badge(
+										backgroundColor = AppColors.accent.collectAsState().value,
+										contentColor = Color.White
+									) {
+										Text(option.badgeCount.toString())
+									}
+							}
+						) {
+							Icon(
+								imageVector = option.icon,
+								contentDescription = option.contentDescription,
+								tint = MaterialTheme.colors.onSurface
+							)
+						}
+
 					}
 				}
 				is AppBarOption.Dropdown -> {
@@ -242,6 +256,7 @@ sealed class AppBarOption(
 	class Clickable(
 		override val icon: ImageVector,
 		override val contentDescription: String? = null,
+		val badgeCount: Int = 0,
 		val onClick: () -> Unit
 	) : AppBarOption(icon, contentDescription)
 

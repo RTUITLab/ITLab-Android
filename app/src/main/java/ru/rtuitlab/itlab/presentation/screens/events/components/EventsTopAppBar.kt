@@ -111,10 +111,10 @@ fun EventsTopAppBar(
 			AppBarOption.Clickable(
 				icon = Icons.Default.Notifications,
 				onClick = {
-					eventsViewModel.fetchInvitations()
 					appBarViewModel.onNavigate(AppScreen.EventsNotifications)
 					navController?.navigate(AppScreen.EventsNotifications.route)
-				}
+				},
+				badgeCount = eventsViewModel.invitationsCountFlow.collectAsState().value
 			),
 			AppBarOption.Clickable(
 				icon = Icons.Default.Search,

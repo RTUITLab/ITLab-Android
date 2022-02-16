@@ -25,7 +25,7 @@ fun EventsNotifications(
 	eventsViewModel: EventsViewModel,
 	onNavigate: (id: String, title: String) -> Unit
 ) {
-	val notificationsResource by eventsViewModel.invitations.collectAsState()
+	val notificationsResource by eventsViewModel.invitationsResourceFlow.collectAsState()
 
 	var isRefreshing by remember { mutableStateOf(false) }
 

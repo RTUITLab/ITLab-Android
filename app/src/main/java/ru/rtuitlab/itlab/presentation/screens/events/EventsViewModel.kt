@@ -72,8 +72,11 @@ class EventsViewModel @Inject constructor(
 		MutableStateFlow<Resource<List<EventModel>>>(Resource.Empty)
 	val pastEventsListResponseFlow = _pastEventsListResponseFlow.asStateFlow()
 
-	private var _invitations = MutableStateFlow<Resource<List<EventInvitationDto>>>(Resource.Loading)
-	val invitations = _invitations.asStateFlow().also { fetchInvitations() }
+	private var _invitationsResourceFlow = MutableStateFlow<Resource<List<EventInvitationDto>>>(Resource.Loading)
+	val invitationsResourceFlow = _invitationsResourceFlow.asStateFlow().also { fetchInvitations() }
+
+	private var _invitationsCountFlow = MutableStateFlow(0)
+	val invitationsCountFlow = _invitationsCountFlow.asStateFlow()
 
 	private var cachedEventList = emptyList<EventModel>()
 	private var cachedUserEventList = emptyList<UserEventModel>()
@@ -129,8 +132,14 @@ class EventsViewModel @Inject constructor(
 		)
 	}
 
-	fun fetchInvitations() = _invitations.emitInIO(viewModelScope) {
-		repository.fetchInvitations()
+	fun fetchInvitations() = _invitationsResourceFlow.emitInIO(viewModelScope) {
+		val resource = repository.fetchInvitations()
+		resource.handle(
+			onSuccess = {
+				_invitationsCountFlow.value = it.size
+			}
+		)
+		resource
 	}
 
 	fun rejectInvitation(
