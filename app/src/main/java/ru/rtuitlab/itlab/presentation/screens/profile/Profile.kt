@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -24,6 +22,9 @@ fun Profile(
 	onNavigate: (id: String, title: String) -> Unit
 ) {
 	val userCredentialsResource by profileViewModel.userCredentialsFlow.collectAsState()
+	LaunchedEffect(true){
+		profileViewModel.fetchUserCredentials()
+	}
 	Column(
 		modifier = Modifier
 			.fillMaxSize()

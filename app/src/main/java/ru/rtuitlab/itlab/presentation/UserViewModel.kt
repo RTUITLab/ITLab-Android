@@ -41,7 +41,7 @@ abstract class UserViewModel (
 	private val _properties = MutableStateFlow<Resource<List<UserPropertyTypeModel>>>(Resource.Empty)
 	val properties = _properties.asStateFlow().also { fetchPropertyTypes() }
 
-	private fun fetchUserCredentials() = _userCredentialsFlow.emitInIO(viewModelScope) {
+	fun fetchUserCredentials() = _userCredentialsFlow.emitInIO(viewModelScope) {
 		usersRepo.fetchUserCredentials(userId)
 	}
 
