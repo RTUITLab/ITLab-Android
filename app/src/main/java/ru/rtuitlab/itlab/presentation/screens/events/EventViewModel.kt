@@ -68,6 +68,7 @@ class EventViewModel @Inject constructor(
 			onSuccess = {
 				onFinish()
 				showSnackbar(it.errorBody()?.string() ?: successMessage)
+				fetchEventData()
 			},
 			onError = {
 				onFinish()

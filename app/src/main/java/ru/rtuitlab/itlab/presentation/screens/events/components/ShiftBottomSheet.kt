@@ -12,16 +12,19 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.People
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Place
 import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Shift
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
+import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.ImagePosition
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
@@ -34,6 +37,7 @@ fun ShiftBottomSheet(
 	shift: Shift,
 	salaries: List<Int>,
 	eventViewModel: EventViewModel,
+	profileViewModel: ProfileViewModel = viewModel(),
 	bottomSheetViewModel: BottomSheetViewModel,
 	navController: NavHostController
 ) {
@@ -64,6 +68,7 @@ fun ShiftBottomSheet(
 				salary = salaries[index].takeUnless { it == -1 },
 				eventViewModel = eventViewModel,
 				bottomSheetViewModel = bottomSheetViewModel,
+				shiftContainsUser = shift.places.any { (it.participants + it.wishers + it.invited).any { it.user.id == profileViewModel.userId } },
 				navController = navController
 			)
 		}
@@ -79,6 +84,7 @@ private fun ShiftPlaceCard(
 	salary: Int?,
 	eventViewModel: EventViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
+	shiftContainsUser: Boolean,
 	navController: NavHostController
 ) {
 	var dialogIsShown by remember { mutableStateOf(false) }
@@ -93,6 +99,7 @@ private fun ShiftPlaceCard(
 				dialogIsShown = false
 				bottomSheetViewModel.hide(scope)
 			},
+			shiftContainsUser = shiftContainsUser,
 			navController = navController
 		) {
 			dialogIsShown = false
@@ -154,7 +161,8 @@ private fun ShiftPlaceCard(
 						IconizedRow(
 							imageVector = Icons.Default.Info,
 							imageHeight = 14.dp,
-							imageWidth = 14.dp
+							imageWidth = 14.dp,
+							verticalAlignment = Alignment.Top
 						) {
 							Text(
 								text = place.description,
@@ -165,7 +173,8 @@ private fun ShiftPlaceCard(
 					IconizedRow(
 						imageVector = Icons.Default.Payment,
 						imageHeight = 14.dp,
-						imageWidth = 14.dp
+						imageWidth = 14.dp,
+						verticalAlignment = Alignment.Top
 					) {
 						Text(
 							text = if (salary != null) stringResource(

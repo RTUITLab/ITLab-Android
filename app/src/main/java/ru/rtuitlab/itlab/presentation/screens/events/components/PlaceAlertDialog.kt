@@ -37,6 +37,7 @@ fun PlaceAlertDialog(
 	number: Int,
 	salary: Int?,
 	eventViewModel: EventViewModel,
+	shiftContainsUser: Boolean,
 	onResult: () -> Unit,
 	navController: NavHostController,
 	onDismissRequest: () -> Unit
@@ -89,7 +90,8 @@ fun PlaceAlertDialog(
 					IconizedRow(
 						imageVector = Icons.Default.Info,
 						imageHeight = 14.dp,
-						imageWidth = 14.dp
+						imageWidth = 14.dp,
+						verticalAlignment = Alignment.Top
 					) {
 						Text(
 							text = place.description,
@@ -150,7 +152,8 @@ fun PlaceAlertDialog(
 								}
 
 								Text(
-									text = if (role !is EventRole.Other) stringResource(role.nameResource) else role.name ?: "",
+									text = if (role !is EventRole.Other) stringResource(role.nameResource) else role.name
+										?: "",
 									style = MaterialTheme.typography.subtitle2,
 									color = AppColors.greyText.collectAsState().value,
 									maxLines = 1,
@@ -160,51 +163,57 @@ fun PlaceAlertDialog(
 						}
 					}
 
-					Spacer(modifier = Modifier.height(10.dp))
-					Divider()
-				}
-				Spacer(modifier = Modifier.height(20.dp))
-
-				val choices = remember { eventRoles }
-				var selectedSegment by remember { mutableStateOf(choices[1]) }
-				SegmentedControl(
-					segments = choices,
-					selectedSegment = selectedSegment,
-					onSegmentSelected = { selectedSegment = it }
-				) { choice ->
-					SegmentText(
-						modifier = Modifier.padding(horizontal = 4.dp, vertical = 10.dp),
-						text = if (choice !is EventRole.Other) stringResource(choice.nameResource) else choice.name ?: "",
-						selected = selectedSegment == choice,
-						selectedColor = AppColors.accent.collectAsState().value,
-						unselectedColor = AppColors.greyText.collectAsState().value.copy(alpha = .8f)
-					)
+					if (!shiftContainsUser) {
+						Spacer(modifier = Modifier.height(10.dp))
+						Divider()
+					}
 				}
 
-				Spacer(modifier = Modifier.height(5.dp))
-				val resources = LocalContext.current.resources
-				PrimaryButton(
-					modifier = Modifier
-						.align(Alignment.End),
-					onClick = {
-						if (!isLoading)
-							isLoading = true
-						eventViewModel.onPlaceApply(
-							place.id,
-							selectedSegment.id,
-							successMessage = resources.getString(R.string.application_successful)
+				if (!shiftContainsUser) {
+					Spacer(modifier = Modifier.height(20.dp))
+					val choices = remember { eventRoles }
+					var selectedSegment by remember { mutableStateOf(choices[1]) }
+					SegmentedControl(
+						segments = choices,
+						selectedSegment = selectedSegment,
+						onSegmentSelected = { selectedSegment = it }
+					) { choice ->
+						SegmentText(
+							modifier = Modifier.padding(horizontal = 4.dp, vertical = 10.dp),
+							text = if (choice !is EventRole.Other) stringResource(choice.nameResource) else choice.name
+								?: "",
+							selected = selectedSegment == choice,
+							selectedColor = AppColors.accent.collectAsState().value,
+							unselectedColor = AppColors.greyText.collectAsState().value.copy(alpha = .8f)
+						)
+					}
+
+					Spacer(modifier = Modifier.height(5.dp))
+					val resources = LocalContext.current.resources
+					PrimaryButton(
+						modifier = Modifier
+							.align(Alignment.End),
+						onClick = {
+							if (!isLoading) {
+								isLoading = true
+								eventViewModel.onPlaceApply(
+									place.id,
+									selectedSegment.id,
+									successMessage = resources.getString(R.string.application_successful)
+								) {
+									isLoading = false
+									onResult()
+								}
+							}
+						},
+						text = stringResource(R.string.event_apply)
+					) { text ->
+						LoadableButtonContent(
+							isLoading = isLoading,
+							strokeWidth = 2.dp
 						) {
-							isLoading = false
-							onResult()
+							text()
 						}
-					},
-					text = stringResource(R.string.event_apply)
-				) { text ->
-					LoadableButtonContent(
-						isLoading = isLoading,
-						strokeWidth = 2.dp
-					) {
-						text()
 					}
 				}
 			}
