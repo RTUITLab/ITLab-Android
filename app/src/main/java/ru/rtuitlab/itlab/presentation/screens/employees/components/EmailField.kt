@@ -33,7 +33,7 @@ fun EmailField(
 		AlertDialog(
 			title = {
 				Text(
-					text = stringResource(R.string.are_you_sure),
+					text = stringResource(R.string.dialog_opening_email),
 					style = MaterialTheme.typography.h4
 				)
 			},
