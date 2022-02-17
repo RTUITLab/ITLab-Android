@@ -85,7 +85,7 @@ fun PlaceAlertDialog(
 
 				Spacer(modifier = Modifier.height(5.dp))
 
-				if (place.description.isNotBlank())
+				if (!place.description.isNullOrBlank())
 					IconizedRow(
 						imageVector = Icons.Default.Info,
 						imageHeight = 14.dp,

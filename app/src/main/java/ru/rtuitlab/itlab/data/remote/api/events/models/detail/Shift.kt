@@ -14,7 +14,7 @@ data class Shift(
     val id: String,
     val beginTime: String,
     val endTime: String,
-    val description: String,
+    val description: String? = null,
     val places: List<Place>
 ) {
     fun getTime(context: Context) = run {

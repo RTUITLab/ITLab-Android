@@ -52,7 +52,7 @@ fun ShiftCard(
 				verticalAlignment = Alignment.Top
 			) {
 				Text(
-					text =  if (shift.description.isBlank()) stringResource(R.string.event_no_description)
+					text =  if (shift.description.isNullOrBlank()) stringResource(R.string.event_no_description)
 							else shift.description,
 					style = MaterialTheme.typography.subtitle1,
 					color = AppColors.greyText.collectAsState().value
