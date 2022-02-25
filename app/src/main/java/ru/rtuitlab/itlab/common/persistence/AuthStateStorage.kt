@@ -6,6 +6,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.createDataStore
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import net.openid.appauth.*
 import ru.rtuitlab.itlab.presentation.utils.UserClaimParser
@@ -25,6 +28,18 @@ class AuthStateStorage(context: Context) {
     } ?: AuthState()
 
     val authStateFlow = dataStore.data.map { it.getAuthState() }
+
+    // This is a workaround for token refreshment, since authStateFlow.last() in TokenInterceptor.getAccessToken() freezes HTTP requests
+    var latestAuthState: AuthState = runBlocking { authStateFlow.first() }
+        private set
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            authStateFlow.collect {
+                latestAuthState = it
+            }
+        }
+    }
 
     private fun Preferences.getUserClaims(): List<Any> = UserClaimParser.parse(this[USER_PAYLOAD_KEY])
 
