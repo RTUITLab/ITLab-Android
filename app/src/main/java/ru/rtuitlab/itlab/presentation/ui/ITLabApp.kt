@@ -14,10 +14,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesTab
+import ru.rtuitlab.itlab.presentation.screens.devices.components.DevicesTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.employees.EmployeesTab
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeesTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.events.EventsTab
@@ -30,6 +32,8 @@ import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBa
 import ru.rtuitlab.itlab.presentation.screens.projects.ProjectsTab
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogOur
+import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
@@ -48,7 +52,8 @@ fun ITLabApp(
 	appBarViewModel: AppBarViewModel = viewModel(),
 	appTabsViewModel: AppTabsViewModel = viewModel(),
 	eventsViewModel: EventsViewModel = viewModel(),
-	bottomSheetViewModel: BottomSheetViewModel = viewModel()
+	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
+	dialogViewModel: DialogViewModel = viewModel()
 ) {
 	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) {
 		mutableStateOf(appBarViewModel.defaultTab)
@@ -72,7 +77,11 @@ fun ITLabApp(
 		if (bottomSheetViewModel.bottomSheetState.currentValue == ModalBottomSheetValue.Hidden)
 			bottomSheetViewModel.hide(this)
 	}
-
+	if(dialogViewModel.visibilityAsState.collectAsState().value)
+		Dialog(
+			content = { DialogOur() },
+			onDismissRequest = { dialogViewModel.hide()},
+		)
 	ModalBottomSheetLayout(
 		sheetState = bottomSheetViewModel.bottomSheetState,
 		sheetContent = { BottomSheet() },
@@ -104,6 +113,7 @@ fun ITLabApp(
 					)
 					AppScreen.Employees -> EmployeesTopAppBar()
 					AppScreen.Feedback -> FeedbackTopAppBar()
+					AppScreen.Devices -> DevicesTopAppBar()
 					else -> BasicTopAppBar(
 						text = stringResource(currentScreen.screenNameResource),
 						onBackAction = onBackAction

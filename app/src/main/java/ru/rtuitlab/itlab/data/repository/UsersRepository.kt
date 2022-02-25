@@ -4,6 +4,7 @@ import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyEditRequest
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import javax.inject.Inject
 
 class UsersRepository @Inject constructor(
@@ -18,6 +19,9 @@ class UsersRepository @Inject constructor(
         usersApi.getUser(userId)
     }
 
+ suspend fun fetchUserDevices(userId: String) = handler {
+        usersApi.getUserDevices(userId)
+    }
     suspend fun fetchUserEvents(userId: String, beginTime: String, endTime: String) = handler {
         usersApi.getUserEvents(userId, beginTime, endTime)
     }
@@ -38,5 +42,9 @@ class UsersRepository @Inject constructor(
         usersApi.editUserProperty(
             UserPropertyEditRequest(id, value)
         )
+    }
+ suspend fun getUsers() = usersApi.getUsers()
+    suspend fun getUserById(userId:String):UserResponse {
+        return usersApi.getUser(userId)
     }
 }
