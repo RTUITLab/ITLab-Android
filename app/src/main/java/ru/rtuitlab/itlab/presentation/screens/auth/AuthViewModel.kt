@@ -15,127 +15,191 @@ import kotlinx.coroutines.launch
 import net.openid.appauth.*
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.common.Resource
+import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserInfoModel
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.data.remote.api.auth.AuthApi
 import ru.rtuitlab.itlab.data.repository.NotificationsRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
 import ru.rtuitlab.itlab.domain.services.firebase.FirebaseTokenUtils
+import ru.rtuitlab.itlab.presentation.utils.LogoutUrlBuilder
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
 	private val authStateStorage: AuthStateStorage,
 	private val authService: AuthorizationService,
+	private val authApi: AuthApi,
 	private val usersRepo: UsersRepository,
+	private val handler: ResponseHandler,
 	private val notificationsRepo: NotificationsRepository
 ) : ViewModel() {
 
-    private companion object {
-        const val TAG = "AuthViewModel"
-    }
+	private companion object {
+		const val TAG = "AuthViewModel"
+	}
 
-    val authStateFlow = authStateStorage.authStateFlow
+	val authStateFlow = authStateStorage.authStateFlow
 
-    fun onLoginEvent(authPageLauncher: ActivityResultLauncher<Intent>) {
-        processWithAuthIntent {
-            authPageLauncher.launch(it)
-        }
-    }
+	lateinit var logoutLauncher: ActivityResultLauncher<Intent>
 
-    fun onLogoutEvent() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val config = authStateFlow.first().authorizationServiceConfiguration
-            authStateStorage.resetAuthStateWithConfig(config)
-            authStateStorage.resetUserClaims()
-        }
-    }
+	fun provideLogoutLauncher(authPageLauncher: ActivityResultLauncher<Intent>) {
+		logoutLauncher = authPageLauncher
+	}
 
-    private fun processWithAuthIntent(
-            block: (authIntent: Intent) -> Unit
-    ) {
-        processWithServiceConfig { serviceConfig ->
-            val authRequest = AuthorizationRequest.Builder(
-                    serviceConfig,
-                    BuildConfig.CLIENT_ID,
-                    ResponseTypeValues.CODE,
-                    Uri.parse(BuildConfig.REDIRECT_URI)
-            ).setScopes(*BuildConfig.SCOPES).build()
+	fun onLoginEvent(authPageLauncher: ActivityResultLauncher<Intent>) {
+		processWithAuthIntent {
+			authPageLauncher.launch(it)
+		}
+	}
 
-            val authIntent = authService.getAuthorizationRequestIntent(authRequest)
-            block(authIntent)
-        }
-    }
+	fun onLogoutEvent() = viewModelScope.launch(Dispatchers.IO) {
+		handler {
+			val authRequest = AuthorizationRequest.Builder(
+				authStateStorage.latestAuthState.authorizationServiceConfiguration!!,
+				BuildConfig.CLIENT_ID,
+				ResponseTypeValues.CODE,
+				Uri.parse(BuildConfig.REDIRECT_URI)
+			)
+				.setScopes(*BuildConfig.SCOPES)
+				.setAdditionalParameters(
+					mapOf(
+						LogoutUrlBuilder.PARAM_ID_TOKEN_HINT to authStateStorage.latestAuthState.accessToken
+					)
+				)
+				.build()
+				Log.v("Logout", "Access ${authStateStorage.latestAuthState.accessToken}")
+				Log.v("Logout", "ID ${authStateStorage.latestAuthState.idToken}")
+			authApi.logout(LogoutUrlBuilder.build(authRequest))
+		}.handle(
+			onSuccess = { authStateStorage.endSession() },
+			onError = { authStateStorage.endSession() }
+		)
+	}
 
-    private fun processWithServiceConfig(
-            block: (serviceConfig: AuthorizationServiceConfiguration) -> Unit
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            authStateFlow.first().authorizationServiceConfiguration?.let {
-                Log.i(TAG, "Config retained: $it")
-                block(it)
-            } ?: AuthorizationServiceConfiguration.fetchFromIssuer(
-                    Uri.parse(BuildConfig.ISSUER_URI)
-            ) { serviceConfig, exception ->
-                serviceConfig?.let {
-                    Log.i(TAG, "Config fetched: $it")
-                    viewModelScope.launch(Dispatchers.IO) {
-                        authStateStorage.resetAuthStateWithConfig(it)
-                    }
-                    block(it)
-                } ?:run {
-                    Log.e(TAG, "Failed fetch config: ", exception)
-                }
-            }
-        }
-    }
+	fun enterLogoutFlow() = processWithAuthIntent {
+		logoutLauncher.launch(it)
+	}
 
-    fun handleAuthResult(intent: Intent) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val authResponse = AuthorizationResponse.fromIntent(intent)
-            val authException = AuthorizationException.fromIntent(intent)
-            if (authResponse != null) {
-                authStateStorage.updateAuthState(authResponse, authException)
-                exchangeAuthCode(authResponse)
-            } else {
-                Log.e(TAG, "Error in auth process: ", authException)
-            }
-        }
-    }
+	private fun processWithAuthIntent(
+		block: (authIntent: Intent) -> Unit
+	) {
+		processWithServiceConfig { serviceConfig ->
+			val authRequest = AuthorizationRequest.Builder(
+				serviceConfig,
+				BuildConfig.CLIENT_ID,
+				ResponseTypeValues.CODE,
+				Uri.parse(BuildConfig.REDIRECT_URI)
+			)
+				.setScopes(*BuildConfig.SCOPES)
+				.build()
 
-    private fun exchangeAuthCode(authResponse: AuthorizationResponse) {
-        authService.performTokenRequest(
-                authResponse.createTokenExchangeRequest()
-        ) { tokenResponse, tokenException ->
-            viewModelScope.launch(Dispatchers.IO) {
-                if (tokenResponse != null) {
-                    obtainUserId(tokenResponse.accessToken!!)
-                    authStateStorage.updateAuthState(tokenResponse, tokenException)
-                    authStateStorage.updateUserPayload(tokenResponse.accessToken!!)
-                    addFirebaseToken()
-                } else {
-                    Log.e(TAG, "Exception in exchange process: ", tokenException)
-                }
-            }
-        }
-    }
+			val authIntent = authService.getAuthorizationRequestIntent(authRequest)
+			block(authIntent)
+		}
+	}
 
-    private val _userIdFlow = MutableSharedFlow<Resource<UserInfoModel>>()
-    val userIdFlow = _userIdFlow.asSharedFlow()
+	private fun processWithLogoutIntent(
+		block: (authIntent: Intent) -> Unit
+	) {
+		val authRequest = AuthorizationRequest.Builder(
+			authStateStorage.latestAuthState.authorizationServiceConfiguration!!,
+			BuildConfig.CLIENT_ID,
+			ResponseTypeValues.CODE,
+			Uri.parse(BuildConfig.REDIRECT_URI)
+		)
+			.setScopes(*BuildConfig.SCOPES)
+			.setAdditionalParameters(
+				mapOf(
+					LogoutUrlBuilder.PARAM_ID_TOKEN_HINT to authStateStorage.latestAuthState.accessToken
+				)
+			)
+			.build()
+		Log.v("Logout", "Access ${authStateStorage.latestAuthState.accessToken}")
+		Log.v("Logout", "ID ${authStateStorage.latestAuthState.idToken}")
+//		block(authIntent)
+	}
 
-    private suspend fun obtainUserId(accessToken: String) {
-        val config = authStateFlow.first().authorizationServiceConfiguration!!
-        val userInfoEndpoint = config.discoveryDoc!!.userinfoEndpoint!!.toString()
-        when (val userInfoResource = usersRepo.fetchUserInfo(userInfoEndpoint, accessToken)) {
-            is Resource.Success -> authStateStorage.updateUserId(userInfoResource.data.sub)
-            is Resource.Error -> _userIdFlow.emit(userInfoResource)
-            Resource.Loading -> {}
-        }
-    }
+	private fun processWithServiceConfig(
+		block: (serviceConfig: AuthorizationServiceConfiguration) -> Unit
+	) {
+		viewModelScope.launch(Dispatchers.IO) {
+			authStateStorage.latestAuthState.authorizationServiceConfiguration?.let {
+				Log.i(TAG, "Config retained: $it")
+				block(it)
+			} ?: AuthorizationServiceConfiguration.fetchFromIssuer(
+				Uri.parse(BuildConfig.ISSUER_URI)
+			) { serviceConfig, exception ->
+				serviceConfig?.let {
+					Log.i(TAG, "Config fetched: $it")
+					viewModelScope.launch(Dispatchers.IO) {
+						authStateStorage.resetAuthStateWithConfig(it)
+					}
+					block(it)
+				} ?: run {
+					Log.e(TAG, "Failed fetch config: ", exception)
+				}
+			}
+		}
+	}
 
-    private fun addFirebaseToken() =
-        FirebaseTokenUtils.getToken {
-            viewModelScope.launch(Dispatchers.IO) {
-                notificationsRepo.addFirebaseToken(it)
-            }
-        }
+	private fun <T> withServiceConfig(
+		block: (serviceConfig: AuthorizationServiceConfiguration) -> T
+	) {
+		block(authStateStorage.latestAuthState.authorizationServiceConfiguration!!)
+	}
+
+	fun handleAuthResult(intent: Intent) {
+		viewModelScope.launch(Dispatchers.IO) {
+			val authResponse = AuthorizationResponse.fromIntent(intent)
+			val authException = AuthorizationException.fromIntent(intent)
+			if (authResponse != null) {
+				authStateStorage.updateAuthState(authResponse, authException)
+				exchangeAuthCode(authResponse)
+			} else {
+				Log.e(TAG, "Error in auth process: ", authException)
+			}
+		}
+	}
+
+	fun handleLogoutResult(intent: Intent) {
+		Log.v("Logout", intent.dataString ?: "No data")
+	}
+
+	private fun exchangeAuthCode(authResponse: AuthorizationResponse) {
+		authService.performTokenRequest(
+			authResponse.createTokenExchangeRequest()
+		) { tokenResponse, tokenException ->
+			viewModelScope.launch(Dispatchers.IO) {
+				if (tokenResponse != null) {
+					obtainUserId(tokenResponse.accessToken!!)
+					authStateStorage.updateAuthState(tokenResponse, tokenException)
+					authStateStorage.updateUserPayload(tokenResponse.accessToken!!)
+					addFirebaseToken()
+				} else {
+					Log.e(TAG, "Exception in exchange process: ", tokenException)
+				}
+			}
+		}
+	}
+
+	private val _userIdFlow = MutableSharedFlow<Resource<UserInfoModel>>()
+	val userIdFlow = _userIdFlow.asSharedFlow()
+
+	private suspend fun obtainUserId(accessToken: String) {
+		val config = authStateFlow.first().authorizationServiceConfiguration!!
+		val userInfoEndpoint = config.discoveryDoc!!.userinfoEndpoint!!.toString()
+		when (val userInfoResource = usersRepo.fetchUserInfo(userInfoEndpoint, accessToken)) {
+			is Resource.Success -> authStateStorage.updateUserId(userInfoResource.data.sub)
+			is Resource.Error -> _userIdFlow.emit(userInfoResource)
+			Resource.Loading -> {}
+		}
+	}
+
+	private fun addFirebaseToken() =
+		FirebaseTokenUtils.getToken {
+			viewModelScope.launch(Dispatchers.IO) {
+				notificationsRepo.addFirebaseToken(it)
+			}
+		}
 }

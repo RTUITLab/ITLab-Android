@@ -22,6 +22,7 @@ import ru.rtuitlab.itlab.data.remote.api.feedback.FeedbackApi
 import ru.rtuitlab.itlab.data.remote.api.notifications.NotificationsApi
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.data.remote.api.auth.AuthApi
 import javax.inject.Singleton
 
 @Module
@@ -93,4 +94,8 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideEventsApi(retrofit: Retrofit): EventsApi = retrofit.create()
+
+    @Singleton
+    @Provides
+    fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create()
 }
