@@ -23,6 +23,7 @@ import ru.rtuitlab.itlab.data.remote.api.notifications.NotificationsApi
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.auth.AuthApi
+import ru.rtuitlab.itlab.presentation.utils.AuthorizationServiceExt
 import javax.inject.Singleton
 
 @Module
@@ -33,7 +34,7 @@ object ApiModule {
     @Provides
     fun provideTokenInterceptor(
         authStateStorage: AuthStateStorage,
-        authService: AuthorizationService
+        authService: AuthorizationServiceExt
     ) = TokenInterceptor(authStateStorage, authService)
 
     @Singleton

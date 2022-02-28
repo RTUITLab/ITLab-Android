@@ -3,6 +3,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.browser.customtabs.CustomTabsIntent
 import net.openid.appauth.AppAuthConfiguration
 import net.openid.appauth.AuthorizationManagementActivity
@@ -112,6 +113,8 @@ class AuthorizationServiceExt(
 			uriBuilder.appendQueryParameter(entry.key, entry.value)
 		}
 
-		return uriBuilder.build()
+		return uriBuilder.build().also {
+			Log.v("Logout", it.toString())
+		}
 	}
 }

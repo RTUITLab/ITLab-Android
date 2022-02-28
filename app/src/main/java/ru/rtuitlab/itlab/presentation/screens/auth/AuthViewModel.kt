@@ -22,13 +22,14 @@ import ru.rtuitlab.itlab.data.remote.api.auth.AuthApi
 import ru.rtuitlab.itlab.data.repository.NotificationsRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
 import ru.rtuitlab.itlab.domain.services.firebase.FirebaseTokenUtils
+import ru.rtuitlab.itlab.presentation.utils.AuthorizationServiceExt
 import ru.rtuitlab.itlab.presentation.utils.LogoutUrlBuilder
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
 	private val authStateStorage: AuthStateStorage,
-	private val authService: AuthorizationService,
+	private val authService: AuthorizationServiceExt,
 	private val authApi: AuthApi,
 	private val usersRepo: UsersRepository,
 	private val handler: ResponseHandler,
@@ -77,7 +78,7 @@ class AuthViewModel @Inject constructor(
 		)
 	}
 
-	fun enterLogoutFlow() = processWithAuthIntent {
+	fun enterLogoutFlow() = processWithLogoutIntent {
 		logoutLauncher.launch(it)
 	}
 
@@ -117,7 +118,7 @@ class AuthViewModel @Inject constructor(
 			.build()
 		Log.v("Logout", "Access ${authStateStorage.latestAuthState.accessToken}")
 		Log.v("Logout", "ID ${authStateStorage.latestAuthState.idToken}")
-//		block(authIntent)
+		block(authService.getLogoutIntent(authRequest))
 	}
 
 	private fun processWithServiceConfig(
@@ -143,12 +144,6 @@ class AuthViewModel @Inject constructor(
 		}
 	}
 
-	private fun <T> withServiceConfig(
-		block: (serviceConfig: AuthorizationServiceConfiguration) -> T
-	) {
-		block(authStateStorage.latestAuthState.authorizationServiceConfiguration!!)
-	}
-
 	fun handleAuthResult(intent: Intent) {
 		viewModelScope.launch(Dispatchers.IO) {
 			val authResponse = AuthorizationResponse.fromIntent(intent)
@@ -162,8 +157,9 @@ class AuthViewModel @Inject constructor(
 		}
 	}
 
-	fun handleLogoutResult(intent: Intent) {
+	fun handleLogoutResult(intent: Intent) = viewModelScope.launch {
 		Log.v("Logout", intent.dataString ?: "No data")
+		authStateStorage.endSession()
 	}
 
 	private fun exchangeAuthCode(authResponse: AuthorizationResponse) {
