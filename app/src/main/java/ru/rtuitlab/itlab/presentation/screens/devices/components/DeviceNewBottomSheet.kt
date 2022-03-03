@@ -44,21 +44,35 @@ fun DeviceNewBottomSheet(
         val scope = rememberCoroutineScope()
 
 
+        var dialogEquipmentTypeIsShown by remember { mutableStateOf(false) }
+        var dialogSerialNumberIsShown by remember { mutableStateOf(false) }
+        var dialogDescriptionIsShown by remember { mutableStateOf(false) }
+
+        var dialogAcceptIsShown by remember { mutableStateOf(false) }
+
+
+
+
 
         val setEquipmentTypeLine: (EquipmentTypeResponse) -> Unit = {
                 titleDevice.value = it.title
                 equipmentId.value = it.id
+                dialogEquipmentTypeIsShown = false
         }
         val setSerialNumberLine: (String) -> Unit = {
                 serialNumberDevice.value = it
+                dialogSerialNumberIsShown = false
         }
         val setDescriptionLine: (String) -> Unit = {
                 descriptionDevice.value = it
+                dialogDescriptionIsShown = false
+
         }
         val onRefreshLines: () -> Unit = {
                 titleDevice.value = ""
                 serialNumberDevice.value = ""
                 descriptionDevice.value = ""
+                dialogAcceptIsShown = false
         }
         Column(
                 modifier = Modifier
@@ -66,7 +80,6 @@ fun DeviceNewBottomSheet(
                         .padding(25.dp)
 
         ) {
-                var dialogEquipmentTypeIsShown by remember { mutableStateOf(false) }
                 if(dialogEquipmentTypeIsShown)
                         Dialog(
                                 onDismissRequest = {dialogEquipmentTypeIsShown=false} ,
@@ -117,7 +130,6 @@ fun DeviceNewBottomSheet(
                 }
                 Spacer(Modifier.height(8.dp))
 
-                var dialogSerialNumberIsShown by remember { mutableStateOf(false) }
                 if(dialogSerialNumberIsShown)
                         Dialog(
                                 onDismissRequest = {dialogSerialNumberIsShown=false} ,
@@ -134,6 +146,7 @@ fun DeviceNewBottomSheet(
                 Row(verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                                 .clickable {
+                                        dialogSerialNumberIsShown = true
 
 //                                        dialogViewModel.show(
 //                                                AppDialog.DeviceInfoEditSerialNumber(
@@ -162,7 +175,6 @@ fun DeviceNewBottomSheet(
                 }
                 Spacer(Modifier.height(8.dp))
 
-                var dialogDescriptionIsShown by remember { mutableStateOf(false) }
                 if(dialogDescriptionIsShown)
                         Dialog(
                                 onDismissRequest = {dialogDescriptionIsShown=false} ,
@@ -191,7 +203,7 @@ fun DeviceNewBottomSheet(
 //                                        )
                                 }) {
                         Icon(
-                                painter = painterResource(R.drawable.ic_edit),
+                                painter = painterResource(R.drawable.ic_info),
                                 contentDescription = stringResource(R.string.description),
                                 modifier = Modifier
                                         .width(20.dp)
@@ -210,7 +222,6 @@ fun DeviceNewBottomSheet(
                 }
                 Spacer(Modifier.height(8.dp))
 
-                var dialogAcceptIsShown by remember { mutableStateOf(false) }
                 if(dialogAcceptIsShown)
                         Dialog(
                                 onDismissRequest = {dialogAcceptIsShown=false} ,
