@@ -6,10 +6,13 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -87,7 +90,12 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                                 setEquipmentTypeNewCardBool(!(equipments.map { it -> it.title }
                                                         .contains(titleDevice.value)))
                                         },
-                                        placeholder = { Text(text = stringResource(R.string.equipmentType)) },
+                                        placeholder = {
+
+                                                                Text(text = stringResource(R.string.equipmentType))
+
+
+                                                      },
                                         singleLine = true,
                                         colors = TextFieldDefaults.outlinedTextFieldColors(
                                                 backgroundColor = MaterialTheme.colors.background,
@@ -98,13 +106,8 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                                 .fillMaxWidth()
 
                                 )
-
                                 AnimatedVisibility(equipmentTypeNewCardBool) {
-                                        Column(
-                                                modifier = Modifier
-                                                        .fillMaxWidth()
 
-                                        ) {
                                                 Spacer(modifier = Modifier.height(5.dp))
 
                                                 Card(
@@ -131,14 +134,28 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                                                         ),
                                                                         modifier = Modifier
                                                                                 .width(30.dp)
+                                                                                .clickable {
+                                                                                        setExtendedEquipmentNewCard(
+                                                                                                !extendedEquipmentNewCard
+                                                                                        )
+                                                                                        //if(extendedEquipmentNewCard)
+                                                                                        //      dialogViewModel.setHeight(500.dp)
+                                                                                        //else
+                                                                                        //      dialogViewModel.setHeight(340.dp)
+                                                                                }
                                                                 )
                                                                 Spacer(modifier = Modifier.width(5.dp))
-                                                                Text(text = titleDevice.value)
+                                                                Text(text = titleDevice.value,maxLines = 1)
                                                         }
                                                 }
-                                        }
+
+
 
                                 }
+
+
+
+
 
 
                                 AnimatedVisibility(extendedEquipmentNewCard) {
@@ -155,12 +172,13 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                                 rememberSaveable { mutableStateOf(description.value.length) }
                                         val sizeMaxDescription = 280
 
-
+                                        val scrollState = rememberScrollState()
                                         Column(
                                                 horizontalAlignment = Alignment.CenterHorizontally,
                                                 verticalArrangement = Arrangement.Center,
                                                 modifier = Modifier
                                                         .fillMaxWidth()
+                                                        .verticalScroll(scrollState)
                                         ) {
                                                 OutlinedTextField(
                                                         value = titleEquipmentNew.value,
@@ -229,10 +247,10 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                                         modifier = Modifier
                                                                 .fillMaxWidth(),
                                                         label = { Text(text = stringResource(id = R.string.description) + " " + "${sizeDescription.value}" + "/" + sizeMaxDescription) },
-                                                        maxLines = 5
+                                                        singleLine = true
 
 
-                                                )
+                                                        )
                                                 Spacer(modifier = Modifier.height(5.dp))
                                                 Row(
                                                         modifier = Modifier
@@ -281,46 +299,56 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
 
                                         }
                                 }
-                                listequipment.handle(
-                                        onLoading = {},
-                                        onError = { msg ->
-                                                LoadingError(msg = msg)
-                                        },
-                                        onSuccess = {
-                                                devicesViewModel.onEquipmentTypeResourceSuccess(it)
-
-                                                EquipmentList(
-                                                        match = titleDevice.value,
-                                                        devicesViewModel = devicesViewModel,
-                                                        userSelectedString,
-                                                        setEquipmentTypeNewCardBool,
-                                                        setExtendedEquipmentNewCard,
-                                                )
-
-                                        }
-                                )
-                                Spacer(modifier = Modifier.height(5.dp))
-                                Row(
-                                        modifier = Modifier
-                                                .fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.End,
-                                        verticalAlignment = Alignment.Bottom
+                                AnimatedVisibility(!extendedEquipmentNewCard,
+                                modifier = Modifier
+                                        .fillMaxSize()
                                 ) {
-                                        Text(
-                                                text = stringResource(id = R.string.to_choose),
-                                                modifier = Modifier.clickable {
-                                                        val eq = equipments.find { it ->
-                                                                it.title.equals(titleDevice.value)
-                                                        }
-                                                        if (eq != null) {
-                                                                setChoosenLine(eq)
-                                                                dialogViewModel.hide()
-                                                        }
-                                                }
 
+
+                                        listequipment.handle(
+                                                onLoading = {},
+                                                onError = { msg ->
+                                                        LoadingError(msg = msg)
+                                                },
+                                                onSuccess = {
+                                                        devicesViewModel.onEquipmentTypeResourceSuccess(
+                                                                it
+                                                        )
+
+                                                        EquipmentList(
+                                                                match = titleDevice.value,
+                                                                devicesViewModel = devicesViewModel,
+                                                                userSelectedString,
+                                                                setEquipmentTypeNewCardBool,
+                                                                setExtendedEquipmentNewCard,
+                                                        )
+
+                                                }
                                         )
+
+                                        Spacer(modifier = Modifier.height(5.dp))
+                                        Row(
+                                                modifier = Modifier
+                                                        .fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.End,
+                                                verticalAlignment = Alignment.Bottom
+                                        ) {
+                                                Text(
+                                                        text = stringResource(id = R.string.to_choose),
+                                                        modifier = Modifier.clickable {
+                                                                val eq = equipments.find { it ->
+                                                                        it.title.equals(titleDevice.value)
+                                                                }
+                                                                if (eq != null) {
+                                                                        setChoosenLine(eq)
+                                                                        dialogViewModel.hide()
+                                                                }
+                                                        }
+
+                                                )
+                                        }
+                                        Spacer(modifier = Modifier.height(5.dp))
                                 }
-                                Spacer(modifier = Modifier.height(5.dp))
                         }
 
 

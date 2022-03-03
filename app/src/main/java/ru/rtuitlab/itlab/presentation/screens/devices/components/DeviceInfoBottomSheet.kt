@@ -61,24 +61,32 @@ fun DeviceInfoBottomSheet(
 		descriptionDevice.value = tempDeviceDetails?.description
 	}
 
+	var dialogEquipmentTypeIsShown by remember { mutableStateOf(false) }
+	var dialogSerialNumberIsShown by remember { mutableStateOf(false) }
+	var dialogDescriptionIsShown by remember { mutableStateOf(false) }
+
+
+
 
 	val setEquipmentTypeLine: (EquipmentTypeResponse) -> Unit = {
 		titleDevice.value = it.title
 		equipmentId.value = it.id
+		dialogEquipmentTypeIsShown = false
 	}
 	val setSerialNumberLine: (String) -> Unit = {
 		serialNumberDevice.value = it
+		dialogSerialNumberIsShown = false
 	}
 	val setDescriptionLine: (String) -> Unit = {
 		descriptionDevice.value = it
 	}
+
 	Column(
 		modifier = Modifier
 			.fillMaxWidth()
 			.padding(25.dp)
 
 	) {
-		var dialogEquipmentTypeIsShown by remember { mutableStateOf(false) }
 		if(dialogEquipmentTypeIsShown)
 			Dialog(
 				onDismissRequest = {dialogEquipmentTypeIsShown=false} ,
@@ -129,7 +137,6 @@ fun DeviceInfoBottomSheet(
 		}
 		Spacer(Modifier.height(8.dp))
 
-		var dialogSerialNumberIsShown by remember { mutableStateOf(false) }
 		if(dialogSerialNumberIsShown)
 			Dialog(
 				onDismissRequest = {dialogSerialNumberIsShown=false} ,
@@ -175,7 +182,6 @@ fun DeviceInfoBottomSheet(
 		}
 		Spacer(Modifier.height(8.dp))
 
-		var dialogDescriptionIsShown by remember { mutableStateOf(false) }
 		if(dialogDescriptionIsShown)
 			Dialog(
 				onDismissRequest = {dialogDescriptionIsShown=false} ,
