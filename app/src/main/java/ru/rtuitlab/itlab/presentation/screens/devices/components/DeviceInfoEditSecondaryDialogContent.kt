@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -13,20 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
 
 @ExperimentalMaterialApi
 @Composable
 fun DeviceInfoEditSecondaryDialogContent(
         line: String,
         hint: String,
-        dialogViewModel: DialogViewModel,
-        devicesViewModel: DevicesViewModel,
         setChoosenLine: (String) -> Unit
 ) {
         val description = rememberSaveable { mutableStateOf(line) }
-        dialogViewModel.setHeight(100.dp)
         Card(
                 shape = RoundedCornerShape(10.dp)
         ) {
@@ -44,7 +38,7 @@ fun DeviceInfoEditSecondaryDialogContent(
 
                                 modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(dialogViewModel.dialogHeightFlow.collectAsState().value)
+                                        .height(100.dp)
                                         .padding(10.dp),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
@@ -79,7 +73,6 @@ fun DeviceInfoEditSecondaryDialogContent(
                                                 text = stringResource(id = R.string.to_choose),
                                                 modifier = Modifier.clickable {
                                                         setChoosenLine(description.value)
-                                                        dialogViewModel.hide()
                                                 }
 
                                         )
