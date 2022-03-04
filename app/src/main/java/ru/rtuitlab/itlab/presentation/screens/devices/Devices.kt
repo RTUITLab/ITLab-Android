@@ -17,7 +17,6 @@ import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceCard
 import ru.rtuitlab.itlab.presentation.screens.devices.components.FloatActionButton
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -26,8 +25,6 @@ fun Devices(
 	devicesViewModel: DevicesViewModel,
 	//employeesViewModel: EmployeesViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
-	dialogViewModel: DialogViewModel,
-
 	navController: NavController
 ) {
 	val devicesResource by devicesViewModel.deviceResponsesFlow.collectAsState()
@@ -64,7 +61,7 @@ fun Devices(
 					onSuccess = {
 						isRefreshing = false
 						devicesViewModel.onResourceSuccess(it)
-						DeviceList(devicesViewModel, bottomSheetViewModel, dialogViewModel)
+						DeviceList(devicesViewModel, bottomSheetViewModel)
 
 
 					}
@@ -75,7 +72,7 @@ fun Devices(
 
 			val isAccesile = devicesViewModel.accesibleFlow.collectAsState().value
 			if (isAccesile)
-				FloatActionButton(devicesViewModel, bottomSheetViewModel, dialogViewModel)
+				FloatActionButton(devicesViewModel, bottomSheetViewModel)
 
 		}
 
@@ -88,8 +85,7 @@ fun Devices(
 @Composable
 private fun DeviceList(
 	devicesViewModel: DevicesViewModel,
-	bottomSheetViewModel: BottomSheetViewModel,
-	dialogViewModel: DialogViewModel
+	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val devices by devicesViewModel.devicesFlow.collectAsState()
 	val currentDeviceId = devicesViewModel.deviceIdFlow.collectAsState()
@@ -129,11 +125,10 @@ private fun DeviceList(
 			DeviceCard(
 				devicesViewModel = devicesViewModel,
 				bottomSheetViewModel = bottomSheetViewModel,
-				dialogViewModel = dialogViewModel,
 
 				device = device,
 				modifier = Modifier
-					.fillMaxWidth(),
+					.fillMaxWidth()
 
 				)
 

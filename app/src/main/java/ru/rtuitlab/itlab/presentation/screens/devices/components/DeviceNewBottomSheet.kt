@@ -4,7 +4,9 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.runtime.*
@@ -18,11 +20,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentNewRequest
 import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentTypeResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
-import ru.rtuitlab.itlab.presentation.utils.AppDialog
 
 @ExperimentalAnimationApi
 @ExperimentalTransitionApi
@@ -31,7 +32,6 @@ import ru.rtuitlab.itlab.presentation.utils.AppDialog
 fun DeviceNewBottomSheet(
         devicesViewModel: DevicesViewModel,
         bottomSheetViewModel: BottomSheetViewModel,
-        dialogViewModel: DialogViewModel
 ) {
 
         var equipmentIdString:String = ""
@@ -86,7 +86,6 @@ fun DeviceNewBottomSheet(
                                 content = {
                                         DeviceInfoEditEquipmentTypeDialogContent(
                                                 "",
-                                                dialogViewModel,
                                                 devicesViewModel,
                                                 setEquipmentTypeLine
                                         )
@@ -96,7 +95,7 @@ fun DeviceNewBottomSheet(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                                 .clickable {
-                                        dialogEquipmentTypeIsShown = true;
+                                        dialogEquipmentTypeIsShown = true
 //                                        dialogViewModel.show(
 //                                                AppDialog.DeviceInfoEditEquipmentType(
 //                                                        "",
@@ -137,8 +136,6 @@ fun DeviceNewBottomSheet(
                                         DeviceInfoEditSecondaryDialogContent(
                                                 "",
                                                 stringResource(R.string.serial_number),
-                                                dialogViewModel,
-                                                devicesViewModel,
                                                 setSerialNumberLine
                                         )
                                 }
@@ -182,8 +179,6 @@ fun DeviceNewBottomSheet(
                                         DeviceInfoEditSecondaryDialogContent(
                                                 "",
                                                 stringResource(R.string.description),
-                                                dialogViewModel,
-                                                devicesViewModel,
                                                 setDescriptionLine
                                         )
                                 }
@@ -226,16 +221,28 @@ fun DeviceNewBottomSheet(
                         Dialog(
                                 onDismissRequest = {dialogAcceptIsShown=false} ,
                                 content = {
-                                        DeviceNewAcceptDialogContent(
-                                                dialogViewModel,
-                                                bottomSheetViewModel,
-                                                devicesViewModel,
+                                        DeviceAcceptDialogContent(
                                                 titleDevice.value,
                                                 serialNumberDevice.value,
-                                                descriptionDevice.value,
-                                                equipmentId.value,
-                                                onRefreshLines
-                                        )
+                                                descriptionDevice.value
+                                        ){
+                                                if(titleDevice.value.isNotEmpty() && serialNumberDevice.value.isNotEmpty() && descriptionDevice.value.isNotEmpty()) {
+                                                        val equipmentNewRequest = EquipmentNewRequest(
+                                                                serialNumberDevice.value,
+                                                                equipmentId.value,
+                                                                descriptionDevice.value
+                                                        )
+                                                        devicesViewModel.onCreateEquipment(equipmentNewRequest){
+                                                                        isSuccessful ->
+                                                                if(isSuccessful) {
+                                                                        dialogAcceptIsShown = false
+                                                                        bottomSheetViewModel.hide(scope)
+                                                                        devicesViewModel.onRefresh()
+                                                                        onRefreshLines()
+                                                                }
+                                                        }
+                                                }
+                                        }
                                 }
                         )
                 Row(

@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation.screens.devices.components
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.clickable
@@ -26,8 +27,6 @@ import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentEditRequest
 import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentTypeResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
-import ru.rtuitlab.itlab.presentation.utils.AppDialog
 
 @ExperimentalAnimationApi
 @ExperimentalTransitionApi
@@ -35,17 +34,16 @@ import ru.rtuitlab.itlab.presentation.utils.AppDialog
 @Composable
 fun DeviceInfoBottomSheet(
 	devicesViewModel: DevicesViewModel,
-	dialogViewModel: DialogViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
 	deviceDetails: DeviceDetails?
 ) {
 
 	val scope = rememberCoroutineScope()
 
-	devicesViewModel.setdeviceFromSheet(deviceDetails)
+	//devicesViewModel.setdeviceFromSheet(deviceDetails)
 
 
-	val tempDeviceDetails = devicesViewModel.deviceFromSheetFlow.collectAsState().value
+	val tempDeviceDetails = deviceDetails?.copy()
 	val equipmentIdString = tempDeviceDetails?.equipmentTypeId
 	val equipmentId = remember { mutableStateOf(equipmentIdString) }
 	val titleString = tempDeviceDetails?.equipmentType?.title
@@ -55,17 +53,18 @@ fun DeviceInfoBottomSheet(
 	val descriptionString = tempDeviceDetails?.description
 	val descriptionDevice = remember { mutableStateOf(descriptionString) }
 
-	if (!bottomSheetViewModel.visibilityAsState.collectAsState().value) {
+	/*if (!bottomSheetViewModel.visibilityAsState.collectAsState().value) {
 		titleDevice.value = tempDeviceDetails?.equipmentType?.title
 		serialNumberDevice.value = tempDeviceDetails?.serialNumber
 		descriptionDevice.value = tempDeviceDetails?.description
-	}
+	}*/
 
 	var dialogEquipmentTypeIsShown by remember { mutableStateOf(false) }
 	var dialogSerialNumberIsShown by remember { mutableStateOf(false) }
 	var dialogDescriptionIsShown by remember { mutableStateOf(false) }
 
 
+	var dialogAcceptIsShown by remember { mutableStateOf(false) }
 
 
 	val setEquipmentTypeLine: (EquipmentTypeResponse) -> Unit = {
@@ -93,7 +92,6 @@ fun DeviceInfoBottomSheet(
 				content = {
 					DeviceInfoEditEquipmentTypeDialogContent(
 					tempDeviceDetails?.equipmentType?.title.toString(),
-					dialogViewModel,
 					devicesViewModel,
 					setEquipmentTypeLine
 				)
@@ -144,8 +142,6 @@ fun DeviceInfoBottomSheet(
 					DeviceInfoEditSecondaryDialogContent(
 						tempDeviceDetails?.serialNumber.toString(),
 						stringResource(R.string.serial_number),
-						dialogViewModel,
-						devicesViewModel,
 						setSerialNumberLine
 				)
 				}
@@ -189,8 +185,6 @@ fun DeviceInfoBottomSheet(
 					DeviceInfoEditSecondaryDialogContent(
 						tempDeviceDetails?.description.toString(),
 						stringResource(R.string.description),
-						dialogViewModel,
-						devicesViewModel,
 						setDescriptionLine
 					)
 				}
@@ -272,6 +266,39 @@ fun DeviceInfoBottomSheet(
 					}
 
 			)
+			if(dialogAcceptIsShown)
+				Dialog(
+					onDismissRequest = {dialogAcceptIsShown=false} ,
+					content = {
+
+						if (deviceDetails != null) {
+
+							DeviceAcceptDialogContent(
+
+								deviceDetails.equipmentType.title,
+								deviceDetails.serialNumber.toString(),
+								deviceDetails.description.toString(),
+
+								){
+								Log.d("DeviceInfo","KILL")
+
+									/*devicesViewModel.onDeleteEquipment(deviceDetails.id) { isSuccessful ->
+										Log.d("DeviceInfo","$isSuccessful")
+
+										if (isSuccessful) {
+											bottomSheetViewModel.hide(scope)
+											devicesViewModel.onRefresh()
+											dialogAcceptIsShown = false
+										}
+
+
+									}*/
+
+
+							}
+						}
+					}
+				)
 			Icon(
 				Icons.Outlined.Delete,
 				contentDescription = stringResource(R.string.delete),
@@ -281,21 +308,7 @@ fun DeviceInfoBottomSheet(
 					.height(30.dp)
 					.padding(0.dp)
 					.clickable {
-
-						if (tempDeviceDetails != null) {
-							devicesViewModel.onDeleteEquipment(
-								tempDeviceDetails.id
-							) { isSuccessful ->
-								if (isSuccessful) {
-									bottomSheetViewModel.hide(
-										scope
-									)
-									devicesViewModel.onRefresh()
-								}
-
-
-							}
-						}
+						dialogAcceptIsShown = true
 
 					}
 

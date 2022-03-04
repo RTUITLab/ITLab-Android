@@ -26,7 +26,6 @@ import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
 @ExperimentalMaterialApi
@@ -35,7 +34,6 @@ import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 fun DeviceCard(
 	devicesViewModel: DevicesViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
-	dialogViewModel: DialogViewModel,
 	device: DeviceDetails,
 	modifier: Modifier,
 ) {
@@ -69,9 +67,9 @@ fun DeviceCard(
 
 				) {
 					Text(
-						text = "${equipmentType.title} ",
+						text = if(equipmentType.title.length<30) equipmentType.title else "${equipmentType.title.subSequence(0,29)}"+"...",
 						fontWeight = FontWeight(500),
-						fontSize = 17.sp,
+						fontSize = if(equipmentType.title.length<20)17.sp else 13.sp,
 						lineHeight = 22.sp,
 
 
@@ -109,9 +107,7 @@ fun DeviceCard(
 												AppBottomSheet.DeviceInfo(
 													device,
 													devicesViewModel,
-													bottomSheetViewModel,
-													dialogViewModel
-												),
+													bottomSheetViewModel),
 												coroutineScope
 											)
 											//navController.navigate(AppScreen.DeviceDetails.route)

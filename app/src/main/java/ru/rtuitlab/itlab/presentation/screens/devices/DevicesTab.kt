@@ -13,7 +13,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.rtuitlab.itlab.presentation.screens.employees.EmployeesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
@@ -26,8 +25,7 @@ fun DevicesTab(navState: MutableState<Bundle>,
                appBarViewModel: AppBarViewModel = viewModel(),
                deviceViewModel: DevicesViewModel = viewModel(),
                employeesViewModel: EmployeesViewModel = viewModel(),
-               bottomSheetViewModel: BottomSheetViewModel = viewModel(),
-               dialogViewModel: DialogViewModel = viewModel()) {
+               bottomSheetViewModel: BottomSheetViewModel = viewModel()) {
     val navController = rememberNavController()
 
     DisposableEffect(null) {
@@ -51,6 +49,6 @@ fun DevicesTab(navState: MutableState<Bundle>,
 
     NavHost(navController, startDestination = AppScreen.Devices.route) {
         composable(AppScreen.Devices.route) { 
-	Devices(deviceViewModel,bottomSheetViewModel,dialogViewModel, navController) }
+	Devices(deviceViewModel,bottomSheetViewModel, navController) }
     }
 }

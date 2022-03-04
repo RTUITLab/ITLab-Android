@@ -1,7 +1,10 @@
 package ru.rtuitlab.itlab.presentation.screens.devices.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.FloatingActionButtonDefaults
+import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
@@ -11,12 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
 @ExperimentalMaterialApi
@@ -24,7 +24,6 @@ import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 fun FloatActionButton(
         devicesViewModel: DevicesViewModel,
         bottomSheetViewModel: BottomSheetViewModel,
-        dialogViewModel: DialogViewModel
 ) {
         val coroutineScope = rememberCoroutineScope()
 
@@ -42,7 +41,7 @@ fun FloatActionButton(
                         onClick = {
 
                                 bottomSheetViewModel.show(
-                                        AppBottomSheet.DeviceNew(devicesViewModel,bottomSheetViewModel, dialogViewModel),
+                                        AppBottomSheet.DeviceNew(devicesViewModel,bottomSheetViewModel),
                                         coroutineScope)
 
                         }

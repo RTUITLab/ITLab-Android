@@ -1,12 +1,11 @@
 package ru.rtuitlab.itlab.presentation.screens.devices.components
 
-import androidx.compose.foundation.clickable
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -17,27 +16,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentNewRequest
-import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import java.util.*
 
 @ExperimentalMaterialApi
 @Composable
-fun DeviceNewAcceptDialogContent(
-        dialogViewModel: DialogViewModel,
-        bottomSheetViewModel: BottomSheetViewModel,
-        devicesViewModel: DevicesViewModel,
+fun DeviceAcceptDialogContent(
+
         title:String,
         serialNumber:String,
         description:String,
-        equipmentTypeId:String,
-        onRefreshLines:() -> Unit
+        acceptActions: () -> Unit
 ) {
 
-        val scope = rememberCoroutineScope()
 
 
         Card(
@@ -119,13 +110,15 @@ fun DeviceNewAcceptDialogContent(
                                 )
 
                         }
+                        Log.d("DeviceInfo","KILL2")
 
                         Button(
                                 modifier = Modifier
                                         .align(Alignment.End)
                                         .clipToBounds(),
                                 onClick = {
-
+                                        Log.d("DeviceInfo","KILL3")
+                                        acceptActions()
                                 },
                                 colors = ButtonDefaults.buttonColors(
                                         backgroundColor = Color.Transparent
@@ -141,25 +134,6 @@ fun DeviceNewAcceptDialogContent(
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight(500),
                                         lineHeight = 22.sp,
-                                        modifier = Modifier
-                                                .clickable {
-                                                        if(serialNumber.isNotEmpty() && title.isNotEmpty() && description.isNotEmpty()) {
-                                                                val equipmentNewRequest = EquipmentNewRequest(
-                                                                        serialNumber,
-                                                                        equipmentTypeId,
-                                                                        description
-                                                                )
-                                                                devicesViewModel.onCreateEquipment(equipmentNewRequest){
-                                                                                isSuccessful ->
-                                                                                        if(isSuccessful) {
-                                                                                                dialogViewModel.hide()
-                                                                                                bottomSheetViewModel.hide(scope)
-                                                                                                devicesViewModel.onRefresh()
-                                                                                                onRefreshLines()
-                                                                                        }
-                                                                }
-                                                        }
-                                                }
                                 )
                         }
 

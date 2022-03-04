@@ -32,8 +32,7 @@ import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBa
 import ru.rtuitlab.itlab.presentation.screens.projects.ProjectsTab
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogOur
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
+
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
@@ -53,7 +52,6 @@ fun ITLabApp(
 	appTabsViewModel: AppTabsViewModel = viewModel(),
 	eventsViewModel: EventsViewModel = viewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
-	dialogViewModel: DialogViewModel = viewModel()
 ) {
 	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) {
 		mutableStateOf(appBarViewModel.defaultTab)
@@ -77,11 +75,7 @@ fun ITLabApp(
 		if (bottomSheetViewModel.bottomSheetState.currentValue == ModalBottomSheetValue.Hidden)
 			bottomSheetViewModel.hide(this)
 	}
-	if(dialogViewModel.visibilityAsState.collectAsState().value)
-		Dialog(
-			content = { DialogOur() },
-			onDismissRequest = { dialogViewModel.hide()},
-		)
+
 	ModalBottomSheetLayout(
 		sheetState = bottomSheetViewModel.bottomSheetState,
 		sheetContent = { BottomSheet() },
