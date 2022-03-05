@@ -94,4 +94,22 @@
     <string name="event_invitation_reject">Отказаться</string>
     <string name="event_place">Место</string>
     <string name="events_notifications_empty">Новых уведомлений нет</string>
+
+    <string name="description">Описание</string>
+    <string name="serial_number">Серийный номер</string>
+    <string name="ownerId">Владелец</string>
+    <string name="edit">Изменить</string>
+    <string name="title">Название</string>
+    <string name="number">Номер</string>
+    <string name="add_device">Добавить Устройство</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="dismiss">Отменить</string>
+
+
+    <string name="equipmentType">Тип оборудования</string>
+
+    <string name="shortTitle">Короткое название</string>
+    <string name="to_create">Создать</string>
+    <string name="to_choose">Выбрать</string>
+    <string name="Laboratory">Лаборатория</string>
 </resources>

@@ -5,7 +5,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ru.rtuitlab.itlab.common.ResponseHandler
+import ru.rtuitlab.itlab.data.remote.api.devices.DevicesApi
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
+import ru.rtuitlab.itlab.data.repository.DevicesRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
 import javax.inject.Singleton
 
@@ -17,4 +19,8 @@ object RepositoriesModule {
     @Provides
     fun provideRepository(usersApi: UsersApi, responseHandler: ResponseHandler) =
         UsersRepository(usersApi, responseHandler)
+    @Singleton
+    @Provides
+    fun provideDevicesRepository( devicesApi: DevicesApi, responseHandler: ResponseHandler) =
+        DevicesRepository(devicesApi, responseHandler)
 }

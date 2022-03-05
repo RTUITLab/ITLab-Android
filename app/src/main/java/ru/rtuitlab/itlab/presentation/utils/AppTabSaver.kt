@@ -15,7 +15,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon: ImageVector, var accessible: Boolean = true) {
     object Events: AppTab("events_tab", R.string.events, Icons.Default.EventNote)
     object Projects: AppTab("projects_tab", R.string.projects, Icons.Default.Widgets, false)
-    object Devices: AppTab("devices_tab", R.string.devices, Icons.Default.DevicesOther, false)
+    object Devices: AppTab("devices_tab", R.string.devices, Icons.Default.DevicesOther)
     object Employees: AppTab("employees_tab", R.string.employees, Icons.Default.People)
     object Feedback: AppTab("feedback_tab", R.string.feedback, Icons.Default.Feedback)
     object Profile: AppTab("profile_tab", R.string.profile, Icons.Default.AccountCircle, false)
