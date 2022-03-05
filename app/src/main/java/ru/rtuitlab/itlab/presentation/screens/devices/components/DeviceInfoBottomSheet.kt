@@ -43,21 +43,29 @@ fun DeviceInfoBottomSheet(
 	//devicesViewModel.setdeviceFromSheet(deviceDetails)
 
 
+
+
 	val tempDeviceDetails = deviceDetails?.copy()
 	val equipmentIdString = tempDeviceDetails?.equipmentTypeId
 	val equipmentId = remember { mutableStateOf(equipmentIdString) }
 	val titleString = tempDeviceDetails?.equipmentType?.title
-	val titleDevice = remember { mutableStateOf(titleString) }
-	val serialNumberString = tempDeviceDetails?.serialNumber
-	val serialNumberDevice = remember { mutableStateOf(serialNumberString) }
+	val titleDevice = remember { mutableStateOf(tempDeviceDetails?.equipmentType?.title) }
+	var serialNumberString = tempDeviceDetails?.serialNumber
+	val serialNumberDevice = remember { mutableStateOf(tempDeviceDetails?.serialNumber) }
 	val descriptionString = tempDeviceDetails?.description
-	val descriptionDevice = remember { mutableStateOf(descriptionString) }
+	val descriptionDevice = remember { mutableStateOf(tempDeviceDetails?.description) }
 
-	/*if (!bottomSheetViewModel.visibilityAsState.collectAsState().value) {
-		titleDevice.value = tempDeviceDetails?.equipmentType?.title
-		serialNumberDevice.value = tempDeviceDetails?.serialNumber
-		descriptionDevice.value = tempDeviceDetails?.description
-	}*/
+	if (bottomSheetViewModel.visibilityAsState.collectAsState().value) {
+		titleDevice.value = deviceDetails?.equipmentType?.title
+		serialNumberDevice.value = deviceDetails?.serialNumber
+		descriptionDevice.value = deviceDetails?.description
+	}
+
+	if (!bottomSheetViewModel.visibilityAsState.collectAsState().value) {
+		titleDevice.value = deviceDetails?.equipmentType?.title
+		serialNumberDevice.value = deviceDetails?.serialNumber
+		descriptionDevice.value = deviceDetails?.description
+	}
 
 	var dialogEquipmentTypeIsShown by remember { mutableStateOf(false) }
 	var dialogSerialNumberIsShown by remember { mutableStateOf(false) }
@@ -102,14 +110,6 @@ fun DeviceInfoBottomSheet(
 			modifier = Modifier
 				.clickable {
 					dialogEquipmentTypeIsShown = true
-//					dialogViewModel.show(
-//						AppDialog.DeviceInfoEditEquipmentType(
-//							tempDeviceDetails?.equipmentType?.title.toString(),
-//							dialogViewModel,
-//							devicesViewModel,
-//							setEquipmentTypeLine
-//						)
-//					)
 				}
 				.fillMaxWidth()
 		) {
@@ -151,14 +151,6 @@ fun DeviceInfoBottomSheet(
 				.clickable {
 
 					dialogSerialNumberIsShown = true
-//					dialogViewModel.show(
-//						AppDialog.DeviceInfoEditSerialNumber(
-//							tempDeviceDetails?.serialNumber.toString(),
-//							dialogViewModel,
-//							devicesViewModel,
-//							setSerialNumberLine
-//						)
-//					)
 				}) {
 			Icon(
 				modifier = Modifier
@@ -194,14 +186,6 @@ fun DeviceInfoBottomSheet(
 				.clickable {
 
 					dialogDescriptionIsShown = true
-//					dialogViewModel.show(
-//						AppDialog.DeviceInfoEditDescription(
-//							tempDeviceDetails?.description.toString(),
-//							dialogViewModel,
-//							devicesViewModel,
-//							setDescriptionLine
-//						)
-//					)
 				}) {
 			Icon(
 				painter = painterResource(R.drawable.ic_info),
@@ -280,19 +264,6 @@ fun DeviceInfoBottomSheet(
 								deviceDetails.description.toString(),
 
 								){
-								Log.d("DeviceInfo","KILL")
-
-									/*devicesViewModel.onDeleteEquipment(deviceDetails.id) { isSuccessful ->
-										Log.d("DeviceInfo","$isSuccessful")
-
-										if (isSuccessful) {
-											bottomSheetViewModel.hide(scope)
-											devicesViewModel.onRefresh()
-											dialogAcceptIsShown = false
-										}
-
-
-									}*/
 
 
 							}

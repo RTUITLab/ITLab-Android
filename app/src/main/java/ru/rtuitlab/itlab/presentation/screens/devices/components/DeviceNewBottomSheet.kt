@@ -43,7 +43,6 @@ fun DeviceNewBottomSheet(
 
         val scope = rememberCoroutineScope()
 
-
         var dialogEquipmentTypeIsShown by remember { mutableStateOf(false) }
         var dialogSerialNumberIsShown by remember { mutableStateOf(false) }
         var dialogDescriptionIsShown by remember { mutableStateOf(false) }

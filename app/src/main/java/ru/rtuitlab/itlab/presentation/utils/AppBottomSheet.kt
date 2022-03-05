@@ -23,12 +23,10 @@ sealed class AppBottomSheet {
                 val devicesViewModel: DevicesViewModel,
                 val bottomSheetViewModel: BottomSheetViewModel
 
-                //val setShowDialog: (Boolean) -> Unit
         ): AppBottomSheet()
         class DeviceNew(
                 val devicesViewModel: DevicesViewModel,
                 val bottomSheetViewModel: BottomSheetViewModel,
-                //val setShowDialog: (Boolean) -> Unit
         ): AppBottomSheet()
 
         object ProfileEquipment: AppBottomSheet()
