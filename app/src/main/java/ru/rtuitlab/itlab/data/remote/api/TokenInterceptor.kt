@@ -6,7 +6,6 @@ import net.openid.appauth.AuthorizationService
 import okhttp3.Interceptor
 import okhttp3.Response
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
-import ru.rtuitlab.itlab.presentation.utils.AuthorizationServiceExt
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -14,7 +13,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class TokenInterceptor @Inject constructor(
         private val authStateStorage: AuthStateStorage,
-        private val authService: AuthorizationServiceExt
+        private val authService: AuthorizationService
 ): Interceptor {
     private companion object {
         const val TAG = "TokenInterceptor"

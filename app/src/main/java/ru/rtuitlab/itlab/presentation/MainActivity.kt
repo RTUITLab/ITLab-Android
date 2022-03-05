@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
 	private val logoutPageLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-			authViewModel.handleLogoutResult(it.data!!)
+			authViewModel.handleLogoutResult(it)
 		}
 
 	override fun onCreate(savedInstanceState: Bundle?) {

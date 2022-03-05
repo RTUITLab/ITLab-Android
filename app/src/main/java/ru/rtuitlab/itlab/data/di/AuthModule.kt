@@ -7,8 +7,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import net.openid.appauth.AppAuthConfiguration
+import net.openid.appauth.AuthorizationService
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
-import ru.rtuitlab.itlab.presentation.utils.AuthorizationServiceExt
 import javax.inject.Singleton
 
 @Module
@@ -21,5 +21,5 @@ object AuthModule {
 
     @Singleton
     @Provides
-    fun provideAuthService(@ApplicationContext context: Context) = AuthorizationServiceExt(context, AppAuthConfiguration.DEFAULT)
+    fun provideAuthService(@ApplicationContext context: Context) = AuthorizationService(context, AppAuthConfiguration.DEFAULT)
 }

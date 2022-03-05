@@ -3,6 +3,7 @@ package ru.rtuitlab.itlab.presentation.screens.auth
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,21 +17,18 @@ import net.openid.appauth.*
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserInfoModel
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
-import ru.rtuitlab.itlab.data.remote.api.auth.AuthApi
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserInfoModel
 import ru.rtuitlab.itlab.data.repository.NotificationsRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
 import ru.rtuitlab.itlab.domain.services.firebase.FirebaseTokenUtils
-import ru.rtuitlab.itlab.presentation.utils.AuthorizationServiceExt
 import ru.rtuitlab.itlab.presentation.utils.LogoutUrlBuilder
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
 	private val authStateStorage: AuthStateStorage,
-	private val authService: AuthorizationServiceExt,
-	private val authApi: AuthApi,
+	private val authService: AuthorizationService,
 	private val usersRepo: UsersRepository,
 	private val handler: ResponseHandler,
 	private val notificationsRepo: NotificationsRepository
@@ -54,30 +52,6 @@ class AuthViewModel @Inject constructor(
 		}
 	}
 
-	fun onLogoutEvent() = viewModelScope.launch(Dispatchers.IO) {
-		handler {
-			val authRequest = AuthorizationRequest.Builder(
-				authStateStorage.latestAuthState.authorizationServiceConfiguration!!,
-				BuildConfig.CLIENT_ID,
-				ResponseTypeValues.CODE,
-				Uri.parse(BuildConfig.REDIRECT_URI)
-			)
-				.setScopes(*BuildConfig.SCOPES)
-				.setAdditionalParameters(
-					mapOf(
-						LogoutUrlBuilder.PARAM_ID_TOKEN_HINT to authStateStorage.latestAuthState.accessToken
-					)
-				)
-				.build()
-				Log.v("Logout", "Access ${authStateStorage.latestAuthState.accessToken}")
-				Log.v("Logout", "ID ${authStateStorage.latestAuthState.idToken}")
-			authApi.logout(LogoutUrlBuilder.build(authRequest))
-		}.handle(
-			onSuccess = { authStateStorage.endSession() },
-			onError = { authStateStorage.endSession() }
-		)
-	}
-
 	fun enterLogoutFlow() = processWithLogoutIntent {
 		logoutLauncher.launch(it)
 	}
@@ -90,7 +64,7 @@ class AuthViewModel @Inject constructor(
 				serviceConfig,
 				BuildConfig.CLIENT_ID,
 				ResponseTypeValues.CODE,
-				Uri.parse(BuildConfig.REDIRECT_URI)
+				Uri.parse(BuildConfig.REDIRECT_URI_LOGIN)
 			)
 				.setScopes(*BuildConfig.SCOPES)
 				.build()
@@ -103,22 +77,14 @@ class AuthViewModel @Inject constructor(
 	private fun processWithLogoutIntent(
 		block: (authIntent: Intent) -> Unit
 	) {
-		val authRequest = AuthorizationRequest.Builder(
-			authStateStorage.latestAuthState.authorizationServiceConfiguration!!,
-			BuildConfig.CLIENT_ID,
-			ResponseTypeValues.CODE,
-			Uri.parse(BuildConfig.REDIRECT_URI)
+
+		val endSessionRequest = EndSessionRequest.Builder(
+			authStateStorage.latestAuthState.authorizationServiceConfiguration!!
 		)
-			.setScopes(*BuildConfig.SCOPES)
-			.setAdditionalParameters(
-				mapOf(
-					LogoutUrlBuilder.PARAM_ID_TOKEN_HINT to authStateStorage.latestAuthState.accessToken
-				)
-			)
+			.setIdTokenHint(authStateStorage.latestAuthState.idToken)
+			.setPostLogoutRedirectUri(Uri.parse(BuildConfig.REDIRECT_URI_LOGOUT))
 			.build()
-		Log.v("Logout", "Access ${authStateStorage.latestAuthState.accessToken}")
-		Log.v("Logout", "ID ${authStateStorage.latestAuthState.idToken}")
-		block(authService.getLogoutIntent(authRequest))
+		block(authService.getEndSessionRequestIntent(endSessionRequest))
 	}
 
 	private fun processWithServiceConfig(
@@ -157,8 +123,7 @@ class AuthViewModel @Inject constructor(
 		}
 	}
 
-	fun handleLogoutResult(intent: Intent) = viewModelScope.launch {
-		Log.v("Logout", intent.dataString ?: "No data")
+	fun handleLogoutResult(result: ActivityResult) = viewModelScope.launch {
 		authStateStorage.endSession()
 	}
 
