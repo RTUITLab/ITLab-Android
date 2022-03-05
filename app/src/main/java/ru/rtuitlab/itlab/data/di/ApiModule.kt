@@ -16,12 +16,13 @@ import retrofit2.Retrofit
 import retrofit2.create
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.common.ResponseHandler
-import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.TokenInterceptor
 import ru.rtuitlab.itlab.data.remote.api.events.EventsApi
 import ru.rtuitlab.itlab.data.remote.api.feedback.FeedbackApi
 import ru.rtuitlab.itlab.data.remote.api.notifications.NotificationsApi
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
+import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.data.remote.api.devices.DevicesApi
 import javax.inject.Singleton
 
 @Module
@@ -93,4 +94,8 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideEventsApi(retrofit: Retrofit): EventsApi = retrofit.create()
+
+    @Singleton
+    @Provides
+    fun provideDevicesApi(retrofit: Retrofit): DevicesApi = retrofit.create()
 }

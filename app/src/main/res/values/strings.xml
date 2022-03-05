@@ -91,6 +91,23 @@
 
     <!--    Devices    -->
     <string name="devices">Devices</string>
+    <string name="description">Description</string>
+    <string name="serial_number">Serial number</string>
+    <string name="ownerId">Owner Id</string>
+    <string name="edit">Edit</string>
+    <string name="title">Title</string>
+    <string name="equipmentType">Equipment Type</string>
+
+
+    <string name="number">Number</string>
+    <string name="add_device">Add Device</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="dismiss">Отменить</string>
+
+    <string name="shortTitle">Short Title</string>
+    <string name="to_create">Create</string>
+    <string name="to_choose">Choose</string>
+    <string name="Laboratory">Laboratory</string>
 
     <!--    Feedback    -->
     <string name="feedback">Feedback</string>

@@ -1,6 +1,8 @@
 package ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -16,12 +18,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceInfoBottomSheet
+import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceNewBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventDetailsBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileEventsBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileSettingsBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
+@ExperimentalTransitionApi
+@ExperimentalAnimationApi
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
 @Composable
@@ -75,6 +81,23 @@ fun BottomSheet(
 					userViewModel = data.viewModel,
 					onNavigate = data.onNavigate
 				)
+			}
+			is AppBottomSheet.DeviceInfo -> {
+				val details = currentSheet as AppBottomSheet.DeviceInfo
+				val deviceDetails = details.deviceDetails
+				val devicesViewModel = details.devicesViewModel
+				val dialogViewModel = details.dialogViewModel
+				val bottomSheetViewModel = details.bottomSheetViewModel
+				DeviceInfoBottomSheet(devicesViewModel,dialogViewModel, bottomSheetViewModel,deviceDetails)
+			}
+			is AppBottomSheet.DeviceNew -> {
+				val details = currentSheet as AppBottomSheet.DeviceNew
+				val devicesViewModel = details.devicesViewModel
+				val dialogViewModel = details.dialogViewModel
+				val bottomSheetViewModel = details.bottomSheetViewModel
+				DeviceNewBottomSheet(devicesViewModel,  bottomSheetViewModel,dialogViewModel)
+
+
 			}
 			else -> {}
 		}
