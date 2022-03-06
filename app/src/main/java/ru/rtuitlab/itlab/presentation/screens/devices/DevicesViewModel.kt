@@ -2,6 +2,7 @@ package ru.rtuitlab.itlab.presentation.screens.devices
 
 import android.util.Log
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,11 +41,14 @@ class DevicesViewModel @Inject constructor(
                 }
         }
 
+        private val _freeFilteringIs = MutableStateFlow(false)
+        val freeFilteringIs = _freeFilteringIs.asStateFlow()
+
         private var _deviceIdFlow = MutableStateFlow("")
         val deviceIdFlow = _deviceIdFlow.asStateFlow()
 
         private val _devicesResponsesFlow = MutableStateFlow<Resource<List<Pair<DeviceDetailDto,UserResponse?>>>>(Resource.Loading)
-        val deviceResponsesFlow = _devicesResponsesFlow.asStateFlow().also { fetchDevices() }
+        val deviceResponsesFlow = _devicesResponsesFlow.asStateFlow().also {fetchDevices() }
 
 
         var cachedDevices = emptyList<DeviceDetails>()
@@ -176,8 +180,14 @@ class DevicesViewModel @Inject constructor(
         }
 
         fun onRefreshEquipmentTypes() = fetchListEquipmentType()
-        fun onRefresh() = fetchDevices()
+        fun onRefresh() {
+                if (_freeFilteringIs.value) {
+                        fetchFreeDevices()
+                } else {
+                        fetchDevices()
 
+                }
+        }
 
         private fun fetchDevices() = _devicesResponsesFlow.emitInIO(viewModelScope) {
                 var resources: Resource<List<Pair<DeviceDetailDto, UserResponse?>>> = Resource.Loading
@@ -186,8 +196,8 @@ class DevicesViewModel @Inject constructor(
                         onSuccess = { details ->
                                 val listPair = mutableListOf<Pair<DeviceDetailDto, UserResponse?>>()
 
-                                var resource: Pair<DeviceDetailDto, UserResponse?>
                                 details.map {
+                                        var resource: Pair<DeviceDetailDto, UserResponse?>
                                         resource = it to null
                                         Log.d("DeviceViewModel",it.toString())
                                         if(it.ownerId!=null) {
@@ -210,6 +220,8 @@ class DevicesViewModel @Inject constructor(
                 resources
 
         }
+
+        //Owner
 
         private val _userResponsesFlow = MutableStateFlow<Resource<List<UserResponse>>>(Resource.Loading)
         val userResponsesFlow = _userResponsesFlow.asStateFlow().also { fetchUsers() }
@@ -274,5 +286,51 @@ class DevicesViewModel @Inject constructor(
                 )
         }
 
+        //Filtering
+
+        fun onFreeRefresh() = fetchFreeDevices()
+
+
+        fun onChangeFiltering(){
+                if(_freeFilteringIs.value) {
+                        onRefresh()
+                        _freeFilteringIs.value = false
+                }else{
+                        onFreeRefresh()
+                        _freeFilteringIs.value = true
+
+                }
+        }
+
+
+        private fun fetchFreeDevices() = _devicesResponsesFlow.emitInIO(viewModelScope){
+                var resources: Resource<List<Pair<DeviceDetailDto, UserResponse?>>> = Resource.Loading
+
+                devicesRepo.fetchFreeEquipmentList().handle (
+                        onSuccess = { details ->
+                                val listPair = mutableListOf<Pair<DeviceDetailDto, UserResponse?>>()
+
+                                details.map {
+                                        var resource: Pair<DeviceDetailDto, UserResponse?>
+                                        resource = it to null
+                                        Log.d("DeviceViewModel",it.toString())
+                                        if(it.ownerId!=null) {
+                                                devicesRepo.fetchOwner(it.ownerId).handle(
+                                                        onSuccess = { userResponce ->
+                                                                resource = it to userResponce
+                                                        }
+                                                )
+                                        }
+                                        listPair.add(resource)
+
+                                }
+                                resources = Resource.Success(listPair)
+
+                        },
+                        onError = {resources = Resource.Error(it)}
+                )
+                resources
+
+        }
 
 }
