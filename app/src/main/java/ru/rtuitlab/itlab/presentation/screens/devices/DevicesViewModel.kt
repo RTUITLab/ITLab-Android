@@ -13,6 +13,7 @@ import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.emitInIO
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.devices.models.*
+import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.data.repository.DevicesRepository
@@ -184,11 +185,9 @@ class DevicesViewModel @Inject constructor(
                 devicesRepo.fetchDevices().handle (
                         onSuccess = { details ->
                                 val listPair = mutableListOf<Pair<DeviceDetailDto, UserResponse?>>()
-                                val listIterator = listPair.listIterator()
 
                                 var resource: Pair<DeviceDetailDto, UserResponse?>
                                 details.map {
-                                        val i = listIterator.nextIndex()
                                         resource = it to null
                                         Log.d("DeviceViewModel",it.toString())
                                         if(it.ownerId!=null) {
@@ -212,7 +211,68 @@ class DevicesViewModel @Inject constructor(
 
         }
 
+        private val _userResponsesFlow = MutableStateFlow<Resource<List<UserResponse>>>(Resource.Loading)
+        val userResponsesFlow = _userResponsesFlow.asStateFlow().also { fetchUsers() }
 
+        var cachedUsers = emptyList<UserResponse>()
+
+        private val _usersFlow = MutableStateFlow(cachedUsers)
+        val usersFlow = _usersFlow.asStateFlow()
+
+        private fun fetchUsers() =
+                _userResponsesFlow.emitInIO(viewModelScope) {
+                        devicesRepo.fetchUsers()
+                }
+
+        fun onUserResourceSuccess(users: List<UserResponse>) {
+                cachedUsers = users
+                _usersFlow.value = cachedUsers
+        }
+
+
+        private val _userFilterFlow = MutableStateFlow(cachedUsers )
+        val userFilterFlow = _userFilterFlow.asStateFlow()
+
+        fun userfiltering(match:String){
+                _userFilterFlow.value = cachedUsers .filter {  user->
+                        "${user.lastName} ${user.firstName} ${user.middleName}".contains(match.trim(), ignoreCase = true)
+                }
+        }
+
+        fun onChangeEquipmentOwner(ownerId: String,equipmentId: String,
+                                  onFinish: (Boolean) -> Unit) = viewModelScope.launch {
+                devicesRepo.fetchEquipmentOwnerNew(ownerId,equipmentId).handle(
+                        onError = { msg ->
+                                onFinish(false)
+                                snackbarHostState.showSnackbar(
+                                        message = msg
+                                )
+                        },
+                        onSuccess = {
+                                onFinish(true)
+                                snackbarHostState.showSnackbar(
+                                        message = "Successful"
+                                )
+                        }
+                )
+        }
+        fun onPickUpEquipment(ownerId: String,equipmentId: String,
+                                   onFinish: (Boolean) -> Unit) = viewModelScope.launch {
+                devicesRepo.fetchEquipmentOwnerPickUp(ownerId,equipmentId).handle(
+                        onError = { msg ->
+                                onFinish(false)
+                                snackbarHostState.showSnackbar(
+                                        message = msg
+                                )
+                        },
+                        onSuccess = {
+                                onFinish(true)
+                                snackbarHostState.showSnackbar(
+                                        message = "Successful"
+                                )
+                        }
+                )
+        }
 
 
 }

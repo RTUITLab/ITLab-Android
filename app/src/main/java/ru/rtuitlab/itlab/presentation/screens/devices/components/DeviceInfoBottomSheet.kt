@@ -264,7 +264,13 @@ fun DeviceInfoBottomSheet(
 								deviceDetails.description.toString(),
 
 								){
-
+									devicesViewModel.onDeleteEquipment(deviceDetails.id){
+											isSuccessful ->
+										if (isSuccessful) {
+											bottomSheetViewModel.hide(scope)
+											devicesViewModel.onRefresh()
+										}
+									}
 
 							}
 						}
