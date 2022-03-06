@@ -148,7 +148,7 @@ class DevicesViewModel @Inject constructor(
 
         fun onSearch(query: String) {
                 _devicesFlow.value = cachedDevices.filter { device ->
-                        "${device.equipmentType.title} ${device.serialNumber} ${device.number}".contains(query.trim(), ignoreCase = true)
+                        "${device.equipmentType.title} ${device.serialNumber} ${device.number} ${device.ownerlastName} ${device.ownerfirstName}".contains(query.trim(), ignoreCase = true)
                 }
         }
         private val _equipmentTypeFilterFlow = MutableStateFlow(cachedEquipmentType)
