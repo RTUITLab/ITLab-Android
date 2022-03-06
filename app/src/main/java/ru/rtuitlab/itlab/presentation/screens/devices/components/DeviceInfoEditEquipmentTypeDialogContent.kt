@@ -42,7 +42,7 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
 ) {
         val titleDevice = rememberSaveable { mutableStateOf(line) }
 
-        val userSelectedString: (String) -> Unit = {
+        val equipmentSelectedString: (String) -> Unit = {
                 titleDevice.value = it
         }
 
@@ -313,7 +313,7 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                                         EquipmentList(
                                                                 match = titleDevice.value,
                                                                 devicesViewModel = devicesViewModel,
-                                                                userSelectedString,
+                                                                equipmentSelectedString,
                                                                 setEquipmentTypeNewCardBool,
                                                                 setExtendedEquipmentNewCard,
                                                         )

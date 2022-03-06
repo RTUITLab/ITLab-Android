@@ -11,7 +11,7 @@ data class DeviceDetails (
         val number: Int,
         var equipmentType: EquipmentTypeResponse,
         val equipmentTypeId: String,
-        val ownerId: String? = null,
+        var ownerId: String? = null,
         val parentId: String? = null,
         val children: List<DeviceDetailDto>? = null,
 
