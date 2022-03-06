@@ -72,5 +72,9 @@ interface DevicesApi {
 
         @GET("user?count=-1")
         suspend fun getUsers() : List<UserResponse>
+
+        //Filtering
+        @GET("Equipment/user/free")
+        suspend fun getFreeEquipments(): List<DeviceDetailDto>
 }
 

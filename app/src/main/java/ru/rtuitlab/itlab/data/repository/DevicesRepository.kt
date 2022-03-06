@@ -49,5 +49,10 @@ class DevicesRepository @Inject constructor(
                 devicesApi.getUsers()
         }
 
+        //Filtering
+        suspend fun fetchFreeEquipmentList() = handler{
+                devicesApi.getFreeEquipments()
+        }
+
 }
 
