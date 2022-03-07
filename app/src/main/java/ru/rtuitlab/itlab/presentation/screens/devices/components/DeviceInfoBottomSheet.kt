@@ -86,6 +86,7 @@ fun DeviceInfoBottomSheet(
 	}
 	val setDescriptionLine: (String) -> Unit = {
 		descriptionDevice.value = it
+		dialogDescriptionIsShown = false
 	}
 
 	Column(
