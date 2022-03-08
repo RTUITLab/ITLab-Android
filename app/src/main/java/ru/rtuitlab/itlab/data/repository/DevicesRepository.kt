@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.data.repository
 
+import android.util.Log
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.data.remote.api.devices.DevicesApi
 import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentEditRequest
@@ -22,7 +23,9 @@ class DevicesRepository @Inject constructor(
         }
 
         suspend fun fetchEquipmentNew(equipmentNewRequest: EquipmentNewRequest) = handler {
-                devicesApi.createEquipment(equipmentNewRequest)
+               val deviceDetailDto =  devicesApi.createEquipment(equipmentNewRequest)
+                Log.d("REPO","$deviceDetailDto")
+                deviceDetailDto
         }
         suspend fun fetchEquipmentEdit(equipmentEditRequest: EquipmentEditRequest) = handler {
                 devicesApi.updateEquipment(equipmentEditRequest)

@@ -232,11 +232,11 @@ fun DeviceNewBottomSheet(
                                                                 descriptionDevice.value
                                                         )
                                                         devicesViewModel.onCreateEquipment(equipmentNewRequest){
-                                                                        isSuccessful ->
-                                                                if(isSuccessful) {
+                                                                        createdDevice ->
+                                                                if(createdDevice != null) {
                                                                         dialogAcceptIsShown = false
                                                                         bottomSheetViewModel.hide(scope)
-                                                                        devicesViewModel.onRefresh()
+                                                                        devicesViewModel.onCreateCachedDevice(createdDevice)
                                                                         onRefreshLines()
                                                                 }
                                                         }

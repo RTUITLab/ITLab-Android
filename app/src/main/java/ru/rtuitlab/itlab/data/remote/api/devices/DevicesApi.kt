@@ -31,12 +31,12 @@ interface DevicesApi {
         @POST("Equipment")
         suspend fun createEquipment(
                 @Body equipmentNewRequest: EquipmentNewRequest
-        ):Response<Unit>
+        ):DeviceDetailDto
 
         @PUT("Equipment")
         suspend fun updateEquipment(
                 @Body equipmentEditRequest: EquipmentEditRequest
-        ):Response<Unit>
+        ):DeviceDetailDto
 
         @HTTP(method = "DELETE",  path = "Equipment",hasBody = true)
         suspend fun deleteEquipment(

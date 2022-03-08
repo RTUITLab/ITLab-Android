@@ -47,11 +47,11 @@ class DevicesViewModel @Inject constructor(
         private var _deviceIdFlow = MutableStateFlow("")
         val deviceIdFlow = _deviceIdFlow.asStateFlow()
 
-        private val _devicesResponsesFlow = MutableStateFlow<Resource<List<Pair<DeviceDetailDto,UserResponse?>>>>(Resource.Loading)
+        private val _devicesResponsesFlow = MutableStateFlow<Resource<MutableList<Pair<DeviceDetailDto,UserResponse?>>>>(Resource.Loading)
         val deviceResponsesFlow = _devicesResponsesFlow.asStateFlow().also {fetchDevices() }
 
 
-        var cachedDevices = emptyList<DeviceDetails>()
+        var cachedDevices = mutableListOf<DeviceDetails>()
 
         private val _devicesFlow = MutableStateFlow(cachedDevices)
         val devicesFlow = _devicesFlow.asStateFlow()
@@ -60,7 +60,7 @@ class DevicesViewModel @Inject constructor(
 
         private val _deviceFromSheetFlow = MutableStateFlow(deviceFromSheet)
         val deviceFromSheetFlow = _deviceFromSheetFlow.asStateFlow()
-        fun setdeviceFromSheet(deviceDetails: DeviceDetails?){
+        fun setDeviceFromSheet(deviceDetails: DeviceDetails?){
                 deviceFromSheet = deviceDetails
                 _deviceFromSheetFlow.value = deviceFromSheet
         }
@@ -97,39 +97,42 @@ class DevicesViewModel @Inject constructor(
                         }
                 )
         }
-        fun onCreateEquipment(equipmentNewRequest: EquipmentNewRequest,onFinish: (Boolean) -> Unit) = viewModelScope.launch {
+        fun onCreateEquipment(equipmentNewRequest: EquipmentNewRequest,createdDevice: (DeviceDetailDto?) ->Unit) = viewModelScope.launch {
                 devicesRepo.fetchEquipmentNew(equipmentNewRequest).handle(
                         onError = { msg ->
-                                onFinish(false)
+                                createdDevice(null)
+                                Log.d("DeviceCreate",msg)
+
                                 snackbarHostState.showSnackbar(
                                         message = msg
                                 )
                         },
-                        onSuccess = {
-                                onFinish(true)
+                        onSuccess = {deviceDto ->
+                                createdDevice(deviceDto)
+                                Log.d("DeviceCreate","$deviceDto")
                                 snackbarHostState.showSnackbar(
                                         message = "Successful"
                                 )
                         }
                 )
         }
-        fun onUpdateEquipment(equipmentEditRequest: EquipmentEditRequest,onFinish: (Boolean) -> Unit) = viewModelScope.launch {
+        fun onUpdateEquipment(equipmentEditRequest: EquipmentEditRequest,editedDevice: (DeviceDetailDto?) ->Unit) = viewModelScope.launch {
                 devicesRepo.fetchEquipmentEdit(equipmentEditRequest).handle(
                         onError = { msg ->
-                                onFinish(false)
+                                editedDevice(null)
                                 snackbarHostState.showSnackbar(
                                         message = msg
                                 )
                         },
-                        onSuccess = {
-                                onFinish(true)
+                        onSuccess = { deviceDto ->
+                                editedDevice(deviceDto)
                                 snackbarHostState.showSnackbar(
                                         message = "Successful"
                                 )
                         }
                 )
         }
-        fun onDeleteEquipment(id: String,onFinish: (Boolean) -> Unit) = viewModelScope.launch {
+        fun onDeleteEquipment(id: String,onFinish: (Boolean) ->Unit) = viewModelScope.launch {
                 devicesRepo.fetchEquipmentDelete(id).handle(
                         onError = { msg ->
                                 onFinish(false)
@@ -149,7 +152,7 @@ class DevicesViewModel @Inject constructor(
         fun onSearch(query: String) {
                 _devicesFlow.value = cachedDevices.filter { device ->
                         "${device.equipmentType.title} ${device.serialNumber} ${device.number} ${device.ownerlastName} ${device.ownerfirstName}".contains(query.trim(), ignoreCase = true)
-                }
+                } as MutableList<DeviceDetails>
         }
         private val _equipmentTypeFilterFlow = MutableStateFlow(cachedEquipmentType)
         val equipmentTypeFilterFlow = _equipmentTypeFilterFlow.asStateFlow()
@@ -169,7 +172,7 @@ class DevicesViewModel @Inject constructor(
                                 it.first.toDevice(null)
                         }
 
-                }
+                } as MutableList<DeviceDetails>
                 _devicesFlow.value = cachedDevices
         }
 
@@ -190,7 +193,7 @@ class DevicesViewModel @Inject constructor(
         }
 
         private fun fetchDevices() = _devicesResponsesFlow.emitInIO(viewModelScope) {
-                var resources: Resource<List<Pair<DeviceDetailDto, UserResponse?>>> = Resource.Loading
+                var resources: Resource<MutableList<Pair<DeviceDetailDto, UserResponse?>>> = Resource.Loading
 
                 devicesRepo.fetchDevices().handle (
                         onSuccess = { details ->
@@ -292,19 +295,13 @@ class DevicesViewModel @Inject constructor(
 
 
         fun onChangeFiltering(){
-                if(_freeFilteringIs.value) {
-                        onRefresh()
-                        _freeFilteringIs.value = false
-                }else{
-                        onFreeRefresh()
-                        _freeFilteringIs.value = true
-
-                }
+                _freeFilteringIs.value = !_freeFilteringIs.value
+                onRefresh()
         }
 
 
         private fun fetchFreeDevices() = _devicesResponsesFlow.emitInIO(viewModelScope){
-                var resources: Resource<List<Pair<DeviceDetailDto, UserResponse?>>> = Resource.Loading
+                var resources: Resource<MutableList<Pair<DeviceDetailDto, UserResponse?>>> = Resource.Loading
 
                 devicesRepo.fetchFreeEquipmentList().handle (
                         onSuccess = { details ->
@@ -331,6 +328,115 @@ class DevicesViewModel @Inject constructor(
                 )
                 resources
 
+        }
+
+        fun onUpdateCachedDevice(tempDevice: DeviceDetailDto) = viewModelScope.launch  {
+                var resource: Pair<DeviceDetailDto, UserResponse?>
+                resource = tempDevice to null
+                if(tempDevice.ownerId!=null) {
+                        devicesRepo.fetchOwner(tempDevice.ownerId).handle(
+                                onSuccess = { userResponce ->
+                                        resource = tempDevice to userResponce
+
+                                }
+                        )
+                }
+                val cachedDevice:DeviceDetails =
+                        if(resource.second!=null){
+                                resource.first.toDevice(resource.second!!.toUser())
+                        }else{
+                                resource.first.toDevice(null)
+                        }
+
+
+                val oldDevice =  cachedDevices.find{ it -> it.id==cachedDevice.id}
+                val index = cachedDevices.indexOf(oldDevice)
+                cachedDevices[index] = cachedDevice
+                val mutableListofPair = cachedDevices.map{
+                        var pair :Pair<DeviceDetailDto,UserResponse?>
+                        var deviceDetailDto: DeviceDetailDto? = null
+                        var userResponse: UserResponse? = null
+                        it.toDeviceDtoAndUser(
+                                deviceDetailDto = {
+                                                  deviceDetailDto = it
+                                },
+                                owner = {
+                                        if (it != null) {
+                                                userResponse = it.toUserResponse()
+                                        }
+                                }
+                        )
+                        pair = deviceDetailDto!! to userResponse
+                        pair
+                } as MutableList
+                _devicesFlow.value = cachedDevices
+                _devicesResponsesFlow.value = Resource.Success(mutableListofPair)
+                _deviceFromSheetFlow.value = cachedDevice
+        }
+
+        fun onDeleteCachedDevice(id: String) = viewModelScope.launch  {
+
+                val oldDevice =  cachedDevices.find{ it -> it.id==id}
+                cachedDevices.remove(oldDevice)
+                val mutableListofPair = cachedDevices.map{
+                        var pair :Pair<DeviceDetailDto,UserResponse?>
+                        var deviceDetailDto: DeviceDetailDto? = null
+                        var userResponse: UserResponse? = null
+                        it.toDeviceDtoAndUser(
+                                deviceDetailDto = {
+                                        deviceDetailDto = it
+                                },
+                                owner = {
+                                        if (it != null) {
+                                                userResponse = it.toUserResponse()
+                                        }
+                                }
+                        )
+                        pair = deviceDetailDto!! to userResponse
+                        pair
+                } as MutableList
+                _devicesFlow.value = cachedDevices
+                _devicesResponsesFlow.value = Resource.Success(mutableListofPair)
+        }
+
+        fun onCreateCachedDevice(tempDevice: DeviceDetailDto) = viewModelScope.launch  {
+                var resource: Pair<DeviceDetailDto, UserResponse?>
+                resource = tempDevice to null
+                if(tempDevice.ownerId!=null) {
+                        devicesRepo.fetchOwner(tempDevice.ownerId).handle(
+                                onSuccess = { userResponce ->
+                                        resource = tempDevice to userResponce
+
+                                }
+                        )
+                }
+                val cachedDevice:DeviceDetails =
+                        if(resource.second!=null){
+                                resource.first.toDevice(resource.second!!.toUser())
+                        }else{
+                                resource.first.toDevice(null)
+                        }
+
+                cachedDevices.add(cachedDevice)
+                val mutableListofPair = cachedDevices.map{
+                        var pair :Pair<DeviceDetailDto,UserResponse?>
+                        var deviceDetailDto: DeviceDetailDto? = null
+                        var userResponse: UserResponse? = null
+                        it.toDeviceDtoAndUser(
+                                deviceDetailDto = {
+                                        deviceDetailDto = it
+                                },
+                                owner = {
+                                        if (it != null) {
+                                                userResponse = it.toUserResponse()
+                                        }
+                                }
+                        )
+                        pair = deviceDetailDto!! to userResponse
+                        pair
+                } as MutableList
+                _devicesFlow.value = cachedDevices
+                _devicesResponsesFlow.value = Resource.Success(mutableListofPair)
         }
 
 }
