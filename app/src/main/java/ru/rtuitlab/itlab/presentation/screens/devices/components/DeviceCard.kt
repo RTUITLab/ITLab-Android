@@ -109,6 +109,7 @@ fun DeviceCard(
 										.height(16.dp)
 										.padding(0.dp)
 										.clickable {
+											devicesViewModel.setDeviceFromSheet(device)
 											bottomSheetViewModel.show(
 												AppBottomSheet.DeviceInfo(
 													device,

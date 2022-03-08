@@ -25,6 +25,7 @@ data class UserResponse (
 			properties = properties
 		)
 
+
 	fun getEditRequest() =
 		UserEditRequest(
 			firstName = firstName,
@@ -48,4 +49,14 @@ data class User(
 	val discordId: String? = null,
 	val skypeId: String? = null,
 	val properties: List<UserPropertyModel>? = null
-)
+){
+	fun toUserResponse() = UserResponse(
+		id = id,
+		firstName = firstName,
+		lastName = lastName,
+		middleName = middleName,
+		phoneNumber = phoneNumber,
+		email = email,
+		properties = properties ?: emptyList<UserPropertyModel>()
+	)
+}

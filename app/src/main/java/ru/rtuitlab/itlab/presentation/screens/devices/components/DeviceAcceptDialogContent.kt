@@ -110,14 +110,12 @@ fun DeviceAcceptDialogContent(
                                 )
 
                         }
-                        Log.d("DeviceInfo","KILL2")
 
                         Button(
                                 modifier = Modifier
                                         .align(Alignment.End)
                                         .clipToBounds(),
                                 onClick = {
-                                        Log.d("DeviceInfo","KILL3")
                                         acceptActions()
                                 },
                                 colors = ButtonDefaults.buttonColors(
