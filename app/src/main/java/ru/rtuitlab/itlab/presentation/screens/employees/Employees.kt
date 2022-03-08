@@ -54,6 +54,7 @@ private fun EmployeeList(
 	val currentUserId = employeesViewModel.userIdFlow.collectAsState()
 	val currentUser = users.find { it.id == currentUserId.value }
 	LazyColumn(
+		modifier = Modifier.fillMaxHeight(),
 		verticalArrangement = Arrangement.spacedBy(10.dp),
 		contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
 	) {
