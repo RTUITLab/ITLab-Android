@@ -9,12 +9,20 @@ object UserClaimParser {
 		if (payload == null) return emptyList()
 
 		// Sometimes "itlab" field is not an Array of Strings, but just String, so this check is needed
-		val privileges =
+		val claims =
 			if (payload.substringAfter("\"itlab\":").startsWith('\"'))
 				"[${payload.substringAfter("\"itlab\":").substringBefore(',')}]" // Obtaining single parameter as a list
 			else
 				"${payload.substringAfter("\"itlab\":").substringBefore(']')}]" // Obtaining a list of claims
-		return Json.decodeFromString<List<String>>(privileges).mapNotNull {
+
+		val roles =
+			if (payload.substringAfter("\"role\":").startsWith('\"'))
+				"[${payload.substringAfter("\"role\":").substringBefore(',')}]"
+			else
+				"${payload.substringAfter("\"role\":").substringBefore(']')}]"
+		return Json.decodeFromString<List<String>>(claims).mapNotNull {
+			UserClaimCategories.obtainClaimFrom(it)
+		} + Json.decodeFromString<List<String>>(roles).mapNotNull {
 			UserClaimCategories.obtainClaimFrom(it)
 		}
 	}
