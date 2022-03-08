@@ -130,7 +130,7 @@ fun ProfileSettingsBottomSheet(
 						contentDescription = stringResource(R.string.logout),
 						text = stringResource(R.string.logout),
 						tint = AppColors.red,
-						onClick = authViewModel::onLogoutEvent
+						onClick = authViewModel::enterLogoutFlow//authViewModel::onLogoutEvent
 					)
 
 				}

@@ -37,8 +37,14 @@ class MainActivity : AppCompatActivity() {
 			authViewModel.handleAuthResult(requireNotNull(it.data))
 		}
 
+	private val logoutPageLauncher =
+		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+			authViewModel.handleLogoutResult(it)
+		}
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		authViewModel.provideLogoutLauncher(logoutPageLauncher)
 		installSplashScreen()
 		setContent {
 			val authState by authViewModel.authStateFlow.collectAsState(null)
