@@ -16,7 +16,8 @@ object UserClaimParser {
 				"${payload.substringAfter("\"itlab\":").substringBefore(']')}]" // Obtaining a list of claims
 
 		val roles =
-			if (payload.substringAfter("\"role\":").startsWith('\"'))
+			if (!payload.contains("\"role\":")) "[]"
+			else if (payload.substringAfter("\"role\":").startsWith('\"'))
 				"[${payload.substringAfter("\"role\":").substringBefore(',')}]"
 			else
 				"${payload.substringAfter("\"role\":").substringBefore(']')}]"
