@@ -34,7 +34,7 @@ class DevicesViewModel @Inject constructor(
                 viewModelScope.launch {
                         userClaimsFlow.collect {
 
-                                isAccesible = it.contains(UserClaimCategories.FEEDBACK.ADMIN)
+                                isAccesible = it.contains(UserClaimCategories.DEVICES.EDIT)
                                 Log.d("DevicesViewModel","$isAccesible")
                                 _accesibleFlow.value = isAccesible
                         }
@@ -151,7 +151,8 @@ class DevicesViewModel @Inject constructor(
 
         fun onSearch(query: String) {
                 _devicesFlow.value = cachedDevices.filter { device ->
-                        "${device.equipmentType.title} ${device.serialNumber} ${device.number} ${device.ownerlastName} ${device.ownerfirstName}".contains(query.trim(), ignoreCase = true)
+
+                        "${device.equipmentType?.title} ${device.serialNumber} ${device.number} ${device.ownerlastName} ${device.ownerfirstName}".contains(query.trim(), ignoreCase = true)
                 } as MutableList<DeviceDetails>
         }
         private val _equipmentTypeFilterFlow = MutableStateFlow(cachedEquipmentType)
