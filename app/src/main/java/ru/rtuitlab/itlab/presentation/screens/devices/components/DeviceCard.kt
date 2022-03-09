@@ -163,7 +163,8 @@ fun DeviceCard(
 						devicesViewModel,
 						afterChange = {
 							dialogUsersIsShown = false
-						}
+						},
+						haveOwner = devicesViewModel.usersFlow.collectAsState().value.find { it -> it.id.equals(device.ownerId)}
 					)
 
 				AnimatedVisibility(expandedDeviceCardbool.value) {
