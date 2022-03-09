@@ -34,7 +34,7 @@ class DevicesViewModel @Inject constructor(
                 viewModelScope.launch {
                         userClaimsFlow.collect {
 
-                                isAccesible = it.contains(UserClaimCategories.FEEDBACK.ADMIN)
+                                isAccesible = it.contains(UserClaimCategories.DEVICES.EDIT)
                                 Log.d("DevicesViewModel","$isAccesible")
                                 _accesibleFlow.value = isAccesible
                         }
