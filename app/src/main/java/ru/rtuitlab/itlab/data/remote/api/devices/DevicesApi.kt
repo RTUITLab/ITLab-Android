@@ -26,24 +26,28 @@ interface DevicesApi {
                 @Path("ownerid") ownerId: String
         ): UserResponse
 
-        @POST("EquipmentType")
-        suspend fun createEquipmentType(
-                @Body equipmentTypeNewRequest: EquipmentTypeNewRequest
-        ):Response<Unit>
+
 
         @POST("Equipment")
         suspend fun createEquipment(
                 @Body equipmentNewRequest: EquipmentNewRequest
-        ):Response<Unit>
+        ):DeviceDetailDto
 
         @PUT("Equipment")
         suspend fun updateEquipment(
                 @Body equipmentEditRequest: EquipmentEditRequest
-        ):Response<Unit>
+        ):DeviceDetailDto
 
         @HTTP(method = "DELETE",  path = "Equipment",hasBody = true)
         suspend fun deleteEquipment(
                 @Body id:EquipmentIdRequest
+        ):Response<Unit>
+
+        //EquipmentType
+
+        @POST("EquipmentType")
+        suspend fun createEquipmentType(
+                @Body equipmentTypeNewRequest: EquipmentTypeNewRequest
         ):Response<Unit>
 
         @GET("EquipmentType")
@@ -51,5 +55,26 @@ interface DevicesApi {
                 @Query("match")match:String,
                 @Query("all")all:Boolean
         ): List<EquipmentTypeResponse>
+
+        //EquipmentOwner
+
+        @POST("Equipment/user/{userId}")
+        suspend fun  setOwner(
+                @Path("userId") userId:String,
+                @Body id:EquipmentIdRequest
+        ): Response<Unit>
+
+        @HTTP(method = "DELETE",  path = "Equipment/user/{userId}",hasBody = true)
+        suspend fun  deleteOwner(
+                @Path("userId") userId:String,
+                @Body id:EquipmentIdRequest
+        ): Response<Unit>
+
+        @GET("user?count=-1")
+        suspend fun getUsers() : List<UserResponse>
+
+        //Filtering
+        @GET("Equipment/user/free")
+        suspend fun getFreeEquipments(): List<DeviceDetailDto>
 }
 

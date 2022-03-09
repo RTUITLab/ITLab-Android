@@ -10,7 +10,7 @@ data class DeviceDetailDto (
         val description : String? = null,
         val number: Int,
         val equipmentTypeId : String,
-        val equipmentType : EquipmentTypeResponse,
+        val equipmentType : EquipmentTypeResponse? = null,
         val ownerId : String? = null,
         val parentId: String? = null,
         val children: List<DeviceDetailDto>? = null,

@@ -86,16 +86,14 @@ fun BottomSheet(
 				val details = currentSheet as AppBottomSheet.DeviceInfo
 				val deviceDetails = details.deviceDetails
 				val devicesViewModel = details.devicesViewModel
-				val dialogViewModel = details.dialogViewModel
 				val bottomSheetViewModel = details.bottomSheetViewModel
-				DeviceInfoBottomSheet(devicesViewModel,dialogViewModel, bottomSheetViewModel,deviceDetails)
+				DeviceInfoBottomSheet(devicesViewModel, bottomSheetViewModel,deviceDetails)
 			}
 			is AppBottomSheet.DeviceNew -> {
 				val details = currentSheet as AppBottomSheet.DeviceNew
 				val devicesViewModel = details.devicesViewModel
-				val dialogViewModel = details.dialogViewModel
 				val bottomSheetViewModel = details.bottomSheetViewModel
-				DeviceNewBottomSheet(devicesViewModel,  bottomSheetViewModel,dialogViewModel)
+				DeviceNewBottomSheet(devicesViewModel,  bottomSheetViewModel)
 
 
 			}

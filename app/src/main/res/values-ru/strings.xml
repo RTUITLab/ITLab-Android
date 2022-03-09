@@ -111,5 +111,8 @@
     <string name="shortTitle">Короткое название</string>
     <string name="to_create">Создать</string>
     <string name="to_choose">Выбрать</string>
-    <string name="Laboratory">Лаборатория</string>
+    <string name="laboratory">Лаборатория</string>
+    <string name="to_assign_owner">Назначить владельца</string>
+    <string name="pick_up">Pick up</string>
+    <string name="show_only_free">Показать только доступное</string>
 </resources>

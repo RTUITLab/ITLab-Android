@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation.screens.devices.components
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.shrinkVertically
@@ -20,13 +21,15 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
+import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
 @ExperimentalMaterialApi
@@ -35,18 +38,19 @@ import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 fun DeviceCard(
 	devicesViewModel: DevicesViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
-	dialogViewModel: DialogViewModel,
 	device: DeviceDetails,
 	modifier: Modifier,
 ) {
-	val compactDeviceCardbool = remember { mutableStateOf(false) }
+	val expandedDeviceCardbool = remember { mutableStateOf(false) }
+
+	var dialogUsersIsShown by remember { mutableStateOf(false) }
 
 	val coroutineScope = rememberCoroutineScope()
 	Card(
 		modifier = modifier
 			.clickable {
-				compactDeviceCardbool.value = !compactDeviceCardbool.value
-
+				expandedDeviceCardbool.value = !expandedDeviceCardbool.value
+				Log.d("DeviceCard",device.toString())
 			},
 		elevation = 2.dp,
 		shape = RoundedCornerShape(5.dp)
@@ -69,10 +73,12 @@ fun DeviceCard(
 
 				) {
 					Text(
-						text = "${equipmentType.title} ",
+
+						text =  if(equipmentType != null) equipmentType?.title.toString() else "Обновите" ,
 						fontWeight = FontWeight(500),
-						fontSize = 17.sp,
+						fontSize = 17.sp ,
 						lineHeight = 22.sp,
+						overflow = TextOverflow.Ellipsis
 
 
 						)
@@ -84,7 +90,7 @@ fun DeviceCard(
 						color = Color.Gray
 					)
 
-					AnimatedVisibility(compactDeviceCardbool.value) {
+					AnimatedVisibility(expandedDeviceCardbool.value) {
 						Row(
 							horizontalArrangement = Arrangement.End,
 							verticalAlignment = Alignment.Top,
@@ -105,13 +111,12 @@ fun DeviceCard(
 										.height(16.dp)
 										.padding(0.dp)
 										.clickable {
+											devicesViewModel.setDeviceFromSheet(device)
 											bottomSheetViewModel.show(
 												AppBottomSheet.DeviceInfo(
 													device,
 													devicesViewModel,
-													bottomSheetViewModel,
-													dialogViewModel
-												),
+													bottomSheetViewModel),
 												coroutineScope
 											)
 											//navController.navigate(AppScreen.DeviceDetails.route)
@@ -125,11 +130,11 @@ fun DeviceCard(
 						}
 					}
 				}
-				AnimatedVisibility(compactDeviceCardbool.value) {
+				AnimatedVisibility(expandedDeviceCardbool.value) {
 					Spacer(Modifier.height(10.dp))
 				}
 				if (serialNumber != null) {
-					AnimatedVisibility(compactDeviceCardbool.value) {
+					AnimatedVisibility(expandedDeviceCardbool.value) {
 						Row(verticalAlignment = Alignment.CenterVertically) {
 							Icon(
 								painter = painterResource(R.drawable.ic_serial_number),
@@ -151,27 +156,75 @@ fun DeviceCard(
 					}
 				}
 
-				AnimatedVisibility(compactDeviceCardbool.value) {
-					Row(verticalAlignment = Alignment.CenterVertically) {
-						Icon(
-							painter = painterResource(R.drawable.ic_person),
-							contentDescription = stringResource(R.string.ownerId),
+				if(dialogUsersIsShown)
+					DeviceChangeOwnerDialog(
+						onDismissRequest = {dialogUsersIsShown=false},
+						device,
+						devicesViewModel,
+						afterChange = {
+							dialogUsersIsShown = false
+						}
+					)
+
+				AnimatedVisibility(expandedDeviceCardbool.value) {
+					if (devicesViewModel.accesibleFlow.collectAsState().value) {
+
+						Row(verticalAlignment = Alignment.CenterVertically,
 							modifier = Modifier
-								.width(16.dp)
-								.height(16.dp)
+								.clickable {
 
-						)
-						Spacer(Modifier.width(8.dp))
+									dialogUsersIsShown = true
+								}
+						) {
+							Icon(
+								painter = painterResource(R.drawable.ic_person),
+								contentDescription = stringResource(R.string.ownerId),
+								modifier = Modifier
+									.width(16.dp)
+									.height(16.dp)
 
-						Text(
-							text = if (ownerlastName != null) "$ownerfirstName $ownerlastName" else stringResource(
-								R.string.Laboratory
-							),
-							fontWeight = FontWeight(500),
-							fontSize = 16.sp,
-							lineHeight = 22.sp
-						)
+							)
+							Spacer(Modifier.width(8.dp))
 
+							Text(
+								text = if (ownerlastName != null) "$ownerfirstName $ownerlastName" else stringResource(
+									R.string.laboratory
+								),
+								fontWeight = FontWeight(500),
+								fontSize = 16.sp,
+								lineHeight = 22.sp,
+								color = AppColors.accent.collectAsState().value,
+								overflow = TextOverflow.Ellipsis
+
+							)
+
+						}
+					}else{
+						Row(verticalAlignment = Alignment.CenterVertically,
+
+						) {
+							Icon(
+								painter = painterResource(R.drawable.ic_person),
+								contentDescription = stringResource(R.string.ownerId),
+								modifier = Modifier
+									.width(16.dp)
+									.height(16.dp)
+
+							)
+							Spacer(Modifier.width(8.dp))
+
+							Text(
+								text = if (ownerlastName != null) "$ownerfirstName $ownerlastName" else stringResource(
+									R.string.laboratory
+								),
+								fontWeight = FontWeight(500),
+								fontSize = 16.sp,
+								lineHeight = 22.sp,
+								overflow = TextOverflow.Ellipsis
+
+							)
+
+						}
 					}
 					Spacer(Modifier.height(8.dp))
 				}

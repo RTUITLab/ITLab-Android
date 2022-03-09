@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.data.repository
 
+import android.util.Log
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.data.remote.api.devices.DevicesApi
 import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentEditRequest
@@ -21,12 +22,10 @@ class DevicesRepository @Inject constructor(
                 devicesApi.getOwner(ownerId)
         }
 
-
-        suspend fun fetchEquipmentTypeNew(equipmentTypeNewRequest: EquipmentTypeNewRequest) = handler {
-                devicesApi.createEquipmentType(equipmentTypeNewRequest)
-        }
         suspend fun fetchEquipmentNew(equipmentNewRequest: EquipmentNewRequest) = handler {
-                devicesApi.createEquipment(equipmentNewRequest)
+               val deviceDetailDto =  devicesApi.createEquipment(equipmentNewRequest)
+                Log.d("REPO","$deviceDetailDto")
+                deviceDetailDto
         }
         suspend fun fetchEquipmentEdit(equipmentEditRequest: EquipmentEditRequest) = handler {
                 devicesApi.updateEquipment(equipmentEditRequest)
@@ -35,8 +34,28 @@ class DevicesRepository @Inject constructor(
                 devicesApi.deleteEquipment(EquipmentIdRequest( id))
         }
 
+        //EquipmentType
+        suspend fun fetchEquipmentTypeNew(equipmentTypeNewRequest: EquipmentTypeNewRequest) = handler {
+                devicesApi.createEquipmentType(equipmentTypeNewRequest)
+        }
         suspend fun fetchListEquipmentType(match:String,all:Boolean) = handler {
                 devicesApi.getListEquipmentType(match,all)
         }
+        //EquipmentOwner
+        suspend fun fetchEquipmentOwnerNew(ownerid:String,equipmentId:String) = handler {
+                devicesApi.setOwner(ownerid, EquipmentIdRequest( equipmentId))
+        }
+        suspend fun fetchEquipmentOwnerPickUp(ownerid:String,equipmentId:String) = handler {
+                devicesApi.deleteOwner(ownerid,  EquipmentIdRequest( equipmentId))
+        }
+        suspend fun fetchUsers() = handler {
+                devicesApi.getUsers()
+        }
+
+        //Filtering
+        suspend fun fetchFreeEquipmentList() = handler{
+                devicesApi.getFreeEquipments()
+        }
+
 }
 
