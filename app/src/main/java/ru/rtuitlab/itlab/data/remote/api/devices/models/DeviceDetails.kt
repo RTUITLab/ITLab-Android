@@ -10,7 +10,7 @@ data class DeviceDetails (
         var serialNumber: String? = null,
         val description : String? = null,
         val number: Int,
-        var equipmentType: EquipmentTypeResponse,
+        var equipmentType: EquipmentTypeResponse? = null,
         val equipmentTypeId: String,
         var ownerId: String? = null,
         val parentId: String? = null,

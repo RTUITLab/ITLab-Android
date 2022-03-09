@@ -73,10 +73,11 @@ fun DeviceCard(
 
 				) {
 					Text(
-						text = if(equipmentType.title.length<30) equipmentType.title else "${equipmentType.title.subSequence(0,29)}"+"...",
+						text =  if(equipmentType != null) equipmentType?.title.toString() else "Обновите" ,
 						fontWeight = FontWeight(500),
-						fontSize = if(equipmentType.title.length<20)17.sp else 13.sp,
+						fontSize = 17.sp ,
 						lineHeight = 22.sp,
+						overflow = TextOverflow.Ellipsis
 
 
 						)

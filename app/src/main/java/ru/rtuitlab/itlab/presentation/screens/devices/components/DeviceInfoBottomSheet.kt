@@ -261,7 +261,7 @@ fun DeviceInfoBottomSheet(
 
 								DeviceAcceptDialogContent(
 
-									tempDeviceDetails!!.equipmentType.title,
+									tempDeviceDetails!!.equipmentType?.title.toString(),
 									tempDeviceDetails!!.serialNumber.toString(),
 									tempDeviceDetails!!.description.toString(),
 
