@@ -167,34 +167,64 @@ fun DeviceCard(
 					)
 
 				AnimatedVisibility(expandedDeviceCardbool.value) {
-					Row(verticalAlignment = Alignment.CenterVertically,
-						modifier = Modifier
-							.clickable {
-								dialogUsersIsShown = true
-							}
-					) {
-						Icon(
-							painter = painterResource(R.drawable.ic_person),
-							contentDescription = stringResource(R.string.ownerId),
+					if (devicesViewModel.accesibleFlow.collectAsState().value) {
+
+						Row(verticalAlignment = Alignment.CenterVertically,
 							modifier = Modifier
-								.width(16.dp)
-								.height(16.dp)
+								.clickable {
 
-						)
-						Spacer(Modifier.width(8.dp))
+									dialogUsersIsShown = true
+								}
+						) {
+							Icon(
+								painter = painterResource(R.drawable.ic_person),
+								contentDescription = stringResource(R.string.ownerId),
+								modifier = Modifier
+									.width(16.dp)
+									.height(16.dp)
 
-						Text(
-							text = if (ownerlastName != null) "$ownerfirstName $ownerlastName" else stringResource(
-								R.string.laboratory
-							),
-							fontWeight = FontWeight(500),
-							fontSize = 16.sp,
-							lineHeight = 22.sp,
-							color = AppColors.accent.collectAsState().value,
-							overflow = TextOverflow.Ellipsis
+							)
+							Spacer(Modifier.width(8.dp))
 
-						)
+							Text(
+								text = if (ownerlastName != null) "$ownerfirstName $ownerlastName" else stringResource(
+									R.string.laboratory
+								),
+								fontWeight = FontWeight(500),
+								fontSize = 16.sp,
+								lineHeight = 22.sp,
+								color = AppColors.accent.collectAsState().value,
+								overflow = TextOverflow.Ellipsis
 
+							)
+
+						}
+					}else{
+						Row(verticalAlignment = Alignment.CenterVertically,
+
+						) {
+							Icon(
+								painter = painterResource(R.drawable.ic_person),
+								contentDescription = stringResource(R.string.ownerId),
+								modifier = Modifier
+									.width(16.dp)
+									.height(16.dp)
+
+							)
+							Spacer(Modifier.width(8.dp))
+
+							Text(
+								text = if (ownerlastName != null) "$ownerfirstName $ownerlastName" else stringResource(
+									R.string.laboratory
+								),
+								fontWeight = FontWeight(500),
+								fontSize = 16.sp,
+								lineHeight = 22.sp,
+								overflow = TextOverflow.Ellipsis
+
+							)
+
+						}
 					}
 					Spacer(Modifier.height(8.dp))
 				}

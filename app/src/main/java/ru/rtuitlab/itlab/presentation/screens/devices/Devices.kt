@@ -70,8 +70,7 @@ fun Devices(
 			}
 
 
-			val isAccesile = devicesViewModel.accesibleFlow.collectAsState().value
-			if (isAccesile)
+			if (devicesViewModel.accesibleFlow.collectAsState().value)
 				FloatActionButton(devicesViewModel, bottomSheetViewModel)
 
 		}
