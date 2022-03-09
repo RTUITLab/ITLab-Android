@@ -33,11 +33,14 @@ import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadableButtonContent
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.PrimaryButton
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
+@ExperimentalMaterialApi
 @Composable
 fun ProfileSettingsBottomSheet(
 	profileViewModel: ProfileViewModel = viewModel(),
+	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
 	authViewModel: AuthViewModel = viewModel()
 ) {
 
@@ -49,6 +52,8 @@ fun ProfileSettingsBottomSheet(
 	var fieldEditedNow: EditableField? by remember {
 		mutableStateOf(null)
 	}
+
+	val scope = rememberCoroutineScope()
 
 	credentials.handle(
 		onSuccess = { userResponse ->
@@ -130,7 +135,10 @@ fun ProfileSettingsBottomSheet(
 						contentDescription = stringResource(R.string.logout),
 						text = stringResource(R.string.logout),
 						tint = AppColors.red,
-						onClick = authViewModel::enterLogoutFlow//authViewModel::onLogoutEvent
+						onClick = {
+							authViewModel.enterLogoutFlow()
+							bottomSheetViewModel.hide(scope)
+						}
 					)
 
 				}
