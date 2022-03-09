@@ -47,7 +47,8 @@ android {
         def API_URI = "API_URI"
         def ISSUER_URI = "ISSUER_URI"
         def CLIENT_ID = "CLIENT_ID"
-        def REDIRECT_URI = "REDIRECT_URI"
+        def REDIRECT_URI_LOGIN = "REDIRECT_URI_LOGIN"
+        def REDIRECT_URI_LOGOUT = "REDIRECT_URI_LOGOUT"
         def API_SCOPES = "SCOPES"
 
         def CONFIG = { k -> "\"${project.properties.get(k)}\"" }
@@ -57,7 +58,8 @@ android {
             buildConfigField("String", API_URI, CONFIG("debug.api.uri"))
             buildConfigField("String", ISSUER_URI, CONFIG("debug.issuer.uri"))
             buildConfigField("String", CLIENT_ID, CONFIG("client.id"))
-            buildConfigField("String", REDIRECT_URI, CONFIG("redirect.uri"))
+            buildConfigField("String", REDIRECT_URI_LOGIN, CONFIG("redirect.uri.login"))
+            buildConfigField("String", REDIRECT_URI_LOGOUT, CONFIG("redirect.uri.logout"))
             buildConfigField("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
         }
 
@@ -65,7 +67,8 @@ android {
             buildConfigField("String", API_URI, CONFIG("release.api.uri"))
             buildConfigField("String", ISSUER_URI, CONFIG("release.issuer.uri"))
             buildConfigField("String", CLIENT_ID, CONFIG("client.id"))
-            buildConfigField("String", REDIRECT_URI, CONFIG("redirect.uri"))
+            buildConfigField("String", REDIRECT_URI_LOGIN, CONFIG("redirect.uri.login"))
+            buildConfigField("String", REDIRECT_URI_LOGOUT, CONFIG("redirect.uri.logout"))
             buildConfigField("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
 
             signingConfig signingConfigs.release
@@ -129,7 +132,7 @@ dependencies {
     implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
 
     // OpenID auth
-    implementation 'net.openid:appauth:0.7.1'
+    implementation 'net.openid:appauth:0.11.1'
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"

@@ -5,11 +5,29 @@ object UserClaimCategories {
 	val REPORTS = UserClaimCategory()
 	val SALARY = UserClaimCategory()
 	val PROJECTS = UserClaimCategory()
+	val DEVICES = UserRole.DEVICES()
 
 	object USER
 	object PURCHASE
 
+	private val roleMap = mapOf(
+		"CanEditEquipment" to DEVICES.EDIT,
+		"CanEditEquipmentOwner" to DEVICES.OWNER.EDIT,
+		"CanEditEquipmentType" to DEVICES.TYPE.EDIT
+
+		// later?
+		/*"CanEditRoles",
+		"CanEditEvent",
+		"CanEditEventType",
+		"CanDeleteEventRole",
+		"CanEditUserPropertyTypes",
+		"Administrator"*/
+	)
+
 	fun obtainClaimFrom(string: String): Any? = when {
+		roleMap.containsKey(string) -> {
+			roleMap[string]
+		}
 		string.startsWith("feedback") -> {
 			when {
 				string.contains("admin") -> FEEDBACK.ADMIN
@@ -45,12 +63,35 @@ object UserClaimCategories {
 
 	data class UserClaimCategory(
 		val ADMIN: ClaimLevel.ADMIN = ClaimLevel.ADMIN(),
-		val USER: ClaimLevel.USER = ClaimLevel.USER()
+		val USER: ClaimLevel.USER = ClaimLevel.USER(),
+		val EDIT: RoleAction.EDIT = RoleAction.EDIT(),
+		val DELETE: RoleAction.DELETE = RoleAction.DELETE()
 	)
 
 	sealed class ClaimLevel {
 		class ADMIN : ClaimLevel()
 		class USER : ClaimLevel()
+	}
+
+	sealed class RoleAction {
+		class EDIT : RoleAction()
+		class DELETE : RoleAction()
+	}
+
+	sealed class RoleSubject(
+		val EDIT: RoleAction.EDIT = RoleAction.EDIT(),
+		val DELETE: RoleAction.DELETE = RoleAction.DELETE()
+	) {
+		class OWNER : RoleSubject()
+		class TYPE : RoleSubject()
+	}
+
+	sealed class UserRole {
+		class DEVICES(
+			val OWNER: RoleSubject = RoleSubject.OWNER(),
+			val TYPE: RoleSubject = RoleSubject.TYPE(),
+			val EDIT: RoleAction.EDIT = RoleAction.EDIT()
+		): UserRole()
 	}
 
 }

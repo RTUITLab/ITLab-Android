@@ -106,4 +106,10 @@ class AuthStateStorage(context: Context) {
         }
     }
 
+    suspend fun endSession() {
+        val config = latestAuthState.authorizationServiceConfiguration
+        resetAuthStateWithConfig(config)
+        resetUserClaims()
+    }
+
 }

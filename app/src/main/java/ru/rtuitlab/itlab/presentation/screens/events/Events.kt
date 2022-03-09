@@ -36,6 +36,9 @@ fun Events(
 	val eventsResource by eventsViewModel.eventsListResponsesFlow.collectAsState()
 	val userEventsResource by eventsViewModel.userEventsListResponsesFlow.collectAsState()
 	val pastEventsResource by eventsViewModel.pastEventsListResponseFlow.collectAsState()
+	val events by eventsViewModel.eventsFlow.collectAsState()
+	val pastEvents by eventsViewModel.pastEventsFlow.collectAsState()
+	val showPastEvents by eventsViewModel.showPastEvents.collectAsState()
 
 	var isRefreshing by remember { mutableStateOf(false) }
 	var secondPageVisited by rememberSaveable { mutableStateOf(false) }
@@ -85,7 +88,7 @@ fun Events(
 							onSuccess = {
 								isRefreshing = false
 								eventsViewModel.onResourceSuccess(it)
-								if (it.isEmpty())
+								if (events.isEmpty() && (pastEvents.isEmpty() || !showPastEvents))
 									LoadingError(msg = stringResource(R.string.no_pending_events))
 								else
 									EventsList(

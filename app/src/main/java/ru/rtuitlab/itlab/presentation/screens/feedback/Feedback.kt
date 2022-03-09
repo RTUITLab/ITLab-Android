@@ -157,6 +157,7 @@ fun AnimatedFeedbackList(
 	val lazyListState = rememberLazyListState()
 
 	LazyColumn(
+		modifier = Modifier.fillMaxSize(),
 		state = lazyListState,
 		verticalArrangement = Arrangement.spacedBy(10.dp),
 		contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
