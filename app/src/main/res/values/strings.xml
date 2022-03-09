@@ -106,8 +106,8 @@
 
     <string name="shortTitle">Short Title</string>
     <string name="to_create">Create</string>
-    <string name="to_choose">Choose</string>
-    <string name="Laboratory">Laboratory</string>
+    <string name="to_choose">Chose</string>
+    <string name="laboratory">Laboratory</string>
 
     <!--    Feedback    -->
     <string name="feedback">Feedback</string>
@@ -117,4 +117,7 @@
     <string name="feedback_incoming">Incoming</string>
     <string name="feedback_read">Read</string>
     <string name="feedback_read_at">Read at %1$s</string>
+    <string name="to_assign_owner">Assign owner</string>
+    <string name="pick_up">Pick up</string>
+    <string name="show_only_free">Show only free</string>
 </resources>

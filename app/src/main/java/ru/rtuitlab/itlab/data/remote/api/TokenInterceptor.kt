@@ -1,7 +1,6 @@
 package ru.rtuitlab.itlab.data.remote.api
 
 import android.util.Log
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationService
 import okhttp3.Interceptor
@@ -33,7 +32,7 @@ class TokenInterceptor @Inject constructor(
     }
 
     private fun getAccessToken(): String = runBlocking {
-        val authState = authStateStorage.authStateFlow.first()
+        val authState = authStateStorage.latestAuthState
         val isNeedToUpdateToken = authState.needsTokenRefresh
 
         suspendCoroutine { continuation ->

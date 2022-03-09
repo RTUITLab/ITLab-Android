@@ -13,6 +13,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.constraintlayout.compose.ExperimentalMotionApi
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 import ru.rtuitlab.itlab.presentation.ui.ITLabApp
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		installSplashScreen()
 		setContent {
 			val authState by authViewModel.authStateFlow.collectAsState(null)
 			ITLabTheme {

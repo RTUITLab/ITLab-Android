@@ -8,7 +8,7 @@ import ru.rtuitlab.itlab.presentation.UserViewModel
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.dialog.DialogViewModel
+
 @ExperimentalMaterialApi
 sealed class AppBottomSheet {
         class EventShift(
@@ -21,16 +21,12 @@ sealed class AppBottomSheet {
         class DeviceInfo (
                 val deviceDetails: DeviceDetails?,
                 val devicesViewModel: DevicesViewModel,
-                val bottomSheetViewModel: BottomSheetViewModel,
-                val dialogViewModel: DialogViewModel,
+                val bottomSheetViewModel: BottomSheetViewModel
 
-                //val setShowDialog: (Boolean) -> Unit
         ): AppBottomSheet()
         class DeviceNew(
                 val devicesViewModel: DevicesViewModel,
                 val bottomSheetViewModel: BottomSheetViewModel,
-                val dialogViewModel: DialogViewModel
-                //val setShowDialog: (Boolean) -> Unit
         ): AppBottomSheet()
 
         object ProfileEquipment: AppBottomSheet()
