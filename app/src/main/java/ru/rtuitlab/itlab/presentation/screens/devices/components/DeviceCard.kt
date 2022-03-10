@@ -72,61 +72,77 @@ fun DeviceCard(
 						.fillMaxWidth()
 
 				) {
-					Text(
+					Row() {
+						Text(
 
-						text =  if(equipmentType != null) equipmentType?.title.toString() else "Обновите" ,
-						fontWeight = FontWeight(500),
-						fontSize = 17.sp ,
-						lineHeight = 22.sp,
-						overflow = TextOverflow.Ellipsis
+							text = if (equipmentType != null) equipmentType?.title.toString() else "Обновите",
+							fontWeight = FontWeight(500),
+							fontSize = 17.sp,
+							lineHeight = 22.sp,
+							overflow = TextOverflow.Ellipsis,
+							maxLines = 1,
+							modifier = Modifier
+								.weight(3f, false)
 
 
 						)
-					Text(
-						text = " #$number",
-						fontWeight = FontWeight(500),
-						fontSize = 17.sp,
-						lineHeight = 22.sp,
-						color = Color.Gray
-					)
-
-					AnimatedVisibility(expandedDeviceCardbool.value) {
-						Row(
+						Text(
+							text = " #$number",
+							fontWeight = FontWeight(500),
+							fontSize = 17.sp,
+							lineHeight = 22.sp,
+							color = Color.Gray,
+							modifier = Modifier
+								.weight(1f, false)
+						)
+					}
+					Row(
 							horizontalArrangement = Arrangement.End,
 							verticalAlignment = Alignment.Top,
-							modifier = Modifier
-								.fillMaxWidth()
-								.animateEnterExit(exit = shrinkVertically())
+
+
+
 
 						) {
-							if (devicesViewModel.accesibleFlow.collectAsState().value) {
+						AnimatedVisibility(expandedDeviceCardbool.value) {
+							Row(
+								horizontalArrangement = Arrangement.End,
+								verticalAlignment = Alignment.Top,
+								modifier = Modifier
+									.fillMaxSize()
+									.animateEnterExit(exit = shrinkVertically())
 
-								Icon(
-									imageVector = Icons.Default.Edit,
-									contentDescription = stringResource(R.string.edit),
-									tint = colorResource(R.color.accent),
-									modifier = Modifier
-										.padding(10.dp)
-										.width(16.dp)
-										.height(16.dp)
-										.padding(0.dp)
-										.clickable {
-											devicesViewModel.setDeviceFromSheet(device)
-											bottomSheetViewModel.show(
-												AppBottomSheet.DeviceInfo(
-													device,
-													devicesViewModel,
-													bottomSheetViewModel),
-												coroutineScope
-											)
-											//navController.navigate(AppScreen.DeviceDetails.route)
+							) {
+								if (devicesViewModel.accesibleFlow.collectAsState().value) {
 
-										}
+									Icon(
+										imageVector = Icons.Default.Edit,
+										contentDescription = stringResource(R.string.edit),
+										tint = colorResource(R.color.accent),
+										modifier = Modifier
+											.padding(10.dp)
+											.width(16.dp)
+											.height(16.dp)
+											.padding(0.dp)
+											.clickable {
+												devicesViewModel.setDeviceFromSheet(device)
+												bottomSheetViewModel.show(
+													AppBottomSheet.DeviceInfo(
+														device,
+														devicesViewModel,
+														bottomSheetViewModel
+													),
+													coroutineScope
+												)
+												//navController.navigate(AppScreen.DeviceDetails.route)
+
+											}
 
 
-								)
+									)
+								}
+
 							}
-
 						}
 					}
 				}
