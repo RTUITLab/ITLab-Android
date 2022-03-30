@@ -84,7 +84,7 @@ open class AppScreen(
     // Events-related
     object Events: AppScreen(R.string.events, "events")
     @Parcelize
-    class  EventDetails(val title: String): AppScreen(R.string.event, "event/{eventId}") { // Has back button
+    class  EventDetails(val title: String): AppScreen(R.string.event_name, "event/{eventId}") { // Has back button
         companion object {
             const val route = "event/{eventId}"
             val navLink: String = route.substringBefore("/{")

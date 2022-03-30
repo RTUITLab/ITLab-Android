@@ -14,9 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesTab
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DevicesTopAppBar
@@ -32,7 +33,6 @@ import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBa
 import ru.rtuitlab.itlab.presentation.screens.projects.ProjectsTab
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
@@ -48,6 +48,7 @@ import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
 @ExperimentalPagerApi
 @Composable
 fun ITLabApp(
+	eventsNavController: NavHostController = rememberNavController(),
 	appBarViewModel: AppBarViewModel = viewModel(),
 	appTabsViewModel: AppTabsViewModel = viewModel(),
 	eventsViewModel: EventsViewModel = viewModel(),
@@ -62,7 +63,7 @@ fun ITLabApp(
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
 
 	val currentNavController by appBarViewModel.currentNavHost.collectAsState()
-	val onBackAction: () -> Unit = { currentNavController?.popBackStack() }
+	val onBackAction: () -> Unit = { if (currentNavController?.popBackStack() == false) appBarViewModel.handleDeepLinkPop() }
 
 	val eventsResetTask = RunnableHolder()
 	val projectsResetTask = RunnableHolder()
@@ -130,6 +131,7 @@ fun ITLabApp(
 				) {
 					when (currentTab) {
 						AppTab.Events -> EventsTab(
+							eventsNavController,
 							eventsNavState,
 							eventsResetTask
 						)

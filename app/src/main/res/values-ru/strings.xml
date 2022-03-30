@@ -16,7 +16,7 @@
     <string name="employee">Сотрудник</string>
     <string name="dial">Позвонить</string>
     <string name="save">Сохранить</string>
-    <string name="event">%1$s</string>
+    <string name="event_name">%1$s</string>
     <string name="event_new">Новое событие</string>
     <string name="study_group">Учебная группа</string>
     <string name="vk_id">ВК</string>
@@ -115,4 +115,5 @@
     <string name="to_assign_owner">Назначить владельца</string>
     <string name="pick_up">Pick up</string>
     <string name="show_only_free">Показать только доступное</string>
+    <string name="event">Событие</string>
 </resources>
