@@ -6,6 +6,7 @@
 1. Viewing events
 1. Event application form
 1. In-app notifications for event invitations
+1. Deep link handling - tapping a link of an event will take you to the event screen inside the application
 
 ### Profiles
 1. Viewing user's events for selected period
