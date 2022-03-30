@@ -22,9 +22,7 @@ import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
 @Composable
 fun DevicesTab(navState: MutableState<Bundle>,
                resetTabTask: RunnableHolder,
-               appBarViewModel: AppBarViewModel = viewModel(),
                deviceViewModel: DevicesViewModel = viewModel(),
-               employeesViewModel: EmployeesViewModel = viewModel(),
                bottomSheetViewModel: BottomSheetViewModel = viewModel()) {
     val navController = rememberNavController()
 
@@ -49,6 +47,6 @@ fun DevicesTab(navState: MutableState<Bundle>,
 
     NavHost(navController, startDestination = AppScreen.Devices.route) {
         composable(AppScreen.Devices.route) { 
-	Devices(deviceViewModel,bottomSheetViewModel, navController) }
+	Devices(deviceViewModel,bottomSheetViewModel) }
     }
 }

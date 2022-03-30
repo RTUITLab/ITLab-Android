@@ -113,7 +113,7 @@
     <string name="to_choose">Выбрать</string>
     <string name="laboratory">Лаборатория</string>
     <string name="to_assign_owner">Назначить владельца</string>
-    <string name="pick_up">Pick up</string>
+    <string name="pick_up">Убрать</string>
     <string name="show_only_free">Показать только доступное</string>
     <string name="event">Событие</string>
 </resources>

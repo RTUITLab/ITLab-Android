@@ -28,6 +28,7 @@ import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentEditRequest
 import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentTypeResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @ExperimentalAnimationApi
 @ExperimentalTransitionApi
@@ -290,9 +291,11 @@ fun DeviceInfoBottomSheet(
 						.clickable {
 							dialogAcceptIsShown = true
 
-						}
+						},
+					tint = AppColors.red
 
-				)
+
+					)
 
 			}
 		}
