@@ -153,11 +153,18 @@ fun ITLabApp(
 								onClick = {
 
 									// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
-									// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once,
-									// but only two of the above.
-									// This line of code sacrifices resetting.
-									if (tab == currentTab) return@BottomNavigationItem
+									// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once by the means
+									// of Jetpack Navigation APIs, but only two of the above.
+									// This code provides resetting and singleTop behavior for the default tab.
+									if (tab == currentTab) {
+										navController.popBackStack(
+											route = tab.startDestination,
+											inclusive = false
+										)
+										return@BottomNavigationItem
+									}
 
+									// This code always leaves default tab's start destination on the bottom of the stack. Workaround needed?
 									navController.navigate(tab.route) {
 										popUpTo(navController.graph.findStartDestination().id) {
 											saveState = true
