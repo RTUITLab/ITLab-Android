@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceInfoBottomSheet
@@ -32,7 +33,8 @@ import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 @ExperimentalMaterialApi
 @Composable
 fun BottomSheet(
-	viewModel: BottomSheetViewModel = viewModel()
+	viewModel: BottomSheetViewModel = viewModel(),
+	navController: NavHostController
 ) {
 	val currentSheet by viewModel.currentBottomSheet.collectAsState()
 	val sheetIsVisible by viewModel.visibilityAsState.collectAsState()
@@ -79,7 +81,7 @@ fun BottomSheet(
 				val data = currentSheet as AppBottomSheet.ProfileEvents
 				ProfileEventsBottomSheet(
 					userViewModel = data.viewModel,
-					onNavigate = data.onNavigate
+					navController = navController
 				)
 			}
 			is AppBottomSheet.DeviceInfo -> {

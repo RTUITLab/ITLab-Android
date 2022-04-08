@@ -29,8 +29,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetView
 @Composable
 fun Employee(
 	employeeViewModel: EmployeeViewModel,
-	bottomSheetViewModel: BottomSheetViewModel,
-	onNavigate: (id: String, title: String) -> Unit
+	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val userCredentialsResource by employeeViewModel.userCredentialsFlow.collectAsState()
 
@@ -43,8 +42,7 @@ fun Employee(
 		//UserDevices(userDevicesResource)
 		UserEvents(
 			employeeViewModel,
-			bottomSheetViewModel,
-			onNavigate
+			bottomSheetViewModel
 		)
 	}
 }

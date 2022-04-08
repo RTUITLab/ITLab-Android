@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.ui
 
-import android.os.Bundle
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.layout.Box
@@ -16,21 +15,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
-import ru.rtuitlab.itlab.presentation.screens.devices.DevicesTab
+import ru.rtuitlab.itlab.presentation.navigation.AppNavigation
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DevicesTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.employees.EmployeesTab
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeesTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.events.EventsTab
 import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.feedback.FeedbackTab
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.profile.ProfileTab
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.projects.ProjectsTab
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
@@ -39,7 +35,6 @@ import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.AppTab
-import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
 
 @ExperimentalMotionApi
 @ExperimentalMaterialApi
@@ -48,7 +43,6 @@ import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
 @ExperimentalPagerApi
 @Composable
 fun ITLabApp(
-	eventsNavController: NavHostController = rememberNavController(),
 	appBarViewModel: AppBarViewModel = viewModel(),
 	appTabsViewModel: AppTabsViewModel = viewModel(),
 	eventsViewModel: EventsViewModel = viewModel(),
@@ -62,15 +56,10 @@ fun ITLabApp(
 
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
 
+	val navController = rememberNavController()
+
 	val currentNavController by appBarViewModel.currentNavHost.collectAsState()
 	val onBackAction: () -> Unit = { if (currentNavController?.popBackStack() == false) appBarViewModel.handleDeepLinkPop() }
-
-	val eventsResetTask = RunnableHolder()
-	val projectsResetTask = RunnableHolder()
-	val devicesResetTask = RunnableHolder()
-	val employeesResetTask = RunnableHolder()
-	val feedbackResetTask = RunnableHolder()
-	val profileResetTask = RunnableHolder()
 
 	LaunchedEffect(bottomSheetViewModel.bottomSheetState.currentValue) {
 		if (bottomSheetViewModel.bottomSheetState.currentValue == ModalBottomSheetValue.Hidden)
@@ -79,7 +68,7 @@ fun ITLabApp(
 
 	ModalBottomSheetLayout(
 		sheetState = bottomSheetViewModel.bottomSheetState,
-		sheetContent = { BottomSheet() },
+		sheetContent = { BottomSheet(navController = navController) },
 		sheetShape = RoundedCornerShape(
 			topStart = 16.dp,
 			topEnd = 16.dp
@@ -116,40 +105,13 @@ fun ITLabApp(
 				}
 			},
 			content = {
-				val eventsNavState = rememberSaveable { mutableStateOf(Bundle()) }
-				val projectsNavState = rememberSaveable { mutableStateOf(Bundle()) }
-				val devicesNavState = rememberSaveable { mutableStateOf(Bundle()) }
-				val employeesNavState = rememberSaveable { mutableStateOf(Bundle()) }
-				val feedbackNavState = rememberSaveable { mutableStateOf(Bundle()) }
-				val profileNavState = rememberSaveable { mutableStateOf(Bundle()) }
-
 				Box(
 					modifier = Modifier.padding(
 						bottom = it.calculateBottomPadding(),
 						top = it.calculateTopPadding()
 					)
 				) {
-					when (currentTab) {
-						AppTab.Events -> EventsTab(
-							eventsNavController,
-							eventsNavState,
-							eventsResetTask
-						)
-						AppTab.Projects -> ProjectsTab(projectsNavState, projectsResetTask)
-						AppTab.Devices -> DevicesTab(devicesNavState, devicesResetTask)
-						AppTab.Employees -> EmployeesTab(
-							employeesNavState,
-							employeesResetTask
-						)
-						AppTab.Feedback -> FeedbackTab(
-							navState = feedbackNavState,
-							resetTabTask = feedbackResetTask
-						)
-						AppTab.Profile -> ProfileTab(
-							navState = profileNavState,
-							resetTabTask = profileResetTask
-						)
-					}
+					AppNavigation(navController)
 				}
 
 			},
@@ -157,15 +119,17 @@ fun ITLabApp(
 				BottomNavigation(
 					elevation = 10.dp
 				) {
+					val navBackStackEntry by navController.currentBackStackEntryAsState()
+					val currentDestination = navBackStackEntry?.destination
 					val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
 					appTabs
 						.filter { it.accessible }
-						.forEach { screen ->
+						.forEach { tab ->
 							BottomNavigationItem(
 								icon = {
 									BadgedBox(
 										badge = {
-											if (screen is AppTab.Events && invitationsCount > 0)
+											if (tab is AppTab.Events && invitationsCount > 0)
 												Badge(
 													backgroundColor = AppColors.accent.collectAsState().value,
 													contentColor = Color.White
@@ -174,29 +138,36 @@ fun ITLabApp(
 												}
 										}
 									) {
-										Icon(screen.icon, null)
+										Icon(tab.icon, null)
 									}
 							    },
 								label = {
 									Text(
-										text = stringResource(screen.resourceId),
+										text = stringResource(tab.resourceId),
 										fontSize = 9.sp,
 										lineHeight = 16.sp
 									)
 								},
-								selected = currentTab == screen,
+								selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
 								alwaysShowLabel = true,
 								onClick = {
-									when {
-										screen != currentTab       -> currentTab = screen
-										screen == AppTab.Events    -> eventsResetTask.run()
-										screen == AppTab.Projects  -> projectsResetTask.run()
-										screen == AppTab.Devices   -> devicesResetTask.run()
-										screen == AppTab.Employees -> employeesResetTask.run()
-										screen == AppTab.Feedback  -> feedbackResetTask.run()
-										screen == AppTab.Profile   -> profileResetTask.run()
+
+									// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
+									// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once,
+									// but only two of the above.
+									// This line of code sacrifices resetting.
+									if (tab == currentTab) return@BottomNavigationItem
+
+									navController.navigate(tab.route) {
+										popUpTo(navController.graph.findStartDestination().id) {
+											saveState = true
+										}
+										launchSingleTop = true
+
+										// We want to reset the graph if it is clicked while already selected
+										restoreState = tab != currentTab
 									}
-									appBarViewModel.onNavigate(currentTab.asScreen())
+									currentTab = tab
 								}
 							)
 						}

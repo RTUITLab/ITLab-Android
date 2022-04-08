@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -24,6 +25,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.components.UserEventCard
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CollapsibleScrollArea
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.heightDelta
+import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.EventTab
 
 @ExperimentalMaterialApi
@@ -31,7 +33,7 @@ import ru.rtuitlab.itlab.presentation.utils.EventTab
 @Composable
 fun Events(
 	eventsViewModel: EventsViewModel,
-	onNavigate: (id: String, title: String) -> Unit
+	navController: NavHostController
 ) {
 	val eventsResource by eventsViewModel.eventsListResponsesFlow.collectAsState()
 	val userEventsResource by eventsViewModel.userEventsListResponsesFlow.collectAsState()
@@ -69,7 +71,10 @@ fun Events(
 		SwipeRefresh(
 			modifier = Modifier.fillMaxSize(),
 			state = rememberSwipeRefreshState(isRefreshing),
-			onRefresh = eventsViewModel::fetchPendingEvents
+			onRefresh = {
+				eventsViewModel.fetchPendingEvents()
+				eventsViewModel.fetchInvitations()
+			}
 		) {
 			CollapsibleScrollArea(
 				swipingState = swipingState,
@@ -94,7 +99,7 @@ fun Events(
 									EventsList(
 										eventsViewModel = eventsViewModel,
 										listState = eventsViewModel.allEventsListState,
-										onNavigate = onNavigate
+										navController = navController
 									)
 							}
 						)
@@ -124,7 +129,7 @@ fun Events(
 									UserEventsList(
 										eventsViewModel = eventsViewModel,
 										listState = eventsViewModel.userEventsListState,
-										onNavigate = onNavigate
+										navController = navController
 									)
 							}
 						)
@@ -144,7 +149,7 @@ fun Events(
 fun EventsList(
 	eventsViewModel: EventsViewModel,
 	listState: LazyListState,
-	onNavigate: (id: String, title: String) -> Unit
+	navController: NavHostController
 ) {
 	val events by eventsViewModel.eventsFlow.collectAsState()
 	val pastEvents by eventsViewModel.pastEventsFlow.collectAsState()
@@ -161,7 +166,7 @@ fun EventsList(
 		) {
 			EventCard(
 				modifier = Modifier.clickable {
-					onNavigate(it.id, it.title)
+					navController.navigate("${AppScreen.EventDetails.navLink}/${it.id}")
 				},
 				event = it
 			)
@@ -177,7 +182,7 @@ fun EventsList(
 			) {
 				EventCard(
 					modifier = Modifier.clickable {
-						onNavigate(it.id, it.title)
+						navController.navigate("${AppScreen.EventDetails.navLink}/${it.id}")
 					},
 					event = it
 				)
@@ -192,7 +197,7 @@ fun EventsList(
 fun UserEventsList(
 	eventsViewModel: EventsViewModel,
 	listState: LazyListState,
-	onNavigate: (id: String, title: String) -> Unit
+	navController: NavHostController
 ) {
 	val events by eventsViewModel.userEventsFlow.collectAsState()
 	LazyColumn(
@@ -207,7 +212,7 @@ fun UserEventsList(
 		) {
 			UserEventCard(
 				modifier = Modifier.clickable {
-					onNavigate(it.id, it.title)
+					navController.navigate("${AppScreen.EventDetails.navLink}/${it.id}")
 				},
 				event = it
 			)

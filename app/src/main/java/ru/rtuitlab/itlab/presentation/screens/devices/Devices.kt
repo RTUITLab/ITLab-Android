@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.screens.devices
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,24 +10,20 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceCard
 import ru.rtuitlab.itlab.presentation.screens.devices.components.FloatActionButton
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import java.sql.Time
-import java.time.Instant
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
 fun Devices(
-	devicesViewModel: DevicesViewModel,
-
-	bottomSheetViewModel: BottomSheetViewModel,
-
+	devicesViewModel: DevicesViewModel = viewModel(),
+	bottomSheetViewModel: BottomSheetViewModel = viewModel()
 ) {
 	val devicesResource by devicesViewModel.deviceResponsesFlow.collectAsState()
 	var isRefreshing by remember { mutableStateOf(false) }

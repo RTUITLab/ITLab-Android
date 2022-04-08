@@ -29,15 +29,14 @@ import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 @Composable
 fun UserEvents(
 	userViewModel: UserViewModel,
-	bottomSheetViewModel: BottomSheetViewModel,
-	onNavigate: (id: String, title: String) -> Unit
+	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val scope = rememberCoroutineScope()
 	IconizedRow(
 		modifier = Modifier
 			.clickable {
 				bottomSheetViewModel.show(
-					sheet = AppBottomSheet.ProfileEvents(userViewModel, onNavigate),
+					sheet = AppBottomSheet.ProfileEvents(userViewModel),
 					scope = scope
 				)
 			}

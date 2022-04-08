@@ -28,11 +28,13 @@ class AppBarViewModel @Inject constructor(
 		savedStateHandle.set("currentScreen", currentScreen.value)
 	}
 
-	// If a deep link is opened from a killed state, nav host's back stack does not exist.
+	// If a deep link is opened from a killed state, nav host's back stack does not yet exist.
 	// If we want to be able to use the app normally through a deep link, we need to
 	// explicitly recreate the back stack after "Go back" interaction.
 	fun handleDeepLinkPop() {
-		currentNavHost.value?.navigate(AppScreen.Events.route)
+		when (currentScreen.value) {
+			is AppScreen.EventDetails -> currentNavHost.value?.navigate(AppScreen.Events.route)
+		}
 	}
 
 }

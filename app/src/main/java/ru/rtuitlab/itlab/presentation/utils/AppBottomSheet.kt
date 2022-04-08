@@ -32,8 +32,7 @@ sealed class AppBottomSheet {
         object ProfileEquipment: AppBottomSheet()
         object ProfileSettings: AppBottomSheet()
         class ProfileEvents(
-               val viewModel: UserViewModel,
-               val onNavigate: (String,String) -> Unit
+               val viewModel: UserViewModel
         ): AppBottomSheet()
         object Equipment: AppBottomSheet()
         object Unspecified: AppBottomSheet()

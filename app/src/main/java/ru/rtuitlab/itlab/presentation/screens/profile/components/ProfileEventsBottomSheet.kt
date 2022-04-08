@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.util.Pair
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener
@@ -30,13 +31,14 @@ import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.extensions.toClientDate
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
+import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
 @Composable
 fun ProfileEventsBottomSheet(
-	onNavigate: (id: String, title: String) -> Unit,
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
+	navController: NavHostController,
 	userViewModel: UserViewModel
 ) {
 	val userEventsResource by userViewModel.userEventsFlow.collectAsState()
@@ -107,7 +109,7 @@ fun ProfileEventsBottomSheet(
 					) {
 						Column(
 							modifier = Modifier.clickable {
-								onNavigate(it.id, it.title)
+								navController.navigate("${AppScreen.EventDetails.navLink}/${it.id}")
 								bottomSheetViewModel.hide(scope)
 							}
 						) {

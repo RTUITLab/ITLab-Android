@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation.utils
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.annotation.StringRes
@@ -12,13 +13,19 @@ import kotlinx.parcelize.Parcelize
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 
-sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon: ImageVector, var accessible: Boolean = true) {
-    object Events: AppTab("events_tab", R.string.events, Icons.Default.EventNote)
-    object Projects: AppTab("projects_tab", R.string.projects, Icons.Default.Widgets, false)
-    object Devices: AppTab("devices_tab", R.string.devices, Icons.Default.DevicesOther)
-    object Employees: AppTab("employees_tab", R.string.employees, Icons.Default.People)
-    object Feedback: AppTab("feedback_tab", R.string.feedback, Icons.Default.Feedback)
-    object Profile: AppTab("profile_tab", R.string.profile, Icons.Default.AccountCircle, false)
+sealed class AppTab(
+    val route: String,
+    val startDestination: String,
+    @StringRes val resourceId: Int,
+    val icon: ImageVector,
+    var accessible: Boolean = true
+) {
+    object Events: AppTab("events_tab", AppScreen.Events.route, R.string.events, Icons.Default.EventNote)
+    object Projects: AppTab("projects_tab", AppScreen.Projects.route, R.string.projects, Icons.Default.Widgets, false)
+    object Devices: AppTab("devices_tab", AppScreen.Devices.route, R.string.devices, Icons.Default.DevicesOther)
+    object Employees: AppTab("employees_tab", AppScreen.Employees.route, R.string.employees, Icons.Default.People)
+    object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback)
+    object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, false)
 
     fun saveState() = bundleOf(SCREEN_KEY to route)
 
@@ -84,7 +91,7 @@ open class AppScreen(
     // Events-related
     object Events: AppScreen(R.string.events, "events")
     @Parcelize
-    class  EventDetails(val title: String): AppScreen(R.string.event_name, "event/{eventId}") { // Has back button
+    class EventDetails(val title: String): AppScreen(R.string.event_name, "event/{eventId}") { // Has back button
         companion object {
             const val route = "event/{eventId}"
             val navLink: String = route.substringBefore("/{")
@@ -101,4 +108,17 @@ open class AppScreen(
 
     // Profile-related
     object Profile: AppScreen(R.string.profile, "profile")
+    companion object {
+        fun getAll(context: Context) = listOf(
+            Employees,
+            EmployeeDetails,
+            Feedback,
+            Events,
+            EventDetails(context.resources.getString(R.string.event)),
+            EventsNotifications,
+            Projects,
+            Devices,
+            Profile,
+        )
+    }
 }
