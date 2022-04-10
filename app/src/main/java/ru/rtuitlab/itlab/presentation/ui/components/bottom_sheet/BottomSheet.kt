@@ -4,6 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -21,10 +23,10 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceInfoBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceNewBottomSheet
-import ru.rtuitlab.itlab.presentation.screens.events.components.EventDetailsBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileEventsBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileSettingsBottomSheet
+import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
 @ExperimentalTransitionApi
@@ -74,7 +76,10 @@ fun BottomSheet(
 				)
 			}
 			is AppBottomSheet.EventDescription -> {
-				EventDetailsBottomSheet(markdownText = (currentSheet as AppBottomSheet.EventDescription).markdown)
+				MarkdownTextArea(
+					modifier = Modifier.verticalScroll(rememberScrollState()),
+					textMd = (currentSheet as AppBottomSheet.EventDescription).markdown
+				)
 			}
 			is AppBottomSheet.ProfileSettings -> ProfileSettingsBottomSheet()
 			is AppBottomSheet.ProfileEvents -> {
