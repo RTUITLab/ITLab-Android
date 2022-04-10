@@ -10,15 +10,18 @@ import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
-import ru.rtuitlab.itlab.presentation.ui.ITLabApp
+import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthScreen
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthViewModel
+import ru.rtuitlab.itlab.presentation.ui.ITLabApp
 import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
 
 @ExperimentalMaterialApi
@@ -52,7 +55,11 @@ class MainActivity : AppCompatActivity() {
 				Surface(color = MaterialTheme.colors.background) {
 					when (authState?.isAuthorized) {
 						true -> {
-							ITLabApp()
+							CompositionLocalProvider(
+								LocalNavController provides rememberNavController()
+							) {
+								ITLabApp()
+							}
 						}
 						false -> AuthScreen { authViewModel.onLoginEvent(authPageLauncher) }
 						null -> {}

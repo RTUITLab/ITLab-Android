@@ -56,7 +56,7 @@ fun ITLabApp(
 
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
 
-	val navController = rememberNavController()
+	val navController = LocalNavController.current
 
 	val currentNavController by appBarViewModel.currentNavHost.collectAsState()
 	val onBackAction: () -> Unit = { if (currentNavController?.popBackStack() == false) appBarViewModel.handleDeepLinkPop() }
