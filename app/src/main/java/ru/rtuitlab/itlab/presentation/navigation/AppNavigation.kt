@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.presentation.navigation
 
 import android.content.res.Resources
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.material.ExperimentalMaterialApi
@@ -30,7 +31,11 @@ import ru.rtuitlab.itlab.presentation.screens.feedback.Feedback
 import ru.rtuitlab.itlab.presentation.screens.feedback.FeedbackViewModel
 import ru.rtuitlab.itlab.presentation.screens.profile.Profile
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
+import ru.rtuitlab.itlab.presentation.screens.reports.Report
+import ru.rtuitlab.itlab.presentation.screens.reports.Reports
+import ru.rtuitlab.itlab.presentation.screens.reports.ReportsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedElementsRootScope
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.AppTab
@@ -48,7 +53,8 @@ fun AppNavigation(
 	profileViewModel: ProfileViewModel = viewModel(),
 	appBarViewModel: AppBarViewModel = viewModel(),
 	employeesViewModel: EmployeesViewModel = viewModel(),
-	feedbackViewModel: FeedbackViewModel = viewModel()
+	feedbackViewModel: FeedbackViewModel = viewModel(),
+	reportsViewModel: ReportsViewModel = viewModel()
 ) {
 	val resources = LocalContext.current.resources
 
@@ -61,6 +67,9 @@ fun AppNavigation(
 			navController
 		)
 	}
+
+	// Disabling system "Back" button during transition
+	BackHandler(LocalSharedElementsRootScope.current!!.isRunningTransition) {}
 
 	NavHost(
 		navController = navController,
@@ -84,6 +93,11 @@ fun AppNavigation(
 		devicesGraph(bottomSheetViewModel)
 
 		feedbackGraph(feedbackViewModel)
+
+		reportsGraph(
+			reportsViewModel,
+			appBarViewModel
+		)
 	}
 }
 
@@ -126,13 +140,6 @@ private fun NavGraphBuilder.eventsGraph(
 				appBarViewModel = appBarViewModel
 			)
 		}
-
-		composable(AppScreen.EmployeeDetails.route) {
-			Employee(
-				employeeViewModel = it.hiltViewModel(),
-				bottomSheetViewModel = bottomSheetViewModel
-			)
-		}
 	}
 }
 
@@ -162,14 +169,6 @@ private fun NavGraphBuilder.employeesGraph(
 			Profile(
 				profileViewModel = profileViewModel,
 				bottomSheetViewModel = bottomSheetViewModel
-			)
-		}
-
-		composable(AppScreen.EventDetails.route) {
-			Event(
-				eventViewModel = it.hiltViewModel(),
-				bottomSheetViewModel = bottomSheetViewModel,
-				navController = navController
 			)
 		}
 	}
@@ -206,6 +205,28 @@ private fun NavGraphBuilder.feedbackGraph(
 	) {
 		composable(AppScreen.Feedback.route) {
 			Feedback(feedbackViewModel)
+		}
+	}
+}
+
+private fun NavGraphBuilder.reportsGraph(
+	reportsViewModel: ReportsViewModel,
+	appBarViewModel: AppBarViewModel
+) {
+	navigation(
+		startDestination = AppTab.Reports.startDestination,
+		route = AppTab.Reports.route
+	) {
+		composable(AppScreen.Reports.route) {
+			Reports(reportsViewModel)
+		}
+
+		composable(AppScreen.ReportDetails.route) {
+			Report(
+				id = it.arguments?.getString("reportId")!!,
+				reportsViewModel = reportsViewModel,
+				appBarViewModel = appBarViewModel
+			)
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.ui.theme
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +22,7 @@ object AppColors {
 		if (isLightTheme) Color.Black.copy(alpha = .6f)
 		else Color.White.copy(alpha = .6f)
 	)
+	val green = Color(0xff28a745)
 	val greyText = _greyText.asStateFlow()
 	val red = Color(0xFFFF3B30)
 	val tag = Color(0xFFE0E0E0)

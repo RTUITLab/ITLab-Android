@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.presentation.ui
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -18,9 +19,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.presentation.navigation.AppNavigation
+import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DevicesTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeesTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
@@ -29,6 +30,8 @@ import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopApp
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedElementsRootScope
+import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElementsRoot
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
@@ -58,8 +61,12 @@ fun ITLabApp(
 
 	val navController = LocalNavController.current
 
-	val currentNavController by appBarViewModel.currentNavHost.collectAsState()
-	val onBackAction: () -> Unit = { if (currentNavController?.popBackStack() == false) appBarViewModel.handleDeepLinkPop() }
+	var sharedElementScope = LocalSharedElementsRootScope.current
+
+	val onBackAction: () -> Unit = {
+		if (sharedElementScope?.isRunningTransition == false)
+			if (!navController.popBackStack()) appBarViewModel.handleDeepLinkPop()
+	}
 
 	LaunchedEffect(bottomSheetViewModel.bottomSheetState.currentValue) {
 		if (bottomSheetViewModel.bottomSheetState.currentValue == ModalBottomSheetValue.Hidden)
@@ -77,31 +84,43 @@ fun ITLabApp(
 	) {
 		Scaffold(
 			topBar = {
-				when (currentScreen) {
-					AppScreen.Events -> EventsTopAppBar()
-					is AppScreen.EventDetails -> BasicTopAppBar(
-						text = stringResource(
-							currentScreen.screenNameResource,
-							(currentScreen as AppScreen.EventDetails).title
-						),
-						onBackAction = onBackAction
-					)
-					AppScreen.EventNew,
-					AppScreen.EmployeeDetails -> BasicTopAppBar(
-						text = stringResource(currentScreen.screenNameResource),
-						onBackAction = onBackAction
-					)
-					AppScreen.Profile -> ProfileTopAppBar(
-						text = stringResource(currentScreen.screenNameResource),
-						onBackAction = onBackAction
-					)
-					AppScreen.Employees -> EmployeesTopAppBar()
-					AppScreen.Feedback -> FeedbackTopAppBar()
-					AppScreen.Devices -> DevicesTopAppBar()
-					else -> BasicTopAppBar(
-						text = stringResource(currentScreen.screenNameResource),
-						onBackAction = onBackAction
-					)
+				Box(
+					modifier = Modifier.animateContentSize()
+				) {
+					when (currentScreen) {
+						AppScreen.Events -> EventsTopAppBar()
+						is AppScreen.EventDetails -> BasicTopAppBar(
+							text = stringResource(
+								currentScreen.screenNameResource,
+								(currentScreen as AppScreen.EventDetails).title
+							),
+							onBackAction = onBackAction
+						)
+						AppScreen.EventNew,
+						AppScreen.EmployeeDetails -> BasicTopAppBar(
+							text = stringResource(currentScreen.screenNameResource),
+							onBackAction = onBackAction
+						)
+						AppScreen.Profile -> ProfileTopAppBar(
+							text = stringResource(currentScreen.screenNameResource),
+							onBackAction = onBackAction
+						)
+						AppScreen.Employees -> EmployeesTopAppBar()
+						AppScreen.Feedback -> FeedbackTopAppBar()
+						AppScreen.Devices -> DevicesTopAppBar()
+						AppScreen.Reports -> BasicTopAppBar(text = stringResource(currentScreen.screenNameResource))
+						is AppScreen.ReportDetails -> BasicTopAppBar(
+							text = stringResource(
+								currentScreen.screenNameResource,
+								(currentScreen as AppScreen.ReportDetails).title
+							),
+							onBackAction = onBackAction
+						)
+						else -> BasicTopAppBar(
+							text = stringResource(currentScreen.screenNameResource),
+							onBackAction = onBackAction
+						)
+					}
 				}
 			},
 			content = {
@@ -111,7 +130,10 @@ fun ITLabApp(
 						top = it.calculateTopPadding()
 					)
 				) {
-					AppNavigation(navController)
+					SharedElementsRoot {
+						sharedElementScope = LocalSharedElementsRootScope.current
+						AppNavigation(navController)
+					}
 				}
 
 			},

@@ -16,7 +16,7 @@
     <string name="employee">Сотрудник</string>
     <string name="dial">Позвонить</string>
     <string name="save">Сохранить</string>
-    <string name="event_name">%1$s</string>
+    <string name="details_name">%1$s</string>
     <string name="event_new">Новое событие</string>
     <string name="study_group">Учебная группа</string>
     <string name="vk_id">ВК</string>
@@ -116,4 +116,8 @@
     <string name="pick_up">Убрать</string>
     <string name="show_only_free">Показать только доступное</string>
     <string name="event">Событие</string>
+    <string name="reports">Отчёты</string>
+    <string name="report">Отчёт</string>
+    <string name="report_applicant">Автор:</string>
+    <string name="report_implementer">О ком:</string>
 </resources>
