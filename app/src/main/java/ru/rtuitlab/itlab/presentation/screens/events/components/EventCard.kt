@@ -16,9 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
@@ -51,9 +49,7 @@ fun EventCard(
 			) {
 				Text(
 					text = title,
-					fontWeight = FontWeight(500),
-					fontSize = 17.sp,
-					lineHeight = 22.sp
+					style = MaterialTheme.typography.h6
 				)
 				Spacer(modifier = Modifier.height(8.dp))
 				Text(
