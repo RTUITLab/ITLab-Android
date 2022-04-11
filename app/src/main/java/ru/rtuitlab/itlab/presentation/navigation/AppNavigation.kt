@@ -62,10 +62,15 @@ fun AppNavigation(
 	val navBackStackEntry by navController.currentBackStackEntryAsState()
 
 	LaunchedEffect(navBackStackEntry) {
-		appBarViewModel.onNavigate(
-			allScreens.find { it.route == navBackStackEntry?.destination?.route }!!,
-			navController
-		)
+		// If a deep link is opened from a killed state, nav host's back stack does not yet exist,
+		// thus resulting in a NullPointerException.
+		// Deep link will be handled on the next composition tree pass
+		try {
+			appBarViewModel.onNavigate(
+				allScreens.find { it.route == navBackStackEntry?.destination?.route }!!,
+				navController
+			)
+		} catch (e: NullPointerException) {}
 	}
 
 	// Disabling system "Back" button during transition
