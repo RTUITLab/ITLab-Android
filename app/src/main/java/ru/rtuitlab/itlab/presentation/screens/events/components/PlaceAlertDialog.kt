@@ -27,7 +27,6 @@ import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
-import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
@@ -146,10 +145,7 @@ fun PlaceAlertDialog(
 									verticalAlignment = Alignment.CenterVertically,
 									spacing = 0.dp
 								) {
-									InteractiveField(value = it.user.fullName) {
-										navController.navigate("${AppScreen.EmployeeDetails.navLink}/${it.user.id}")
-										onResult()
-									}
+									UserLink(user = it.user, onNavigate = onResult)
 								}
 
 								Text(
