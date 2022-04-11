@@ -7,17 +7,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeeCard
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @Composable
 fun Employees(
-	employeesViewModel: EmployeesViewModel,
-	navController: NavController
+	employeesViewModel: EmployeesViewModel
 ) {
 	val usersResource by employeesViewModel.userResponsesFlow.collectAsState()
 	var isRefreshing by remember { mutableStateOf(false) }
@@ -39,7 +38,7 @@ fun Employees(
 			onSuccess = {
 				isRefreshing = false
 				employeesViewModel.onResourceSuccess(it)
-				EmployeeList(employeesViewModel, navController)
+				EmployeeList(employeesViewModel)
 			}
 		)
 	}
@@ -47,12 +46,14 @@ fun Employees(
 
 @Composable
 private fun EmployeeList(
-	employeesViewModel: EmployeesViewModel,
-	navController: NavController
+	employeesViewModel: EmployeesViewModel
 ) {
 	val users by employeesViewModel.usersFlow.collectAsState()
 	val currentUserId = employeesViewModel.userIdFlow.collectAsState()
 	val currentUser = users.find { it.id == currentUserId.value }
+
+	val navController = LocalNavController.current
+
 	LazyColumn(
 		modifier = Modifier.fillMaxHeight(),
 		verticalArrangement = Arrangement.spacedBy(10.dp),

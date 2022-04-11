@@ -75,7 +75,7 @@ fun ITLabApp(
 
 	ModalBottomSheetLayout(
 		sheetState = bottomSheetViewModel.bottomSheetState,
-		sheetContent = { BottomSheet(navController = navController) },
+		sheetContent = { BottomSheet() },
 		sheetShape = RoundedCornerShape(
 			topStart = 16.dp,
 			topEnd = 16.dp
@@ -186,7 +186,6 @@ fun ITLabApp(
 										return@BottomNavigationItem
 									}
 
-									// This code always leaves default tab's start destination on the bottom of the stack. Workaround needed?
 									navController.navigate(tab.route) {
 										popUpTo(navController.graph.findStartDestination().id) {
 											saveState = true

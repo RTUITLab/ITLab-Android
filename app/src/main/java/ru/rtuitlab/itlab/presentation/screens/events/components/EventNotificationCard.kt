@@ -13,10 +13,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventInvitation
+import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.ButtonLoadingIndicator
 import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
@@ -28,10 +28,10 @@ import ru.rtuitlab.itlab.presentation.utils.AppScreen
 @Composable
 fun EventNotificationCard(
 	notification: EventInvitation,
-	eventsViewModel: EventsViewModel,
-	navController: NavHostController
+	eventsViewModel: EventsViewModel
 ) {
 	var isLoadingState by rememberSaveable { mutableStateOf(false) }
+	val navController = LocalNavController.current
 	Card(
 		modifier = Modifier
 			.fillMaxWidth()

@@ -81,7 +81,6 @@ fun AppNavigation(
 		startDestination = appBarViewModel.defaultTab.route
 	) {
 		eventsGraph(
-			navController,
 			eventsViewModel,
 			bottomSheetViewModel,
 			resources,
@@ -89,7 +88,6 @@ fun AppNavigation(
 		)
 
 		employeesGraph(
-			navController,
 			employeesViewModel,
 			bottomSheetViewModel,
 			profileViewModel
@@ -110,7 +108,6 @@ fun AppNavigation(
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
 private fun NavGraphBuilder.eventsGraph(
-	navController: NavHostController,
 	eventsViewModel: EventsViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
 	resources: Resources,
@@ -122,11 +119,11 @@ private fun NavGraphBuilder.eventsGraph(
 		route = AppTab.Events.route
 	) {
 		composable(AppScreen.Events.route) {
-			Events(eventsViewModel, navController)
+			Events(eventsViewModel)
 		}
 
 		composable(AppScreen.EventsNotifications.route) {
-			EventsNotifications(eventsViewModel, navController)
+			EventsNotifications(eventsViewModel)
 		}
 
 		composable(
@@ -141,7 +138,6 @@ private fun NavGraphBuilder.eventsGraph(
 			Event(
 				eventViewModel = it.hiltViewModel(),
 				bottomSheetViewModel = bottomSheetViewModel,
-				navController = navController,
 				appBarViewModel = appBarViewModel
 			)
 		}
@@ -152,7 +148,6 @@ private fun NavGraphBuilder.eventsGraph(
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
 private fun NavGraphBuilder.employeesGraph(
-	navController: NavHostController,
 	employeesViewModel: EmployeesViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
 	profileViewModel: ProfileViewModel
@@ -162,7 +157,7 @@ private fun NavGraphBuilder.employeesGraph(
 		route = AppTab.Employees.route
 	) {
 		composable(AppScreen.Employees.route) {
-			Employees(employeesViewModel, navController)
+			Employees(employeesViewModel)
 		}
 		composable(AppScreen.EmployeeDetails.route) {
 			Employee(

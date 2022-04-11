@@ -20,9 +20,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
-import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.domain.model.EventDetail
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftCard
@@ -44,7 +42,6 @@ import ru.rtuitlab.itlab.presentation.utils.AppScreen
 fun Event(
 	eventViewModel: EventViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
-	navController: NavHostController,
 	appBarViewModel: AppBarViewModel = viewModel()
 ) {
 
@@ -74,8 +71,7 @@ fun Event(
 					EventInfoWithList(
 						event = it.first.toEvent(it.second),
 						eventViewModel = eventViewModel,
-						bottomSheetViewModel = bottomSheetViewModel,
-						navController = navController
+						bottomSheetViewModel = bottomSheetViewModel
 					)
 				}
 			)
@@ -88,8 +84,7 @@ fun Event(
 private fun EventInfoWithList(
 	event: EventDetail,
 	eventViewModel: EventViewModel,
-	bottomSheetViewModel: BottomSheetViewModel,
-	navController: NavHostController
+	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val swipingState = rememberSwipeableState(SwipingStates.EXPANDED)
 
@@ -119,8 +114,7 @@ private fun EventInfoWithList(
 			EventShifts(
 				event = event,
 				eventViewModel = eventViewModel,
-				bottomSheetViewModel = bottomSheetViewModel,
-				navController = navController
+				bottomSheetViewModel = bottomSheetViewModel
 			)
 		}
 	}
@@ -268,8 +262,7 @@ private fun EventInfo(
 private fun EventShifts(
 	event: EventDetail,
 	eventViewModel: EventViewModel,
-	bottomSheetViewModel: BottomSheetViewModel,
-	navController: NavHostController
+	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val coroutineScope = rememberCoroutineScope()
 	Column(
@@ -307,8 +300,7 @@ private fun EventShifts(
 											}
 										}
 									},
-									eventViewModel = eventViewModel,
-									navController = navController
+									eventViewModel = eventViewModel
 								),
 								coroutineScope
 							)

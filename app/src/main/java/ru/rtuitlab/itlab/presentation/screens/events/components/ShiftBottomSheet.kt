@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Place
@@ -38,8 +37,7 @@ fun ShiftBottomSheet(
 	salaries: List<Int>,
 	eventViewModel: EventViewModel,
 	profileViewModel: ProfileViewModel = viewModel(),
-	bottomSheetViewModel: BottomSheetViewModel,
-	navController: NavHostController
+	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	Row(
 		modifier = Modifier.fillMaxWidth(),
@@ -68,8 +66,7 @@ fun ShiftBottomSheet(
 				salary = salaries[index].takeUnless { it == -1 },
 				eventViewModel = eventViewModel,
 				bottomSheetViewModel = bottomSheetViewModel,
-				shiftContainsUser = shift.places.any { (it.participants + it.wishers + it.invited).any { it.user.id == profileViewModel.userId } },
-				navController = navController
+				shiftContainsUser = shift.places.any { (it.participants + it.wishers + it.invited).any { it.user.id == profileViewModel.userId } }
 			)
 		}
 	}
@@ -84,8 +81,7 @@ private fun ShiftPlaceCard(
 	salary: Int?,
 	eventViewModel: EventViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
-	shiftContainsUser: Boolean,
-	navController: NavHostController
+	shiftContainsUser: Boolean
 ) {
 	var dialogIsShown by remember { mutableStateOf(false) }
 	val scope = rememberCoroutineScope()
@@ -99,8 +95,7 @@ private fun ShiftPlaceCard(
 				dialogIsShown = false
 				bottomSheetViewModel.hide(scope)
 			},
-			shiftContainsUser = shiftContainsUser,
-			navController = navController
+			shiftContainsUser = shiftContainsUser
 		) {
 			dialogIsShown = false
 		}

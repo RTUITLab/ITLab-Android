@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -20,6 +19,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventCard
 import ru.rtuitlab.itlab.presentation.screens.events.components.UserEventCard
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
@@ -32,8 +32,7 @@ import ru.rtuitlab.itlab.presentation.utils.EventTab
 @ExperimentalPagerApi
 @Composable
 fun Events(
-	eventsViewModel: EventsViewModel,
-	navController: NavHostController
+	eventsViewModel: EventsViewModel
 ) {
 	val eventsResource by eventsViewModel.eventsListResponsesFlow.collectAsState()
 	val userEventsResource by eventsViewModel.userEventsListResponsesFlow.collectAsState()
@@ -98,8 +97,7 @@ fun Events(
 								else
 									EventsList(
 										eventsViewModel = eventsViewModel,
-										listState = eventsViewModel.allEventsListState,
-										navController = navController
+										listState = eventsViewModel.allEventsListState
 									)
 							}
 						)
@@ -128,8 +126,7 @@ fun Events(
 								else
 									UserEventsList(
 										eventsViewModel = eventsViewModel,
-										listState = eventsViewModel.userEventsListState,
-										navController = navController
+										listState = eventsViewModel.userEventsListState
 									)
 							}
 						)
@@ -148,12 +145,13 @@ fun Events(
 @Composable
 fun EventsList(
 	eventsViewModel: EventsViewModel,
-	listState: LazyListState,
-	navController: NavHostController
+	listState: LazyListState
 ) {
 	val events by eventsViewModel.eventsFlow.collectAsState()
 	val pastEvents by eventsViewModel.pastEventsFlow.collectAsState()
 	val showPastEvents by eventsViewModel.showPastEvents.collectAsState()
+
+	val navController = LocalNavController.current
 	LazyColumn(
 		modifier = Modifier.fillMaxSize(),
 		state = listState,
@@ -196,10 +194,10 @@ fun EventsList(
 @Composable
 fun UserEventsList(
 	eventsViewModel: EventsViewModel,
-	listState: LazyListState,
-	navController: NavHostController
+	listState: LazyListState
 ) {
 	val events by eventsViewModel.userEventsFlow.collectAsState()
+	val navController = LocalNavController.current
 	LazyColumn(
 		modifier = Modifier.fillMaxSize(),
 		state = listState,
