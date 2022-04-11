@@ -70,6 +70,12 @@ fun AppNavigation(
 				allScreens.find { it.route == navBackStackEntry?.destination?.route }!!,
 				navController
 			)
+
+			// This condition is possible to be true if a system "Back" press was detected in a non-default tab,
+			// navigating the user to app's start destination.
+			// To correctly reflect that in bottom navigation, this code is needed
+			if (navBackStackEntry?.destination?.route == appBarViewModel.defaultTab.startDestination)
+				appBarViewModel.setCurrentTab(appBarViewModel.defaultTab)
 		} catch (e: NullPointerException) {}
 	}
 

@@ -18,6 +18,9 @@ class AppBarViewModel @Inject constructor(
 	private val _currentScreen = MutableStateFlow(savedStateHandle["currentScreen"] ?: defaultTab.asScreen())
 	val currentScreen: StateFlow<AppScreen> = _currentScreen
 
+	private val _currentTab: MutableStateFlow<AppTab> = MutableStateFlow(defaultTab)
+	val currentTab: StateFlow<AppTab> = _currentTab
+
 	private val _currentNavHost: MutableStateFlow<NavHostController?> = MutableStateFlow(null)
 	val currentNavHost: StateFlow<NavHostController?> = _currentNavHost
 
@@ -26,6 +29,10 @@ class AppBarViewModel @Inject constructor(
 		if (navHostController != null)
 			_currentNavHost.value = navHostController
 		savedStateHandle.set("currentScreen", currentScreen.value)
+	}
+
+	fun setCurrentTab(tab: AppTab) {
+		_currentTab.value = tab
 	}
 
 	// If a deep link is opened from a killed state, nav host's back stack does not yet exist.

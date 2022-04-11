@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -51,9 +50,7 @@ fun ITLabApp(
 	eventsViewModel: EventsViewModel = viewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
 ) {
-	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) {
-		mutableStateOf(appBarViewModel.defaultTab)
-	}
+	val currentTab by appBarViewModel.currentTab.collectAsState()
 
 	val appTabs by appTabsViewModel.appTabs.collectAsState()
 
@@ -195,7 +192,7 @@ fun ITLabApp(
 										// We want to reset the graph if it is clicked while already selected
 										restoreState = tab != currentTab
 									}
-									currentTab = tab
+									appBarViewModel.setCurrentTab(tab)
 								}
 							)
 						}
