@@ -120,4 +120,5 @@
     <string name="to_assign_owner">Assign owner</string>
     <string name="pick_up">Pick up</string>
     <string name="show_only_free">Show only free</string>
+    <string name="Null">null</string>
 </resources>

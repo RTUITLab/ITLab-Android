@@ -14,11 +14,12 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 
 sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon: ImageVector, var accessible: Boolean = true) {
     object Events: AppTab("events_tab", R.string.events, Icons.Default.EventNote)
-    object Projects: AppTab("projects_tab", R.string.projects, Icons.Default.Widgets, false)
+    object Projects: AppTab("projects_tab", R.string.projects, Icons.Default.Widgets,)
     object Devices: AppTab("devices_tab", R.string.devices, Icons.Default.DevicesOther)
     object Employees: AppTab("employees_tab", R.string.employees, Icons.Default.People)
     object Feedback: AppTab("feedback_tab", R.string.feedback, Icons.Default.Feedback)
-    object Profile: AppTab("profile_tab", R.string.profile, Icons.Default.AccountCircle, false)
+    object Profile: AppTab("profile_tab", R.string.profile, Icons.Default.AccountCircle)
+    object Null: AppTab("", R.string.Null, Icons.Default.HourglassEmpty)
 
     fun saveState() = bundleOf(SCREEN_KEY to route)
 
@@ -29,6 +30,7 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
         Employees -> AppScreen.Employees
         Feedback -> AppScreen.Feedback
         Profile -> AppScreen.Profile
+        Null -> AppScreen.Null
     }
 
     companion object {
@@ -42,6 +44,20 @@ sealed class AppTab(val route: String, @StringRes val resourceId: Int, val icon:
                 Employees,
                 Feedback,
                 Profile
+            )
+        val firstPage
+            get() = listOf(
+                Events,
+               // Projects,
+                Devices,
+                Employees,
+                Feedback,
+                Profile
+            )
+        val secondPage
+            get() = listOf(
+                Projects,
+
             )
 
         fun saver() = Saver<AppTab, Bundle>(
@@ -101,4 +117,6 @@ open class AppScreen(
 
     // Profile-related
     object Profile: AppScreen(R.string.profile, "profile")
+
+    object Null: AppScreen(R.string.Null,"null")
 }

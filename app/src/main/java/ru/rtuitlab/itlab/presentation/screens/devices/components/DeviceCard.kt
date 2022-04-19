@@ -24,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
@@ -72,62 +71,73 @@ fun DeviceCard(
 						.fillMaxWidth()
 
 				) {
-					Text(
-						text =  if(equipmentType != null) equipmentType?.title.toString() else "Обновите" ,
-						fontWeight = FontWeight(500),
-						fontSize = 17.sp ,
-						lineHeight = 22.sp,
-						overflow = TextOverflow.Ellipsis
+
+
+						Text(
+							text = if (equipmentType != null) equipmentType?.title.toString() else "Обновите",
+							fontWeight = FontWeight(500),
+							fontSize = 17.sp,
+							lineHeight = 22.sp,
+							overflow = TextOverflow.Ellipsis,
+							modifier = Modifier
+
 
 
 						)
-					Text(
-						text = " #$number",
-						fontWeight = FontWeight(500),
-						fontSize = 17.sp,
-						lineHeight = 22.sp,
-						color = Color.Gray
-					)
-
-					AnimatedVisibility(expandedDeviceCardbool.value) {
-						Row(
-							horizontalArrangement = Arrangement.End,
-							verticalAlignment = Alignment.Top,
+						Text(
+							text = " #$number",
+							fontWeight = FontWeight(500),
+							fontSize = 17.sp,
+							lineHeight = 22.sp,
+							color = Color.Gray,
 							modifier = Modifier
-								.fillMaxWidth()
-								.animateEnterExit(exit = shrinkVertically())
-
-						) {
-							if (devicesViewModel.accesibleFlow.collectAsState().value) {
-
-								Icon(
-									imageVector = Icons.Default.Edit,
-									contentDescription = stringResource(R.string.edit),
-									tint = colorResource(R.color.accent),
-									modifier = Modifier
-										.padding(10.dp)
-										.width(16.dp)
-										.height(16.dp)
-										.padding(0.dp)
-										.clickable {
-											devicesViewModel.setDeviceFromSheet(device)
-											bottomSheetViewModel.show(
-												AppBottomSheet.DeviceInfo(
-													device,
-													devicesViewModel,
-													bottomSheetViewModel),
-												coroutineScope
-											)
-											//navController.navigate(AppScreen.DeviceDetails.route)
-
-										}
 
 
-								)
-							}
+						)
+
+
+	AnimatedVisibility(expandedDeviceCardbool.value) {
+		Row(
+			horizontalArrangement = Arrangement.End,
+			verticalAlignment = Alignment.Top,
+			modifier = Modifier
+				.fillMaxWidth()
+					.weight(1F)
+				.animateEnterExit(exit = shrinkVertically())
+
+		) {
+			if (devicesViewModel.accesibleFlow.collectAsState().value) {
+
+				Icon(
+					imageVector = Icons.Default.Edit,
+					contentDescription = stringResource(R.string.edit),
+					tint = colorResource(R.color.accent),
+					modifier = Modifier
+						.padding(10.dp)
+						.width(16.dp)
+						.height(16.dp)
+						.padding(0.dp)
+						.clickable {
+							devicesViewModel.setDeviceFromSheet(device)
+							bottomSheetViewModel.show(
+								AppBottomSheet.DeviceInfo(
+									device,
+									devicesViewModel,
+									bottomSheetViewModel
+								),
+								coroutineScope
+							)
+							//navController.navigate(AppScreen.DeviceDetails.route)
 
 						}
-					}
+
+
+				)
+			}
+
+
+	}
+}
 				}
 				AnimatedVisibility(expandedDeviceCardbool.value) {
 					Spacer(Modifier.height(10.dp))

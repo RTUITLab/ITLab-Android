@@ -1,23 +1,39 @@
 package ru.rtuitlab.itlab.presentation.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintLayoutBaseScope
+import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.android.material.bottomnavigation.BottomNavigationPresenter
+import com.google.android.material.internal.NavigationMenu
+import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesTab
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DevicesTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.employees.EmployeesTab
@@ -30,17 +46,22 @@ import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopApp
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileTab
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.projects.ProjectsTab
+import ru.rtuitlab.itlab.presentation.ui.components.CustomBottomNavigation
+import ru.rtuitlab.itlab.presentation.ui.components.CustomBottomNavigationItem
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.curve
 
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
+import ru.rtuitlab.itlab.presentation.ui.components.wheelBottomNavigation.WheelNavigation
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.AppTab
 import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
 
+@ExperimentalStdlibApi
 @ExperimentalMotionApi
 @ExperimentalMaterialApi
 @ExperimentalTransitionApi
@@ -50,14 +71,11 @@ import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
 fun ITLabApp(
 	appBarViewModel: AppBarViewModel = viewModel(),
 	appTabsViewModel: AppTabsViewModel = viewModel(),
-	eventsViewModel: EventsViewModel = viewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
+	eventsViewModel: EventsViewModel = viewModel()
 ) {
-	var currentTab by rememberSaveable(stateSaver = AppTab.saver()) {
-		mutableStateOf(appBarViewModel.defaultTab)
-	}
+	val currentTab by appBarViewModel.currentTab.collectAsState()
 
-	val appTabs by appTabsViewModel.appTabs.collectAsState()
 
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
 
@@ -134,7 +152,10 @@ fun ITLabApp(
 							eventsResetTask
 						)
 						AppTab.Projects -> ProjectsTab(projectsNavState, projectsResetTask)
-						AppTab.Devices -> DevicesTab(devicesNavState, devicesResetTask)
+						AppTab.Devices -> DevicesTab(
+							devicesNavState,
+							devicesResetTask
+						)
 						AppTab.Employees -> EmployeesTab(
 							employeesNavState,
 							employeesResetTask
@@ -150,56 +171,14 @@ fun ITLabApp(
 					}
 				}
 
-			},
-			bottomBar = {
-				BottomNavigation(
-					elevation = 10.dp
-				) {
-					val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
-					appTabs
-						.filter { it.accessible }
-						.forEach { screen ->
-							BottomNavigationItem(
-								icon = {
-									BadgedBox(
-										badge = {
-											if (screen is AppTab.Events && invitationsCount > 0)
-												Badge(
-													backgroundColor = AppColors.accent.collectAsState().value,
-													contentColor = Color.White
-												) {
-													Text(invitationsCount.toString())
-												}
-										}
-									) {
-										Icon(screen.icon, null)
-									}
-							    },
-								label = {
-									Text(
-										text = stringResource(screen.resourceId),
-										fontSize = 9.sp,
-										lineHeight = 16.sp
-									)
-								},
-								selected = currentTab == screen,
-								alwaysShowLabel = true,
-								onClick = {
-									when {
-										screen != currentTab       -> currentTab = screen
-										screen == AppTab.Events    -> eventsResetTask.run()
-										screen == AppTab.Projects  -> projectsResetTask.run()
-										screen == AppTab.Devices   -> devicesResetTask.run()
-										screen == AppTab.Employees -> employeesResetTask.run()
-										screen == AppTab.Feedback  -> feedbackResetTask.run()
-										screen == AppTab.Profile   -> profileResetTask.run()
-									}
-									appBarViewModel.onNavigate(currentTab.asScreen())
-								}
-							)
-						}
-				}
+				WheelNavigation(
+
+					eventsViewModel = eventsViewModel,
+
+				)
+
 			}
 		)
+
 	}
 }
