@@ -14,6 +14,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.core.MarkwonTheme
+import io.noties.markwon.image.ImagesPlugin
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 
@@ -37,6 +38,9 @@ fun MarkdownTextArea(
 						.isLinkUnderlined(false)
 				}
 			}
+		)
+		.usePlugin(
+			ImagesPlugin.create()
 		)
 		.build()
 
