@@ -10,7 +10,7 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceCard
@@ -22,13 +22,12 @@ import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetView
 @ExperimentalAnimationApi
 @Composable
 fun Devices(
-	devicesViewModel: DevicesViewModel,
-	//employeesViewModel: EmployeesViewModel,
-	bottomSheetViewModel: BottomSheetViewModel,
-	navController: NavController
+	devicesViewModel: DevicesViewModel = viewModel(),
+	bottomSheetViewModel: BottomSheetViewModel = viewModel()
 ) {
 	val devicesResource by devicesViewModel.deviceResponsesFlow.collectAsState()
 	var isRefreshing by remember { mutableStateOf(false) }
+
 
 
 
@@ -61,6 +60,7 @@ fun Devices(
 					onSuccess = {
 						isRefreshing = false
 						devicesViewModel.onResourceSuccess(it)
+
 						DeviceList(devicesViewModel, bottomSheetViewModel)
 
 
@@ -70,8 +70,7 @@ fun Devices(
 			}
 
 
-			val isAccesile = devicesViewModel.accesibleFlow.collectAsState().value
-			if (isAccesile)
+			if (devicesViewModel.accesibleFlow.collectAsState().value)
 				FloatActionButton(devicesViewModel, bottomSheetViewModel)
 
 		}
@@ -89,37 +88,19 @@ private fun DeviceList(
 ) {
 	val devices by devicesViewModel.devicesFlow.collectAsState()
 	val currentDeviceId = devicesViewModel.deviceIdFlow.collectAsState()
-	val currentDevice = devices.find { it.id == currentDeviceId.value }
+
+
 
 	LazyColumn(
 		verticalArrangement = Arrangement.spacedBy(10.dp),
 		contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp),
 		modifier = Modifier.fillMaxSize()
 	) {
-/*
-                if (currentDevice != null && currentUser!= null)
-                        item {
-                                DeviceCard(
-                                        devicesViewModel = devicesViewModel,
-                                        device = currentDevice,
-                                        owner = currentUser,
-                                        state = state,
-                                        scope = scope,
-                                        modifier = Modifier
-                                                .fillMaxWidth()
-                                                .clickable {
-
-                                                        navController.navigate(AppScreen.Devices.route)
-                                                },
-                                        navController = navController
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                        }
 
 
- */
-
-		items(devices.filter { it.id != currentDeviceId.value }) { device ->
+		items(devices.filter { it ->
+				it.id != currentDeviceId.value
+		}) { device ->
 
 
 			DeviceCard(
@@ -132,7 +113,10 @@ private fun DeviceList(
 
 				)
 
+
 		}
+
+
 	}
 
 }

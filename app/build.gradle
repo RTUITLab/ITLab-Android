@@ -32,8 +32,8 @@ android {
         applicationId "ru.rtuitlab.itlab"
         minSdkVersion 24
         targetSdkVersion 31
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1.8"
 
         manifestPlaceholders = [
                 'appAuthRedirectScheme': 'ru.rtuitlab.itlab'
@@ -44,6 +44,7 @@ android {
     }
 
     buildTypes {
+        def HOST_URI = "HOST_URI"
         def API_URI = "API_URI"
         def ISSUER_URI = "ISSUER_URI"
         def CLIENT_ID = "CLIENT_ID"
@@ -55,6 +56,7 @@ android {
         def CONFIG_RAW = { k -> "${project.properties.get(k)}" }
 
         debug {
+            resValue("string", HOST_URI, CONFIG("debug.host.uri"))
             buildConfigField("String", API_URI, CONFIG("debug.api.uri"))
             buildConfigField("String", ISSUER_URI, CONFIG("debug.issuer.uri"))
             buildConfigField("String", CLIENT_ID, CONFIG("client.id"))
@@ -64,6 +66,7 @@ android {
         }
 
         release {
+            resValue("string", HOST_URI, CONFIG("release.host.uri"))
             buildConfigField("String", API_URI, CONFIG("release.api.uri"))
             buildConfigField("String", ISSUER_URI, CONFIG("release.issuer.uri"))
             buildConfigField("String", CLIENT_ID, CONFIG("client.id"))

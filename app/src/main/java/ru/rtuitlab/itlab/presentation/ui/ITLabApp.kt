@@ -1,7 +1,6 @@
 package ru.rtuitlab.itlab.presentation.ui
 
-import android.os.Bundle
-import android.widget.Toast
+
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.Image
@@ -24,34 +23,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.ConstraintLayoutBaseScope
-import androidx.constraintlayout.compose.Dimension
+
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.android.material.bottomnavigation.BottomNavigationPresenter
-import com.google.android.material.internal.NavigationMenu
-import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.presentation.screens.devices.DevicesTab
+import kotlinx.serialization.ExperimentalSerializationApi
+
+import ru.rtuitlab.itlab.presentation.navigation.AppNavigation
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DevicesTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.employees.EmployeesTab
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeesTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.events.EventsTab
 import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.feedback.FeedbackTab
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.profile.ProfileTab
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.projects.ProjectsTab
-import ru.rtuitlab.itlab.presentation.ui.components.CustomBottomNavigation
-import ru.rtuitlab.itlab.presentation.ui.components.CustomBottomNavigationItem
+
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.curve
-
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
@@ -59,8 +50,8 @@ import ru.rtuitlab.itlab.presentation.ui.components.wheelBottomNavigation.WheelN
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.AppTab
-import ru.rtuitlab.itlab.presentation.utils.RunnableHolder
 
+@ExperimentalSerializationApi
 @ExperimentalStdlibApi
 @ExperimentalMotionApi
 @ExperimentalMaterialApi
@@ -74,20 +65,13 @@ fun ITLabApp(
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
 	eventsViewModel: EventsViewModel = viewModel()
 ) {
-	val currentTab by appBarViewModel.currentTab.collectAsState()
-
 
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
 
-	val currentNavController by appBarViewModel.currentNavHost.collectAsState()
-	val onBackAction: () -> Unit = { currentNavController?.popBackStack() }
+	val navController = rememberNavController()
 
-	val eventsResetTask = RunnableHolder()
-	val projectsResetTask = RunnableHolder()
-	val devicesResetTask = RunnableHolder()
-	val employeesResetTask = RunnableHolder()
-	val feedbackResetTask = RunnableHolder()
-	val profileResetTask = RunnableHolder()
+	val currentNavController by appBarViewModel.currentNavHost.collectAsState()
+	val onBackAction: () -> Unit = { if (currentNavController?.popBackStack() == false) appBarViewModel.handleDeepLinkPop() }
 
 	LaunchedEffect(bottomSheetViewModel.bottomSheetState.currentValue) {
 		if (bottomSheetViewModel.bottomSheetState.currentValue == ModalBottomSheetValue.Hidden)
@@ -96,7 +80,7 @@ fun ITLabApp(
 
 	ModalBottomSheetLayout(
 		sheetState = bottomSheetViewModel.bottomSheetState,
-		sheetContent = { BottomSheet() },
+		sheetContent = { BottomSheet(navController = navController) },
 		sheetShape = RoundedCornerShape(
 			topStart = 16.dp,
 			topEnd = 16.dp
@@ -133,52 +117,28 @@ fun ITLabApp(
 				}
 			},
 			content = {
-				val eventsNavState = rememberSaveable { mutableStateOf(Bundle()) }
-				val projectsNavState = rememberSaveable { mutableStateOf(Bundle()) }
-				val devicesNavState = rememberSaveable { mutableStateOf(Bundle()) }
-				val employeesNavState = rememberSaveable { mutableStateOf(Bundle()) }
-				val feedbackNavState = rememberSaveable { mutableStateOf(Bundle()) }
-				val profileNavState = rememberSaveable { mutableStateOf(Bundle()) }
-
 				Box(
 					modifier = Modifier.padding(
 						bottom = it.calculateBottomPadding(),
 						top = it.calculateTopPadding()
 					)
 				) {
-					when (currentTab) {
-						AppTab.Events -> EventsTab(
-							eventsNavState,
-							eventsResetTask
+
+					AppNavigation(navController)
+
+					WheelNavigation(
+						eventsViewModel = eventsViewModel,
+						navController = navController
+
+
 						)
-						AppTab.Projects -> ProjectsTab(projectsNavState, projectsResetTask)
-						AppTab.Devices -> DevicesTab(
-							devicesNavState,
-							devicesResetTask
-						)
-						AppTab.Employees -> EmployeesTab(
-							employeesNavState,
-							employeesResetTask
-						)
-						AppTab.Feedback -> FeedbackTab(
-							navState = feedbackNavState,
-							resetTabTask = feedbackResetTask
-						)
-						AppTab.Profile -> ProfileTab(
-							navState = profileNavState,
-							resetTabTask = profileResetTask
-						)
-					}
 				}
-
-				WheelNavigation(
-
-					eventsViewModel = eventsViewModel,
-
-				)
 
 			}
 		)
+
+
+
 
 	}
 }

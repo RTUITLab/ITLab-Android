@@ -10,7 +10,8 @@ object UserClaimParser {
 
 		// Sometimes "itlab" field is not an Array of Strings, but just String, so this check is needed
 		val claims =
-			if (payload.substringAfter("\"itlab\":").startsWith('\"'))
+			if (!payload.contains("\"itlab\":")) "[]"
+			else if (payload.substringAfter("\"itlab\":").startsWith('\"'))
 				"[${payload.substringAfter("\"itlab\":").substringBefore(',')}]" // Obtaining single parameter as a list
 			else
 				"${payload.substringAfter("\"itlab\":").substringBefore(']')}]" // Obtaining a list of claims

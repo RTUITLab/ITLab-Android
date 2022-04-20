@@ -18,6 +18,8 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.data.repository.DevicesRepository
+import java.sql.Time
+import java.time.Instant
 import javax.inject.Inject
 
 @HiltViewModel
@@ -151,6 +153,7 @@ class DevicesViewModel @Inject constructor(
 
         fun onSearch(query: String) {
                 _devicesFlow.value = cachedDevices.filter { device ->
+
                         "${device.equipmentType?.title} ${device.serialNumber} ${device.number} ${device.ownerlastName} ${device.ownerfirstName}".contains(query.trim(), ignoreCase = true)
                 } as MutableList<DeviceDetails>
         }
@@ -193,6 +196,7 @@ class DevicesViewModel @Inject constructor(
         }
 
         private fun fetchDevices() = _devicesResponsesFlow.emitInIO(viewModelScope) {
+                val time1:Long = Time.from(Instant.now()).time
                 var resources: Resource<MutableList<Pair<DeviceDetailDto, UserResponse?>>> = Resource.Loading
 
                 devicesRepo.fetchDevices().handle (
@@ -220,6 +224,8 @@ class DevicesViewModel @Inject constructor(
                         },
                         onError = {resources = Resource.Error(it)}
                 )
+                val time2:Long = Time.from(Instant.now()).time
+                Log.d("TIME","${time2-time1}")
                 resources
 
         }

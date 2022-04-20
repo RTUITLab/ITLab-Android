@@ -18,8 +18,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetView
 @Composable
 fun Profile(
 	profileViewModel: ProfileViewModel,
-	bottomSheetViewModel: BottomSheetViewModel,
-	onNavigate: (id: String, title: String) -> Unit
+	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val userCredentialsResource by profileViewModel.userCredentialsFlow.collectAsState()
 	LaunchedEffect(true){
@@ -35,8 +34,7 @@ fun Profile(
 			/*UserDevices(userDevicesResource)*/
 			UserEvents(
 				userViewModel = profileViewModel,
-				bottomSheetViewModel = bottomSheetViewModel,
-				onNavigate = onNavigate
+				bottomSheetViewModel = bottomSheetViewModel
 			)
 	}
 }

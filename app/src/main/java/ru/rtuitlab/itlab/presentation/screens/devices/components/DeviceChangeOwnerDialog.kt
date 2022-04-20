@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.screens.devices.components
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
@@ -12,7 +11,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
@@ -32,7 +31,8 @@ fun DeviceChangeOwnerDialog(
 	onDismissRequest: () -> Unit,
 	device:DeviceDetails,
 	devicesViewModel: DevicesViewModel,
-	afterChange: () ->Unit
+	afterChange: () ->Unit,
+	haveOwner: UserResponse?
 ) {
 	val stringSearch = rememberSaveable { mutableStateOf("") }
 
@@ -45,10 +45,7 @@ fun DeviceChangeOwnerDialog(
 
 	val users = devicesViewModel.usersFlow.collectAsState().value
 
-	val ownerIs = remember { mutableStateOf(users.find { it ->
-		it.id.equals(device.ownerId)
-	}
-	) }
+
 
 	Dialog(
 		onDismissRequest = onDismissRequest,
@@ -121,7 +118,7 @@ fun DeviceChangeOwnerDialog(
 						horizontalArrangement = Arrangement.End,
 						verticalAlignment = Alignment.Bottom
 					) {
-						AnimatedVisibility(ownerIs.value!=null) {
+						AnimatedVisibility(haveOwner != null) {
 
 							Text(
 								text = stringResource(id = R.string.pick_up),
@@ -129,7 +126,7 @@ fun DeviceChangeOwnerDialog(
 								modifier = Modifier.clickable {
 
 										devicesViewModel.onPickUpEquipment(
-											ownerIs.value?.id.toString(),
+											haveOwner?.id.toString(),
 											device.id
 										) { isSuccessful ->
 											if (isSuccessful) {
@@ -142,8 +139,9 @@ fun DeviceChangeOwnerDialog(
 								}
 
 							)
-							Spacer(modifier = Modifier.height(15.dp))
 						}
+						Spacer(modifier = Modifier.width(15.dp))
+
 						Text(
 							text = stringResource(id = R.string.to_choose),
 							color = AppColors.accent.collectAsState().value,

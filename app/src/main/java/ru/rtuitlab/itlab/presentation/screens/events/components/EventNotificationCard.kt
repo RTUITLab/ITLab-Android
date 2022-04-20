@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventInvitation
@@ -20,6 +21,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.ButtonLoadingIndicator
 import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
+import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
@@ -27,7 +29,7 @@ import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 fun EventNotificationCard(
 	notification: EventInvitation,
 	eventsViewModel: EventsViewModel,
-	onNavigate: (id: String, title: String) -> Unit
+	navController: NavHostController
 ) {
 	var isLoadingState by rememberSaveable { mutableStateOf(false) }
 	Card(
@@ -45,7 +47,7 @@ fun EventNotificationCard(
 				style = MaterialTheme.typography.h6
 			)
 			InteractiveField(value = notification.title) {
-				onNavigate(notification.eventId, notification.title)
+				navController.navigate("${AppScreen.EventDetails.navLink}/${notification.eventId}")
 			}
 
 			Row {

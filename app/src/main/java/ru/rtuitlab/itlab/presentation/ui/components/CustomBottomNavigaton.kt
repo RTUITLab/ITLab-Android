@@ -6,6 +6,7 @@ import android.content.Context
 import android.util.Log
 import android.view.RoundedCorner
 import android.view.View
+import android.widget.Toast
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
@@ -82,11 +83,12 @@ fun curve(positionXInParent: Dp,marginDown: Dp,centerXInParent:Dp,centerYInParen
 	val temprad = (radius-BottomNavigationHeight)/(howmany-1)
 	val indextemp = abs(abs(index-howmany/2 ) - howmany/2)
 	var x = (positionXInParent.value - centerXInParent.value)
-	var radius2 = (radius.value) * (radius.value)*1.9f
+	var radius2 = (radius.value) * (radius.value)*1.6f
 
 	var y = 0f
 		if(radius2 - x * x>0)
-		y = - sqrt(radius2 - x * x)
+			y = - sqrt(radius2 - x * x)
+	Log.d("Custom","${positionXInParent.value} ${centerXInParent.value} $x $y")
 	return if(index == 0) {
 		if(firstTime < 2){
 			setOffsetY((-y).dp + marginDown)

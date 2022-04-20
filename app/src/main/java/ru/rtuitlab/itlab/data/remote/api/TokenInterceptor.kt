@@ -39,7 +39,10 @@ class TokenInterceptor @Inject constructor(
             authState.performActionWithFreshTokens(authService) { accessToken, _, exception ->
                 exception?.let {
                     Log.e(TAG, "Exception in token process: ", it)
-                    continuation.resumeWithException(it)
+                    runBlocking {
+                        authStateStorage.endSession()
+                    }
+                    continuation.resume("No token")
                 } ?: run {
                     if (isNeedToUpdateToken) {
                         runBlocking {

@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.launch
@@ -30,10 +31,13 @@ import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingIndicator
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CollapsibleScrollArea
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.SwipingStates
 import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
+import ru.rtuitlab.itlab.presentation.utils.AppScreen
+import ru.rtuitlab.itlab.presentation.utils.AppTab
 
 @ExperimentalPagerApi
 @OptIn(ExperimentalMaterialApi::class)
@@ -41,7 +45,8 @@ import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 fun Event(
 	eventViewModel: EventViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
-	navController: NavHostController
+	navController: NavHostController,
+	appBarViewModel: AppBarViewModel = viewModel()
 ) {
 
 	val eventResource by eventViewModel.eventResourceFlow.collectAsState()
@@ -61,6 +66,12 @@ fun Event(
 					LoadingError(msg = msg)
 				},
 				onSuccess = {
+					LaunchedEffect(null) {
+						if (appBarViewModel.currentScreen.value is AppScreen.EventDetails)
+							appBarViewModel.onNavigate(
+								AppScreen.EventDetails(it.first.title)
+							)
+					}
 					EventInfoWithList(
 						event = it.first.toEvent(it.second),
 						eventViewModel = eventViewModel,

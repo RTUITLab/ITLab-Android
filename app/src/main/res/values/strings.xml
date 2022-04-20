@@ -30,7 +30,8 @@
 
     <!--    Events    -->
     <string name="events">Events</string>
-    <string name="event">%1$s</string>
+    <string name="event_name">%1$s</string>
+    <string name="event">Event</string>
     <string name="event_new">New event</string>
     <string name="events_all">All</string>
     <string name="events_my">My</string>

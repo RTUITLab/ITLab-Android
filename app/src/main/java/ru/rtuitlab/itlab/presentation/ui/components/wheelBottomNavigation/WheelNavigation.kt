@@ -1,11 +1,14 @@
 package ru.rtuitlab.itlab.presentation.ui.components.wheelBottomNavigation
 
+import android.graphics.drawable.shapes.Shape
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -27,6 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -53,29 +60,25 @@ fun WheelNavigation(
 	appTabsViewModel: AppTabsViewModel = viewModel(),
 	wheelNavigationViewModel: WheelNavigationViewModel = viewModel(),
 	eventsViewModel: EventsViewModel,
+	navController:NavHostController
 
 
 ) {
 
-	val currentTab = appBarViewModel.currentTab.collectAsState().value
+	val currentTab by appBarViewModel.currentTab.collectAsState()
 
 	val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
 
 
 	val appTabsForCircle by appTabsViewModel.appTabs.collectAsState()
 
+	//fill empty space in
 	val appTabNull by appTabsViewModel.appTabNull.collectAsState()
 
 	val statePage = appTabsViewModel.statePage.collectAsState().value
 
 	val coroutineScope = rememberCoroutineScope()
 
-	val eventsResetTask = RunnableHolder()
-	val projectsResetTask = RunnableHolder()
-	val devicesResetTask = RunnableHolder()
-	val employeesResetTask = RunnableHolder()
-	val feedbackResetTask = RunnableHolder()
-	val profileResetTask = RunnableHolder()
 
 	ConstraintLayout(
 		modifier = Modifier.fillMaxSize()
@@ -94,6 +97,7 @@ fun WheelNavigation(
 				MaterialTheme.colors.primarySurface
 			)
 		)
+		//sizes bottomnavigation
 		val sizeremwidth = remember { mutableStateOf(0.dp) }
 		val sizeremheight = remember { mutableStateOf(0.dp) }
 
@@ -101,6 +105,7 @@ fun WheelNavigation(
 
 		val currentContext = LocalContext.current
 		val swipeableState = rememberSwipeableState(1)
+		//three anchors for infinity sliding
 		val anchors = mapOf(with(LocalDensity.current) {
 			-300.dp.toPx() } to 0,
 			0f to 1,
@@ -162,20 +167,15 @@ fun WheelNavigation(
 				finishedListener = {
 					if (it == with(density) { sizeremwidth.value.toPx() }) {
 						if (statePage == 1) {
-							//visibilityPage.value = false
 							appTabsViewModel.setSecondPage(coroutineScope)
 						} else {
-							//visibilityPage.value = true
 							appTabsViewModel.setFirstPage(coroutineScope)
 						}
-						//if(it == with(density){sizeremwidth.value.toPx()}){
+						//monitoring when elements is hiden
+						//important reverse
 						currentState = if (swipeableState.direction > 0) 2 else 0
-						Log.d(
-							"Auth",
-							"$currentState LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL ${swipeableState.direction}"
-						)
-						coroutineScope.launch {
 
+						coroutineScope.launch {
 
 							swipeableState.snapTo(1)
 
@@ -184,10 +184,12 @@ fun WheelNavigation(
 				}
 			)
 
-			//print(screenWidth)
+			val navBackStackEntry by navController.currentBackStackEntryAsState()
+			val currentDestination = navBackStackEntry?.destination
+			val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
 			appTabsForCircle
 				.filter { it.accessible }
-				.forEach { screen ->
+				.forEach { tab ->
 					var positionremx by remember { mutableStateOf(0.dp) }
 					var positionremy by remember { mutableStateOf(0.dp) }
 
@@ -195,10 +197,10 @@ fun WheelNavigation(
 					val sizeitemwidth = remember { mutableStateOf(0.dp) }
 					val sizeitemheight = remember { mutableStateOf(0.dp) }
 
+					//to what side elements have to move -1 - on the left; 1 - on the right
 					val statedir =
 						(if ((currentState == 2 && swipeableState.progress.to == 1) || swipeableState.targetValue == 0) -1 else 1)
-
-					Log.d("Auth", "$currentState ${swipeableState.progress.to}")
+					val oddValue = if(appTabsForCircle.filter { it.accessible }.size % 2 ==0)37.5f else 30f
 
 					CustomBottomNavigationItem(
 						modifier = Modifier
@@ -219,34 +221,36 @@ fun WheelNavigation(
 								}
 								positionsumx += positionremx
 							}
-							.offset((statedir * with(density) { rotationAngle.toDp().value }).dp + (300 / appTabsForCircle.filter { it.accessible }.size / 2 + (300 / appTabsForCircle.filter { it.accessible }.size) * appTabsForCircle
-								.filter { it.accessible }
-								.indexOf(screen)).dp - sizeitemwidth.value / 2,
-								(sizeremheight.value - sizeitemheight.value) + curve((statedir * with(
-									density
-								) { rotationAngle.toDp().value }).dp +
-										(30 + (300 / appTabsForCircle.filter { it.accessible }.size) * appTabsForCircle
-											.filter { it.accessible }
-											.indexOf(screen)).dp,
+
+							.offset(
+								(statedir * with(density) { rotationAngle.toDp().value }).dp            // for animation move
+									+ (oddValue                // margin left and right for first tab
+									+ (300 / appTabsForCircle.filter { it.accessible }.size) * appTabsForCircle.filter { it.accessible }.indexOf(tab)).dp // between tabs * num of tab
+									- sizeitemwidth.value / 2           // half of tab to the left
+									,
+
+								(sizeremheight.value - sizeitemheight.value)    // shift from top navigation to necessary place
+										+ curve(                                           //formula for circle
+									(statedir * with(density) { rotationAngle.toDp().value }).dp  //for animation move
+											+ (oddValue             // optimal  margin left and right for first tab
+											+ (300 / appTabsForCircle.filter { it.accessible }.size) * appTabsForCircle.filter { it.accessible }.indexOf(tab)).dp, // between tabs * num of tab
 									marginDown.value,
-									sizeremwidth.value.div(2),
+									sizeremwidth.value / 2,
 									sizeremheight.value.plus(sizeremwidth.value / 2),
 									appTabsForCircle.filter { it.accessible }.size,
-									appTabsForCircle
-										.filter { it.accessible }
-										.indexOf(screen),
-									sizeremwidth.value.times(0.5f),
+									appTabsForCircle.filter { it.accessible }.indexOf(tab),
+									sizeremwidth.value / 2,
 									setOffsetY,
 									offsetY,
 									setFirstTime,
 									firstTime
 								)
-							),//curve(appTabs.filter{ it.accessible }.size,appTabs.filter{ it.accessible }.indexOf(screen),100.dp,10.dp)),
+							),
 						icon = {
 
 							BadgedBox(
 								badge = {
-									if (screen is AppTab.Events && invitationsCount > 0)
+									if (tab is AppTab.Events && invitationsCount > 0)
 									Badge(
 									backgroundColor = Color.Red,
 									contentColor = Color.White
@@ -255,16 +259,16 @@ fun WheelNavigation(
 								}
 								}
 							) {
-								if (screen != appTabNull) {
-									Icon(screen.icon, null)
+								if (tab != appTabNull) {
+									Icon(tab.icon, null)
 								}
 							}
 						},
 						label = {
-							if (screen != appTabNull) {
+							if (tab != appTabNull) {
 
 								Text(
-									text = stringResource(screen.resourceId),
+									text = stringResource(tab.resourceId),
 									fontSize = 9.sp,
 									lineHeight = 16.sp,
 									modifier = Modifier
@@ -274,31 +278,61 @@ fun WheelNavigation(
 								)
 							}
 						},
-						selected = currentTab == screen,
-						alwaysShowLabel = true,
+						selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
+						//alwaysShowLabel = true,
 						onClick = {
-							when {
-								screen != currentTab -> appBarViewModel.onChangeTab(screen)
-								screen == AppTab.Events -> eventsResetTask.run()
-								screen == AppTab.Projects -> projectsResetTask.run()
-								screen == AppTab.Devices -> devicesResetTask.run()
-								screen == AppTab.Employees -> employeesResetTask.run()
-								screen == AppTab.Feedback -> feedbackResetTask.run()
-								screen == AppTab.Profile -> profileResetTask.run()
+							// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
+							// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once by the means
+							// of Jetpack Navigation APIs, but only two of the above.
+							// This code provides resetting and singleTop behavior for the default tab.
+							if (tab == currentTab) {
+								navController.popBackStack(
+									route = tab.startDestination,
+									inclusive = false
+								)
+								return@CustomBottomNavigationItem
 							}
-							if (screen != appTabNull) {
 
-								appBarViewModel.onNavigate(screen.asScreen())
+							// This code always leaves default tab's start destination on the bottom of the stack. Workaround needed?
+							navController.navigate(tab.route) {
+								popUpTo(navController.graph.findStartDestination().id) {
+									saveState = true
+								}
+								launchSingleTop = true
 
-
+								// We want to reset the graph if it is clicked while already selected
+								restoreState = tab != currentTab
 							}
+							appBarViewModel.onChangeTab(tab)
+
 						}
 					)
 
 				}
-
-			//}
+			//logging for well markup
+			/*Box(
+				modifier = Modifier
+					.offset(37.5.dp,0.dp)
+					.size(1.dp,700.dp)
+					.background(Color.Red)
+			){
+			}
+			Box(
+				modifier = Modifier
+					.offset((37.5+75).dp,0.dp)
+					.size(1.dp,700.dp)
+					.background(Color.Red)
+			){
+			}
+			Box(
+				modifier = Modifier
+					.offset((37.5+150).dp,0.dp)
+					.size(1.dp,700.dp)
+					.background(Color.Red)
+			){
+			}*/
 		}
+
 
 	}
 }
