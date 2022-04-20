@@ -15,6 +15,20 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.zIndex
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.*
 
+
+/**
+ * A container for a composable that will be animated when **screenKey** changes in the scope of
+ * [SharedElementsRoot]. Note that it can only have one direct child.
+ * @param key a unique key to identify this composable in the composition tree
+ * @param screenKey a key that is used to detect a composition change. When this happens,
+ * a transition is launched from SharedElement with a different **screenKey** and the same **key** to this SharedElement
+ * @param isFullscreen If the element is root element (i.e. direct child of [SharedElementsRoot]) and is full-screen (e.g. has Modifier.fillMaxSize()),
+ * specifying **isFullscreen = true** on it can greatly improve performance and allows you to use stateful composables
+ * @param transitionSpec [SharedElementsTransitionSpec], specifying transition to be used between **SharedElement**s. Linear by default
+ * @param onFractionChanged callback, returning a [Float] in range {0, 1}, representing transition progress
+ * @param placeholder composable to be shown during animation. **content** by default
+ * @param content content of this SharedElement. Can only have one direct measurable child
+ */
 @Composable
 fun SharedElement(
     key: Any,
@@ -41,7 +55,7 @@ fun SharedElement(
 @Composable
 private fun Placeholder(state: SharedElementsTransitionState) {
     with(LocalDensity.current) {
-        val fraction = state.fraction
+        val fraction = state.fraction // Transition progress {0..1}
         val startBounds = state.startBounds
         val endBounds = state.endBounds
 
