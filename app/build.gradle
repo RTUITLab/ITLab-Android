@@ -28,6 +28,17 @@ android {
     }
     compileSdkVersion 31
 
+    def HOST_URI = "HOST_URI"
+    def API_URI = "API_URI"
+    def ISSUER_URI = "ISSUER_URI"
+    def CLIENT_ID = "CLIENT_ID"
+    def REDIRECT_URI_LOGIN = "REDIRECT_URI_LOGIN"
+    def REDIRECT_URI_LOGOUT = "REDIRECT_URI_LOGOUT"
+    def API_SCOPES = "SCOPES"
+
+    def CONFIG = { k -> "\"${project.properties.get(k)}\"" }
+    def CONFIG_RAW = { k -> "${project.properties.get(k)}" }
+
     defaultConfig {
         applicationId "ru.rtuitlab.itlab"
         minSdkVersion 24
@@ -41,39 +52,34 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
+
+        buildConfigField("String", CLIENT_ID, CONFIG("client.id"))
+        buildConfigField("String", REDIRECT_URI_LOGIN, CONFIG("redirect.uri.login"))
+        buildConfigField("String", REDIRECT_URI_LOGOUT, CONFIG("redirect.uri.logout"))
+        buildConfigField("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
     }
 
-    buildTypes {
-        def HOST_URI = "HOST_URI"
-        def API_URI = "API_URI"
-        def ISSUER_URI = "ISSUER_URI"
-        def CLIENT_ID = "CLIENT_ID"
-        def REDIRECT_URI_LOGIN = "REDIRECT_URI_LOGIN"
-        def REDIRECT_URI_LOGOUT = "REDIRECT_URI_LOGOUT"
-        def API_SCOPES = "SCOPES"
+    flavorDimensions "api"
+    productFlavors {
+        devApi {
+            dimension "api"
+            applicationIdSuffix ".dev"
 
-        def CONFIG = { k -> "\"${project.properties.get(k)}\"" }
-        def CONFIG_RAW = { k -> "${project.properties.get(k)}" }
-
-        debug {
             resValue("string", HOST_URI, CONFIG("debug.host.uri"))
             buildConfigField("String", API_URI, CONFIG("debug.api.uri"))
             buildConfigField("String", ISSUER_URI, CONFIG("debug.issuer.uri"))
-            buildConfigField("String", CLIENT_ID, CONFIG("client.id"))
-            buildConfigField("String", REDIRECT_URI_LOGIN, CONFIG("redirect.uri.login"))
-            buildConfigField("String", REDIRECT_URI_LOGOUT, CONFIG("redirect.uri.logout"))
-            buildConfigField("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
         }
-
-        release {
+        prodApi {
+            dimension "api"
             resValue("string", HOST_URI, CONFIG("release.host.uri"))
             buildConfigField("String", API_URI, CONFIG("release.api.uri"))
             buildConfigField("String", ISSUER_URI, CONFIG("release.issuer.uri"))
-            buildConfigField("String", CLIENT_ID, CONFIG("client.id"))
-            buildConfigField("String", REDIRECT_URI_LOGIN, CONFIG("redirect.uri.login"))
-            buildConfigField("String", REDIRECT_URI_LOGOUT, CONFIG("redirect.uri.logout"))
-            buildConfigField("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
+        }
+    }
 
+    buildTypes {
+
+        release {
             signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
