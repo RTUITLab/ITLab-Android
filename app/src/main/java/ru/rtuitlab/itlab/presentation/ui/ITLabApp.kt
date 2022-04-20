@@ -1,7 +1,6 @@
 package ru.rtuitlab.itlab.presentation.ui
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -27,6 +26,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
+import ru.rtuitlab.itlab.presentation.screens.reports.components.ReportsTopAppBar
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedElementsRootScope
@@ -81,43 +81,39 @@ fun ITLabApp(
 	) {
 		Scaffold(
 			topBar = {
-				Box(
-					modifier = Modifier.animateContentSize()
-				) {
-					when (currentScreen) {
-						AppScreen.Events -> EventsTopAppBar()
-						is AppScreen.EventDetails -> BasicTopAppBar(
-							text = stringResource(
-								currentScreen.screenNameResource,
-								(currentScreen as AppScreen.EventDetails).title
-							),
-							onBackAction = onBackAction
-						)
-						AppScreen.EventNew,
-						AppScreen.EmployeeDetails -> BasicTopAppBar(
-							text = stringResource(currentScreen.screenNameResource),
-							onBackAction = onBackAction
-						)
-						AppScreen.Profile -> ProfileTopAppBar(
-							text = stringResource(currentScreen.screenNameResource),
-							onBackAction = onBackAction
-						)
-						AppScreen.Employees -> EmployeesTopAppBar()
-						AppScreen.Feedback -> FeedbackTopAppBar()
-						AppScreen.Devices -> DevicesTopAppBar()
-						AppScreen.Reports -> BasicTopAppBar(text = stringResource(currentScreen.screenNameResource))
-						is AppScreen.ReportDetails -> BasicTopAppBar(
-							text = stringResource(
-								currentScreen.screenNameResource,
-								(currentScreen as AppScreen.ReportDetails).title
-							),
-							onBackAction = onBackAction
-						)
-						else -> BasicTopAppBar(
-							text = stringResource(currentScreen.screenNameResource),
-							onBackAction = onBackAction
-						)
-					}
+				when (currentScreen) {
+					AppScreen.Events -> EventsTopAppBar()
+					is AppScreen.EventDetails -> BasicTopAppBar(
+						text = stringResource(
+							currentScreen.screenNameResource,
+							(currentScreen as AppScreen.EventDetails).title
+						),
+						onBackAction = onBackAction
+					)
+					AppScreen.EventNew,
+					AppScreen.EmployeeDetails -> BasicTopAppBar(
+						text = stringResource(currentScreen.screenNameResource),
+						onBackAction = onBackAction
+					)
+					AppScreen.Profile -> ProfileTopAppBar(
+						text = stringResource(currentScreen.screenNameResource),
+						onBackAction = onBackAction
+					)
+					AppScreen.Employees -> EmployeesTopAppBar()
+					AppScreen.Feedback -> FeedbackTopAppBar()
+					AppScreen.Devices -> DevicesTopAppBar()
+					AppScreen.Reports -> ReportsTopAppBar()
+					is AppScreen.ReportDetails -> BasicTopAppBar(
+						text = stringResource(
+							currentScreen.screenNameResource,
+							(currentScreen as AppScreen.ReportDetails).title
+						),
+						onBackAction = onBackAction
+					)
+					else -> BasicTopAppBar(
+						text = stringResource(currentScreen.screenNameResource),
+						onBackAction = onBackAction
+					)
 				}
 			},
 			content = {
@@ -170,6 +166,8 @@ fun ITLabApp(
 								selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
 								alwaysShowLabel = true,
 								onClick = {
+
+									if (sharedElementScope?.isRunningTransition == true) return@BottomNavigationItem
 
 									// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
 									// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once by the means

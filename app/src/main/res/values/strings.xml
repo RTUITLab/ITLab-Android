@@ -128,4 +128,13 @@
     <string name="report">Report</string>
     <string name="report_applicant">Author:</string>
     <string name="report_implementer">Subject:</string>
+    <string name="report_application_text">Report text</string>
+    <string name="report_approval_text">Approval text</string>
+    <string name="report_new">New report</string>
+    <string name="report_new_disclaimer">Describe your recent work you consider important. You can attach images and files. Reports support Markdown format.</string>
+    <string name="reports_about_me">About me</string>
+    <string name="reports_from_me">My reports</string>
+    <string name="reports_files">Files</string>
+    <string name="report_write">Write</string>
+    <string name="report_preview">Preview</string>
 </resources>

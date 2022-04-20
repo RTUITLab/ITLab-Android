@@ -121,6 +121,7 @@ open class AppScreen(
             val navLink: String = route.substringBefore("/{")
         }
     }
+    object NewReport: AppScreen(R.string.report_new, "reports/new")
 
     companion object {
         fun getAll(context: Context) = listOf(
@@ -134,7 +135,8 @@ open class AppScreen(
             Devices,
             Profile,
             Reports,
-            ReportDetails(context.resources.getString(R.string.report))
+            ReportDetails(context.resources.getString(R.string.report)),
+            NewReport
         )
     }
 }

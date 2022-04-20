@@ -120,4 +120,13 @@
     <string name="report">Отчёт</string>
     <string name="report_applicant">Автор:</string>
     <string name="report_implementer">О ком:</string>
+    <string name="report_application_text">Текст отчёта</string>
+    <string name="report_approval_text">Сообщение принявшего</string>
+    <string name="report_new">Новый отчёт</string>
+    <string name="report_new_disclaimer">Опишите, что вы делали за последнее время, что вы считаете важным при оценке вашей работы.  Вы можете прикрепить изображения или документы. Формат описания поддерживает формат Markdown.</string>
+    <string name="reports_about_me">Обо мне</string>
+    <string name="reports_from_me">Мои</string>
+    <string name="reports_files">Файлы</string>
+    <string name="report_write">Писать</string>
+    <string name="report_preview">Просмотр</string>
 </resources>

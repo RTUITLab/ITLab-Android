@@ -31,6 +31,7 @@ import ru.rtuitlab.itlab.presentation.screens.feedback.Feedback
 import ru.rtuitlab.itlab.presentation.screens.feedback.FeedbackViewModel
 import ru.rtuitlab.itlab.presentation.screens.profile.Profile
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
+import ru.rtuitlab.itlab.presentation.screens.reports.NewReport
 import ru.rtuitlab.itlab.presentation.screens.reports.Report
 import ru.rtuitlab.itlab.presentation.screens.reports.Reports
 import ru.rtuitlab.itlab.presentation.screens.reports.ReportsViewModel
@@ -215,6 +216,8 @@ private fun NavGraphBuilder.feedbackGraph(
 	}
 }
 
+@ExperimentalPagerApi
+@ExperimentalAnimationApi
 private fun NavGraphBuilder.reportsGraph(
 	reportsViewModel: ReportsViewModel,
 	appBarViewModel: AppBarViewModel
@@ -233,6 +236,10 @@ private fun NavGraphBuilder.reportsGraph(
 				reportsViewModel = reportsViewModel,
 				appBarViewModel = appBarViewModel
 			)
+		}
+
+		composable(AppScreen.NewReport.route) {
+			NewReport()
 		}
 	}
 }
