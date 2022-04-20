@@ -49,7 +49,7 @@ fun DeviceCard(
 		modifier = modifier
 			.clickable {
 				expandedDeviceCardbool.value = !expandedDeviceCardbool.value
-				Log.d("DeviceCard",device.toString())
+				Log.d("DeviceCard", device.toString())
 			},
 		elevation = 2.dp,
 		shape = RoundedCornerShape(5.dp)
@@ -95,8 +95,8 @@ fun DeviceCard(
 						)
 					}
 					Row(
-							horizontalArrangement = Arrangement.End,
-							verticalAlignment = Alignment.Top,
+						horizontalArrangement = Arrangement.End,
+						verticalAlignment = Alignment.Top,
 
 						) {
 						AnimatedVisibility(expandedDeviceCardbool.value) {
@@ -141,12 +141,11 @@ fun DeviceCard(
 						}
 
 
+					}
 
-			}
 
+				}
 
-	}
-}
 
 				AnimatedVisibility(expandedDeviceCardbool.value) {
 					Spacer(Modifier.height(10.dp))
@@ -174,15 +173,19 @@ fun DeviceCard(
 					}
 				}
 
-				if(dialogUsersIsShown)
+				if (dialogUsersIsShown)
 					DeviceChangeOwnerDialog(
-						onDismissRequest = {dialogUsersIsShown=false},
+						onDismissRequest = { dialogUsersIsShown = false },
 						device,
 						devicesViewModel,
 						afterChange = {
 							dialogUsersIsShown = false
 						},
-						haveOwner = devicesViewModel.usersFlow.collectAsState().value.find { it -> it.id.equals(device.ownerId)}
+						haveOwner = devicesViewModel.usersFlow.collectAsState().value.find { it ->
+							it.id.equals(
+								device.ownerId
+							)
+						}
 					)
 
 				AnimatedVisibility(expandedDeviceCardbool.value) {
@@ -218,10 +221,11 @@ fun DeviceCard(
 							)
 
 						}
-					}else{
-						Row(verticalAlignment = Alignment.CenterVertically,
+					} else {
+						Row(
+							verticalAlignment = Alignment.CenterVertically,
 
-						) {
+							) {
 							Icon(
 								painter = painterResource(R.drawable.ic_person),
 								contentDescription = stringResource(R.string.ownerId),
@@ -255,5 +259,5 @@ fun DeviceCard(
 
 	}
 
-
+}
 
