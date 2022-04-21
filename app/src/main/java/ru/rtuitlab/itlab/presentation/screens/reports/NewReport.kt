@@ -151,8 +151,7 @@ fun NewReport() {
 								colors = TextFieldDefaults.outlinedTextFieldColors(
 									cursorColor = MaterialTheme.colors.secondary,
 									focusedBorderColor = MaterialTheme.colors.onSurface,
-
-									),
+								),
 							)
 						}
 					}
