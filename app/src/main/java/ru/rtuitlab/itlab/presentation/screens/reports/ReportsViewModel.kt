@@ -36,6 +36,9 @@ class ReportsViewModel @Inject constructor(
 		MutableStateFlow<Resource<List<Report>>>(Resource.Loading).also { fetchReports() }
 	val reportsResponseFlow = _reportsResponseFlow.asStateFlow()
 
+	private val _searchQuery = MutableStateFlow("")
+	val searchQuery = _searchQuery.asStateFlow()
+
 	fun fetchReports() = viewModelScope.launch(Dispatchers.IO) {
 		var resource: Resource<List<Report>> = Resource.Loading
 		_reportsResponseFlow.emit(resource)
@@ -88,6 +91,16 @@ class ReportsViewModel @Inject constructor(
 	}
 
 	fun onSearch(query: String) {
-		TODO("Not yet implemented")
+		_searchQuery.value = query
+	}
+
+}
+
+fun List<Report>.performQuery(query: String): List<Report> {
+	val q = query.trim()
+	return filter {
+		"${it.applicant.lastName} ${it.applicant.firstName} ${it.applicant.middleName}".contains(q, true) ||
+				"${it.implementer.lastName} ${it.implementer.firstName} ${it.implementer.middleName}".contains(q, true) ||
+				it.title.contains(q, true)
 	}
 }
