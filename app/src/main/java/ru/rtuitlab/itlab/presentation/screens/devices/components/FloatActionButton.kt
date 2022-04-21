@@ -35,7 +35,8 @@ fun FloatActionButton(
         ){
                 FloatingActionButton(
                         modifier = Modifier
-                                .padding(10.dp),
+                                .padding(10.dp)
+                                .offset(0.dp,20.dp),
                         backgroundColor = colorResource(R.color.accent),
                         elevation = FloatingActionButtonDefaults.elevation(8.dp),
                         onClick = {
