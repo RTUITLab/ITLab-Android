@@ -123,6 +123,7 @@
     <string name="show_only_free">Show only free</string>
 
 
+
     <!--    Reports    -->
     <string name="reports">Reports</string>
     <string name="report">Report</string>
@@ -137,4 +138,6 @@
     <string name="reports_files">Files</string>
     <string name="report_write">Write</string>
     <string name="report_preview">Preview</string>
+    <string name="Null">null</string>
+
 </resources>
