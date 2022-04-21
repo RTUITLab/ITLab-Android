@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.presentation.screens.reports.components
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,6 +28,7 @@ import ru.rtuitlab.itlab.presentation.screens.reports.ReportsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.SearchBar
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarOption
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.ExtendedTopAppBarBody
+import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import kotlin.math.ln
 
 
@@ -46,7 +49,11 @@ fun ReportsTopAppBar(
 		}
 
 	Surface(
-		color = calculateForegroundColor(backgroundColor = MaterialTheme.colors.surface, elevation = AppBarDefaults.TopAppBarElevation),
+		// For dark theme this is the color corresponding to 4dp of elevation. For light theme this is white
+		color = if (isSystemInDarkTheme())
+			calculateForegroundColor(backgroundColor = MaterialTheme.colors.primarySurface, elevation = AppBarDefaults.TopAppBarElevation)
+				.compositeOver(MaterialTheme.colors.surface)
+				else AppColors.appBarsLight,
 		contentColor = contentColorFor(MaterialTheme.colors.primarySurface),
 		elevation = 0.dp,
 		shape = RectangleShape
