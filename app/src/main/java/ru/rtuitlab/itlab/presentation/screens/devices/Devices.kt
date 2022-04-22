@@ -71,7 +71,13 @@ fun Devices(
 
 
 			if (devicesViewModel.accesibleFlow.collectAsState().value)
-				FloatActionButton(devicesViewModel, bottomSheetViewModel)
+				FloatActionButton(
+					devicesViewModel,
+					bottomSheetViewModel,
+					modifier = Modifier
+						.offset(0.dp,(-50).dp)
+
+				)
 
 		}
 
