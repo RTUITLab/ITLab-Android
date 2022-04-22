@@ -4,7 +4,10 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
@@ -15,11 +18,11 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalTextToolbar
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.flowlayout.FlowRow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,12 +31,14 @@ import ru.rtuitlab.itlab.presentation.screens.events.components.SegmentText
 import ru.rtuitlab.itlab.presentation.screens.events.components.SegmentedControl
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MdAction
+import ru.rtuitlab.itlab.presentation.ui.components.markdown.MdAction.Companion.asTextActionsOn
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.FadeMode
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.ProgressThresholds
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
+import ru.rtuitlab.itlab.presentation.utils.text_toolbar.AppTextToolbar
 
 @ExperimentalAnimationApi
 @Composable
@@ -75,8 +80,7 @@ fun NewReport() {
 			modifier = Modifier
 				.fillMaxSize()
 				.verticalScroll(rememberScrollState())
-				.clip(RoundedCornerShape(transitionProgress.dp * 128/*percent = ((transitionProgress) * 50).toInt().absoluteValue*/)),
-//			shape = RoundedCornerShape(percent = ((transitionProgress) * 50).toInt().absoluteValue),
+				.clip(RoundedCornerShape(transitionProgress.dp * 128)),
 			elevation = 2.dp
 		) {
 			Column(
@@ -110,36 +114,23 @@ fun NewReport() {
 				) {
 					Column {
 						val scope = rememberCoroutineScope()
-						FlowRow(
-							mainAxisSpacing = 8.dp,
-							crossAxisSpacing = 8.dp
-						) {
-							MdAction.all.forEach {
-								IconButton(
-									onClick = {
-										scope.launch(Dispatchers.Main) {
-											// As per https://issuetracker.google.com/issues/229137122
-											val new = it.action(reportTextFieldValue)
-											reportTextFieldValue = reportTextFieldValue.copy(text = new.text)
-											delay(100)
-											reportTextFieldValue = reportTextFieldValue.copy(selection = new.selection)
-										}
-									}
-								) {
-									Icon(
-										painter = painterResource(it.iconResource),
-										contentDescription = it.contentDescription
-									)
-								}
-							}
-						}
-						Spacer(modifier = Modifier.height(32.dp))
 						CompositionLocalProvider(
 							LocalTextSelectionColors provides
 									TextSelectionColors(
 										handleColor = MaterialTheme.colors.secondary,
 										backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.4f)
-									)
+									),
+							LocalTextToolbar provides AppTextToolbar(
+								view = LocalView.current,
+								options = MdAction.all.asTextActionsOn(reportTextFieldValue) {
+									scope.launch(Dispatchers.Main) {
+										// As per https://issuetracker.google.com/issues/229137122
+										reportTextFieldValue = reportTextFieldValue.copy(text = it.text)
+										delay(100)
+										reportTextFieldValue = reportTextFieldValue.copy(selection = it.selection)
+									}
+								}
+							)
 						) {
 							OutlinedTextField(
 								modifier = Modifier

@@ -129,4 +129,14 @@
     <string name="reports_files">Файлы</string>
     <string name="report_write">Писать</string>
     <string name="report_preview">Просмотр</string>
+    <string name="md_heading">Заголовок</string>
+    <string name="md_bold">Жирный</string>
+    <string name="md_italics">Курсив</string>
+    <string name="md_quote">Цитата</string>
+    <string name="md_code">Код</string>
+    <string name="md_link">Ссылка</string>
+    <string name="md_ul">Ненумерованный список</string>
+    <string name="md_ol">Нумерованный список</string>
+    <string name="md_task">Чекбокс</string>
+    <string name="md_attach">Прикрепить...</string>
 </resources>

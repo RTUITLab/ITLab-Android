@@ -2,13 +2,15 @@ package ru.rtuitlab.itlab.presentation.ui.components.markdown
 
 import android.util.Log
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.presentation.utils.text_toolbar.TextAction
 
 sealed class MdAction(
 	@DrawableRes val iconResource: Int,
-	val contentDescription: String? = null,
+	@StringRes val nameResource: Int,
 	val action: (TextFieldValue) -> TextFieldValue
 ) {
 
@@ -45,7 +47,7 @@ sealed class MdAction(
 		}
 
 		val all = listOf(
-			Header,
+			Heading,
 			Bold,
 			Italics,
 			Quote,
@@ -56,16 +58,27 @@ sealed class MdAction(
 			Task,
 			Attach
 		)
+
+		fun List<MdAction>.asTextActionsOn(
+			text: TextFieldValue,
+			transform: (TextFieldValue) -> Unit
+		) =
+			map {
+				TextAction(it.nameResource) {
+					transform(it.action(text))
+				}
+			}
 	}
 
-	object Header: MdAction(
+	object Heading: MdAction(
 		iconResource = R.drawable.ic_header,
 		action = {
 			process(
 				wrapper = "###",
 				textValueToProcess = it
 			)
-		}
+		},
+		nameResource = R.string.md_heading
 	)
 
 	object Bold: MdAction(
@@ -76,7 +89,8 @@ sealed class MdAction(
 				delimiter = "",
 				textValueToProcess = it
 			)
-		}
+		},
+		nameResource = R.string.md_bold
 	)
 
 	object Italics: MdAction(
@@ -87,7 +101,8 @@ sealed class MdAction(
 				delimiter = "",
 				textValueToProcess = it
 			)
-		}
+		},
+		nameResource = R.string.md_italics
 	)
 
 	object Quote: MdAction(
@@ -98,7 +113,8 @@ sealed class MdAction(
 				wrapper = ">",
 				textValueToProcess = it
 			)
-		}
+		},
+		nameResource = R.string.md_quote
 	)
 
 	object Code: MdAction(
@@ -109,7 +125,8 @@ sealed class MdAction(
 				delimiter = "",
 				textValueToProcess = it
 			)
-		}
+		},
+		nameResource = R.string.md_code
 	)
 
 	object Link: MdAction(
@@ -119,7 +136,8 @@ sealed class MdAction(
 				wrapper = "###",
 				textValueToProcess = it
 			)
-		}
+		},
+		nameResource = R.string.md_link
 	)
 
 	object UnorderedList: MdAction(
@@ -130,7 +148,8 @@ sealed class MdAction(
 				wrapper = "-",
 				textValueToProcess = it
 			)
-		}
+		},
+		nameResource = R.string.md_ul
 	)
 
 	object OrderedList: MdAction(
@@ -141,7 +160,8 @@ sealed class MdAction(
 				wrapper = "1.",
 				textValueToProcess = it
 			)
-		}
+		},
+		nameResource = R.string.md_ol
 	)
 
 	object Task: MdAction(
@@ -152,7 +172,8 @@ sealed class MdAction(
 				wrapper = "- [ ]",
 				textValueToProcess = it
 			)
-		}
+		},
+		nameResource = R.string.md_task
 	)
 
 	object Attach: MdAction(
@@ -162,7 +183,8 @@ sealed class MdAction(
 				wrapper = "###",
 				textValueToProcess = it
 			)
-		}
+		},
+		nameResource = R.string.md_attach
 	)
 
 
