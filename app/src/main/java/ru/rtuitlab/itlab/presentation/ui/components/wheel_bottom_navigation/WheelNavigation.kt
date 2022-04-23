@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.presentation.ui.components.wheelBottomNavigation
+package ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation
 
 import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi

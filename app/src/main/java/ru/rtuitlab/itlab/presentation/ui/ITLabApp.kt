@@ -44,9 +44,9 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElemen
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
-import ru.rtuitlab.itlab.presentation.ui.components.wheelBottomNavigation.WheelNavigation
-import ru.rtuitlab.itlab.presentation.ui.components.wheelBottomNavigation.xCoordinate
-import ru.rtuitlab.itlab.presentation.ui.components.wheelBottomNavigation.yCoordinate
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.WheelNavigation
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.xCoordinate
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.yCoordinate
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.AppTab
 
