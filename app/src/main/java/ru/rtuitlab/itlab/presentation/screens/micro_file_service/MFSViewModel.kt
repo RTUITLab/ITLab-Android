@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +21,7 @@ import ru.rtuitlab.itlab.data.repository.MFSRepository
 import java.io.File
 import javax.inject.Inject
 
+@HiltViewModel
 class MFSViewModel @Inject constructor(
 	private val repository: MFSRepository
 ): ViewModel() {
