@@ -1,9 +1,9 @@
 package ru.rtuitlab.itlab.data.remote.api.micro_file_service
 
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
-import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.File
-import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.Message
+import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfo
 
 interface MFSApi {
 	@GET("/mfs/download/{id}")
@@ -15,17 +15,18 @@ interface MFSApi {
 	suspend fun getFilesInfo(
 		@Query("user") userId:String? = null,
 		@Query("sorted_by") sortedBy:String? = null
-	):List<File>
+	):List<FileInfo>
 
+	@Multipart
 	@POST("/mfs/files/upload")
 	suspend fun uploadFile(
-		//
-	):File
+		@PartMap map:HashMap<String,RequestBody>
+	):FileInfo
 
 	@GET("/mfs/files/{id}")
 	suspend fun getFileInfo(
 		@Path("id") fileId:String //required
-	):File
+	):FileInfo
 
 	@DELETE("/mfs/files/{id}")
 	suspend fun deleteFile(
