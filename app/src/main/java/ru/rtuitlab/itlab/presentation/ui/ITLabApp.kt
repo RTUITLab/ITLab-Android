@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.presentation.ui
 
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.animateFloatAsState
@@ -44,6 +45,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElemen
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.DirectionWheelNavigation
 import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.WheelNavigation
 import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.xCoordinate
 import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.yCoordinate
@@ -152,20 +154,19 @@ fun ITLabApp(
 					val currentTab by appBarViewModel.currentTab.collectAsState()
 
 					val appTabsForCircle by appTabsViewModel.appTabs.collectAsState()
-					val sizeAppTabs = appTabsForCircle.filter { it.accessible }.size
+					val sizeAppTabs by appTabsViewModel.appTabsSize.collectAsState()
 
 					//fill empty space in
 					val appTabNull by appTabsViewModel.appTabNull.collectAsState()
 
 					val density = LocalDensity.current
 
-					val swipeableState = rememberSwipeableState(1)
+					val swipeableState = rememberSwipeableState(DirectionWheelNavigation.Center)
 					//three anchors for infinity sliding
-					val anchors = mapOf(with(density) {
-						-SIZEVIEWNAVIGATION.toPx()
-					} to 0,
-						0f to 1,
-						with(density) { SIZEVIEWNAVIGATION.toPx() } to 2) // Maps anchor points (in px) to states
+					val anchors = mapOf(
+						with(density) { -SIZEVIEWNAVIGATION.toPx() } to DirectionWheelNavigation.Left,
+						0f to DirectionWheelNavigation.Center,
+						with(density) { SIZEVIEWNAVIGATION.toPx() } to DirectionWheelNavigation.Right) // Maps anchor points (in px) to states
 
 					val marginDown = remember { mutableStateOf((-20).dp) }
 
@@ -214,7 +215,7 @@ fun ITLabApp(
 						val coroutineScope = rememberCoroutineScope()
 
 						val rotationPosition by animateFloatAsState(
-							targetValue = if (swipeableState.targetValue != 1) with(density) { sizeNavWidth.value.toPx() } else 0f,
+							targetValue = if (swipeableState.targetValue != DirectionWheelNavigation.Center) with(density) { sizeNavWidth.value.toPx() } else 0f,
 							animationSpec = tween(durationMillis = 250),
 							finishedListener = {
 								if (it == with(density) { sizeNavWidth.value.toPx() }) {
@@ -227,17 +228,18 @@ fun ITLabApp(
 									//important reverse
 									currentDirectionState = if (swipeableState.direction > 0) 2 else 0
 									coroutineScope.launch {
-										swipeableState.snapTo(1)
+										swipeableState.snapTo(DirectionWheelNavigation.Center)
 									}
 								}
 							}
 						)
 
 						//to what side elements have to move -1 - on the left; 1 - on the right
-						val stateDirection =
-							(if ((currentDirectionState == 2 && swipeableState.progress.to == 1) || swipeableState.targetValue == 0) -1 else 1)
-						val oddValue =
-							if (appTabsForCircle.filter { it.accessible }.size % 2 == 0) 37.5f else 30f
+						val stateDirection = (if ((currentDirectionState == 2 && swipeableState.progress.to == DirectionWheelNavigation.Center) || swipeableState.targetValue == DirectionWheelNavigation.Left) -1 else 1)
+						val oddValue = appTabsViewModel.oddValue.collectAsState().value
+
+						Log.d("ITLAB--------","$oddValue ${appTabsForCircle.filter { it.accessible }.size}")
+
 						appTabsForCircle
 							.filter { it.accessible }
 							.forEach { tab ->
@@ -328,29 +330,31 @@ fun ITLabApp(
 									selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
 									alwaysShowLabel = true,
 									onClick = {
-										// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
-										// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once by the means
-										// of Jetpack Navigation APIs, but only two of the above.
-										// This code provides resetting and singleTop behavior for the default tab.
-										if (tab == currentTab) {
-											navController.popBackStack(
-												route = tab.startDestination,
-												inclusive = false
-											)
-											return@CustomWheelNavigationItem
-										}
-										// This code always leaves default tab's start destination on the bottom of the stack. Workaround needed?
-										navController.navigate(tab.route) {
-											popUpTo(navController.graph.findStartDestination().id) {
-												saveState = true
+										if (tab != appTabNull) {
+											// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
+
+											// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once by the means
+											// of Jetpack Navigation APIs, but only two of the above.
+											// This code provides resetting and singleTop behavior for the default tab.
+											if (tab == currentTab) {
+												navController.popBackStack(
+													route = tab.startDestination,
+													inclusive = false
+												)
+												return@CustomWheelNavigationItem
 											}
-											launchSingleTop = true
+											// This code always leaves default tab's start destination on the bottom of the stack. Workaround needed?
+											navController.navigate(tab.route) {
+												popUpTo(navController.graph.findStartDestination().id) {
+													saveState = true
+												}
+												launchSingleTop = true
 
-											// We want to reset the graph if it is clicked while already selected
-											restoreState = tab != currentTab
+												// We want to reset the graph if it is clicked while already selected
+												restoreState = tab != currentTab
+											}
+											appBarViewModel.setCurrentTab(tab)
 										}
-										appBarViewModel.setCurrentTab(tab)
-
 									}
 								)
 
