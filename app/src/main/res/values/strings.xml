@@ -139,5 +139,7 @@
     <string name="report_write">Write</string>
     <string name="report_preview">Preview</string>
     <string name="Null">null</string>
+    <string name="Select_a_file">Select a file</string>
+    <string name="Upload_a_file">Upload a file</string>
 
 </resources>

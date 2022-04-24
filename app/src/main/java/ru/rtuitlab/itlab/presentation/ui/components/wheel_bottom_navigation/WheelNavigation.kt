@@ -123,7 +123,6 @@ fun curve(positionXInParent: Dp,marginDown: Dp,centerXInParent:Dp,centerYInParen
 	var y = 0f
 	if(radius2 - x * x>0)
 		y = - sqrt(radius2 - x * x)
-	Log.d("Custom","${positionXInParent.value} ${centerXInParent.value} $x $y")
 	return if(index == 0) {
 		if(firstTime < 2){
 			setOffsetY((-y).dp + marginDown)
@@ -137,4 +136,7 @@ fun curve(positionXInParent: Dp,marginDown: Dp,centerXInParent:Dp,centerYInParen
 	}
 
 
+}
+enum class DirectionWheelNavigation{
+	Left,Center,Right
 }
