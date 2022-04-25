@@ -92,13 +92,11 @@ fun Events(
 							onSuccess = {
 								isRefreshing = false
 								eventsViewModel.onResourceSuccess(it)
-								if (events.isEmpty() && (pastEvents.isEmpty() || !showPastEvents))
-									LoadingError(msg = stringResource(R.string.no_pending_events))
-								else
-									EventsList(
-										eventsViewModel = eventsViewModel,
-										listState = eventsViewModel.allEventsListState
-									)
+
+								EventsList(
+									eventsViewModel = eventsViewModel,
+									listState = eventsViewModel.allEventsListState
+								)
 							}
 						)
 						pastEventsResource.handle(
@@ -152,30 +150,17 @@ fun EventsList(
 	val showPastEvents by eventsViewModel.showPastEvents.collectAsState()
 
 	val navController = LocalNavController.current
-	LazyColumn(
-		modifier = Modifier.fillMaxSize(),
-		state = listState,
-		verticalArrangement = Arrangement.spacedBy(10.dp),
-		contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
-	) {
-		items(
-			items = events.sortedByDescending { it.beginTime },
-			key = { it.id }
+	if (events.isEmpty() && (pastEvents.isEmpty() || !showPastEvents))
+		LoadingError(msg = stringResource(R.string.no_pending_events))
+	else
+		LazyColumn(
+			modifier = Modifier.fillMaxSize(),
+			state = listState,
+			verticalArrangement = Arrangement.spacedBy(10.dp),
+			contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
 		) {
-			EventCard(
-				modifier = Modifier.clickable {
-					navController.navigate("${AppScreen.EventDetails.navLink}/${it.id}")
-				},
-				event = it
-			)
-		}
-		if (showPastEvents) {
-			if (events.isNotEmpty())
-				item {
-					Spacer(modifier = Modifier.height(16.dp))
-				}
 			items(
-				items = pastEvents.sortedByDescending { it.beginTime },
+				items = events.sortedByDescending { it.beginTime },
 				key = { it.id }
 			) {
 				EventCard(
@@ -185,8 +170,24 @@ fun EventsList(
 					event = it
 				)
 			}
+			if (showPastEvents) {
+				if (events.isNotEmpty())
+					item {
+						Spacer(modifier = Modifier.height(16.dp))
+					}
+				items(
+					items = pastEvents.sortedByDescending { it.beginTime },
+					key = { it.id }
+				) {
+					EventCard(
+						modifier = Modifier.clickable {
+							navController.navigate("${AppScreen.EventDetails.navLink}/${it.id}")
+						},
+						event = it
+					)
+				}
+			}
 		}
-	}
 }
 
 @ExperimentalPagerApi

@@ -20,6 +20,7 @@ import androidx.navigation.navigation
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.devices.Devices
+import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.screens.employees.Employee
 import ru.rtuitlab.itlab.presentation.screens.employees.Employees
 import ru.rtuitlab.itlab.presentation.screens.employees.EmployeesViewModel
@@ -54,6 +55,7 @@ fun AppNavigation(
 	profileViewModel: ProfileViewModel = viewModel(),
 	appBarViewModel: AppBarViewModel = viewModel(),
 	employeesViewModel: EmployeesViewModel = viewModel(),
+	devicesViewModel: DevicesViewModel = viewModel(),
 	feedbackViewModel: FeedbackViewModel = viewModel(),
 	reportsViewModel: ReportsViewModel = viewModel()
 ) {
@@ -100,7 +102,10 @@ fun AppNavigation(
 			profileViewModel
 		)
 
-		devicesGraph(bottomSheetViewModel)
+		devicesGraph(
+			bottomSheetViewModel,
+			devicesViewModel
+		)
 
 		feedbackGraph(feedbackViewModel)
 
@@ -185,7 +190,8 @@ private fun NavGraphBuilder.employeesGraph(
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 private fun NavGraphBuilder.devicesGraph(
-	bottomSheetViewModel: BottomSheetViewModel
+	bottomSheetViewModel: BottomSheetViewModel,
+	devicesViewModel: DevicesViewModel
 ) {
 	navigation(
 		startDestination = AppTab.Devices.startDestination,
@@ -194,7 +200,7 @@ private fun NavGraphBuilder.devicesGraph(
 		composable(AppScreen.Devices.route) {
 			Devices(
 				bottomSheetViewModel = bottomSheetViewModel,
-				devicesViewModel = it.hiltViewModel()
+				devicesViewModel = devicesViewModel
 			)
 		}
 	}
