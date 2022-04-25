@@ -19,11 +19,8 @@ class AppBarViewModel @Inject constructor(
 	private val _currentScreen = MutableStateFlow(savedStateHandle["currentScreen"] ?: defaultTab.asScreen())
 	val currentScreen: StateFlow<AppScreen> = _currentScreen
 
-<<<<<<< HEAD
-	private val _currentTab: MutableStateFlow<AppTab> = MutableStateFlow(defaultTab)
-=======
+
 	private val _currentTab = MutableStateFlow<AppTab>(defaultTab)
->>>>>>> WheelBottomNavigation
 	val currentTab: StateFlow<AppTab> = _currentTab
 
 	private val _currentNavHost: MutableStateFlow<NavHostController?> = MutableStateFlow(null)

@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation.screens.devices.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,6 +26,8 @@ import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 fun FloatActionButton(
         devicesViewModel: DevicesViewModel,
         bottomSheetViewModel: BottomSheetViewModel,
+        modifier: Modifier
+
 ) {
         val coroutineScope = rememberCoroutineScope()
 
@@ -34,9 +38,7 @@ fun FloatActionButton(
                 horizontalAlignment = Alignment.End
         ){
                 FloatingActionButton(
-                        modifier = Modifier
-                                .padding(10.dp)
-                                .offset(0.dp,20.dp),
+                        modifier = modifier,
                         backgroundColor = colorResource(R.color.accent),
                         elevation = FloatingActionButtonDefaults.elevation(8.dp),
                         onClick = {

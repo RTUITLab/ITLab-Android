@@ -130,4 +130,8 @@
     <string name="reports_files">Файлы</string>
     <string name="report_write">Писать</string>
     <string name="report_preview">Просмотр</string>
+
+    //MFS
+    <string name="Select_a_file">Выбрать файл</string>
+    <string name="Upload_a_file">Загрузить файл</string>
 </resources>

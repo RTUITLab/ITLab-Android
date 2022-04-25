@@ -50,7 +50,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 @Composable
-fun CustomBottomNavigation(
+fun CustomWheelNavigation(
 	modifier: Modifier = Modifier,
 	backgroundColor: Color = MaterialTheme.colors.primarySurface,
 	contentColor: Color = contentColorFor(backgroundColor),
@@ -79,32 +79,9 @@ fun CustomBottomNavigation(
 	}
 }
 
-fun curve(positionXInParent: Dp,marginDown: Dp,centerXInParent:Dp,centerYInParent:Dp,howmany:Int,index:Int, radius:Dp, setOffsetY:(Dp) ->Unit,offsetY:Dp, setFirstTime:(Int) ->Unit,firstTime:Int): Dp {
-	val temprad = (radius-BottomNavigationHeight)/(howmany-1)
-	val indextemp = abs(abs(index-howmany/2 ) - howmany/2)
-	var x = (positionXInParent.value - centerXInParent.value)
-	var radius2 = (radius.value) * (radius.value)*1.6f
 
-	var y = 0f
-		if(radius2 - x * x>0)
-			y = - sqrt(radius2 - x * x)
-	Log.d("Custom","${positionXInParent.value} ${centerXInParent.value} $x $y")
-	return if(index == 0) {
-		if(firstTime < 2){
-			setOffsetY((-y).dp + marginDown)
-			setFirstTime(firstTime+1)
-			marginDown
-		}else{
-			(y + offsetY.value).dp
-		}
-	}else{
-		(y + offsetY.value).dp
-	}
-
-
-}
 @Composable
-fun CustomBottomNavigationItem(
+fun CustomWheelNavigationItem(
 	selected: Boolean,
 	onClick: () -> Unit,
 	icon: @Composable () -> Unit,
