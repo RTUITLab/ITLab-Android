@@ -6,11 +6,17 @@ import androidx.lifecycle.viewModelScope
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.reports.models.Report
+import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportDto
+import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportSalary
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.data.repository.ReportsRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
 import javax.inject.Inject
@@ -39,6 +45,7 @@ class ReportsViewModel @Inject constructor(
 	private val _searchQuery = MutableStateFlow("")
 	val searchQuery = _searchQuery.asStateFlow()
 
+	@Suppress("UNCHECKED_CAST")
 	fun fetchReports() = viewModelScope.launch(Dispatchers.IO) {
 		var resource: Resource<List<Report>> = Resource.Loading
 		_reportsResponseFlow.emit(resource)
@@ -47,43 +54,26 @@ class ReportsViewModel @Inject constructor(
 		val salaries = async { repository.fetchPricedReports() }
 		val users = async { usersRepository.fetchUsers() }
 
-		delay(5000)
-
-		reports.await().handle(
+		(reports.await() + salaries.await() + users.await()).handle(
 			onError = {
 				resource = Resource.Error(it)
 			},
-			onSuccess = { reportsList ->
-				salaries.await().handle(
-					onError = {
-						resource = Resource.Error(it)
-					},
-					onSuccess = { salaries ->
-						users.await().handle(
-							onError = {
-								resource = Resource.Error(it)
-							},
-							onSuccess = { users ->
-								resource = try {
-									Resource.Success(
-										reportsList.map { reportDto ->
-											val salary = salaries.find { it.reportId == reportDto.id }
-											reportDto.toReport(
-												salary = salary,
-												applicant = users.find { it.id == reportDto.assignees.reporterId }!!,
-												approver = users.find { it.id == salary?.approverId },
-												implementer = users.find { it.id == reportDto.assignees.implementerId }!!
-											)
-										}
-									)
-								} catch (e: NullPointerException) {
-									Resource.Error(e.localizedMessage ?: "Parsing error")
-								}
-
-							}
-						)
-					}
-				)
+			onSuccess = { (r, s, u) ->
+				resource = try {
+					Resource.Success(
+						(r as List<ReportDto>).map { reportDto ->
+							val salary = (s as List<ReportSalary>).find { it.reportId == reportDto.id }
+							reportDto.toReport(
+								salary = salary,
+								applicant = (u as List<UserResponse>).find { it.id == reportDto.assignees.reporterId }!!,
+								approver = u.find { it.id == salary?.approverId },
+								implementer = u.find { it.id == reportDto.assignees.implementerId }!!
+							)
+						}
+					)
+				} catch (e: Throwable) {
+					Resource.Error(e.localizedMessage ?: "Parsing error")
+				}
 			}
 		)
 
