@@ -54,6 +54,7 @@ fun SearchBar(
 				onValueChange = {
 					text = it
 					isHintDisplayed = it.isEmpty()
+					onSearch(it)
 				},
 				textStyle = TextStyle(
 					color = MaterialTheme.colors.onSurface,
