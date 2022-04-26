@@ -1,5 +1,7 @@
 package ru.rtuitlab.itlab.presentation.screens.auth
 
+
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -12,13 +14,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.serialization.ExperimentalSerializationApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import java.util.*
 
+
+@ExperimentalMaterialApi
+@ExperimentalAnimationApi
+@ExperimentalSerializationApi
 @ExperimentalStdlibApi
 @Composable
-fun AuthScreen(onLoginEvent: () -> Unit) {
+fun AuthScreen(
+	onLoginEvent: () -> Unit,
+               ) {
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
@@ -65,4 +74,5 @@ fun AuthScreen(onLoginEvent: () -> Unit) {
 			)
 		}
 	}
+
 }

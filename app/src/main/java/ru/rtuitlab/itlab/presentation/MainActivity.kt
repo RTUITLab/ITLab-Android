@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,9 +19,12 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.ExperimentalSerializationApi
+import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MFSContract
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthScreen
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthViewModel
+import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
 import ru.rtuitlab.itlab.presentation.ui.ITLabApp
 import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
 
@@ -31,9 +35,13 @@ import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
 @ExperimentalPagerApi
 @ExperimentalStdlibApi
 @AndroidEntryPoint
+@ExperimentalSerializationApi
 class MainActivity : AppCompatActivity() {
 
+	private val mfsViewModel: MFSViewModel by viewModels()
 	private val authViewModel: AuthViewModel by viewModels()
+
+
 
 	private val authPageLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -47,6 +55,10 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+
+		mfsViewModel._mfsContract.value = registerForActivityResult(MFSContract(mfsViewModel)){}
+
+
 		authViewModel.provideLogoutLauncher(logoutPageLauncher)
 		installSplashScreen()
 		setContent {
@@ -68,4 +80,6 @@ class MainActivity : AppCompatActivity() {
 			}
 		}
 	}
+
+
 }

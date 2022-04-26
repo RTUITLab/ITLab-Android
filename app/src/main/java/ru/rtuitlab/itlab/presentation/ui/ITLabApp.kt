@@ -1,14 +1,22 @@
 package ru.rtuitlab.itlab.presentation.ui
 
+
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -18,6 +26,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.pager.ExperimentalPagerApi
+import kotlinx.coroutines.launch
+import kotlinx.serialization.ExperimentalSerializationApi
 import ru.rtuitlab.itlab.presentation.navigation.AppNavigation
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DevicesTopAppBar
@@ -27,6 +37,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.reports.components.ReportsTopAppBar
+import ru.rtuitlab.itlab.presentation.ui.components.CustomWheelNavigationItem
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedElementsRootScope
@@ -34,10 +45,15 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElemen
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.DirectionWheelNavigation
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.WheelNavigation
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.xCoordinate
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.yCoordinate
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.AppTab
 
+@ExperimentalSerializationApi
+@ExperimentalStdlibApi
 @ExperimentalMotionApi
 @ExperimentalMaterialApi
 @ExperimentalTransitionApi
@@ -47,12 +63,16 @@ import ru.rtuitlab.itlab.presentation.utils.AppTab
 fun ITLabApp(
 	appBarViewModel: AppBarViewModel = viewModel(),
 	appTabsViewModel: AppTabsViewModel = viewModel(),
-	eventsViewModel: EventsViewModel = viewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
+	eventsViewModel: EventsViewModel = viewModel()
 ) {
+	val SIZEVIEWNAVIGATION = 300.dp
+
+
 	val currentTab by appBarViewModel.currentTab.collectAsState()
 
 	val appTabs by appTabsViewModel.appTabs.collectAsState()
+
 
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
 
@@ -129,73 +149,221 @@ fun ITLabApp(
 					}
 				}
 
-			},
-			bottomBar = {
-				BottomNavigation(
-					elevation = 10.dp
-				) {
-					val navBackStackEntry by navController.currentBackStackEntryAsState()
-					val currentDestination = navBackStackEntry?.destination
-					val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
-					appTabs
-						.filter { it.accessible }
-						.forEach { tab ->
-							BottomNavigationItem(
-								icon = {
-									BadgedBox(
-										badge = {
-											if (tab is AppTab.Events && invitationsCount > 0)
-												Badge(
-													backgroundColor = AppColors.accent.collectAsState().value,
-													contentColor = Color.White
-												) {
-													Text(invitationsCount.toString())
-												}
-										}
-									) {
-										Icon(tab.icon, null)
-									}
-							    },
-								label = {
-									Text(
-										text = stringResource(tab.resourceId),
-										fontSize = 9.sp,
-										lineHeight = 16.sp
-									)
-								},
-								selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
-								alwaysShowLabel = true,
-								onClick = {
+				//WheelNavigation is there
 
-									if (sharedElementScope?.isRunningTransition == true) return@BottomNavigationItem
+					val currentTab by appBarViewModel.currentTab.collectAsState()
 
-									// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
-									// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once by the means
-									// of Jetpack Navigation APIs, but only two of the above.
-									// This code provides resetting and singleTop behavior for the default tab.
-									if (tab == currentTab) {
-										navController.popBackStack(
-											route = tab.startDestination,
-											inclusive = false
-										)
-										return@BottomNavigationItem
-									}
+					val appTabsForCircle by appTabsViewModel.appTabs.collectAsState()
+					val sizeAppTabs by appTabsViewModel.appTabsSize.collectAsState()
 
-									navController.navigate(tab.route) {
-										popUpTo(navController.graph.findStartDestination().id) {
-											saveState = true
-										}
-										launchSingleTop = true
+					//fill empty space in
+					val appTabNull by appTabsViewModel.appTabNull.collectAsState()
 
-										// We want to reset the graph if it is clicked while already selected
-										restoreState = tab != currentTab
-									}
-									appBarViewModel.setCurrentTab(tab)
+					val density = LocalDensity.current
+
+					val swipeableState = rememberSwipeableState(DirectionWheelNavigation.Center)
+					//three anchors for infinity sliding
+					val anchors = mapOf(
+						with(density) { -SIZEVIEWNAVIGATION.toPx() } to DirectionWheelNavigation.Left,
+						0f to DirectionWheelNavigation.Center,
+						with(density) { SIZEVIEWNAVIGATION.toPx() } to DirectionWheelNavigation.Right) // Maps anchor points (in px) to states
+
+					val marginDown = remember { mutableStateOf((-20).dp) }
+
+					//sizes bottomnavigation
+					val sizeNavWidth = remember { mutableStateOf(0.dp) }
+					val sizeNavHeight = remember { mutableStateOf(0.dp) }
+
+					WheelNavigation(
+						modifier = Modifier
+							.width(SIZEVIEWNAVIGATION)
+							.onSizeChanged {
+								sizeNavWidth.value = with(density) {
+									it.width.toDp()
 								}
-							)
-						}
+								sizeNavHeight.value = with(density) {
+									it.height.toDp()
+								}
+							}
+							.swipeable(
+								state = swipeableState,
+								anchors = anchors,
+								thresholds = { _, _ -> FractionalThreshold(0.3f) },
+								orientation = Orientation.Horizontal,
+							),
+						onClickWheel = {
+							//hide and show
+						},
+						marginDown = marginDown.value,
+
+
+					) {
+						val navBackStackEntry by navController.currentBackStackEntryAsState()
+						val currentDestination = navBackStackEntry?.destination
+
+
+						val (offsetY, setOffsetY) = remember { mutableStateOf(0.dp) }
+						val (firstTime, setFirstTime) = remember { mutableStateOf(0) }
+
+
+						val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
+
+						var currentDirectionState by remember { mutableStateOf(1) }
+
+						val statePage = appTabsViewModel.statePage.collectAsState().value
+
+						val coroutineScope = rememberCoroutineScope()
+
+						val rotationPosition by animateFloatAsState(
+							targetValue = if (swipeableState.targetValue != DirectionWheelNavigation.Center) with(density) { sizeNavWidth.value.toPx() } else 0f,
+							animationSpec = tween(durationMillis = 250),
+							finishedListener = {
+								if (it == with(density) { sizeNavWidth.value.toPx() }) {
+									if (statePage == 1) {
+										appTabsViewModel.setSecondPage(coroutineScope)
+									} else {
+										appTabsViewModel.setFirstPage(coroutineScope)
+									}
+									//monitoring when elements is hiden
+									//important reverse
+									currentDirectionState = if (swipeableState.direction > 0) 2 else 0
+									coroutineScope.launch {
+										swipeableState.snapTo(DirectionWheelNavigation.Center)
+									}
+								}
+							}
+						)
+
+						//to what side elements have to move -1 - on the left; 1 - on the right
+						val stateDirection = (if ((currentDirectionState == 2 && swipeableState.progress.to == DirectionWheelNavigation.Center) || swipeableState.targetValue == DirectionWheelNavigation.Left) -1 else 1)
+						val oddValue = appTabsViewModel.oddValue.collectAsState().value
+
+						Log.d("ITLAB--------","$oddValue ${appTabsForCircle.filter { it.accessible }.size}")
+
+						appTabsForCircle
+							.filter { it.accessible }
+							.forEach { tab ->
+								var positionRemX by remember { mutableStateOf(0.dp) }
+								var positionSumX by remember { mutableStateOf(0.dp) }
+
+								val sizeItemWidth = remember { mutableStateOf(0.dp) }
+								val sizeItemHeight = remember { mutableStateOf(0.dp) }
+
+								val xCoordinate = xCoordinate(
+									stateDirection,
+									density,
+									rotationPosition,
+									oddValue,
+									SIZEVIEWNAVIGATION,
+									sizeAppTabs,
+									appTabsForCircle.filter { it.accessible }
+										.indexOf(tab),
+									sizeItemWidth.value
+								)
+								val yCoordinate = yCoordinate(
+									(sizeNavHeight.value - sizeItemHeight.value),
+									xCoordinate,
+									sizeItemWidth.value,
+									marginDown.value,
+									sizeNavWidth.value,
+									sizeNavHeight.value,
+									sizeAppTabs,
+									appTabsForCircle.filter { it.accessible }
+										.indexOf(tab),
+									setOffsetY,
+									offsetY,
+									setFirstTime,
+									firstTime
+								)
+
+								CustomWheelNavigationItem(
+									modifier = Modifier
+										.onSizeChanged {
+											sizeItemWidth.value = with(density) {
+												it.width.toDp()
+											}
+											sizeItemHeight.value = with(density) {
+												it.height.toDp()
+											}
+										}
+										.onGloballyPositioned {
+											positionRemX = with(density) {
+												it.positionInParent().x.toDp()
+											}
+											positionSumX += positionRemX
+										}
+										.offset(
+											xCoordinate,
+											yCoordinate
+										),
+									icon = {
+
+										BadgedBox(
+											badge = {
+												if (tab is AppTab.Events && invitationsCount > 0)
+													Badge(
+														backgroundColor = Color.Red,
+														contentColor = Color.White
+													) {
+														Text(invitationsCount.toString())
+													}
+											}
+										) {
+											if (tab != appTabNull) {
+												Icon(tab.icon, null)
+											}
+										}
+									},
+									label = {
+										if (tab != appTabNull) {
+											Text(
+												text = stringResource(tab.resourceId),
+												fontSize = 9.sp,
+												lineHeight = 16.sp,
+												modifier = Modifier
+													.onSizeChanged {
+														marginDown.value = (-10).dp
+													}
+											)
+										}
+									},
+									selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
+									alwaysShowLabel = true,
+									onClick = {
+										if (tab != appTabNull) {
+											// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
+
+											// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once by the means
+											// of Jetpack Navigation APIs, but only two of the above.
+											// This code provides resetting and singleTop behavior for the default tab.
+											if (tab == currentTab) {
+												navController.popBackStack(
+													route = tab.startDestination,
+													inclusive = false
+												)
+												return@CustomWheelNavigationItem
+											}
+											// This code always leaves default tab's start destination on the bottom of the stack. Workaround needed?
+											navController.navigate(tab.route) {
+												popUpTo(navController.graph.findStartDestination().id) {
+													saveState = true
+												}
+												launchSingleTop = true
+
+												// We want to reset the graph if it is clicked while already selected
+												restoreState = tab != currentTab
+											}
+											appBarViewModel.setCurrentTab(tab)
+										}
+									}
+								)
+
+							}
+
+					}
+
 				}
-			}
+
 		)
 	}
 }

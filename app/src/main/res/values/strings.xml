@@ -149,5 +149,9 @@
     <string name="md_ul">Unorderd list</string>
     <string name="md_ol">Ordered list</string>
     <string name="md_task">Task</string>
-    <string name="md_attach">Attach...</string>
+    <string name="md_attach">Attach…</string>
+    <string name="Null">null</string>
+    <string name="Select_a_file">Select a file</string>
+    <string name="Upload_a_file">Upload a file</string>
+
 </resources>

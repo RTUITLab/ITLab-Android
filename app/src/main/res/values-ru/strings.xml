@@ -115,6 +115,7 @@
     <string name="to_assign_owner">Назначить владельца</string>
     <string name="pick_up">Убрать</string>
     <string name="show_only_free">Показать только доступное</string>
+    <string name="Null">null</string>
     <string name="event">Событие</string>
     <string name="reports">Отчёты</string>
     <string name="report">Отчёт</string>
@@ -138,5 +139,9 @@
     <string name="md_ul">Ненумерованный список</string>
     <string name="md_ol">Нумерованный список</string>
     <string name="md_task">Чекбокс</string>
-    <string name="md_attach">Прикрепить...</string>
+    <string name="md_attach">Прикрепить…</string>
+
+    //MFS
+    <string name="Select_a_file">Выбрать файл</string>
+    <string name="Upload_a_file">Загрузить файл</string>
 </resources>
