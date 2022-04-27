@@ -181,19 +181,6 @@ private fun ReportDetails(
 
 		Spacer(modifier = Modifier.height(20.dp))
 
-		ReportCommentRecord(
-			header = {
-				Text(
-					text = stringResource(R.string.report_application_text),
-					style = MaterialTheme.typography.h6
-				)
-			},
-			textMd = report.applicationCommentMd,
-			visibleState = animationState
-		)
-
-		Spacer(modifier = Modifier.height(20.dp))
-
 		if (!report.approvingCommentMd.isNullOrBlank())
 			ReportCommentRecord(
 				header = {
@@ -205,6 +192,19 @@ private fun ReportDetails(
 				textMd = report.approvingCommentMd,
 				visibleState = animationState
 			)
+
+		Spacer(modifier = Modifier.height(20.dp))
+
+		ReportCommentRecord(
+			header = {
+				Text(
+					text = stringResource(R.string.report_application_text),
+					style = MaterialTheme.typography.h6
+				)
+			},
+			textMd = report.applicationCommentMd,
+			visibleState = animationState
+		)
 	}
 }
 
