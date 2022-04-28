@@ -57,8 +57,8 @@ stages:
             inputs:
               UserName: 'RTUITLab'
               Message: |
-                :tada: New release ${{ github.ref_name }} is already available! :tada:
-                Visit <${{ steps.create_release.outputs.html_url }}|this page> to see what's new
+                :tada: New release $(Build.SourceBranchName) is already available! :tada:
+                Visit <this page> to see what's new
               ApiToken: '$(slack_token)'
               Channel: '#itlab-mobile-apks'
               IconUrl: 'https://files.rtuitlab.dev/logo/logo.png'
