@@ -37,6 +37,7 @@ stages:
             artifact: itlab-mobile-android
       - job: createRelease
         displayName: Create Release
+        dependsOn: buildApp
         condition: succeeded()
         steps:
           - task: GitHubRelease@1
