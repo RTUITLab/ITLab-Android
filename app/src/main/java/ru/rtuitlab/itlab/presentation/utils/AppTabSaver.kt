@@ -27,7 +27,7 @@ sealed class AppTab(
     object Employees: AppTab("employees_tab", AppScreen.Employees.route, R.string.employees, Icons.Default.People,)
     object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback,)
     object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, )
-    object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description, true)
+    object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description)
     object Null: AppTab("","", R.string.Null, Icons.Default.HourglassEmpty)
 
 
@@ -68,6 +68,8 @@ sealed class AppTab(
             get() = listOf(
                 Profile,
                 Projects,
+                Reports
+
 
 
             )

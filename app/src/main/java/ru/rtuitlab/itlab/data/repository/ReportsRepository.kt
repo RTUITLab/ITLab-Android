@@ -3,11 +3,12 @@ package ru.rtuitlab.itlab.data.repository
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import ru.rtuitlab.itlab.common.ResponseHandler
-import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportDto
-import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportSalary
+import ru.rtuitlab.itlab.data.remote.api.reports.ReportApi
+import ru.rtuitlab.itlab.data.remote.api.reports.models.*
 import javax.inject.Inject
 
 class ReportsRepository @Inject constructor(
+	private val reportApi: ReportApi,
 	private val handler: ResponseHandler
 ) {
 
@@ -22,4 +23,51 @@ class ReportsRepository @Inject constructor(
 		Json.decodeFromString<List<ReportSalary>>(mockPricedReportsJson)
 	}
 
+	suspend fun fetchAllReports(sorted_by:String? =null) = handler{
+		reportApi.getReports(sorted_by)
+	}
+	suspend fun fetchReportNew(
+		implementerId: String? = null,
+		name:String? = null,
+		text:String
+	) = handler {
+		reportApi.createReport(
+			implementerId,
+			ReportRequest(name, text)
+		)
+
+	}
+	suspend fun fetchReportNew(
+		implementerId: String? = null,
+		reportRequest: ReportRequest
+	) = handler {
+		reportApi.createReport(
+			implementerId,
+			reportRequest
+		)
+
+	}
+	suspend fun fetchEmployeeReport(
+		employeeId: String,
+		begin: String? = null,
+		end: String? = null
+	) = handler {
+		reportApi.getReportsOfEmployee(
+			begin,
+			end,
+			employeeId
+		)
+	}
+	suspend fun fetchReportById(id: String) = handler{
+		reportApi.getReport(id)
+	}
+	suspend fun fetchAllReportsSalaryOfUser(userId:String) = handler{
+		reportApi.getListReportSalary(userId)
+	}
+	suspend fun updateReport(reportId:String,requiredReportSalary: ReportSalaryRequest){
+		reportApi.updateReportSalary(reportId,requiredReportSalary)
+	}
+	suspend fun updateReport(reportId:String,count:Int,description:String){
+		reportApi.updateReportSalary(reportId,ReportSalaryRequest(count,description))
+	}
 }
