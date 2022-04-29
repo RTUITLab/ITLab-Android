@@ -30,6 +30,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.EventsNotifications
 import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 import ru.rtuitlab.itlab.presentation.screens.feedback.Feedback
 import ru.rtuitlab.itlab.presentation.screens.feedback.FeedbackViewModel
+import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
 import ru.rtuitlab.itlab.presentation.screens.profile.Profile
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.screens.reports.NewReport
@@ -57,7 +58,8 @@ fun AppNavigation(
 	employeesViewModel: EmployeesViewModel = viewModel(),
 	devicesViewModel: DevicesViewModel = viewModel(),
 	feedbackViewModel: FeedbackViewModel = viewModel(),
-	reportsViewModel: ReportsViewModel = viewModel()
+	reportsViewModel: ReportsViewModel = viewModel(),
+	mfsViewModel: MFSViewModel = viewModel()
 ) {
 	val resources = LocalContext.current.resources
 
@@ -111,7 +113,8 @@ fun AppNavigation(
 
 		reportsGraph(
 			reportsViewModel,
-			appBarViewModel
+			appBarViewModel,
+			mfsViewModel
 		)
 	}
 }
@@ -226,14 +229,15 @@ private fun NavGraphBuilder.feedbackGraph(
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.reportsGraph(
 	reportsViewModel: ReportsViewModel,
-	appBarViewModel: AppBarViewModel
+	appBarViewModel: AppBarViewModel,
+	mfsViewModel: MFSViewModel
 ) {
 	navigation(
 		startDestination = AppTab.Reports.startDestination,
 		route = AppTab.Reports.route
 	) {
 		composable(AppScreen.Reports.route) {
-			Reports(reportsViewModel)
+			Reports(reportsViewModel,mfsViewModel)
 		}
 
 		composable(AppScreen.ReportDetails.route) {

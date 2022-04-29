@@ -1,6 +1,6 @@
 package ru.rtuitlab.itlab.presentation
 
-import android.content.Intent
+import android.Manifest
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -52,11 +52,22 @@ class MainActivity : AppCompatActivity() {
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
 			authViewModel.handleLogoutResult(it)
 		}
+	private val requestPermissionLauncher =
+		registerForActivityResult(ActivityResultContracts.RequestPermission()
+		) {
+			mfsViewModel.changeAccess(it)
+		}
+
+	private val mfsContract =
+		registerForActivityResult(MFSContract()){ selectedFile ->
+			mfsViewModel.setFilePath(selectedFile)
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		mfsViewModel._mfsContract.value = registerForActivityResult(MFSContract(mfsViewModel)){}
+		mfsViewModel.provideRequestPermissionLauncher(this,requestPermissionLauncher)
+		mfsViewModel.provideMFSContract(mfsContract)
 
 
 		authViewModel.provideLogoutLauncher(logoutPageLauncher)

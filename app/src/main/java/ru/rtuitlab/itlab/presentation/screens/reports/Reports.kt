@@ -26,6 +26,8 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.reports.models.Report
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
+import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
+import ru.rtuitlab.itlab.presentation.screens.micro_file_service.components.BaseElements
 import ru.rtuitlab.itlab.presentation.screens.reports.components.NewReportFab
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
@@ -43,7 +45,8 @@ val duration = 300
 @ExperimentalPagerApi
 @Composable
 fun Reports(
-	reportsViewModel: ReportsViewModel
+	reportsViewModel: ReportsViewModel,
+	mfsViewModel: MFSViewModel
 ) {
 	val reportsResource by reportsViewModel.reportsResponseFlow.collectAsState()
 
@@ -109,7 +112,7 @@ fun Reports(
 											.sortedByDescending { it.id }
 									)
 									ReportsTab.Files -> {
-										// MFS code here
+										BaseElements(mfsViewModel)
 									}
 								}
 
