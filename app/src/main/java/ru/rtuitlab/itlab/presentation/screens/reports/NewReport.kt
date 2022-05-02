@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
+import ru.rtuitlab.itlab.presentation.screens.employees.EmployeesViewModel
 import ru.rtuitlab.itlab.presentation.screens.events.components.SegmentText
 import ru.rtuitlab.itlab.presentation.screens.events.components.SegmentedControl
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
@@ -47,6 +48,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextF
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 import ru.rtuitlab.itlab.presentation.utils.text_toolbar.AppTextToolbar
 
 @ExperimentalMaterialApi
@@ -54,12 +56,14 @@ import ru.rtuitlab.itlab.presentation.utils.text_toolbar.AppTextToolbar
 @ExperimentalAnimationApi
 @Composable
 fun NewReport(
-	reportsViewModel: ReportsViewModel,
+	reportsViewModel: ReportsViewModel = singletonViewModel(),
+	employeesViewModel: EmployeesViewModel = singletonViewModel(),
 	bottomSheetViewModel: BottomSheetViewModel
 ) {
-
+	val users by employeesViewModel.usersFlow.collectAsState()
+	val currentUserId = employeesViewModel.userIdFlow.collectAsState()
 	var selectedImplementer: User? by rememberSaveable {
-		mutableStateOf(null)
+		mutableStateOf(users.find { it.id == currentUserId.value })
 	}
 
 	val (reportTitle, titleSetter) = rememberSaveable {

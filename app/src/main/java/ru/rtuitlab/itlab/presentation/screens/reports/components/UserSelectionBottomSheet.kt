@@ -33,7 +33,7 @@ fun UserSelectionBottomSheet(
 
 	LazyColumn(
 		verticalArrangement = Arrangement.spacedBy(10.dp),
-		contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
+		contentPadding = PaddingValues(vertical = 15.dp)
 	) {
 		item {
 			SearchBar {
