@@ -144,4 +144,7 @@
     //MFS
     <string name="Select_a_file">Выбрать файл</string>
     <string name="Upload_a_file">Загрузить файл</string>
+    <string name="report_title">Заголовок отчёта</string>
+    <string name="report_send">Отправить</string>
+    <string name="report_new_about_who">О ком отчёт</string>
 </resources>

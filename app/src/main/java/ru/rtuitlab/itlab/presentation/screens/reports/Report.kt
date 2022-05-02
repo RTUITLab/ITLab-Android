@@ -114,7 +114,7 @@ private fun ReportDetails(
 							spacing = 10.dp
 						) {
 							Text(
-								text = "${report.applicationDate}Z".fromIso8601(LocalContext.current),
+								text = report.applicationDate.fromIso8601(LocalContext.current),
 								style = MaterialTheme.typography.subtitle1
 							)
 						}

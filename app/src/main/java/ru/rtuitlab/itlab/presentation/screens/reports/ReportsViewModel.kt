@@ -6,11 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.reports.models.Report
@@ -37,6 +34,7 @@ class ReportsViewModel @Inject constructor(
 
 	val pagerState = PagerState()
 	val snackbarHostState = SnackbarHostState()
+	val newReportSnackbarHostState = SnackbarHostState()
 
 	private val _reportsResponseFlow: MutableStateFlow<Resource<List<Report>>> =
 		MutableStateFlow(Resource.Loading)
@@ -87,6 +85,43 @@ class ReportsViewModel @Inject constructor(
 
 	fun onSearch(query: String) {
 		_searchQuery.value = query
+	}
+
+	fun onSubmitReport(
+		title: String,
+		text: String,
+		implementerId: String? = null,
+		successMessage: String,
+		onFinished: (isSuccessful: Boolean, newReport: ReportDto?) -> Unit
+	) = viewModelScope.launch(Dispatchers.IO) {
+		repository.createReport(
+			implementerId,
+			title,
+			text
+		).handle(
+			onSuccess = { newReport ->
+				_reportsResponseFlow.value = Resource.Success(
+					(_reportsResponseFlow.value as Resource.Success).data +
+							newReport.toReport(
+								salary = null,
+								approver = null,
+								applicant = usersFlow.value.find { it.id == newReport.assignees.reporterId }!!.toUserResponse(),
+								implementer = usersFlow.value.find {it.id == newReport.assignees.implementerId }!!.toUserResponse()
+							)
+				)
+				withContext(Dispatchers.Main) {
+					pagerState.scrollToPage(1)
+					onFinished(true, newReport)
+				}
+				snackbarHostState.showSnackbar(successMessage)
+			},
+			onError = {
+				withContext(Dispatchers.Main) {
+					onFinished(false, null)
+				}
+				newReportSnackbarHostState.showSnackbar(it)
+			}
+		)
 	}
 
 }

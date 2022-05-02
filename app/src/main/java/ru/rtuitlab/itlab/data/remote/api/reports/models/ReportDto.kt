@@ -12,7 +12,7 @@ data class ReportDto(
     val date: String,
     val text: String,
     @SerialName("archived")
-    val isArchived: Boolean
+    val isArchived: Boolean? = null
 ) {
     fun toReport(
         salary: ReportSalary?,
