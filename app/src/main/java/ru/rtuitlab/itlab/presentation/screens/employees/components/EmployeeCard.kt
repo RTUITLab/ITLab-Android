@@ -1,34 +1,31 @@
 package ru.rtuitlab.itlab.presentation.screens.employees.components
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.R
-import androidx.compose.material.*
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
-import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
 
 @Composable
 fun EmployeeCard(
 	user: User,
-	modifier: Modifier
+	modifier: Modifier,
+	elevation: Dp = 2.dp
 ) {
 	val context = LocalContext.current
 	Card(
 		modifier = modifier,
-		elevation = 2.dp,
+		elevation = elevation,
 		shape = RoundedCornerShape(5.dp)
 	) {
 		user.run {

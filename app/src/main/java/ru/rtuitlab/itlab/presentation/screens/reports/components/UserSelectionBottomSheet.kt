@@ -49,7 +49,8 @@ fun UserSelectionBottomSheet(
 						.clickable {
 							onSelect(currentUser)
 							bottomSheetViewModel.hide(scope)
-						}
+						},
+					elevation = 6.dp
 				)
 				Spacer(modifier = Modifier.height(8.dp))
 			}
@@ -61,7 +62,8 @@ fun UserSelectionBottomSheet(
 					.clickable {
 						onSelect(user)
 						bottomSheetViewModel.hide(scope)
-					}
+					},
+				elevation = 6.dp
 			)
 		}
 	}
