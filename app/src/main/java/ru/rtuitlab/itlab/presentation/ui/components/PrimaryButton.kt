@@ -20,6 +20,7 @@ fun PrimaryButton(
 	modifier: Modifier = Modifier,
 	onClick: () -> Unit,
 	text: String,
+	enabled: Boolean = true,
 	textWrapper: (@Composable RowScope.(text :@Composable () -> Unit) -> Unit)? = null
 ) {
 	Button(
@@ -27,18 +28,21 @@ fun PrimaryButton(
 			.clipToBounds(),
 		onClick = onClick,
 		colors = ButtonDefaults.buttonColors(
-			backgroundColor = Color.Transparent
+			backgroundColor = Color.Transparent,
+			disabledBackgroundColor = Color.Transparent,
+			contentColor = AppColors.accent.collectAsState().value,
+			disabledContentColor = AppColors.greyText.collectAsState().value
 		),
 		elevation = ButtonDefaults.elevation(
 			defaultElevation = 0.dp,
 			pressedElevation = 0.dp
-		)
+		),
+		enabled = enabled
 	) {
 		if (textWrapper != null)
 			textWrapper {
 				Text(
 					text = text.uppercase(Locale.getDefault()),
-					color = AppColors.accent.collectAsState().value,
 					fontSize = 14.sp,
 					fontWeight = FontWeight(500),
 					lineHeight = 22.sp

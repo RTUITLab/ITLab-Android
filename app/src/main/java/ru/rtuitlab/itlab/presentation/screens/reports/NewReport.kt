@@ -224,7 +224,8 @@ fun NewReport(
 								}
 							}
 						},
-						text = stringResource(R.string.report_send)
+						text = stringResource(R.string.report_send),
+						enabled = reportTitle.isNotBlank() && reportTextFieldValue.text.isNotBlank()
 					) { text ->
 						LoadableButtonContent(
 							isLoading = isLoading,
