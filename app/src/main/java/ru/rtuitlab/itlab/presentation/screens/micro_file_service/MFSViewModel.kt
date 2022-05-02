@@ -2,7 +2,10 @@ package ru.rtuitlab.itlab.presentation.screens.micro_file_service
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
@@ -11,21 +14,28 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import retrofit2.Retrofit
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.emitInIO
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfo
+import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.data.repository.MFSRepository
+import ru.rtuitlab.itlab.data.repository.UsersRepository
+import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb
+import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb.saveToInternalStorage
+import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb.toBitmap
 import java.io.File
+import java.net.URL
 import javax.inject.Inject
 
 @HiltViewModel
 class MFSViewModel @Inject constructor(
-	private val repository: MFSRepository
+	private val repository: MFSRepository,
+	private val usersRepository: UsersRepository
 ): ViewModel() {
 
 	private var _requestPermissionLauncher = MutableStateFlow< ActivityResultLauncher<String>?>(null)
@@ -47,8 +57,8 @@ class MFSViewModel @Inject constructor(
 	private val _file = MutableStateFlow<File?>(null)
 	val file = _file.asStateFlow()
 
-	private val _listFileInfoResponseFlow = MutableStateFlow<Resource<List<FileInfo>>>(Resource.Loading)
-	val listFileInfoResponseFlow = _listFileInfoResponseFlow.asStateFlow().also {fetchResponseListFileInfo() }
+	private val _listFileInfoResponseFlow = MutableStateFlow<Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>>>(Resource.Loading)
+	val listFileInfoResponseFlow = _listFileInfoResponseFlow.asStateFlow().also {fetchListFileInfoResponseWithUser() }
 
 	private var cachedFileInfoList = emptyList<FileInfo>()
 
@@ -59,23 +69,63 @@ class MFSViewModel @Inject constructor(
 
 	private val _listUserId = MutableStateFlow<String?>(null)
 
-	fun onRefreshEquipmentTypes() = fetchResponseListFileInfo()
+	private val _whenOKcode = MutableStateFlow<(suspend () -> Unit)?>(null)
+	fun onRefresh() = fetchListFileInfoResponseWithUser()
 
 	fun onSearch(query: String) {
 		_listFileInfoFlow.value = cachedFileInfoList.filter { filterSearchResult(it, query) }
 
 	}
 
-	private fun fetchResponseListFileInfo(userId:String?=null,sortedBy:String?=null) = _listFileInfoResponseFlow.emitInIO(viewModelScope) {
-		repository.fetchFilesInfo(userId,sortedBy)
+	fun onResourceSuccess(files: List<Pair<FileInfoResponse,UserResponse?>>) {
+
+		cachedFileInfoList = files.map {
+			if(it.second!=null){
+			it.first.toFileInfo(it.second!!.toUser())
+		}else{
+			it.first.toFileInfo(null)
+		}}
+
+		_listFileInfoFlow.value = cachedFileInfoList
 	}
 
+	/*private fun fetchListFileInfoResponseWithoutUser(userId:String?=null,sortedBy:String?=null) = _listFileInfoResponseFlow.emitInIO(viewModelScope) {
+		repository.fetchFilesInfo(userId,sortedBy)
+	}*/
+	private fun fetchListFileInfoResponseWithUser(userId:String?=null,sortedBy:String?=null) = _listFileInfoResponseFlow.emitInIO(viewModelScope) {
+
+		var resources: Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>> =
+			Resource.Loading
+		var usersList: MutableList<UserResponse>? = null
+		usersRepository.fetchUsers().handle(
+			onSuccess = { users ->
+				usersList = users as MutableList<UserResponse>
+			}
+		)
+		repository.fetchFilesInfo(userId,sortedBy).handle(
+			onSuccess = { files ->
+				val listPair = mutableListOf<Pair<FileInfoResponse, UserResponse?>>()
+
+				files.map { file ->
+					var resource: Pair<FileInfoResponse, UserResponse?>
+
+					val sender = usersList?.find { it.id == file.metadata.fileSender }
+					resource = file to sender
+					listPair.add(resource)
+				}
+				resources = Resource.Success(listPair)
+
+			},
+			onError = { resources = Resource.Error(it) }
+		)
+		resources
+	}
 	//sortedBy - date or name
 	//userId - id of user
 	fun setUserIdAndSortedBy(userId:String, sortedBy:String) {
 		_listSortedBy.value = sortedBy
 		_listUserId.value = userId
-		fetchResponseListFileInfo(
+		fetchListFileInfoResponseWithUser(
 			userId = userId,
 			sortedBy = sortedBy
 		)
@@ -84,7 +134,9 @@ class MFSViewModel @Inject constructor(
 	fun changeAccess(access: Boolean){
 		_accessPermission.value = access
 		if(access)
-			provideFile()
+			viewModelScope.launch(Dispatchers.IO) {
+				_whenOKcode.value?.invoke()
+			}
 	}
 
 	fun provideRequestPermissionLauncher(activity: Activity,requestPermissionLauncher: ActivityResultLauncher<String>){
@@ -120,12 +172,14 @@ class MFSViewModel @Inject constructor(
 			else {
 				Log.d("MFS","${_activity.value} ----------")
 
-				onRequestPermission(_activity.value!!)
+				onRequestPermission(_activity.value!!){
+					_mfsContract.value?.launch(MFSCONST)
+				}
 			}
 		}
 	}
 	fun uploadFile(fileDescription: String) = viewModelScope.launch(Dispatchers.IO){
-		var resource: Resource<FileInfo> = Resource.Loading
+		var resource: Resource<FileInfoResponse> = Resource.Loading
 
 		if(_file.value != null) {
 			Log.d("MFS", _file.value!!.absolutePath)
@@ -142,19 +196,51 @@ class MFSViewModel @Inject constructor(
 			)
 		}
 	}
+	fun downloadFile(context: Context, fileInfo: FileInfo) = viewModelScope.launch(Dispatchers.IO){
+		val repFetchFile = suspend {
+			Log.d("MFSstring", repository.fetchFile(fileInfo.id))
+			DownloadFileFromWeb.downloadFile(context,repository.fetchFile(fileInfo.id),fileInfo)
 
-	private fun onRequestPermission(activity: Activity) {
+		}
+
+		if (_accessPermission.value) {
+			repFetchFile()
+		}
+		else {
+			onRequestPermission(_activity.value!!){
+				repFetchFile()
+			}
+		}
+
+	}
+	fun getBitmapFromFile(context: Context,fileInfo: FileInfo,setBitmap: (Bitmap?) ->Unit) {
+
+		var urlImage: URL? = URL(repository.fetchFile(fileInfo.id))
+
+		viewModelScope.launch(Dispatchers.IO) {
+			// get saved bitmap internal storage uri
+			val j = async { urlImage?.toBitmap() }
+			val bitmap = j.await()
+			val savedUri : Uri? = bitmap?.saveToInternalStorage(context)
+
+			setBitmap(BitmapFactory.decodeFile(savedUri?.path))
+		}
+	}
+
+	private fun onRequestPermission(activity: Activity, whenOKcode:suspend () ->Unit) {
 		when {
 			(ContextCompat.checkSelfPermission(_activity.value!!.applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) ->
 			{
-				Log.d("MFS----","here")
 				_accessPermission.value = true
+				_whenOKcode.value = { whenOKcode() }
+
 			}
 
 			ActivityCompat.shouldShowRequestPermissionRationale(
 				activity,
 				Manifest.permission.WRITE_EXTERNAL_STORAGE
 			) -> {
+				_whenOKcode.value = { whenOKcode() }
 
 				_requestPermissionLauncher.value?.launch(
 					Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -163,12 +249,12 @@ class MFSViewModel @Inject constructor(
 			}
 
 			else -> {
+				_whenOKcode.value = { whenOKcode() }
 
 				_requestPermissionLauncher.value?.launch(
 					Manifest.permission.WRITE_EXTERNAL_STORAGE
 				)
 
-				Log.d("MFS----","here3")
 
 			}
 		}
@@ -178,5 +264,13 @@ class MFSViewModel @Inject constructor(
 		filename.contains(query.trim(), ignoreCase = true) ||
 				id.contains(query.trim(), ignoreCase = true) ||
 				uploadDate.contains(query.trim(), ignoreCase = true)
+	}
+
+	fun parseUploadDate(uploadDate: String): String {
+		val date = uploadDate.split("T")
+		val YYMMDD = date[0]
+		val hhmmss = date[1].split(".")[0]
+
+		return "$YYMMDD $hhmmss"
 	}
 }

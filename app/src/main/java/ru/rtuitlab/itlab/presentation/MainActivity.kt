@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation
 
-import android.Manifest
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts

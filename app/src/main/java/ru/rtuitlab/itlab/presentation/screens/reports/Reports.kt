@@ -1,5 +1,7 @@
+
 package ru.rtuitlab.itlab.presentation.screens.reports
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -41,7 +43,8 @@ import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.ReportsTab
 
 val duration = 300
-
+@ExperimentalAnimationApi
+@ExperimentalMaterialApi
 @ExperimentalPagerApi
 @Composable
 fun Reports(

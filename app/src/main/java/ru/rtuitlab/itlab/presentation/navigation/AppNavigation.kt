@@ -225,6 +225,7 @@ private fun NavGraphBuilder.feedbackGraph(
 	}
 }
 
+@ExperimentalMaterialApi
 @ExperimentalPagerApi
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.reportsGraph(

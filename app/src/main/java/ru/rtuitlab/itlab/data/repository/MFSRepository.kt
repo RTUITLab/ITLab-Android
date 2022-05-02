@@ -1,6 +1,8 @@
 package ru.rtuitlab.itlab.data.repository
 
+import android.content.Context
 import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -13,9 +15,10 @@ import javax.inject.Inject
 import okhttp3.MultipartBody
 
 import okhttp3.RequestBody
-
-
-
+import retrofit2.http.Url
+import ru.rtuitlab.itlab.BuildConfig
+import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb
+import java.net.URL
 
 
 class MFSRepository @Inject constructor(
@@ -25,9 +28,11 @@ class MFSRepository @Inject constructor(
 
 
 
-	suspend fun fetchFile(fileId:String) = handler {
-		MFSApi.downloadFile(fileId)
+	fun fetchFile(fileId:String):String {
+		//MFSApi.downloadFile(fileId)
+		return (BuildConfig.API_URI+"mfs/download/"+fileId)
 	}
+
 	suspend fun fetchFilesInfo(userId:String?=null,sortedBy:String?=null) = handler {
 		MFSApi.getFilesInfo(userId,sortedBy)
 	}
