@@ -39,8 +39,14 @@ class ReportsViewModel @Inject constructor(
 	val snackbarHostState = SnackbarHostState()
 
 	private val _reportsResponseFlow: MutableStateFlow<Resource<List<Report>>> =
-		MutableStateFlow<Resource<List<Report>>>(Resource.Loading).also { fetchReports() }
-	val reportsResponseFlow = _reportsResponseFlow.asStateFlow()
+		MutableStateFlow(Resource.Loading)
+	val reportsResponseFlow by lazy {
+		fetchReports()
+		_reportsResponseFlow.asStateFlow()
+	}
+
+	val userResponsesFlow = usersRepository.usersResponsesFlow
+	val usersFlow = usersRepository.cachedUsersFlow
 
 	private val _searchQuery = MutableStateFlow("")
 	val searchQuery = _searchQuery.asStateFlow()
@@ -51,10 +57,9 @@ class ReportsViewModel @Inject constructor(
 		_reportsResponseFlow.emit(resource)
 		// Executing in parallel, because any one data set does not depend on another
 		val reports = async { repository.fetchReportsAboutUser() }
-		val salaries = async { repository.fetchPricedReports() }
-		val users = async { usersRepository.fetchUsers() }
+		val salaries = async { repository.fetchPricedReports(userIdFlow.value) }
 
-		(reports.await() + salaries.await() + users.await()).handle(
+		(reports.await() + salaries.await() + userResponsesFlow.value).handle(
 			onError = {
 				resource = Resource.Error(it)
 			},
