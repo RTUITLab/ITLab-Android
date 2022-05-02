@@ -37,13 +37,14 @@ import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.ReportsTab
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 val duration = 300
 
 @ExperimentalPagerApi
 @Composable
 fun Reports(
-	reportsViewModel: ReportsViewModel
+	reportsViewModel: ReportsViewModel = singletonViewModel()
 ) {
 	val reportsResource by reportsViewModel.reportsResponseFlow.collectAsState()
 
