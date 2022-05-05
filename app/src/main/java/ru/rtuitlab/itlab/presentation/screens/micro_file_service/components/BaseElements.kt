@@ -374,8 +374,12 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
 				) {
 					val( bitmap,setBitmap) = rememberSaveable{mutableStateOf<Bitmap?>(null)}
 					Log.d("BASE","$exp")
-					if(exp == "png" || exp == "jpeg" || exp == "jpg"|| exp == "gif") {
-						//mfsViewModel.getBitmapFromFile(context,file,setBitmap,30.dp)
+					if((exp == "png" || exp == "jpeg" || exp == "jpg"|| exp == "gif") ) {
+						if (bitmap == null)
+							SideEffect {
+								mfsViewModel.getBitmapFromFile(context, file, setBitmap)
+							}
+
 						if(bitmap != null){
 							Image(
 								bitmap = bitmap.asImageBitmap(),
@@ -392,6 +396,12 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
 								overflow = TextOverflow.Clip
 							)
 							}
+						DisposableEffect(Unit) {
+							//focusRequester.requestFocus()
+							onDispose {
+								mfsViewModel.getBitmapFromFile(context,null,setBitmap)
+							}
+						}
 					}else {
 						Icon(
 							painter = painterResource(R.drawable.ic_attach),

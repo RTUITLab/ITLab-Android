@@ -34,6 +34,7 @@ import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb
 import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb.saveToInternalStorage
 import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb.toBitmap
 import java.io.File
+import java.lang.Exception
 import java.net.URL
 import javax.inject.Inject
 
@@ -275,22 +276,31 @@ class MFSViewModel @Inject constructor(
 		}
 
 	}
-	fun getBitmapFromFile(context: Context,fileInfo: FileInfo,setBitmap: (Bitmap?) ->Unit,width: Dp) {
+	 fun getBitmapFromFile(context: Context,fileInfo: FileInfo?,setBitmap: (Bitmap?) ->Unit) {
+		if(fileInfo!=null){
 
-		var urlImage: URL? = URL(repository.fetchFile(fileInfo.id))
+		var urlImage: URL? = URL(repository.fetchFile(fileInfo?.id))
 		lateinit var bitmap:Bitmap
 		viewModelScope.launch(Dispatchers.IO) {
 			// get saved bitmap internal storage uri
 			val j = async { urlImage?.toBitmap() }
 			bitmap = j.await()!!
-			bitmap.byteCount
-			Log.d("MFS1", (bitmap).toString())
+
+
+			val savedUri: Uri? = bitmap.saveToInternalStorage(context, fileInfo)
+			Log.d("MFS3", fileInfo?.filename.toString())
+
+			bitmap = BitmapFactory.decodeFile(savedUri?.path)
 			Log.d("MFS2", (bitmap.allocationByteCount).toString())
+			try {
+				if (bitmap.allocationByteCount > 10000000) {
+					bitmap.reconfigure(100, 100, bitmap.config)
+				}
+				setBitmap(bitmap)
+			}catch(exception:Exception){
 
-			val savedUri : Uri? = bitmap.saveToInternalStorage(context,fileInfo)
-			Log.d("MFS3",fileInfo.toString())
-
-			setBitmap(BitmapFactory.decodeFile(savedUri?.path))
+			}
+		}
 		}
 	}
 

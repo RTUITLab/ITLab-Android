@@ -28,7 +28,7 @@ class MFSRepository @Inject constructor(
 
 
 
-	fun fetchFile(fileId:String):String {
+	fun fetchFile(fileId:String?):String {
 		//MFSApi.downloadFile(fileId)
 		return (BuildConfig.API_URI+"mfs/download/"+fileId)
 	}

@@ -89,7 +89,7 @@ object DownloadFileFromWeb {
 		return BitmapFactory.decodeStream(openStream())
 	}
 	// extension function to save an image to internal storage
-	fun Bitmap.saveToInternalStorage(context : Context,fileInfo: FileInfo):Uri? {
+	fun Bitmap.saveToInternalStorage(context : Context,fileInfo: FileInfo?):Uri? {
 		// get the context wrapper instance
 		val wrapper = ContextWrapper(context)
 
@@ -98,7 +98,7 @@ object DownloadFileFromWeb {
 		var file = wrapper.getDir("images", Context.MODE_PRIVATE)
 
 		// create a file to save the image
-		file = File(file, fileInfo.filename)
+		file = File(file, fileInfo?.id.toString())
 
 		// get the file output stream
 		val stream: OutputStream = FileOutputStream(file)

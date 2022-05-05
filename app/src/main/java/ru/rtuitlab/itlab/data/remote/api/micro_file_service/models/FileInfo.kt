@@ -44,7 +44,7 @@ data class FileInfo(
 	val senderfirstName:String?,
 	val senderlastName: String?,
 	val sendermiddleName:String?,
-	val applicant: UserResponse
+	val applicant: UserResponse,
 ){
 
 }
