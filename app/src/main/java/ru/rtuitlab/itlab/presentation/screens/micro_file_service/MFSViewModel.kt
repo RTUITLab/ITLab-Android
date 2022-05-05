@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation.screens.micro_file_service
 
+import RealPathUtil
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -9,6 +10,8 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.unit.Dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
@@ -17,11 +20,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import retrofit2.Retrofit
+import kotlinx.coroutines.flow.collect
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.emitInIO
+import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfo
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.data.repository.MFSRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
@@ -35,8 +40,25 @@ import javax.inject.Inject
 @HiltViewModel
 class MFSViewModel @Inject constructor(
 	private val repository: MFSRepository,
-	private val usersRepository: UsersRepository
+	private val usersRepository: UsersRepository,
+	private val authStateStorage: AuthStateStorage
+
 ): ViewModel() {
+
+	private val userClaimsFlow = authStateStorage.userClaimsFlow
+	private var isAccesible:Boolean = false
+	private var _accesibleFlow = MutableStateFlow(isAccesible)
+	val accesibleFlow = _accesibleFlow.asStateFlow()
+	init {
+		viewModelScope.launch {
+			userClaimsFlow.collect {
+
+				isAccesible = it.contains(UserClaimCategories.REPORTS.ADMIN)
+				Log.d("MFSViewModel","$isAccesible")
+				_accesibleFlow.value = isAccesible
+			}
+		}
+	}
 
 	private var _requestPermissionLauncher = MutableStateFlow< ActivityResultLauncher<String>?>(null)
 	val requestPermissionLauncher = _requestPermissionLauncher.asStateFlow()
@@ -44,13 +66,12 @@ class MFSViewModel @Inject constructor(
 	private var _activity = MutableStateFlow<Activity?>(null)
 	val activity = _activity.asStateFlow()
 
-	private var _mfsContract = MutableStateFlow<ActivityResultLauncher<Int?>?>(null)
+	private var _mfsContract = MutableStateFlow<ActivityResultLauncher<Array<String>>?>(null)
 	val mfsContract = _mfsContract.asStateFlow()
 
 	private var _accessPermission = MutableStateFlow<Boolean>(false)
 	val accessPermission = _accessPermission.asStateFlow()
 
-	private val MFSCONST = 69
 	private val _fileUri = MutableStateFlow<Uri?>(null)
 	val fileUri = _fileUri.asStateFlow()
 
@@ -58,7 +79,9 @@ class MFSViewModel @Inject constructor(
 	val file = _file.asStateFlow()
 
 	private val _listFileInfoResponseFlow = MutableStateFlow<Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>>>(Resource.Loading)
-	val listFileInfoResponseFlow = _listFileInfoResponseFlow.asStateFlow().also {fetchListFileInfoResponseWithUser() }
+	val listFileInfoResponseFlow = _listFileInfoResponseFlow.asStateFlow().also {fetchListFileInfoResponse() }
+
+
 
 	private var cachedFileInfoList = emptyList<FileInfo>()
 
@@ -70,7 +93,7 @@ class MFSViewModel @Inject constructor(
 	private val _listUserId = MutableStateFlow<String?>(null)
 
 	private val _whenOKcode = MutableStateFlow<(suspend () -> Unit)?>(null)
-	fun onRefresh() = fetchListFileInfoResponseWithUser()
+	fun onRefresh() = fetchListFileInfoResponse()
 
 	fun onSearch(query: String) {
 		_listFileInfoFlow.value = cachedFileInfoList.filter { filterSearchResult(it, query) }
@@ -88,11 +111,45 @@ class MFSViewModel @Inject constructor(
 
 		_listFileInfoFlow.value = cachedFileInfoList
 	}
+	private fun fetchListFileInfoResponse(userId: String?=null,sortedBy: String?=null) {
+		if (_accesibleFlow.value)
+			fetchListFileInfoResponseAdmin(userId = userId, sortedBy = sortedBy)
+		else
+			fetchListFileInfoResponseUser(sortedBy = sortedBy)
+	}
+	private fun fetchListFileInfoResponseUser(sortedBy:String?=null) = _listFileInfoResponseFlow.emitInIO(viewModelScope) {
+		var resources: Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>> =
+			Resource.Loading
+		lateinit var userId: String
+		lateinit var userResponse:UserResponse
+		authStateStorage.userIdFlow.collect {
+			userId = it
+			usersRepository.getUserById(it).handle(
+				onSuccess = { user ->
+					userResponse = user
+				}
+			)
+		}
+		repository.fetchFilesInfo(userId,sortedBy).handle(
+			onSuccess = { files ->
+				val listPair = mutableListOf<Pair<FileInfoResponse, UserResponse?>>()
 
-	/*private fun fetchListFileInfoResponseWithoutUser(userId:String?=null,sortedBy:String?=null) = _listFileInfoResponseFlow.emitInIO(viewModelScope) {
-		repository.fetchFilesInfo(userId,sortedBy)
-	}*/
-	private fun fetchListFileInfoResponseWithUser(userId:String?=null,sortedBy:String?=null) = _listFileInfoResponseFlow.emitInIO(viewModelScope) {
+				files.map { file ->
+					var resource: Pair<FileInfoResponse, UserResponse?>
+
+					val sender = userResponse
+					resource = file to sender
+					listPair.add(resource)
+				}
+				resources = Resource.Success(listPair)
+
+			},
+			onError = { resources = Resource.Error(it) }
+		)
+		resources
+
+	}
+	private fun fetchListFileInfoResponseAdmin(userId:String?=null,sortedBy:String?=null) = _listFileInfoResponseFlow.emitInIO(viewModelScope) {
 
 		var resources: Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>> =
 			Resource.Loading
@@ -121,14 +178,16 @@ class MFSViewModel @Inject constructor(
 		resources
 	}
 	//sortedBy - date or name
-	//userId - id of user
-	fun setUserIdAndSortedBy(userId:String, sortedBy:String) {
-		_listSortedBy.value = sortedBy
+	//userId - id of user hmmmm
+	fun setUserId(userId:String) {
 		_listUserId.value = userId
-		fetchListFileInfoResponseWithUser(
-			userId = userId,
-			sortedBy = sortedBy
+		fetchListFileInfoResponse(
+			userId = userId
 		)
+	}
+	fun setSortedBy(sortedBy:String) {
+		_listSortedBy.value = sortedBy
+		fetchListFileInfoResponse(sortedBy = sortedBy)
 	}
 
 	fun changeAccess(access: Boolean){
@@ -138,7 +197,16 @@ class MFSViewModel @Inject constructor(
 				_whenOKcode.value?.invoke()
 			}
 	}
+	fun setFilePath(context: Context,filePath: Uri?){
+		Log.d("MFS","${filePath} ----------")
+		val uri = Uri.parse(RealPathUtil.writeFileContent(context,filePath!!)!!)
+		_fileUri.value = uri
+		Log.d("MFS","${_fileUri.value} ----------")
 
+		_file.value = File(uri.toString())
+		Log.d("MFS","${_file.value!!.name} ----------")
+
+	}
 	fun provideRequestPermissionLauncher(activity: Activity,requestPermissionLauncher: ActivityResultLauncher<String>){
 		_activity.value = activity
 		_requestPermissionLauncher.value = requestPermissionLauncher
@@ -147,17 +215,11 @@ class MFSViewModel @Inject constructor(
 		Log.d("MFS","access ${_accessPermission.value}")
 	}
 
-	fun provideMFSContract(contract: ActivityResultLauncher<Int?>){
+	fun provideMFSContract(contract: ActivityResultLauncher<Array<String>>){
 		_mfsContract.value = contract
 	}
 
-	fun setFilePath(filePath: Uri?){
-		_fileUri.value = filePath
 
-		_file.value = File(filePath!!.path!!)
-		Log.d("MFS","${_file.value!!.name} ----------")
-
-	}
 
 	fun setFileNull(){
 		_fileUri.value = null
@@ -167,13 +229,13 @@ class MFSViewModel @Inject constructor(
 
 		if(_activity.value!=null) {
 			if (_accessPermission.value) {
-				_mfsContract.value?.launch(MFSCONST)
+				_mfsContract.value?.launch(arrayOf("*/*"))
 			}
 			else {
 				Log.d("MFS","${_activity.value} ----------")
 
 				onRequestPermission(_activity.value!!){
-					_mfsContract.value?.launch(MFSCONST)
+					_mfsContract.value?.launch(arrayOf("*/*"))
 				}
 			}
 		}
@@ -213,15 +275,20 @@ class MFSViewModel @Inject constructor(
 		}
 
 	}
-	fun getBitmapFromFile(context: Context,fileInfo: FileInfo,setBitmap: (Bitmap?) ->Unit) {
+	fun getBitmapFromFile(context: Context,fileInfo: FileInfo,setBitmap: (Bitmap?) ->Unit,width: Dp) {
 
 		var urlImage: URL? = URL(repository.fetchFile(fileInfo.id))
-
+		lateinit var bitmap:Bitmap
 		viewModelScope.launch(Dispatchers.IO) {
 			// get saved bitmap internal storage uri
 			val j = async { urlImage?.toBitmap() }
-			val bitmap = j.await()
-			val savedUri : Uri? = bitmap?.saveToInternalStorage(context)
+			bitmap = j.await()!!
+			bitmap.byteCount
+			Log.d("MFS1", (bitmap).toString())
+			Log.d("MFS2", (bitmap.allocationByteCount).toString())
+
+			val savedUri : Uri? = bitmap.saveToInternalStorage(context,fileInfo)
+			Log.d("MFS3",fileInfo.toString())
 
 			setBitmap(BitmapFactory.decodeFile(savedUri?.path))
 		}
@@ -262,8 +329,8 @@ class MFSViewModel @Inject constructor(
 
 	private fun filterSearchResult(fileInfo: FileInfo, query: String) = fileInfo.run {
 		filename.contains(query.trim(), ignoreCase = true) ||
-				id.contains(query.trim(), ignoreCase = true) ||
-				uploadDate.contains(query.trim(), ignoreCase = true)
+				uploadDate.contains(query.trim(), ignoreCase = true) ||
+				applicant.toString().contains(query.trim(), ignoreCase = true)
 	}
 
 	fun parseUploadDate(uploadDate: String): String {

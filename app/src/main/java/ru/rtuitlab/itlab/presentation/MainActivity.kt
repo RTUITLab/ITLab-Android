@@ -19,7 +19,6 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
-import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MFSContract
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthScreen
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthViewModel
@@ -52,14 +51,13 @@ class MainActivity : AppCompatActivity() {
 			authViewModel.handleLogoutResult(it)
 		}
 	private val requestPermissionLauncher =
-		registerForActivityResult(ActivityResultContracts.RequestPermission()
-		) {
+		registerForActivityResult(ActivityResultContracts.RequestPermission()) {
 			mfsViewModel.changeAccess(it)
 		}
 
 	private val mfsContract =
-		registerForActivityResult(MFSContract()){ selectedFile ->
-			mfsViewModel.setFilePath(selectedFile)
+		registerForActivityResult(ActivityResultContracts.OpenDocument()){ selectedFile ->
+			mfsViewModel.setFilePath(this,selectedFile)
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {

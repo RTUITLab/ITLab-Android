@@ -27,7 +27,7 @@ import javax.inject.Inject
 class DevicesViewModel @Inject constructor(
         private val devicesRepo: DevicesRepository,
         private val usersRepository: UsersRepository,
-        authStateStorage:  AuthStateStorage
+        private val authStateStorage:  AuthStateStorage
 ) : ViewModel() {
 
         private val userClaimsFlow = authStateStorage.userClaimsFlow
@@ -39,7 +39,6 @@ class DevicesViewModel @Inject constructor(
                         userClaimsFlow.collect {
 
                                 isAccesible = it.contains(UserClaimCategories.DEVICES.EDIT)
-                                Log.d("DevicesViewModel","$isAccesible")
                                 _accesibleFlow.value = isAccesible
                         }
                 }

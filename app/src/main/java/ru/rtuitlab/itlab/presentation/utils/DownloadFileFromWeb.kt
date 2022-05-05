@@ -44,12 +44,12 @@ object DownloadFileFromWeb {
 			setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
 				.setAllowedOverRoaming(false)
 				.setTitle(fileInfo.filename)
-				.setDescription("${fileInfo.fileDescription}")
+				.setDescription(fileInfo.fileDescription)
 				.setDestinationInExternalPublicDir(
 					directory.toString(),
 					fileInfo.filename
 				)
-			Log.d("DOWN","${fileInfo.filename} ")
+			Log.d("DOWN",fileInfo.filename )
 		}
 
 		val downloadId = downloadManager.enqueue(request)
@@ -89,7 +89,7 @@ object DownloadFileFromWeb {
 		return BitmapFactory.decodeStream(openStream())
 	}
 	// extension function to save an image to internal storage
-	fun Bitmap.saveToInternalStorage(context : Context):Uri? {
+	fun Bitmap.saveToInternalStorage(context : Context,fileInfo: FileInfo):Uri? {
 		// get the context wrapper instance
 		val wrapper = ContextWrapper(context)
 
@@ -98,13 +98,13 @@ object DownloadFileFromWeb {
 		var file = wrapper.getDir("images", Context.MODE_PRIVATE)
 
 		// create a file to save the image
-		file = File(file, "${UUID.randomUUID()}.jpg")
+		file = File(file, fileInfo.filename)
 
 		// get the file output stream
 		val stream: OutputStream = FileOutputStream(file)
 
 		// compress bitmap
-		compress(Bitmap.CompressFormat.JPEG, 100, stream)
+		compress(Bitmap.CompressFormat.JPEG, 10, stream)
 
 		// flush the stream
 		stream.flush()

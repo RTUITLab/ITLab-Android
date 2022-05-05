@@ -12,16 +12,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,8 +37,14 @@ import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceCard
 import ru.rtuitlab.itlab.presentation.screens.devices.components.FloatActionButton
 import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
+import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
+import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
+import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarOption
+import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
+import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
+import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -57,6 +65,8 @@ fun BaseElements(
 			.fillMaxSize(),
 
 	) {
+		//for attach files
+		/*
 		Column(
 
 		) {
@@ -126,41 +136,134 @@ fun BaseElements(
 			)
 		}
 
-		SwipeRefresh(
+
+		 */
+		Column(
 			modifier = Modifier
 				.fillMaxWidth()
-				.offset(0.dp, 200.dp),
-			state = rememberSwipeRefreshState(isRefreshing),
-			onRefresh = mfsViewModel::onRefresh
 		) {
-			Column(
+			val state = remember{ mutableStateOf(false)}
+			val stringSearch  = remember { mutableStateOf("")}
+			val focusRequester = remember { FocusRequester() }
+
+			Row(
 				modifier = Modifier
-					.fillMaxSize()
-			) {
-				filesResource.handle(
-					onLoading = {
-						isRefreshing = true
+					.fillMaxWidth()
+					.padding(10.dp),
+				horizontalArrangement = Arrangement.End,
+				verticalAlignment = Alignment.CenterVertically
+			){
+				SideEffect {
+					mfsViewModel.onSearch(stringSearch.value)
+				}
+				OutlinedTextField(
+					modifier = Modifier
+						.fillMaxWidth()
+						.weight(0.9f)
+						.focusRequester(focusRequester),
+					value = stringSearch.value,
+					onValueChange = {
+						stringSearch.value = it
+						mfsViewModel.onSearch(stringSearch.value)
 					},
-					onError = { msg ->
-						isRefreshing = false
-						LoadingError(msg = msg)
+					placeholder = {
+
+						Text(text = stringResource(R.string.search))
+
+
 					},
-					onSuccess = {
-						isRefreshing = false
-						mfsViewModel.onResourceSuccess(it)
+					singleLine = true,
+					colors = TextFieldDefaults.outlinedTextFieldColors(
+						backgroundColor = MaterialTheme.colors.background,
+						focusedBorderColor = MaterialTheme.colors.onSurface
 
-						FileList(mfsViewModel)
-
-
-					}
+					)
 
 				)
+				DisposableEffect(Unit) {
+					//focusRequester.requestFocus()
+					onDispose {
+						mfsViewModel.onSearch("")
+					}
+				}
+				AppDropdownMenu(
+					modifier = Modifier
+						.fillMaxWidth()
+						.weight(0.1f),
+					anchor = {
+						IconButton(
+							modifier = Modifier
+								.height(36.dp)
+								.width(36.dp),
+							onClick = it
+						) {
+							Icon(
+								imageVector = Icons.Default.FilterList,
+								contentDescription = stringResource(R.string.filter),
+								tint = MaterialTheme.colors.onSurface
+							)
+						}
+					},
+					content = {
+							collapseAction ->
+						LabelledRadioButton(
+							state = !state.value,
+							onCheckedChange = {
+								mfsViewModel.setSortedBy("date")
+								state.value=!state.value
+								collapseAction()
+							},
+							label = stringResource(R.string.byDate)
+						)
+						LabelledRadioButton(
+							state = state.value,
+							onCheckedChange = {
+								mfsViewModel.setSortedBy("user")
+								state.value=!state.value
+								collapseAction()
+							},
+							label = stringResource(R.string.byUser)
+						)
+					}
+				)
+
+			}
+			SwipeRefresh(
+				modifier = Modifier
+					.fillMaxWidth(),
+				state = rememberSwipeRefreshState(isRefreshing),
+				onRefresh = mfsViewModel::onRefresh
+			) {
+
+				Column(
+					modifier = Modifier
+						.fillMaxWidth()
+				) {
+					filesResource.handle(
+						onLoading = {
+							isRefreshing = true
+						},
+						onError = { msg ->
+							isRefreshing = false
+							LoadingError(msg = msg)
+						},
+						onSuccess = {
+							isRefreshing = false
+							mfsViewModel.onResourceSuccess(it)
+
+							FileList(mfsViewModel)
+
+
+						}
+
+					)
+				}
+
+
 			}
 
 
-		}
-
-
+	}
 	}
 }
 @ExperimentalMaterialApi
@@ -202,6 +305,7 @@ private fun FileList(
 fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
 	val context = LocalContext.current
 	val exp = file.filename.substring(file.filename.lastIndexOf(".") + 1)
+	val duration = 300
 
 	Card(
 		modifier = modifier
@@ -211,9 +315,25 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
 				.fillMaxWidth()
 				.padding(10.dp),
 		) {
-			Text(
-				text = mfsViewModel.parseUploadDate(file.uploadDate)
-			)
+			SharedElement(
+				key = "${file.id}/time",
+				screenKey = AppScreen.Reports.route,
+				transitionSpec = SharedElementsTransitionSpec(
+					durationMillis = duration
+				)
+			) {
+				IconizedRow(
+					imageVector = Icons.Default.Schedule,
+					imageWidth = 18.dp,
+					imageHeight = 18.dp,
+					spacing = 8.dp
+				) {
+					Text(
+						text = file.uploadDate.fromIso8601(LocalContext.current),
+						style = MaterialTheme.typography.subtitle1
+					)
+				}
+			}
 			Row {
 				Column(
 					modifier = Modifier
@@ -222,12 +342,27 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
 					verticalArrangement = Arrangement.Center,
 					horizontalAlignment = Alignment.CenterHorizontally
 				) {
-					Text(
-						text = file.senderfirstName + " " + file.senderlastName
-					)
+					SharedElement(
+						key = "${file.id}/applicant",
+						screenKey = AppScreen.ReportDetails.route,
+						transitionSpec = SharedElementsTransitionSpec(
+							durationMillis = ru.rtuitlab.itlab.presentation.screens.reports.duration
+						)
+					) {
+						IconizedRow(
+							imageVector = Icons.Default.Person,
+							opacity = .7f,
+							spacing = 0.dp
+						) {
+							UserLink(user = file.applicant)
+						}
+					}
 					TextButton(
 						onClick = { mfsViewModel.downloadFile(context,file) }){
-						Text(text = stringResource(R.string.download))
+						Text(
+							text = stringResource(R.string.download),
+							color = MaterialTheme.colors.onPrimary
+						)
 					}
 				}
 				Column(
@@ -240,11 +375,12 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
 					val( bitmap,setBitmap) = rememberSaveable{mutableStateOf<Bitmap?>(null)}
 					Log.d("BASE","$exp")
 					if(exp == "png" || exp == "jpeg" || exp == "jpg"|| exp == "gif") {
-						mfsViewModel.getBitmapFromFile(context,file,setBitmap)
+						//mfsViewModel.getBitmapFromFile(context,file,setBitmap,30.dp)
 						if(bitmap != null){
 							Image(
 								bitmap = bitmap.asImageBitmap(),
-								contentDescription = stringResource(R.string.report)
+								contentDescription = stringResource(R.string.report),
+								contentScale = ContentScale.Fit
 							)
 						}else{
 							Icon(
