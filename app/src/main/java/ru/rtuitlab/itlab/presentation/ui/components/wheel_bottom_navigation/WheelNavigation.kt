@@ -23,6 +23,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.serialization.ExperimentalSerializationApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.ui.components.CustomWheelNavigation
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 import kotlin.math.sqrt
 
 @ExperimentalPagerApi
@@ -32,7 +33,7 @@ import kotlin.math.sqrt
 @ExperimentalStdlibApi
 @Composable
 fun WheelNavigation(
-	wheelNavigationViewModel: WheelNavigationViewModel = viewModel(),
+	wheelNavigationViewModel: WheelNavigationViewModel = singletonViewModel(),
 	modifier: Modifier,
 	onClickWheel: () ->Unit,
 	marginDown: Dp,

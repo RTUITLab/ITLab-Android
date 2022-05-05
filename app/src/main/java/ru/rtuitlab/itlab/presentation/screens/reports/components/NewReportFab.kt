@@ -1,12 +1,16 @@
 package ru.rtuitlab.itlab.presentation.screens.reports.components
 
 import android.util.Log
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.reports.duration
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.FadeMode
@@ -37,6 +41,8 @@ fun NewReportFab(
 		}
 	) {
 		FloatingActionButton(
+			modifier = Modifier
+				.offset(0.dp,(-50).dp),
 			onClick = {
 				if (scope?.isRunningTransition == true) return@FloatingActionButton
 				navController.navigate(AppScreen.NewReport.route)
