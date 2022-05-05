@@ -1,6 +1,5 @@
-package ru.rtuitlab.itlab.presentation.ui.components.wheelBottomNavigation
+package ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation
 
-import androidx.compose.material.rememberSwipeableState
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

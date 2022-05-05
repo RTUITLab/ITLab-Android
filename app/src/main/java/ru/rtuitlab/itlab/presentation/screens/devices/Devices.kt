@@ -17,12 +17,13 @@ import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceCard
 import ru.rtuitlab.itlab.presentation.screens.devices.components.FloatActionButton
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
 fun Devices(
-	devicesViewModel: DevicesViewModel = viewModel(),
+	devicesViewModel: DevicesViewModel = singletonViewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = viewModel()
 ) {
 	val devicesResource by devicesViewModel.deviceResponsesFlow.collectAsState()
@@ -71,7 +72,13 @@ fun Devices(
 
 
 			if (devicesViewModel.accesibleFlow.collectAsState().value)
-				FloatActionButton(devicesViewModel, bottomSheetViewModel)
+				FloatActionButton(
+					devicesViewModel,
+					bottomSheetViewModel,
+					modifier = Modifier
+						.offset(0.dp,(-50).dp)
+
+				)
 
 		}
 

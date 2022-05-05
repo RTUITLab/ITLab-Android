@@ -10,16 +10,23 @@ import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
-import ru.rtuitlab.itlab.presentation.ui.ITLabApp
+import kotlinx.serialization.ExperimentalSerializationApi
+import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MFSContract
+import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthScreen
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthViewModel
+import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
+import ru.rtuitlab.itlab.presentation.ui.ITLabApp
 import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
+import ru.rtuitlab.itlab.presentation.utils.LocalActivity
 
 @ExperimentalMaterialApi
 @ExperimentalMotionApi
@@ -28,9 +35,13 @@ import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
 @ExperimentalPagerApi
 @ExperimentalStdlibApi
 @AndroidEntryPoint
+@ExperimentalSerializationApi
 class MainActivity : AppCompatActivity() {
 
+	private val mfsViewModel: MFSViewModel by viewModels()
 	private val authViewModel: AuthViewModel by viewModels()
+
+
 
 	private val authPageLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -44,6 +55,10 @@ class MainActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+
+		mfsViewModel._mfsContract.value = registerForActivityResult(MFSContract(mfsViewModel)){}
+
+
 		authViewModel.provideLogoutLauncher(logoutPageLauncher)
 		installSplashScreen()
 		setContent {
@@ -52,7 +67,12 @@ class MainActivity : AppCompatActivity() {
 				Surface(color = MaterialTheme.colors.background) {
 					when (authState?.isAuthorized) {
 						true -> {
-							ITLabApp()
+							CompositionLocalProvider(
+								LocalNavController provides rememberNavController(),
+								LocalActivity provides this
+							) {
+								ITLabApp()
+							}
 						}
 						false -> AuthScreen { authViewModel.onLoginEvent(authPageLauncher) }
 						null -> {}
@@ -61,4 +81,6 @@ class MainActivity : AppCompatActivity() {
 			}
 		}
 	}
+
+
 }

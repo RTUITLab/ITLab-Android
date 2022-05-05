@@ -1,7 +1,6 @@
 package ru.rtuitlab.itlab.presentation.utils
 
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.navigation.NavHostController
 import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
 import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Shift
 import ru.rtuitlab.itlab.presentation.UserViewModel
@@ -12,10 +11,9 @@ import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetView
 @ExperimentalMaterialApi
 sealed class AppBottomSheet {
         class EventShift(
-                val shift: Shift,
-                val salaries: List<Int>,
-                val eventViewModel: EventViewModel,
-                val navController: NavHostController
+	        val shift: Shift,
+	        val salaries: List<Int>,
+	        val eventViewModel: EventViewModel
         ): AppBottomSheet()
         class EventDescription(val markdown: String): AppBottomSheet()
         class DeviceInfo (

@@ -19,15 +19,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventRole
 import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Place
+import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
-import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
@@ -39,13 +38,14 @@ fun PlaceAlertDialog(
 	eventViewModel: EventViewModel,
 	shiftContainsUser: Boolean,
 	onResult: () -> Unit,
-	navController: NavHostController,
 	onDismissRequest: () -> Unit
 ) {
 
 	var isLoading by remember { mutableStateOf(false) }
 
 	val eventRoles by eventViewModel.eventRoles.collectAsState()
+
+	val navController = LocalNavController.current
 
 	Dialog(
 		onDismissRequest = onDismissRequest,
@@ -145,10 +145,7 @@ fun PlaceAlertDialog(
 									verticalAlignment = Alignment.CenterVertically,
 									spacing = 0.dp
 								) {
-									InteractiveField(value = it.user.fullName) {
-										navController.navigate("${AppScreen.EmployeeDetails.navLink}/${it.user.id}")
-										onResult()
-									}
+									UserLink(user = it.user, onNavigate = onResult)
 								}
 
 								Text(

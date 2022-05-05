@@ -19,10 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
-import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.domain.model.EventDetail
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftCard
@@ -37,16 +34,15 @@ import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.SwipingStates
 import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
-import ru.rtuitlab.itlab.presentation.utils.AppTab
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @ExperimentalPagerApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Event(
 	eventViewModel: EventViewModel,
-	bottomSheetViewModel: BottomSheetViewModel,
-	navController: NavHostController,
-	appBarViewModel: AppBarViewModel = viewModel()
+	bottomSheetViewModel: BottomSheetViewModel = singletonViewModel(),
+	appBarViewModel: AppBarViewModel = singletonViewModel()
 ) {
 
 	val eventResource by eventViewModel.eventResourceFlow.collectAsState()
@@ -75,8 +71,7 @@ fun Event(
 					EventInfoWithList(
 						event = it.first.toEvent(it.second),
 						eventViewModel = eventViewModel,
-						bottomSheetViewModel = bottomSheetViewModel,
-						navController = navController
+						bottomSheetViewModel = bottomSheetViewModel
 					)
 				}
 			)
@@ -89,8 +84,7 @@ fun Event(
 private fun EventInfoWithList(
 	event: EventDetail,
 	eventViewModel: EventViewModel,
-	bottomSheetViewModel: BottomSheetViewModel,
-	navController: NavHostController
+	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val swipingState = rememberSwipeableState(SwipingStates.EXPANDED)
 
@@ -120,8 +114,7 @@ private fun EventInfoWithList(
 			EventShifts(
 				event = event,
 				eventViewModel = eventViewModel,
-				bottomSheetViewModel = bottomSheetViewModel,
-				navController = navController
+				bottomSheetViewModel = bottomSheetViewModel
 			)
 		}
 	}
@@ -269,8 +262,7 @@ private fun EventInfo(
 private fun EventShifts(
 	event: EventDetail,
 	eventViewModel: EventViewModel,
-	bottomSheetViewModel: BottomSheetViewModel,
-	navController: NavHostController
+	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val coroutineScope = rememberCoroutineScope()
 	Column(
@@ -308,8 +300,7 @@ private fun EventShifts(
 											}
 										}
 									},
-									eventViewModel = eventViewModel,
-									navController = navController
+									eventViewModel = eventViewModel
 								),
 								coroutineScope
 							)

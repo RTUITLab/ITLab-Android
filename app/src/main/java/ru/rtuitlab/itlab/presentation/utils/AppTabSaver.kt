@@ -21,11 +21,13 @@ sealed class AppTab(
     var accessible: Boolean = true
 ) {
     object Events: AppTab("events_tab", AppScreen.Events.route, R.string.events, Icons.Default.EventNote)
+
     object Projects: AppTab("projects_tab", AppScreen.Projects.route, R.string.projects, Icons.Default.Widgets, )
     object Devices: AppTab("devices_tab", AppScreen.Devices.route, R.string.devices, Icons.Default.DevicesOther,)
     object Employees: AppTab("employees_tab", AppScreen.Employees.route, R.string.employees, Icons.Default.People,)
     object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback,)
     object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, )
+    object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description)
     object Null: AppTab("","", R.string.Null, Icons.Default.HourglassEmpty)
 
 
@@ -38,6 +40,7 @@ sealed class AppTab(
         Employees -> AppScreen.Employees
         Feedback -> AppScreen.Feedback
         Profile -> AppScreen.Profile
+        Reports -> AppScreen.Reports
         Null -> AppScreen.Null
     }
 
@@ -51,7 +54,8 @@ sealed class AppTab(
                 Devices,
                 Employees,
                 Feedback,
-                Profile
+                Profile,
+                Reports
             )
         val firstPage
             get() = listOf(
@@ -64,6 +68,8 @@ sealed class AppTab(
             get() = listOf(
                 Profile,
                 Projects,
+                Reports
+
 
 
             )
@@ -80,6 +86,7 @@ sealed class AppTab(
             Employees.route -> Employees
             Profile.route   -> Profile
             Feedback.route  -> Feedback
+            Reports.route   -> Reports
             else            -> {throw IllegalArgumentException("Invalid route. Maybe you forgot to add a new screen to AppTabSaver.kt?")}
         }
 
@@ -108,7 +115,7 @@ open class AppScreen(
     // Events-related
     object Events: AppScreen(R.string.events, "events")
     @Parcelize
-    class EventDetails(val title: String): AppScreen(R.string.event_name, "event/{eventId}") { // Has back button
+    class EventDetails(val title: String): AppScreen(R.string.details_name, "event/{eventId}") { // Has back button
         companion object {
             const val route = "event/{eventId}"
             val navLink: String = route.substringBefore("/{")
@@ -126,6 +133,18 @@ open class AppScreen(
     // Profile-related
     object Profile: AppScreen(R.string.profile, "profile")
 
+
+    // Reports-related
+    object Reports: AppScreen(R.string.reports, "reports")
+    class ReportDetails(val title: String): AppScreen(R.string.details_name, "report/{reportId}") {
+        companion object {
+            const val route = "report/{reportId}"
+            val navLink: String = route.substringBefore("/{")
+        }
+    }
+    object NewReport: AppScreen(R.string.report_new, "reports/new")
+
+
     object Null: AppScreen(R.string.Null,"null")
     companion object {
         fun getAll(context: Context) = listOf(
@@ -138,6 +157,9 @@ open class AppScreen(
             Projects,
             Devices,
             Profile,
+            Reports,
+            ReportDetails(context.resources.getString(R.string.report)),
+            NewReport
         )
     }
 }

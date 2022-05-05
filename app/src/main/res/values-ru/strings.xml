@@ -16,7 +16,7 @@
     <string name="employee">Сотрудник</string>
     <string name="dial">Позвонить</string>
     <string name="save">Сохранить</string>
-    <string name="event_name">%1$s</string>
+    <string name="details_name">%1$s</string>
     <string name="event_new">Новое событие</string>
     <string name="study_group">Учебная группа</string>
     <string name="vk_id">ВК</string>
@@ -117,4 +117,21 @@
     <string name="show_only_free">Показать только доступное</string>
     <string name="Null">null</string>
     <string name="event">Событие</string>
+    <string name="reports">Отчёты</string>
+    <string name="report">Отчёт</string>
+    <string name="report_applicant">Автор:</string>
+    <string name="report_implementer">О ком:</string>
+    <string name="report_application_text">Текст отчёта</string>
+    <string name="report_approval_text">Сообщение принявшего</string>
+    <string name="report_new">Новый отчёт</string>
+    <string name="report_new_disclaimer">Опишите, что вы делали за последнее время, что вы считаете важным при оценке вашей работы.  Вы можете прикрепить изображения или документы. Формат описания поддерживает формат Markdown.</string>
+    <string name="reports_about_me">Обо мне</string>
+    <string name="reports_from_me">Мои</string>
+    <string name="reports_files">Файлы</string>
+    <string name="report_write">Писать</string>
+    <string name="report_preview">Просмотр</string>
+
+    //MFS
+    <string name="Select_a_file">Выбрать файл</string>
+    <string name="Upload_a_file">Загрузить файл</string>
 </resources>

@@ -11,20 +11,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventNotificationCard
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
 @Composable
 fun EventsNotifications(
-	eventsViewModel: EventsViewModel,
-	navController: NavHostController
+	eventsViewModel: EventsViewModel = singletonViewModel()
 ) {
 	val notificationsResource by eventsViewModel.invitationsResourceFlow.collectAsState()
 
@@ -63,8 +62,7 @@ fun EventsNotifications(
 							) {
 								EventNotificationCard(
 									notification = it,
-									eventsViewModel = eventsViewModel,
-									navController = navController
+									eventsViewModel = eventsViewModel
 								)
 							}
 						}

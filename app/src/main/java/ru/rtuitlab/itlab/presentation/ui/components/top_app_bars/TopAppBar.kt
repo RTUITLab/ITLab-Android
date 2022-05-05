@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -150,19 +152,12 @@ fun TabbedTopAppBar(
 fun AppBarTabRow(
 	pagerState: PagerState,
 	tabs: List<AppBarTab>,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	isScrollable: Boolean = false
 ) {
 	val coroutineScope = rememberCoroutineScope()
-	TabRow(
-		modifier = modifier,
-		selectedTabIndex = pagerState.currentPage,
-		indicator = { tabPositions ->
-			TabRowDefaults.Indicator(
-				Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
-			)
-		},
-		contentColor = AppColors.accent.collectAsState().value
-	) {
+	@Composable
+	fun tabRowContent() {
 		tabs.forEachIndexed { index, it ->
 			Tab(
 				text = {
@@ -181,6 +176,32 @@ fun AppBarTabRow(
 			)
 		}
 	}
+	if (isScrollable)
+		ScrollableTabRow(
+			modifier = modifier.fillMaxWidth(),
+			selectedTabIndex = pagerState.currentPage,
+			indicator = { tabPositions ->
+				TabRowDefaults.Indicator(
+					Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+				)
+			},
+			contentColor = AppColors.accent.collectAsState().value
+		) {
+			tabRowContent()
+		}
+	else
+		TabRow(
+			modifier = modifier,
+			selectedTabIndex = pagerState.currentPage,
+			indicator = { tabPositions ->
+				TabRowDefaults.Indicator(
+					Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+				)
+			},
+			contentColor = AppColors.accent.collectAsState().value
+		) {
+			tabRowContent()
+		}
 }
 
 @Composable
