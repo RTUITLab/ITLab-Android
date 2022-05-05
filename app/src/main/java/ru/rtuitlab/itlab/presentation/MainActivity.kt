@@ -25,6 +25,7 @@ import ru.rtuitlab.itlab.presentation.screens.auth.AuthViewModel
 import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
 import ru.rtuitlab.itlab.presentation.ui.ITLabApp
 import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
+import ru.rtuitlab.itlab.presentation.utils.LocalActivity
 
 @ExperimentalMaterialApi
 @ExperimentalMotionApi
@@ -76,7 +77,8 @@ class MainActivity : AppCompatActivity() {
 					when (authState?.isAuthorized) {
 						true -> {
 							CompositionLocalProvider(
-								LocalNavController provides rememberNavController()
+								LocalNavController provides rememberNavController(),
+								LocalActivity provides this
 							) {
 								ITLabApp()
 							}
