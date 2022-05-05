@@ -7,6 +7,8 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.utils.text_toolbar.TextAction
+import java.lang.Integer.min
+import kotlin.math.max
 
 sealed class MdAction(
 	@DrawableRes val iconResource: Int,
@@ -21,27 +23,47 @@ sealed class MdAction(
 
 		private fun process(
 			policy: WrappingPolicy = WrappingPolicy.Wrap,
-			wrapper: String,
+			prefix: String,
+			postfix: String = prefix,
 			delimiter: String = " ",
 			textValueToProcess: TextFieldValue
 		) : TextFieldValue {
 			val selection = textValueToProcess.selection
 			Log.v("TextField", "Selection: [${selection.start}, ${selection.end}), Text length: ${textValueToProcess.text.length}")
-			val preSelection = textValueToProcess.text.substring(0, selection.start)
-			val inSelection = textValueToProcess.text.substring(selection.start, selection.end)
-			val postSelection = textValueToProcess.text.substring(selection.end, textValueToProcess.text.length)
+
+			// selection.start can be larger than selection.end depending on user input
+			val selectionStart = min(selection.start, selection.end)
+			val selectionEnd = max(selection.end, selection.start)
+
+			val preSelection = textValueToProcess.text.substring(0, selectionStart)
+			val inSelection = textValueToProcess.text.substring(selectionStart, selectionEnd)
+			val postSelection = textValueToProcess.text.substring(selectionEnd, textValueToProcess.text.length)
 			return when (policy) {
 				WrappingPolicy.Start -> textValueToProcess.copy(
-					text = "$preSelection$wrapper$delimiter$inSelection$postSelection",
-					selection = TextRange(selection.start + wrapper.length + delimiter.length, selection.end + wrapper.length + delimiter.length)
+					text = "$preSelection$prefix$delimiter$inSelection$postSelection",
+					selection = TextRange(
+						selectionStart + prefix.length + delimiter.length,
+						selectionEnd + prefix.length + delimiter.length
+					)
 				)
 				WrappingPolicy.End -> textValueToProcess.copy(
-					text = "$preSelection$delimiter$inSelection $wrapper$postSelection",
-					selection = TextRange(selection.start - wrapper.length - delimiter.length, selection.end - wrapper.length - delimiter.length)
+					text = "$preSelection$delimiter$inSelection $postfix$postSelection",
+					selection = TextRange(
+						selectionStart - postfix.length - delimiter.length,
+						selectionEnd - postfix.length - delimiter.length
+					)
 				)
 				WrappingPolicy.Wrap -> textValueToProcess.copy(
-					text = "$preSelection$wrapper$delimiter$inSelection$delimiter$wrapper$postSelection",
-					selection = TextRange(selection.start + wrapper.length + delimiter.length, selection.start + wrapper.length + delimiter.length + inSelection.length)
+					text = "$preSelection$prefix$delimiter$inSelection$delimiter$postfix$postSelection",
+					selection = if (prefix == postfix)
+						TextRange(
+							selectionStart + prefix.length + delimiter.length,
+							selectionStart + postfix.length + delimiter.length + inSelection.length
+						)
+					else TextRange(
+						selectionStart + prefix.length + delimiter.length,
+						selectionStart + prefix.length + delimiter.length + inSelection.length
+					)
 				)
 			}
 		}
@@ -55,7 +77,7 @@ sealed class MdAction(
 			Link,
 			UnorderedList,
 			OrderedList,
-			Task,
+//			Task, // Not supported
 			Attach
 		)
 
@@ -74,7 +96,7 @@ sealed class MdAction(
 		iconResource = R.drawable.ic_header,
 		action = {
 			process(
-				wrapper = "###",
+				prefix = "###",
 				textValueToProcess = it
 			)
 		},
@@ -85,7 +107,7 @@ sealed class MdAction(
 		iconResource = R.drawable.ic_bold,
 		action = {
 			process(
-				wrapper = "**",
+				prefix = "**",
 				delimiter = "",
 				textValueToProcess = it
 			)
@@ -97,7 +119,7 @@ sealed class MdAction(
 		iconResource = R.drawable.ic_italic,
 		action = {
 			process(
-				wrapper = "*",
+				prefix = "*",
 				delimiter = "",
 				textValueToProcess = it
 			)
@@ -110,7 +132,7 @@ sealed class MdAction(
 		action = {
 			process(
 				policy = WrappingPolicy.Start,
-				wrapper = ">",
+				prefix = ">",
 				textValueToProcess = it
 			)
 		},
@@ -121,7 +143,7 @@ sealed class MdAction(
 		iconResource = R.drawable.ic_code,
 		action = {
 			process(
-				wrapper = "`",
+				prefix = "`",
 				delimiter = "",
 				textValueToProcess = it
 			)
@@ -133,7 +155,10 @@ sealed class MdAction(
 		iconResource = R.drawable.ic_link,
 		action = {
 			process(
-				wrapper = "###",
+				policy = WrappingPolicy.Wrap,
+				prefix = "[",
+				postfix = "](url)",
+				delimiter = "",
 				textValueToProcess = it
 			)
 		},
@@ -145,7 +170,7 @@ sealed class MdAction(
 		action = {
 			process(
 				policy = WrappingPolicy.Start,
-				wrapper = "-",
+				prefix = "-",
 				textValueToProcess = it
 			)
 		},
@@ -157,19 +182,21 @@ sealed class MdAction(
 		action = {
 			process(
 				policy = WrappingPolicy.Start,
-				wrapper = "1.",
+				prefix = "1.",
 				textValueToProcess = it
 			)
 		},
 		nameResource = R.string.md_ol
 	)
 
+
+	// This action is not supported by the Markwon renderer
 	object Task: MdAction(
 		iconResource = R.drawable.ic_task,
 		action = {
 			process(
 				policy = WrappingPolicy.Start,
-				wrapper = "- [ ]",
+				prefix = "- [ ]",
 				textValueToProcess = it
 			)
 		},
@@ -180,7 +207,7 @@ sealed class MdAction(
 		iconResource = R.drawable.ic_attach,
 		action = {
 			process(
-				wrapper = "###",
+				prefix = "###",
 				textValueToProcess = it
 			)
 		},
