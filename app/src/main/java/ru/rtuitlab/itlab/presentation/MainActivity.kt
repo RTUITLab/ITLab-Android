@@ -1,7 +1,9 @@
 package ru.rtuitlab.itlab.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -61,12 +63,17 @@ class MainActivity : AppCompatActivity() {
 			mfsViewModel.setFilePath(this,selectedFile)
 	}
 
+	private val requestDownloadLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+		Log.d("Main", it.data.toString())
+	}
+
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
 		mfsViewModel.provideRequestPermissionLauncher(this,requestPermissionLauncher)
 		mfsViewModel.provideMFSContract(mfsContract)
-
+		mfsViewModel.provideDownloadLauncher(requestDownloadLauncher)
 
 		authViewModel.provideLogoutLauncher(logoutPageLauncher)
 		installSplashScreen()

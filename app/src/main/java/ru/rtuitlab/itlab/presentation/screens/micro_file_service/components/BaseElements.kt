@@ -377,7 +377,7 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
 					if((exp == "png" || exp == "jpeg" || exp == "jpg"|| exp == "gif") ) {
 						if (bitmap == null)
 							SideEffect {
-								mfsViewModel.getBitmapFromFile(context, file, setBitmap)
+								//mfsViewModel.getBitmapFromFile(context, file, setBitmap)
 							}
 
 						if(bitmap != null){
