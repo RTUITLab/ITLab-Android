@@ -268,13 +268,13 @@ class MFSViewModel @Inject constructor(
 	}
 	fun downloadFile(context: Context, fileInfo: FileInfo) = viewModelScope.launch(Dispatchers.IO){
 		val repFetchFile = suspend {
-			/*Log.d("MFSstring", repository.fetchFile(fileInfo.id))
-			DownloadFileFromWeb.downloadFile(context,repository.fetchFile(fileInfo.id),fileInfo)
-*/
-			val url = repository.fetchFile(fileInfo.id)
+			Log.d("MFSstring", repository.fetchFile(fileInfo.id))
+			DownloadFileFromWeb.downloadFile(context,repository.fetchFile(fileInfo.id),fileInfo,"ITLab")
+
+			/*val url = repository.fetchFile(fileInfo.id)
 			val i = Intent(Intent.ACTION_VIEW)
 			i.data = Uri.parse(url)
-			_requestDownLoadLauncher.value!!.launch(i)
+			_requestDownLoadLauncher.value!!.launch(i)*/
 		}
 
 		if (_accessPermission.value) {
