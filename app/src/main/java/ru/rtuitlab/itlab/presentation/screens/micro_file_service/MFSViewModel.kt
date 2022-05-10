@@ -4,12 +4,14 @@ import RealPathUtil
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.unit.Dp
 import androidx.core.app.ActivityCompat
@@ -63,6 +65,9 @@ class MFSViewModel @Inject constructor(
 
 	private var _requestPermissionLauncher = MutableStateFlow< ActivityResultLauncher<String>?>(null)
 	val requestPermissionLauncher = _requestPermissionLauncher.asStateFlow()
+
+	private var _requestDownLoadLauncher = MutableStateFlow< ActivityResultLauncher<Intent>?>(null)
+	val requestDownloadLauncher = _requestDownLoadLauncher.asStateFlow()
 
 	private var _activity = MutableStateFlow<Activity?>(null)
 	val activity = _activity.asStateFlow()
@@ -220,7 +225,9 @@ class MFSViewModel @Inject constructor(
 		_mfsContract.value = contract
 	}
 
-
+	fun provideDownloadLauncher(requestDownloadLauncher: ActivityResultLauncher<Intent>) {
+		_requestDownLoadLauncher.value = requestDownloadLauncher
+	}
 
 	fun setFileNull(){
 		_fileUri.value = null
@@ -262,8 +269,12 @@ class MFSViewModel @Inject constructor(
 	fun downloadFile(context: Context, fileInfo: FileInfo) = viewModelScope.launch(Dispatchers.IO){
 		val repFetchFile = suspend {
 			Log.d("MFSstring", repository.fetchFile(fileInfo.id))
-			DownloadFileFromWeb.downloadFile(context,repository.fetchFile(fileInfo.id),fileInfo)
+			DownloadFileFromWeb.downloadFile(context,repository.fetchFile(fileInfo.id),fileInfo,"ITLab")
 
+			/*val url = repository.fetchFile(fileInfo.id)
+			val i = Intent(Intent.ACTION_VIEW)
+			i.data = Uri.parse(url)
+			_requestDownLoadLauncher.value!!.launch(i)*/
 		}
 
 		if (_accessPermission.value) {
@@ -350,4 +361,8 @@ class MFSViewModel @Inject constructor(
 
 		return "$YYMMDD $hhmmss"
 	}
+
+
+
+
 }
