@@ -7,11 +7,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
@@ -41,8 +44,9 @@ fun WheelNavigation(
 ) {
 
 
+
+
 	ConstraintLayout(
-		modifier = Modifier.fillMaxSize()
 	) {
 		val (bottomnav, image) = createRefs()
 		Image(
@@ -65,8 +69,7 @@ fun WheelNavigation(
 				.constrainAs(bottomnav) {
 					bottom.linkTo(parent.bottom)
 					centerHorizontallyTo(parent)
-				}
-				,
+				},
 		) {
 
 			IconButton(
@@ -91,7 +94,8 @@ fun WheelNavigation(
 		}
 
 
-	}
+
+}
 }
 fun xCoordinate(stateDirection:Int, density: Density,rotationPosition:Float,oddValue:Float,SIZEVIEWNAVIGATION:Dp,sizeAppTabs:Int,indexTab:Int,sizeItemWidth:Dp): Dp {
 	return ((stateDirection * with(density) { rotationPosition.toDp().value }).dp               // for animation move

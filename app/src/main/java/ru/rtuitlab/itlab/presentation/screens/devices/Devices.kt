@@ -15,6 +15,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceCard
 import ru.rtuitlab.itlab.presentation.screens.devices.components.FloatActionButton
+import ru.rtuitlab.itlab.presentation.ui.components.Custom_Scaffold
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
@@ -32,10 +33,19 @@ fun Devices(
 
 
 
-	Scaffold(
+	Custom_Scaffold(
 		modifier = Modifier
 			.fillMaxSize(),
-		scaffoldState = rememberScaffoldState(snackbarHostState = devicesViewModel.snackbarHostState)
+		scaffoldState = rememberScaffoldState(snackbarHostState = devicesViewModel.snackbarHostState),
+		floatingActionButton = {
+			if (devicesViewModel.accesibleFlow.collectAsState().value)
+				FloatActionButton(
+					devicesViewModel,
+					bottomSheetViewModel
+
+				)
+
+		}
 
 	) {
 
@@ -71,14 +81,6 @@ fun Devices(
 			}
 
 
-			if (devicesViewModel.accesibleFlow.collectAsState().value)
-				FloatActionButton(
-					devicesViewModel,
-					bottomSheetViewModel,
-					modifier = Modifier
-						.offset(0.dp,(-50).dp)
-
-				)
 
 		}
 

@@ -26,7 +26,6 @@ import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 fun FloatActionButton(
         devicesViewModel: DevicesViewModel,
         bottomSheetViewModel: BottomSheetViewModel,
-        modifier: Modifier
 
 ) {
         val coroutineScope = rememberCoroutineScope()
@@ -38,7 +37,6 @@ fun FloatActionButton(
                 horizontalAlignment = Alignment.End
         ){
                 FloatingActionButton(
-                        modifier = modifier,
                         backgroundColor = colorResource(R.color.accent),
                         elevation = FloatingActionButtonDefaults.elevation(8.dp),
                         onClick = {
