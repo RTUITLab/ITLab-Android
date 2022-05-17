@@ -41,7 +41,6 @@ stages:
         dependsOn: buildApp
         condition: succeeded()
         steps:
-          - checkout: none
           - download: current
             artifact: itlab-mobile-android
           - task: GitHubRelease@1
