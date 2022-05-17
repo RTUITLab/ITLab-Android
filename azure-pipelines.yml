@@ -51,18 +51,18 @@ stages:
               target: '$(Build.SourceVersion)'
               tagSource: 'gitTag'
               releaseNotesFilePath: '.github/contents/release.md'
-              assets: '$(Build.ArtifactStagingDirectory)/*.apk'
+              assets: '$(Pipeline.Workspace)/itlab-mobile-android/*.apk'
               isPreRelease: ${{ variables.prerelease }}
               changeLogCompareToRelease: 'lastFullRelease'
               changeLogType: 'commitBased'
-          - task: SlackPoster@2
-            displayName: Send Notification to Slack
+          - task: SlackNotification@6
             inputs:
-              UserName: 'RTUITLab'
+              SlackApiToken: '$(slack_token)'
+              MessageAuthor: 'RTUITLab'
+              Channel: '#itlab-mobile-apks'
+              IconUrl: 'https://files.rtuitlab.dev/logo/logo.png'
+              NotificationType: 'ChatMessage'
               Message: |
                 :tada: New release $(Build.SourceBranchName) is already available! :tada:
                 Visit <this page> to see what's new
-              ApiToken: '$(slack_token)'
-              Channel: '#itlab-mobile-apks'
-              IconUrl: 'https://files.rtuitlab.dev/logo/logo.png'
-              NeverFails: false
+              ShowFooterTimestamp: false
