@@ -1,0 +1,59 @@
+trigger:
+  tags:
+    include:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-dev"
+
+variables:
+  prerelase: false
+  ${{ if contains(variables['Build.SourceBranch'], '-dev') }}:
+    prerelease: true
+
+name: $(BuildID)-$(Build.SourceBranchName)
+
+resources:
+  - repo: self
+
+stages:
+  - stage: buildApp
+    displayName: Build App
+    jobs:
+      - job: buildApp
+        displayName: Build App
+        steps:
+          - script: chmod +x ./gradlew
+            displayName: Change wrapper permissions
+          - script: echo $KEYSTORE | base64 --decode > keystore.jks
+            displayName: Decode Keystore
+            env:
+              KEYSTORE: $(keystore)
+          - script: ./gradlew :app:assembleProdApiRelease
+            displayName: Assemble Release
+            env:
+              SIGNING_KEY_ALIAS: $(alias)
+              SIGNING_KEY_PASSWORD: $(key_password)
+              SIGNING_STORE_PASSWORD: $(keystore_password)
+          - script: ls -alRh $(Build.SourcesDirectory)
+          - publish: $(Build.SourcesDirectory)/app/build/outputs/apk/prodApi/release
+            artifact: itlab-mobile-android
+      - job: createRelease
+        displayName: Create Release
+        dependsOn: buildApp
+        condition: succeeded()
+        steps:
+          - download: current
+            artifact: itlab-mobile-android
+          - task: GitHubRelease@1
+            inputs:
+              gitHubConnection: 'Suput''s PAT Droid'
+              repositoryName: '$(Build.Repository.Name)'
+              action: 'create'
+              target: '$(Build.SourceVersion)'
+              tagSource: 'gitTag'
+              releaseNotesFilePath: '.github/contents/release.md'
+              assets: '$(Pipeline.Workspace)/itlab-mobile-android/*.apk'
+              isPreRelease: ${{ variables.prerelease }}
+              changeLogCompareToRelease: 'lastFullRelease'
+              changeLogType: 'commitBased'
+          - script: |
+              curl -X POST -H 'Content-Type: application/json' --data '{"text":":tada: New release $(Build.SourceBranchName) is already available! :tada: Visit <$(Build.Repository.Uri)/releases|this page> to see whats new"}' https://hooks.slack.com/services/$(slack_token)
