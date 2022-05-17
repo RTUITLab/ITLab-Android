@@ -55,14 +55,5 @@ stages:
               isPreRelease: ${{ variables.prerelease }}
               changeLogCompareToRelease: 'lastFullRelease'
               changeLogType: 'commitBased'
-          - task: SlackNotification@6
-            inputs:
-              SlackApiToken: '$(slack_token)'
-              MessageAuthor: 'RTUITLab'
-              Channel: '#itlab-mobile-apks'
-              IconUrl: 'https://files.rtuitlab.dev/logo/logo.png'
-              NotificationType: 'ChatMessage'
-              Message: |
-                :tada: New release $(Build.SourceBranchName) is already available! :tada:
-                Visit <this page> to see what's new
-              ShowFooterTimestamp: false
+          - script: |
+              curl -X POST -H 'Content-Type: application/json' --data '{"text":":tada: New release $(Build.SourceBranchName) is already available! :tada: Visit <$(Build.Repository.Uri)/releases|this page> to see whats new"}' https://hooks.slack.com/services/$(slack_token)
