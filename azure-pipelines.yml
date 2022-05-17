@@ -33,6 +33,7 @@ stages:
               SIGNING_KEY_ALIAS: $(alias)
               SIGNING_KEY_PASSWORD: $(key_password)
               SIGNING_STORE_PASSWORD: $(keystore_password)
+          - script: ls -alRh $(Build.SourcesDirectory)
           - publish: $(Build.SourcesDirectory)/app/prodApi/release/
             artifact: itlab-mobile-android
       - job: createRelease
