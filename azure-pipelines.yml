@@ -41,8 +41,8 @@ stages:
         # dependsOn: buildApp
         condition: succeeded()
         steps:
-          - download: current
-            artifact: itlab-mobile-android
+          # - download: current
+          #   artifact: itlab-mobile-android
           - task: GitHubRelease@1
             inputs:
               gitHubConnection: 'Suput''s PAT Droid'
