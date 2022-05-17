@@ -9,8 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.data.remote.api.devices.DevicesApi
+import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MFSApi
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import ru.rtuitlab.itlab.data.repository.DevicesRepository
+import ru.rtuitlab.itlab.data.repository.MFSRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
 import javax.inject.Singleton
 
@@ -30,4 +32,8 @@ object RepositoriesModule {
     @Provides
     fun provideDevicesRepository( devicesApi: DevicesApi, responseHandler: ResponseHandler) =
         DevicesRepository(devicesApi, responseHandler)
+    @Singleton
+    @Provides
+    fun provideMFSRepository(mfsApi: MFSApi, responseHandler: ResponseHandler) =
+        MFSRepository(mfsApi, responseHandler)
 }

@@ -67,12 +67,12 @@ fun ReportsTopAppBar(
 
 			ExtendedTopAppBarBody(
 				options = listOf(
-					AppBarOption.Clickable(
+					/*AppBarOption.Clickable(
 						icon = Icons.Default.Search,
 						onClick = {
 							searchActivated = true
 						}
-					)
+					)*/
 				),
 				hideBackButton = !searchActivated,
 				hideOptions = searchActivated,

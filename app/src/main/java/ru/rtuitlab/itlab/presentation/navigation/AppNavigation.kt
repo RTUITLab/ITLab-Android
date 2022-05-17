@@ -26,6 +26,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.Event
 import ru.rtuitlab.itlab.presentation.screens.events.Events
 import ru.rtuitlab.itlab.presentation.screens.events.EventsNotifications
 import ru.rtuitlab.itlab.presentation.screens.feedback.Feedback
+
 import ru.rtuitlab.itlab.presentation.screens.profile.Profile
 import ru.rtuitlab.itlab.presentation.screens.reports.NewReport
 import ru.rtuitlab.itlab.presentation.screens.reports.Report
@@ -46,6 +47,7 @@ fun AppNavigation(
 	navController: NavHostController,
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
 	appBarViewModel: AppBarViewModel = viewModel(),
+
 ) {
 	val resources = LocalContext.current.resources
 
