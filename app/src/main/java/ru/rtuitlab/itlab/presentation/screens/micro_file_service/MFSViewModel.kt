@@ -212,11 +212,11 @@ class MFSViewModel @Inject constructor(
 		if(filePath !=null) {
 			uri = Uri.parse(RealPathUtil.writeFileContent(context, filePath)!!)
 			_fileUri.value = uri
-			_file.value = File(uri.toString())
-
+			val file = File(uri.toString())
+			_file.value = file
+			invokeListeners(file)
 		}
 
-		invokeListeners(_file.value!!)
 
 	}
 
