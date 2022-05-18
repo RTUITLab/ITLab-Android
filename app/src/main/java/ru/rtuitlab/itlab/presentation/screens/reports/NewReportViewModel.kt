@@ -119,7 +119,7 @@ class NewReportViewModel @Inject constructor(
 		// Otherwise, user selection should be the provided file name.
 		val newTextValue = MdAction.process(
 			prefix = if (isFileAnImage) "![" else "[",
-			postfix = "](${BuildConfig.API_URI}/mfs/download/${fileInfoResponse.id})",
+			postfix = "](${BuildConfig.API_URI}mfs/download/${fileInfoResponse.id})",
 			delimiter = "",
 			textValueToProcess = _reportState.value.reportText,
 			emptySelectionDefaultText = fileInfoResponse.filename
