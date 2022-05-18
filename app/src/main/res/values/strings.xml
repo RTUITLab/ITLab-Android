@@ -145,5 +145,6 @@
     <string name="byDate">by date</string>
     <string name="byUser">by user</string>
     <string name="filter">filter</string>
+    <string name="no_files">Файлы отсутствуют</string>
 
 </resources>
