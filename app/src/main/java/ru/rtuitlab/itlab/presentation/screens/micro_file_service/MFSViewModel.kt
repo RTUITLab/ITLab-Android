@@ -207,13 +207,14 @@ class MFSViewModel @Inject constructor(
 			}
 	}
 	fun setFilePath(context: Context,filePath: Uri?){
-		Log.d("MFS","${filePath} ----------")
-		val uri = Uri.parse(RealPathUtil.writeFileContent(context,filePath!!)!!)
-		_fileUri.value = uri
-		Log.d("MFS","${_fileUri.value} ----------")
+		Log.d("MFS","$filePath ----------")
+		var uri :Uri?=null
+		if(filePath !=null) {
+			uri = Uri.parse(RealPathUtil.writeFileContent(context, filePath)!!)
+			_fileUri.value = uri
+			_file.value = File(uri.toString())
 
-		_file.value = File(uri.toString())
-		Log.d("MFS","${_file.value!!.name} ----------")
+		}
 
 		invokeListeners(_file.value!!)
 

@@ -153,4 +153,5 @@
     <string name="report_new_about_who">О ком отчёт</string>
     <string name="report_uploading_file">Загрузка файла</string>
     <string name="report_uploading_file_dialog">Вы уверены, что хотите загрузить выбранный файл? %1$s</string>
+    <string name="no_files">Файлы отсутствуют</string>
 </resources>
