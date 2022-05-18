@@ -11,18 +11,16 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.IntentSenderRequest
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.unit.Dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.emitInIO
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
@@ -36,7 +34,6 @@ import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb
 import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb.saveToInternalStorage
 import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb.toBitmap
 import java.io.File
-import java.lang.Exception
 import java.net.URL
 import javax.inject.Inject
 
@@ -87,6 +84,12 @@ class MFSViewModel @Inject constructor(
 	private val _listFileInfoResponseFlow = MutableStateFlow<Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>>>(Resource.Loading)
 	val listFileInfoResponseFlow = _listFileInfoResponseFlow.asStateFlow().also {fetchListFileInfoResponse() }
 
+
+	/**
+	 * A list of callbacks that are invoked on every successfully obtained result of [mfsContract.launch]
+	 * and then cleared.
+	 */
+	private val onFileSelectedListeners = mutableListOf<(File) -> Unit>()
 
 
 	private var cachedFileInfoList = emptyList<FileInfo>()
@@ -212,7 +215,17 @@ class MFSViewModel @Inject constructor(
 		_file.value = File(uri.toString())
 		Log.d("MFS","${_file.value!!.name} ----------")
 
+		invokeListeners(_file.value!!)
+
 	}
+
+	private fun invokeListeners(file: File) {
+		onFileSelectedListeners.forEach {
+			it.invoke(file)
+		}
+		onFileSelectedListeners.clear()
+	}
+
 	fun provideRequestPermissionLauncher(activity: Activity,requestPermissionLauncher: ActivityResultLauncher<String>){
 		_activity.value = activity
 		_requestPermissionLauncher.value = requestPermissionLauncher
@@ -233,22 +246,34 @@ class MFSViewModel @Inject constructor(
 		_fileUri.value = null
 		_file.value = null
 	}
-	fun provideFile() = viewModelScope.launch(Dispatchers.IO) {
+	fun provideFile(
+		onFileProvided: ((File) -> Unit)? = null
+	) = viewModelScope.launch(Dispatchers.IO) {
 
 		if(_activity.value!=null) {
 			if (_accessPermission.value) {
+				if (onFileProvided != null) {
+					onFileSelectedListeners.add(onFileProvided)
+				}
 				_mfsContract.value?.launch(arrayOf("*/*"))
 			}
 			else {
 				Log.d("MFS","${_activity.value} ----------")
 
 				onRequestPermission(_activity.value!!){
+					if (onFileProvided != null) {
+						onFileSelectedListeners.add(onFileProvided)
+					}
 					_mfsContract.value?.launch(arrayOf("*/*"))
 				}
 			}
 		}
 	}
-	fun uploadFile(fileDescription: String) = viewModelScope.launch(Dispatchers.IO){
+	fun uploadFile(
+		fileDescription: String = "",
+		onError: ((message: String) -> Unit)? = null,
+		onSuccess: ((FileInfoResponse) -> Unit)? = null
+	) = viewModelScope.launch(Dispatchers.IO){
 		var resource: Resource<FileInfoResponse> = Resource.Loading
 
 		if(_file.value != null) {
@@ -257,11 +282,13 @@ class MFSViewModel @Inject constructor(
 			repository.uploadFile(_file.value!!, fileDescription).handle (
 				onError = {
 					resource = Resource.Error(it)
+					onError?.invoke(it)
 				},
 				onSuccess = { fileInfo ->
 						//Toast.makeText(activity,"Complete Success",Toast.LENGTH_SHORT).show()
 					Log.d("MFS","$fileInfo")
 					resource = Resource.Success(fileInfo)
+					onSuccess?.invoke(fileInfo)
 				}
 			)
 		}

@@ -151,4 +151,6 @@
     <string name="report_title">Заголовок отчёта</string>
     <string name="report_send">Отправить</string>
     <string name="report_new_about_who">О ком отчёт</string>
+    <string name="report_uploading_file">Загрузка файла</string>
+    <string name="report_uploading_file_dialog">Вы уверены, что хотите загрузить выбранный файл? %1$s</string>
 </resources>

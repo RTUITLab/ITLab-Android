@@ -140,6 +140,8 @@
     <string name="report_title">Report title</string>
     <string name="report_send">Send</string>
     <string name="report_new_about_who">Who this report is about</string>
+    <string name="report_uploading_file">Uploading file</string>
+    <string name="report_uploading_file_dialog">Are you sure you want to upload selected file? %1$s</string>
 
 
     <!--    Markdown    -->

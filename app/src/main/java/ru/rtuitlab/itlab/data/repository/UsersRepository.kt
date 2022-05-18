@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.*
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.common.emitInIO
+import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class UsersRepository @Inject constructor(
 	private val usersApi: UsersApi,
 	private val handler: ResponseHandler,
+	private val authStateStorage: AuthStateStorage,
 	private val coroutineScope: CoroutineScope
 ) {
 
@@ -41,6 +43,10 @@ class UsersRepository @Inject constructor(
 			.stateIn(coroutineScope, SharingStarted.Eagerly, Resource.Loading)
 	}
 
+
+	val currentUserFlow = authStateStorage.userIdFlow.map { userId ->
+		cachedUsersFlow.value.find { it.id == userId }
+	}.stateIn(coroutineScope, SharingStarted.Lazily, null)
 
 	suspend fun fetchUserInfo(url: String, accessToken: String) = handler {
 		usersApi.getUserInfo(url, "Bearer $accessToken")
@@ -82,7 +88,7 @@ class UsersRepository @Inject constructor(
 		)
 	}
 
-	suspend fun getUserById(userId: String): UserResponse {
-		return usersApi.getUser(userId)
+	suspend fun getUserById(userId:String) = handler {
+		usersApi.getUser(userId)
 	}
 }

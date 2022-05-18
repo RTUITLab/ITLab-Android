@@ -1,8 +1,6 @@
 package ru.rtuitlab.itlab.presentation.screens.micro_file_service.components
 
-import android.app.Activity
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
@@ -12,7 +10,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -33,17 +32,11 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfo
-import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
-import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceCard
-import ru.rtuitlab.itlab.presentation.screens.devices.components.FloatActionButton
 import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.*
-import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
-import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarOption
 import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @ExperimentalMaterialApi
@@ -66,7 +59,6 @@ fun BaseElements(
 
 	) {
 		//for attach files
-		/*
 		Column(
 
 		) {
@@ -134,136 +126,135 @@ fun BaseElements(
 				modifier = Modifier
 					.fillMaxWidth()
 			)
+			Column(
+				modifier = Modifier
+					.fillMaxWidth()
+			) {
+				val state = remember{ mutableStateOf(false)}
+				val stringSearch  = remember { mutableStateOf("")}
+				val focusRequester = remember { FocusRequester() }
+
+				Row(
+					modifier = Modifier
+						.fillMaxWidth()
+						.padding(10.dp),
+					horizontalArrangement = Arrangement.End,
+					verticalAlignment = Alignment.CenterVertically
+				){
+					SideEffect {
+						mfsViewModel.onSearch(stringSearch.value)
+					}
+					OutlinedTextField(
+						modifier = Modifier
+							.fillMaxWidth()
+							.weight(0.9f)
+							.focusRequester(focusRequester),
+						value = stringSearch.value,
+						onValueChange = {
+							stringSearch.value = it
+							mfsViewModel.onSearch(stringSearch.value)
+						},
+						placeholder = {
+
+							Text(text = stringResource(R.string.search))
+
+
+						},
+						singleLine = true,
+						colors = TextFieldDefaults.outlinedTextFieldColors(
+							backgroundColor = MaterialTheme.colors.background,
+							focusedBorderColor = MaterialTheme.colors.onSurface
+
+						)
+
+					)
+					DisposableEffect(Unit) {
+						//focusRequester.requestFocus()
+						onDispose {
+							mfsViewModel.onSearch("")
+						}
+					}
+					AppDropdownMenu(
+						modifier = Modifier
+							.fillMaxWidth()
+							.weight(0.1f),
+						anchor = {
+							IconButton(
+								modifier = Modifier
+									.height(36.dp)
+									.width(36.dp),
+								onClick = it
+							) {
+								Icon(
+									imageVector = Icons.Default.FilterList,
+									contentDescription = stringResource(R.string.filter),
+									tint = MaterialTheme.colors.onSurface
+								)
+							}
+						},
+						content = {
+								collapseAction ->
+							LabelledRadioButton(
+								state = !state.value,
+								onCheckedChange = {
+									mfsViewModel.setSortedBy("date")
+									state.value=!state.value
+									collapseAction()
+								},
+								label = stringResource(R.string.byDate)
+							)
+							LabelledRadioButton(
+								state = state.value,
+								onCheckedChange = {
+									mfsViewModel.setSortedBy("user")
+									state.value=!state.value
+									collapseAction()
+								},
+								label = stringResource(R.string.byUser)
+							)
+						}
+					)
+
+				}
+				SwipeRefresh(
+					modifier = Modifier
+						.fillMaxWidth(),
+					state = rememberSwipeRefreshState(isRefreshing),
+					onRefresh = mfsViewModel::onRefresh
+				) {
+
+					Column(
+						modifier = Modifier
+							.fillMaxWidth()
+					) {
+						filesResource.handle(
+							onLoading = {
+								isRefreshing = true
+							},
+							onError = { msg ->
+								isRefreshing = false
+								LoadingError(msg = msg)
+							},
+							onSuccess = {
+								isRefreshing = false
+								mfsViewModel.onResourceSuccess(it)
+
+								FileList(mfsViewModel)
+
+
+							}
+
+						)
+					}
+
+
+				}
+
+
+			}
 		}
 
 
-		 */
-		Column(
-			modifier = Modifier
-				.fillMaxWidth()
-		) {
-			val state = remember{ mutableStateOf(false)}
-			val stringSearch  = remember { mutableStateOf("")}
-			val focusRequester = remember { FocusRequester() }
-
-			Row(
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(10.dp),
-				horizontalArrangement = Arrangement.End,
-				verticalAlignment = Alignment.CenterVertically
-			){
-				SideEffect {
-					mfsViewModel.onSearch(stringSearch.value)
-				}
-				OutlinedTextField(
-					modifier = Modifier
-						.fillMaxWidth()
-						.weight(0.9f)
-						.focusRequester(focusRequester),
-					value = stringSearch.value,
-					onValueChange = {
-						stringSearch.value = it
-						mfsViewModel.onSearch(stringSearch.value)
-					},
-					placeholder = {
-
-						Text(text = stringResource(R.string.search))
-
-
-					},
-					singleLine = true,
-					colors = TextFieldDefaults.outlinedTextFieldColors(
-						backgroundColor = MaterialTheme.colors.background,
-						focusedBorderColor = MaterialTheme.colors.onSurface
-
-					)
-
-				)
-				DisposableEffect(Unit) {
-					//focusRequester.requestFocus()
-					onDispose {
-						mfsViewModel.onSearch("")
-					}
-				}
-				AppDropdownMenu(
-					modifier = Modifier
-						.fillMaxWidth()
-						.weight(0.1f),
-					anchor = {
-						IconButton(
-							modifier = Modifier
-								.height(36.dp)
-								.width(36.dp),
-							onClick = it
-						) {
-							Icon(
-								imageVector = Icons.Default.FilterList,
-								contentDescription = stringResource(R.string.filter),
-								tint = MaterialTheme.colors.onSurface
-							)
-						}
-					},
-					content = {
-							collapseAction ->
-						LabelledRadioButton(
-							state = !state.value,
-							onCheckedChange = {
-								mfsViewModel.setSortedBy("date")
-								state.value=!state.value
-								collapseAction()
-							},
-							label = stringResource(R.string.byDate)
-						)
-						LabelledRadioButton(
-							state = state.value,
-							onCheckedChange = {
-								mfsViewModel.setSortedBy("user")
-								state.value=!state.value
-								collapseAction()
-							},
-							label = stringResource(R.string.byUser)
-						)
-					}
-				)
-
-			}
-			SwipeRefresh(
-				modifier = Modifier
-					.fillMaxWidth(),
-				state = rememberSwipeRefreshState(isRefreshing),
-				onRefresh = mfsViewModel::onRefresh
-			) {
-
-				Column(
-					modifier = Modifier
-						.fillMaxWidth()
-				) {
-					filesResource.handle(
-						onLoading = {
-							isRefreshing = true
-						},
-						onError = { msg ->
-							isRefreshing = false
-							LoadingError(msg = msg)
-						},
-						onSuccess = {
-							isRefreshing = false
-							mfsViewModel.onResourceSuccess(it)
-
-							FileList(mfsViewModel)
-
-
-						}
-
-					)
-				}
-
-
-			}
-
-
-	}
 	}
 }
 @ExperimentalMaterialApi

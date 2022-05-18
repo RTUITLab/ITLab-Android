@@ -17,26 +17,27 @@ sealed class MdAction(
 ) {
 
 	companion object {
-		private enum class WrappingPolicy {
+		enum class WrappingPolicy {
 			Start, End, Wrap
 		}
 
-		private fun process(
+		fun process(
 			policy: WrappingPolicy = WrappingPolicy.Wrap,
 			prefix: String,
 			postfix: String = prefix,
 			delimiter: String = " ",
+			emptySelectionDefaultText: String = "",
 			textValueToProcess: TextFieldValue
 		) : TextFieldValue {
 			val selection = textValueToProcess.selection
-			Log.v("TextField", "Selection: [${selection.start}, ${selection.end}), Text length: ${textValueToProcess.text.length}")
+			Log.v("TextField", "Selection: [${selection.start}, ${selection.end}) - length ${selection.length}, Text length: ${textValueToProcess.text.length}")
 
 			// selection.start can be larger than selection.end depending on user input
 			val selectionStart = min(selection.start, selection.end)
 			val selectionEnd = max(selection.end, selection.start)
 
 			val preSelection = textValueToProcess.text.substring(0, selectionStart)
-			val inSelection = textValueToProcess.text.substring(selectionStart, selectionEnd)
+			val inSelection = if (selection.length == 0) emptySelectionDefaultText else textValueToProcess.text.substring(selectionStart, selectionEnd)
 			val postSelection = textValueToProcess.text.substring(selectionEnd, textValueToProcess.text.length)
 			return when (policy) {
 				WrappingPolicy.Start -> textValueToProcess.copy(
@@ -78,18 +79,18 @@ sealed class MdAction(
 			UnorderedList,
 			OrderedList,
 //			Task, // Not supported
-			Attach
 		)
 
 		fun List<MdAction>.asTextActionsOn(
 			text: TextFieldValue,
-			transform: (TextFieldValue) -> Unit
+			transform: (TextFieldValue) -> Unit,
+			onAttachFile: () -> Unit
 		) =
 			map {
 				TextAction(it.nameResource) {
 					transform(it.action(text))
 				}
-			}
+			} + TextAction(titleResource = Attach.nameResource, onClick = onAttachFile)
 	}
 
 	object Heading: MdAction(
