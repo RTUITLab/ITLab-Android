@@ -206,7 +206,6 @@ fun ITLabApp(
 					},
 					marginDown = marginDown.value,
 
-					oddValue =oddValue
 
 					) {
 					val navBackStackEntry by navController.currentBackStackEntryAsState()

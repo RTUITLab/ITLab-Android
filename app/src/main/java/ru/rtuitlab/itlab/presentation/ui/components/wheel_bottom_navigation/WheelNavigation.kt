@@ -46,33 +46,25 @@ fun WheelNavigation(
 	modifier: Modifier,
 	onClickWheel: () -> Unit,
 	marginDown: Dp,
-	oddValue: Float,
 	content: @Composable () -> Unit,
 ) {
+	val SIZEVIEWNAVIGATION = 300.dp
 
 	val isVisible by wheelNavigationViewModel.currentState.collectAsState()
 
 
 
-
-		ConstraintLayout(
-
-			) {
+		ConstraintLayout {
 			AnimatedVisibility(
 				visible = isVisible,
 				enter = slideInVertically(initialOffsetY = { it -> it }),
 				exit = slideOutVertically(targetOffsetY = { it -> it })
 			) {
-				val (image) = createRefs()
 
-				Box(
-					modifier = Modifier
-						.constrainAs(image) {
-							bottom.linkTo(parent.bottom)
-							centerHorizontallyTo(parent)
-						}
-				) {
+				Box() {
 					Image(
+						modifier = Modifier
+							.align(Alignment.BottomCenter),
 						painter = painterResource(R.drawable.bottom_navigation),
 						contentDescription = "bottom",
 
