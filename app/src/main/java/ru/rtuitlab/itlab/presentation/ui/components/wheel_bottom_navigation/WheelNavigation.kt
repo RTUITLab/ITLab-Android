@@ -2,6 +2,7 @@ package ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation
 
 import android.util.Log
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
@@ -98,6 +100,8 @@ fun WheelNavigation(
 				}
 			}
 			val (bottomnav) = createRefs()
+			val alpha: Float by animateFloatAsState(if (isVisible) 1f else 0.5f)
+
 			Column(modifier = Modifier
 				.constrainAs(bottomnav) {
 					bottom.linkTo(parent.bottom)
@@ -114,8 +118,9 @@ fun WheelNavigation(
 					Icon(
 						painter = painterResource(R.drawable.wheel),
 						contentDescription = stringResource(R.string.rtuitlab),
+						modifier = Modifier.graphicsLayer( alpha = alpha )
 
-						)
+					)
 				}
 			}
 	}
