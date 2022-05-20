@@ -47,10 +47,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElemen
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
-import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.DirectionWheelNavigation
-import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.WheelNavigation
-import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.xCoordinate
-import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.yCoordinate
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.*
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.AppTab
 
@@ -66,7 +63,8 @@ fun ITLabApp(
 	appBarViewModel: AppBarViewModel = viewModel(),
 	appTabsViewModel: AppTabsViewModel = viewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
-	eventsViewModel: EventsViewModel = viewModel()
+	eventsViewModel: EventsViewModel = viewModel(),
+	wheelNavigationViewModel: WheelNavigationViewModel = viewModel()
 ) {
 	val SIZEVIEWNAVIGATION = 300.dp
 
@@ -153,9 +151,7 @@ fun ITLabApp(
 
 
 				},
-			snackbarHost = { Card() {
-				Text(text = "Hello")
-			}},
+
 			bottomBar = {
 
 				//WheelNavigation is there
@@ -183,6 +179,10 @@ fun ITLabApp(
 				val sizeNavWidth = remember { mutableStateOf(0.dp) }
 				val sizeNavHeight = remember { mutableStateOf(0.dp) }
 
+				val currentState by wheelNavigationViewModel.currentState.collectAsState()
+
+				val oddValue = appTabsViewModel.oddValue.collectAsState().value
+
 				WheelNavigation(
 					modifier = Modifier
 						.width(SIZEVIEWNAVIGATION)
@@ -202,9 +202,11 @@ fun ITLabApp(
 						),
 					onClickWheel = {
 						//hide and show
+						wheelNavigationViewModel.setVisible(!currentState)
 					},
 					marginDown = marginDown.value,
 
+					oddValue =oddValue
 
 					) {
 					val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -245,7 +247,6 @@ fun ITLabApp(
 
 					//to what side elements have to move -1 - on the left; 1 - on the right
 					val stateDirection = (if ((currentDirectionState == 2 && swipeableState.progress.to == DirectionWheelNavigation.Center) || swipeableState.targetValue == DirectionWheelNavigation.Left) -1 else 1)
-					val oddValue = appTabsViewModel.oddValue.collectAsState().value
 
 					Log.d("ITLAB--------","$oddValue ${appTabsForCircle.filter { it.accessible }.size}")
 
@@ -302,7 +303,7 @@ fun ITLabApp(
 										positionSumX += positionRemX
 									}
 									.offset(
-										xCoordinate,
+											xCoordinate,
 										yCoordinate
 									),
 								icon = {
@@ -340,6 +341,10 @@ fun ITLabApp(
 								alwaysShowLabel = true,
 								onClick = {
 									if (tab != appTabNull) {
+
+										//hide and show
+										wheelNavigationViewModel.setVisible(!currentState)
+
 										// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
 
 										// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once by the means

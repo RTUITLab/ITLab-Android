@@ -301,6 +301,8 @@ private fun ScaffoldLayout(
 
 
 			val bottomBarHeight = bottomBarPlaceables.fastMaxBy { it.height }?.height ?: 0
+			val bottomBarWidth = bottomBarPlaceables.fastMaxBy { it.width }?.width ?: 0
+
 			Log.d("Scaffold",isFabDocked.toString())
 			val fabOffsetFromBottom = fabPlacement?.let {
 				if (bottomBarHeight == 0) {
@@ -364,7 +366,8 @@ private fun ScaffoldLayout(
 			}
 			// The bottom bar is always at the bottom of the layout
 			bottomBarPlaceables.fastForEach {
-				it.place(0, layoutHeight - bottomBarHeight)
+				it.place((layoutWidth-bottomBarWidth)/2, layoutHeight - bottomBarHeight)
+
 			}
 			// Explicitly not using placeRelative here as `leftOffset` already accounts for RTL
 			fabPlacement?.let { placement ->

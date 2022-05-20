@@ -11,9 +11,11 @@ class WheelNavigationViewModel @Inject constructor(
 
 ): ViewModel()  {
 
-	private val _currentState = MutableStateFlow(ExpandedWheel.UP)
+	private val _currentState = MutableStateFlow(true)
 	var currentState = _currentState.asStateFlow()
+
+	fun setVisible(state:Boolean){
+		_currentState.value = state
+	}
 }
-enum class ExpandedWheel(){
-	Down,UP
-}
+
