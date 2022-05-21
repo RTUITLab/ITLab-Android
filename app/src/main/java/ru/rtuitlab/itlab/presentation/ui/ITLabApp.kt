@@ -69,11 +69,6 @@ fun ITLabApp(
 	val SIZEVIEWNAVIGATION = 300.dp
 
 
-	val currentTab by appBarViewModel.currentTab.collectAsState()
-
-	val appTabs by appTabsViewModel.appTabs.collectAsState()
-
-
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
 
 	val navController = LocalNavController.current
@@ -247,7 +242,6 @@ fun ITLabApp(
 					//to what side elements have to move -1 - on the left; 1 - on the right
 					val stateDirection = (if ((currentDirectionState == 2 && swipeableState.progress.to == DirectionWheelNavigation.Center) || swipeableState.targetValue == DirectionWheelNavigation.Left) -1 else 1)
 
-					Log.d("ITLAB--------","$oddValue ${appTabsForCircle.filter { it.accessible }.size}")
 
 					appTabsForCircle
 						.filter { it.accessible }

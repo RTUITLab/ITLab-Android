@@ -33,7 +33,7 @@ fun Devices(
 
 
 
-	Custom_Scaffold(
+	Scaffold(
 		modifier = Modifier
 			.fillMaxSize(),
 		scaffoldState = rememberScaffoldState(snackbarHostState = devicesViewModel.snackbarHostState),

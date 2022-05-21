@@ -303,30 +303,26 @@ private fun ScaffoldLayout(
 			val bottomBarHeight = bottomBarPlaceables.fastMaxBy { it.height }?.height ?: 0
 			val bottomBarWidth = bottomBarPlaceables.fastMaxBy { it.width }?.width ?: 0
 
-			Log.d("Scaffold",isFabDocked.toString())
 			val fabOffsetFromBottom = fabPlacement?.let {
 				if (bottomBarHeight == 0) {
-					Log.d("Scaffold",")))")
 
 					it.height + FabSpacing.roundToPx()
 				} else {
 					if (isFabDocked) {
-						Log.d("Scaffold","IsFAB")
 
 						// Total height is the bottom bar height + half the FAB height
-						bottomBarHeight/2 + (it.height / 2)
+						bottomBarHeight + (it.height / 2)
 					} else {
-						Log.d("Scaffold","IsNotFAB")
 
 						// Total height is the bottom bar height + the FAB height + the padding
 						// between the FAB and bottom bar
-						bottomBarHeight/2 + it.height + FabSpacing.roundToPx()
+						bottomBarHeight + it.height + FabSpacing.roundToPx()
 					}
 				}
 			}
 
 			val snackbarOffsetFromBottom = if (snackbarHeight != 0) {
-				snackbarHeight + (fabOffsetFromBottom ?: bottomBarHeight/2)
+				snackbarHeight + (fabOffsetFromBottom ?: bottomBarHeight)
 			} else {
 				0
 			}
@@ -334,21 +330,10 @@ private fun ScaffoldLayout(
 			val bodyContentHeight = layoutHeight - topBarHeight
 			val bodyContentPlaceables = subcompose(ScaffoldLayoutContent.MainContent) {
 				val innerPadding = PaddingValues(/*bottom = bottomBarHeight.toDp()*/)
-				val spacer: @Composable () -> Unit = { Spacer(modifier = Modifier.height(bottomBarHeight.toDp()).background(Color.Red)) }
-				val main: @Composable () -> Unit = { content(innerPadding) }
 
-				val list: List<@Composable () -> Unit> = listOf(/*main*/ spacer)
-				/*LazyColumn(
-					verticalArrangement = Arrangement.spacedBy(10.dp),
-					contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp),
-					//modifier = Modifier.fillMaxSize()
-				) {
-					items(list){
-						it.invoke()
-					}*/
-					main()
-				//}
 
+
+				content(innerPadding)
 
 
 			}.fastMap { it.measure(looseConstraints.copy(maxHeight = bodyContentHeight)) }
@@ -364,7 +349,7 @@ private fun ScaffoldLayout(
 			snackbarPlaceables.fastForEach {
 				it.place(0, layoutHeight - snackbarOffsetFromBottom)
 			}
-			// The bottom bar is always at the bottom of the layout
+			// The bottom bar is always at the bottom of the layout and in the center
 			bottomBarPlaceables.fastForEach {
 				it.place((layoutWidth-bottomBarWidth)/2, layoutHeight - bottomBarHeight)
 

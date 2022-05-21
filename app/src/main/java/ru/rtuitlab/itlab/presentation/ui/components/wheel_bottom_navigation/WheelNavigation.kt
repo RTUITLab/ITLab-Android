@@ -48,7 +48,6 @@ fun WheelNavigation(
 	marginDown: Dp,
 	content: @Composable () -> Unit,
 ) {
-	val SIZEVIEWNAVIGATION = 300.dp
 
 	val isVisible by wheelNavigationViewModel.currentState.collectAsState()
 
