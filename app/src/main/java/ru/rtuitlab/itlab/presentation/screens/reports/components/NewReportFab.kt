@@ -41,8 +41,6 @@ fun NewReportFab(
 		}
 	) {
 		FloatingActionButton(
-			modifier = Modifier
-				.offset(0.dp,(-50).dp),
 			onClick = {
 				if (scope?.isRunningTransition == true) return@FloatingActionButton
 				navController.navigate(AppScreen.NewReport.route)
