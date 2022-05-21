@@ -11,11 +11,6 @@ class WheelNavigationViewModel @Inject constructor(
 
 ): ViewModel()  {
 
-	private val _currentState = MutableStateFlow(true)
+	private val _currentState = MutableStateFlow(1)
 	var currentState = _currentState.asStateFlow()
-
-	fun setVisible(state:Boolean){
-		_currentState.value = state
-	}
 }
-
