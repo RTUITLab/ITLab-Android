@@ -1,8 +1,7 @@
 trigger:
   tags:
     include:
-      - "v?.?.?"
-      - "v?.?.?-dev"
+      - "v*"
 
 variables:
   prerelase: false
