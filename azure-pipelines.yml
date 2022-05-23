@@ -10,6 +10,8 @@ variables:
 
 name: $(BuildID)-$(Build.SourceBranchName)
 
+pool: PublicBuilds
+
 resources:
   - repo: self
 
