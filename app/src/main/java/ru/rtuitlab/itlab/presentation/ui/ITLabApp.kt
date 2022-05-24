@@ -30,6 +30,7 @@ import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopApp
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.reports.components.ReportsTopAppBar
 import ru.rtuitlab.itlab.presentation.ui.components.CustomWheelNavigationItem
+import ru.rtuitlab.itlab.presentation.ui.components.Custom_Scaffold
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedElementsRootScope
@@ -37,10 +38,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElemen
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
-import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.DirectionWheelNavigation
-import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.WheelNavigation
-import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.xCoordinate
-import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.yCoordinate
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.*
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.AppTab
 
@@ -56,13 +54,9 @@ fun ITLabApp(
 	appBarViewModel: AppBarViewModel = viewModel(),
 	appTabsViewModel: AppTabsViewModel = viewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
-	eventsViewModel: EventsViewModel = viewModel()
+	eventsViewModel: EventsViewModel = viewModel(),
+	wheelNavigationViewModel: WheelNavigationViewModel = viewModel()
 ) {
-
-
-	val currentTab by appBarViewModel.currentTab.collectAsState()
-
-	val appTabs by appTabsViewModel.appTabs.collectAsState()
 
 
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
@@ -90,7 +84,7 @@ fun ITLabApp(
 		),
 		scrimColor = Color.Black.copy(.25f)
 	) {
-		Scaffold(
+		Custom_Scaffold(
 			topBar = {
 				when (currentScreen) {
 					AppScreen.Events -> EventsTopAppBar()
@@ -140,9 +134,14 @@ fun ITLabApp(
 					}
 				}
 
+
+				},
+
+			bottomBar = {
+
 				//WheelNavigation is there
 
-					val currentTab by appBarViewModel.currentTab.collectAsState()
+				val currentTab by appBarViewModel.currentTab.collectAsState()
 
 				val appTabsForCircle by appTabsViewModel.appTabs.collectAsState()
 
@@ -224,46 +223,25 @@ fun ITLabApp(
 											)
 											return@WheelItem
 										}
-									},
-									selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
-									alwaysShowLabel = true,
-									onClick = {
-										if (tab != appTabNull) {
-											// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
-
-											// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once by the means
-											// of Jetpack Navigation APIs, but only two of the above.
-											// This code provides resetting and singleTop behavior for the default tab.
-											if (tab == currentTab) {
-												navController.popBackStack(
-													route = tab.startDestination,
-													inclusive = false
-												)
-												return@CustomWheelNavigationItem
+										// This code always leaves default tab's start destination on the bottom of the stack. Workaround needed?
+										navController.navigate(tab.route) {
+											popUpTo(navController.graph.findStartDestination().id) {
+												saveState = true
 											}
-											// This code always leaves default tab's start destination on the bottom of the stack. Workaround needed?
-											navController.navigate(tab.route) {
-												popUpTo(navController.graph.findStartDestination().id) {
-													saveState = true
-												}
-												launchSingleTop = true
+											launchSingleTop = true
 
-												// We want to reset the graph if it is clicked while already selected
-												restoreState = tab != currentTab
-											}
-											appBarViewModel.setCurrentTab(tab)
+											// We want to reset the graph if it is clicked while already selected
+											restoreState = tab != currentTab
 										}
 										appBarViewModel.setCurrentTab(tab)
 
 								}
 							)
 
-							}
-
-					}
+						}
 
 				}
-
+			}
 		)
 	}
 }
