@@ -14,11 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -75,7 +71,6 @@ fun WheelNavigation(
 ) {
 	val SIZEVIEWNAVIGATION = 300.dp
 
-	val isVisible by wheelNavigationViewModel.currentState.collectAsState()
 
 	val density = LocalDensity.current
 
@@ -250,8 +245,6 @@ fun WheelNavigation(
 			}
 		}
 	}
-
-
 }
 
 
@@ -298,6 +291,7 @@ fun yCoordinate(
 	)
 			)
 }
+fun curve(positionXInParent: Dp,marginDown: Dp,centerXInParent:Dp,centerYInParent:Dp,howmany:Int,index:Int, radius:Dp, setOffsetY:(Dp) ->Unit,offsetY:Dp, setFirstTime:(Int) ->Unit,firstTime:Int): Dp {
 
 fun curve(
 	positionXInParent: Dp,

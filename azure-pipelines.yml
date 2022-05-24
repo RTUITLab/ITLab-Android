@@ -1,15 +1,16 @@
 trigger:
   tags:
     include:
-      - "v[0-9]+.[0-9]+.[0-9]+"
-      - "v[0-9]+.[0-9]+.[0-9]+-dev"
+      - "v*"
 
 variables:
   prerelase: false
-  ${{ if contains(variables['Build.SourceBranch'], '-dev') }}:
+  ${{ if endsWith(variables['Build.SourceBranch'], '-dev') }}:
     prerelease: true
 
 name: $(BuildID)-$(Build.SourceBranchName)
+
+pool: PublicBuilds
 
 resources:
   - repo: self
@@ -21,6 +22,12 @@ stages:
       - job: buildApp
         displayName: Build App
         steps:
+          - script: |
+              rm -rf /var/lib/apt/lists/* \
+              && apt-get update \
+              && apt-get install -y openjdk-11-jdk openjdk-11-jre android-sdk
+              export ANDROID_SDK_ROOT=/usr/lib/android-sdk
+            displayName: Install 11 jdk jre, android-sdk
           - script: chmod +x ./gradlew
             displayName: Change wrapper permissions
           - script: echo $KEYSTORE | base64 --decode > keystore.jks

@@ -64,7 +64,7 @@
             android:resource="@drawable/ic_notification_default" />
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
+            android:authorities="ru.rtuitlab.itlab.domain.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
