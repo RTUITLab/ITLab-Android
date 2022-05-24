@@ -57,7 +57,6 @@ fun WheelNavigation(
 	wheelNavigationViewModel: WheelNavigationViewModel = singletonViewModel(),
 	onClickWheel: () -> Unit,
 	content: @Composable (
-	                      /*marginDown: MutableState<Dp>,*/
 
 	                      CustomWheelNavItem:  @Composable (
 		                      modifier:Modifier,
@@ -175,10 +174,7 @@ fun WheelNavigation(
 							val stateDirection =
 								(if ((currentDirectionState == 2 && swipeableState.progress.to == DirectionWheelNavigation.Center) || swipeableState.targetValue == DirectionWheelNavigation.Left) -1 else 1)
 
-							val (offsetY, setOffsetY) = remember { mutableStateOf(0.dp) }
-							val (firstTime, setFirstTime) = remember { mutableStateOf(0) }
 
-							val oddValue = appTabsViewModel.oddValue.collectAsState().value
 
 
 							val customWheel: @Composable (
@@ -203,17 +199,13 @@ fun WheelNavigation(
 
 								modifier = modifier,
 								stateDirection = stateDirection,
-								oddValue = oddValue,
 								sizeAppTabs = sizeAppTabs,
 								sizeNavWidth = sizeNavWidth.value,
 								sizeNavHeight = sizeNavHeight.value,
 								marginDown = marginDown,
 								rotationPosition = rotationPosition,
 								indexOfTab = indexOfTab,
-								offsetY = offsetY,
-								setOffsetY = setOffsetY,
-								firstTime = firstTime,
-								setFirstTime = setFirstTime,
+
 								icon = icon,
 								label = label,
 								selected = selected,
@@ -269,80 +261,73 @@ fun xCoordinate(
 	stateDirection: Int,
 	density: Density,
 	rotationPosition: Float,
-	oddValue: Float,
 	SIZEVIEWNAVIGATION: Dp,
 	sizeAppTabs: Int,
 	indexTab: Int,
 	sizeItemWidth: Dp
 ): Dp {
+
+
+
 	return ((stateDirection * with(density) { rotationPosition.toDp().value }).dp               // for animation move
-			+ (oddValue                                                                                 // margin left and right for first tab
-			+ (SIZEVIEWNAVIGATION.value / sizeAppTabs) * indexTab).dp                           // between tabs * num of tab
+			+ (((SIZEVIEWNAVIGATION.value/ 2) / sizeAppTabs)                                                                                // margin left and right for first tab
+			+ (SIZEVIEWNAVIGATION.value / sizeAppTabs) * (indexTab)).dp                           // between tabs * num of tab
 			- sizeItemWidth / 2)                                                                    // half of tab to the left
 }
 
 fun yCoordinate(
 	shiftUp: Dp,
+
+	SIZEVIEWNAVIGATION: Dp,
+	sizeAppTabs: Int,
 	xCoordinate: Dp,
 	sizeItemWidth: Dp,
 	marginDown: Dp,
 	sizeNavWidth: Dp,
-	sizeNavHeight: Dp,
-	sizeAppTabs: Int,
-	indexOfTab: Int,
-	setOffsetY: (Dp) -> Unit,
-	offsetY: Dp,
-	setFirstTime: (Int) -> Unit,
-	firstTime: Int
+
 ): Dp {
+
 	return (shiftUp                                                 // shift from top navigation to necessary place
 			+ curve(                                                        //formula for circle
 		xCoordinate + sizeItemWidth / 2,             // between tabs * num of tab
+		SIZEVIEWNAVIGATION,
+		sizeAppTabs,
 		marginDown,
 		sizeNavWidth / 2,
-		sizeNavHeight.plus(sizeNavWidth / 2),
-		sizeAppTabs,
-		indexOfTab,
 		sizeNavWidth / 2,
-		setOffsetY,
-		offsetY,
-		setFirstTime,
-		firstTime
 	)
 			)
 }
 
 fun curve(
 	positionXInParent: Dp,
+	SIZEVIEWNAVIGATION: Dp,
+	sizeAppTabs: Int,
 	marginDown: Dp,
 	centerXInParent: Dp,
-	centerYInParent: Dp,
-	howmany: Int,
-	index: Int,
-	radius: Dp,
-	setOffsetY: (Dp) -> Unit,
-	offsetY: Dp,
-	setFirstTime: (Int) -> Unit,
-	firstTime: Int
-): Dp {
 
+	radius: Dp
+
+): Dp {
 	val x = (positionXInParent.value - centerXInParent.value)
 	val radius2 = (radius.value) * (radius.value) * 1.6f
+	var size =sizeAppTabs
+	if(sizeAppTabs % 2 == 1)
+		size-=1
+	val oddValue = ((SIZEVIEWNAVIGATION.value/ 2) / size)
+	val offsetoddValueX = ( oddValue - centerXInParent.value )
+	var offsetoddValue = 0f
 
-	var y = 0f
+	if (radius2 - offsetoddValueX * offsetoddValueX > 0)
+		offsetoddValue =  -sqrt(radius2 - offsetoddValueX * offsetoddValueX)
+
+	val offset = (-offsetoddValue).dp + marginDown
+
+		var y = 0f
 	if (radius2 - x * x > 0)
 		y = -sqrt(radius2 - x * x)
-	return if (index == 0) {
-		if (firstTime < 2) {
-			setOffsetY((-y).dp + marginDown)
-			setFirstTime(firstTime + 1)
-			marginDown
-		} else {
-			(y + offsetY.value).dp
-		}
-	} else {
-		(y + offsetY.value).dp
-	}
+
+	return (y + offset.value).dp
 
 
 }

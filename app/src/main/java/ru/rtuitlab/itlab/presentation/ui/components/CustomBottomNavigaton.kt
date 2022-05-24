@@ -90,13 +90,8 @@ fun CustomWheelNavigation(
 @Composable
 fun CustomWheelNavigationItem(
 	stateDirection: Int,
-	oddValue: Float,
 	sizeAppTabs: Int,
 	rotationPosition:Float,
-	offsetY: Dp,
-	setOffsetY: (Dp) -> Unit,
-	firstTime: Int,
-	setFirstTime: (Int) -> Unit,
 	marginDown: MutableState<Dp>,
 	sizeNavWidth: Dp,
 	sizeNavHeight: Dp,
@@ -137,29 +132,35 @@ fun CustomWheelNavigationItem(
 	val sizeItemWidth = remember { mutableStateOf(0.dp) }
 	val sizeItemHeight = remember { mutableStateOf(0.dp) }
 
+	var size=sizeAppTabs
+	var index = indexOfTab
+	if(sizeAppTabs < 4){
+		size+=2
+		index++
+		if(sizeAppTabs == 1){
+			size+=2
+			index++
+		}
+	}
+
 	val xCoordinate = xCoordinate(
 		stateDirection,
 		density,
 		rotationPosition,
-		oddValue,
 		sizeNavWidth,
-		sizeAppTabs,
-		indexOfTab,
+		size,
+		index,
 		sizeItemWidth.value
 	)
 	val yCoordinate = yCoordinate(
 		(sizeNavHeight - sizeItemHeight.value),
+		sizeNavWidth,
+		size,
 		xCoordinate,
 		sizeItemWidth.value,
 		marginDown.value,
 		sizeNavWidth,
-		sizeNavHeight,
-		sizeAppTabs,
-		indexOfTab,
-		setOffsetY,
-		offsetY,
-		setFirstTime,
-		firstTime
+
 	)
 
 	Box(

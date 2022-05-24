@@ -57,7 +57,6 @@ fun ITLabApp(
 	eventsViewModel: EventsViewModel = viewModel(),
 	wheelNavigationViewModel: WheelNavigationViewModel = viewModel()
 ) {
-	val SIZEVIEWNAVIGATION = 300.dp
 
 
 	val currentScreen by appBarViewModel.currentScreen.collectAsState()
@@ -148,8 +147,7 @@ fun ITLabApp(
 
 				val sizeAppTabs by appTabsViewModel.appTabsSize.collectAsState()
 
-				//fill empty space in
-				val appTabNull by appTabsViewModel.appTabNull.collectAsState()
+
 
 
 
@@ -192,29 +190,24 @@ fun ITLabApp(
 												}
 										}
 									) {
-										if (tab != appTabNull) {
+
 											Icon(tab.icon, null)
-										}
+
 									}
 								},
 								label = {
-									if (tab != appTabNull) {
+
 										Text(
 											text = stringResource(tab.resourceId),
 											fontSize = 9.sp,
 											lineHeight = 16.sp,
-											/*modifier = Modifier
-												.onSizeChanged {
-													marginDown.value = (-10).dp
-												}*/
+
 										)
-									}
+
 								},
 								selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
 								alwaysShowLabel = true,
 								onClick = {
-									if (tab != appTabNull) {
-
 										//hide and show
 										wheelNavigationViewModel.changeVisible()
 
@@ -241,7 +234,7 @@ fun ITLabApp(
 											restoreState = tab != currentTab
 										}
 										appBarViewModel.setCurrentTab(tab)
-									}
+
 								}
 							)
 
