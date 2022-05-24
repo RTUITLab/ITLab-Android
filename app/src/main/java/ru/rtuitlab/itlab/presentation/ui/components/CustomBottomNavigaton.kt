@@ -133,7 +133,7 @@ fun CustomWheelNavigationItem(
 	val ripple = rememberRipple(bounded = false, color = selectedContentColor)
 
 	val density = LocalDensity.current
-	
+
 	val sizeItemWidth = remember { mutableStateOf(0.dp) }
 	val sizeItemHeight = remember { mutableStateOf(0.dp) }
 
@@ -172,10 +172,9 @@ fun CustomWheelNavigationItem(
 					it.height.toDp()
 				}
 			}
-			.offset(
-				xCoordinate,
-				yCoordinate
-			)
+			.offset {
+				IntOffset(with(density) {xCoordinate.toPx().roundToInt()}, with(density) {yCoordinate.toPx().roundToInt()})
+			}
 			.selectable(
 				selected = selected,
 				onClick = onClick,
