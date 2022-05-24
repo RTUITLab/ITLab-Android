@@ -1,23 +1,15 @@
 package ru.rtuitlab.itlab.presentation.ui
 
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.layout.positionInParent
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,7 +19,6 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.pager.ExperimentalPagerApi
-import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import ru.rtuitlab.itlab.presentation.navigation.AppNavigation
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
@@ -154,153 +145,42 @@ fun ITLabApp(
 				val currentTab by appBarViewModel.currentTab.collectAsState()
 
 				val appTabsForCircle by appTabsViewModel.appTabs.collectAsState()
+
 				val sizeAppTabs by appTabsViewModel.appTabsSize.collectAsState()
 
 				//fill empty space in
 				val appTabNull by appTabsViewModel.appTabNull.collectAsState()
 
-				val density = LocalDensity.current
 
-				val swipeableState = rememberSwipeableState(DirectionWheelNavigation.Center)
-				//three anchors for infinity sliding
-				val anchors = mapOf(
-					with(density) { -SIZEVIEWNAVIGATION.toPx() } to DirectionWheelNavigation.Left,
-					0f to DirectionWheelNavigation.Center,
-					with(density) { SIZEVIEWNAVIGATION.toPx() } to DirectionWheelNavigation.Right) // Maps anchor points (in px) to states
 
-				val marginDown = remember { mutableStateOf((-20).dp) }
-
-				//sizes bottomnavigation
-				val sizeNavWidth = remember { mutableStateOf(0.dp) }
-				val sizeNavHeight = remember { mutableStateOf(0.dp) }
-
-				val currentState by wheelNavigationViewModel.currentState.collectAsState()
-
-				val oddValue = appTabsViewModel.oddValue.collectAsState().value
 
 				WheelNavigation(
-					modifier = Modifier
-						.width(SIZEVIEWNAVIGATION)
-						.onSizeChanged {
-							sizeNavWidth.value = with(density) {
-								it.width.toDp()
-							}
-							sizeNavHeight.value = with(density) {
-								it.height.toDp()
-							}
-						}
-						.swipeable(
-							state = swipeableState,
-							anchors = anchors,
-							thresholds = { _, _ -> FractionalThreshold(0.3f) },
-							orientation = Orientation.Horizontal,
-						),
+
 					onClickWheel = {
 						//hide and show
-						wheelNavigationViewModel.setVisible(!currentState)
+						wheelNavigationViewModel.changeVisible()
 					},
-					marginDown = marginDown.value,
-
 
 					) {
+						WheelItem ->
+
 					val navBackStackEntry by navController.currentBackStackEntryAsState()
 					val currentDestination = navBackStackEntry?.destination
 
 
-					val (offsetY, setOffsetY) = remember { mutableStateOf(0.dp) }
-					val (firstTime, setFirstTime) = remember { mutableStateOf(0) }
-
-
 					val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
 
-					var currentDirectionState by remember { mutableStateOf(1) }
-
-					val statePage = appTabsViewModel.statePage.collectAsState().value
-
-					val coroutineScope = rememberCoroutineScope()
-
-					val rotationPosition by animateFloatAsState(
-						targetValue = if (swipeableState.targetValue != DirectionWheelNavigation.Center) with(density) { sizeNavWidth.value.toPx() } else 0f,
-						animationSpec = tween(durationMillis = 250),
-						finishedListener = {
-							if (it == with(density) { sizeNavWidth.value.toPx() }) {
-								if (statePage == 1) {
-									appTabsViewModel.setSecondPage(coroutineScope)
-								} else {
-									appTabsViewModel.setFirstPage(coroutineScope)
-								}
-								//monitoring when elements is hiden
-								//important reverse
-								currentDirectionState = if (swipeableState.direction > 0) 2 else 0
-								coroutineScope.launch {
-									swipeableState.snapTo(DirectionWheelNavigation.Center)
-								}
-							}
-						}
-					)
-
-					//to what side elements have to move -1 - on the left; 1 - on the right
-					val stateDirection = (if ((currentDirectionState == 2 && swipeableState.progress.to == DirectionWheelNavigation.Center) || swipeableState.targetValue == DirectionWheelNavigation.Left) -1 else 1)
 
 
 					appTabsForCircle
 						.filter { it.accessible }
 						.forEach { tab ->
-							var positionRemX by remember { mutableStateOf(0.dp) }
-							var positionSumX by remember { mutableStateOf(0.dp) }
-
-							val sizeItemWidth = remember { mutableStateOf(0.dp) }
-							val sizeItemHeight = remember { mutableStateOf(0.dp) }
-
-							val xCoordinate = xCoordinate(
-								stateDirection,
-								density,
-								rotationPosition,
-								oddValue,
-								SIZEVIEWNAVIGATION,
-								sizeAppTabs,
-								appTabsForCircle.filter { it.accessible }
+							WheelItem(
+								modifier = Modifier,
+								indexOfTab = appTabsForCircle.filter { it.accessible }
 									.indexOf(tab),
-								sizeItemWidth.value
-							)
-							val yCoordinate = yCoordinate(
-								(sizeNavHeight.value - sizeItemHeight.value),
-								xCoordinate,
-								sizeItemWidth.value,
-								marginDown.value,
-								sizeNavWidth.value,
-								sizeNavHeight.value,
-								sizeAppTabs,
-								appTabsForCircle.filter { it.accessible }
-									.indexOf(tab),
-								setOffsetY,
-								offsetY,
-								setFirstTime,
-								firstTime
-							)
-
-							CustomWheelNavigationItem(
-								modifier = Modifier
-									.onSizeChanged {
-										sizeItemWidth.value = with(density) {
-											it.width.toDp()
-										}
-										sizeItemHeight.value = with(density) {
-											it.height.toDp()
-										}
-									}
-									.onGloballyPositioned {
-										positionRemX = with(density) {
-											it.positionInParent().x.toDp()
-										}
-										positionSumX += positionRemX
-									}
-									.offset(
-											xCoordinate,
-										yCoordinate
-									),
+								sizeAppTabs = sizeAppTabs,
 								icon = {
-
 									BadgedBox(
 										badge = {
 											if (tab is AppTab.Events && invitationsCount > 0)
@@ -323,10 +203,10 @@ fun ITLabApp(
 											text = stringResource(tab.resourceId),
 											fontSize = 9.sp,
 											lineHeight = 16.sp,
-											modifier = Modifier
+											/*modifier = Modifier
 												.onSizeChanged {
 													marginDown.value = (-10).dp
-												}
+												}*/
 										)
 									}
 								},
@@ -336,7 +216,7 @@ fun ITLabApp(
 									if (tab != appTabNull) {
 
 										//hide and show
-										wheelNavigationViewModel.setVisible(!currentState)
+										wheelNavigationViewModel.changeVisible()
 
 										// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
 
@@ -348,7 +228,7 @@ fun ITLabApp(
 												route = tab.startDestination,
 												inclusive = false
 											)
-											return@CustomWheelNavigationItem
+											return@WheelItem
 										}
 										// This code always leaves default tab's start destination on the bottom of the stack. Workaround needed?
 										navController.navigate(tab.route) {
