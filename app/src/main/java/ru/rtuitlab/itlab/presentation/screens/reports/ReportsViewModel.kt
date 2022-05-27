@@ -38,16 +38,28 @@ class ReportsViewModel @Inject constructor(
 
 	private val _reportsResponseFlow: MutableStateFlow<Resource<List<Report>>> =
 		MutableStateFlow(Resource.Loading)
-	val reportsResponseFlow by lazy {
-		fetchReports()
-		_reportsResponseFlow.asStateFlow()
-	}
+	val reportsResponseFlow = _reportsResponseFlow.asStateFlow()
 
 	val userResponsesFlow = usersRepository.usersResponsesFlow
 	val usersFlow = usersRepository.cachedUsersFlow
 
 	private val _searchQuery = MutableStateFlow("")
 	val searchQuery = _searchQuery.asStateFlow()
+
+	init {
+		// There can be a situation where userResponsesFlow is a Resource.Loading,
+		// which is ignored by a ResourceGroup in fetchReports(), causing an exception.
+		// fetchReports() should be invoked only with present user data.
+		viewModelScope.launch {
+			userResponsesFlow.collect {
+				it.handle(
+					onSuccess = {
+						fetchReports()
+					}
+				)
+			}
+		}
+	}
 
 	@Suppress("UNCHECKED_CAST")
 	fun fetchReports() = viewModelScope.launch(Dispatchers.IO) {
