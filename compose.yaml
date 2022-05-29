@@ -1,0 +1,7 @@
+services:
+  android-builder:
+    build:
+      dockerfile: deploy/Dockerfile
+      context: .
+    volumes:
+      - ./output:/app/app/build/outputs/apk/
