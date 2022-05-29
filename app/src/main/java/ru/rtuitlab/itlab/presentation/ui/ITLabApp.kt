@@ -3,13 +3,16 @@ package ru.rtuitlab.itlab.presentation.ui
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,7 +32,6 @@ import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.reports.components.ReportsTopAppBar
-import ru.rtuitlab.itlab.presentation.ui.components.CustomWheelNavigationItem
 import ru.rtuitlab.itlab.presentation.ui.components.Custom_Scaffold
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
@@ -38,9 +40,11 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElemen
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
-import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.*
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.WheelNavigation
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.WheelNavigationViewModel
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.AppTab
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @ExperimentalSerializationApi
 @ExperimentalStdlibApi
@@ -52,7 +56,7 @@ import ru.rtuitlab.itlab.presentation.utils.AppTab
 @Composable
 fun ITLabApp(
 	appBarViewModel: AppBarViewModel = viewModel(),
-	appTabsViewModel: AppTabsViewModel = viewModel(),
+	appTabsViewModel: AppTabsViewModel = singletonViewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
 	eventsViewModel: EventsViewModel = viewModel(),
 	wheelNavigationViewModel: WheelNavigationViewModel = viewModel()
@@ -143,24 +147,18 @@ fun ITLabApp(
 
 				val currentTab by appBarViewModel.currentTab.collectAsState()
 
-				val appTabsForCircle by appTabsViewModel.appTabs.collectAsState()
-
-				val sizeAppTabs by appTabsViewModel.appTabsSize.collectAsState()
-
-
-
-
+				val pagesSize by appTabsViewModel.pagesSize.collectAsState()
 
 
 				WheelNavigation(
-
+					pagesSize = pagesSize,
 					onClickWheel = {
 						//hide and show
 						wheelNavigationViewModel.changeVisible()
 					},
 
 					) {
-						WheelItem ->
+						WheelItem,appsPage ->
 
 					val navBackStackEntry by navController.currentBackStackEntryAsState()
 					val currentDestination = navBackStackEntry?.destination
@@ -170,14 +168,14 @@ fun ITLabApp(
 
 
 
-					appTabsForCircle
+					appsPage
 						.filter { it.accessible }
 						.forEach { tab ->
 							WheelItem(
 								modifier = Modifier,
-								indexOfTab = appTabsForCircle.filter { it.accessible }
+								indexOfTab = appsPage.filter { it.accessible }
 									.indexOf(tab),
-								sizeAppTabs = sizeAppTabs,
+								sizeAppTabs = appsPage.size,
 								icon = {
 									BadgedBox(
 										badge = {

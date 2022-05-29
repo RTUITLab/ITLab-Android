@@ -1,12 +1,9 @@
 package ru.rtuitlab.itlab.presentation.ui.components.top_app_bars
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
@@ -24,11 +21,8 @@ class AppTabsViewModel @Inject constructor(
 	private val _statePage = MutableStateFlow(1)
 	val statePage = _statePage.asStateFlow()
 
-	private val _appTabs = MutableStateFlow(mutableListOf<AppTab>())
-	val appTabs = _appTabs.asStateFlow()
-
-	private val _appTabsSize = MutableStateFlow(0)
-	val appTabsSize = _appTabsSize.asStateFlow()
+	private val _pagesSize = MutableStateFlow(intArrayOf(4,3))
+	val pagesSize = _pagesSize.asStateFlow()
 
 
 
@@ -39,29 +33,35 @@ class AppTabsViewModel @Inject constructor(
 		viewModelScope.launch {
 			userClaimsFlow.collect {
 				AppTab.applyClaims(it)
-				_appTabs.value.clear()
-				_appTabs.value.addAll(AppTab.firstPage.toList())
-				_statePage.value=1
+				val number = 1  //first page
+				val numberPage = (number + _pagesSize.value.size - 1) % _pagesSize.value.size
+				_statePage.value = numberPage+1
+				var from = 0
 
-				_appTabsSize.value = _appTabs.value.size
+				for(i in 0 until numberPage){
+					from += _pagesSize.value[i]
+
+				}
+				Log.d("AppTabs","$number -> $numberPage $from ${from+_pagesSize.value[numberPage]} ${_pagesSize.value.size} ${_statePage.value}")
+
+
 
 			}
 		}
 	}
 
-	fun setSecondPage( scope: CoroutineScope) = scope.launch {
-		_statePage.value=2
-		_appTabs.value.clear()
-		_appTabs.value.addAll(AppTab.secondPage.toList())
+	fun changePage(pagesSize:IntArray,number:Int):List<AppTab>{
+		val numberPage = (number+pagesSize.size - 1) % pagesSize.size
+		_statePage.value = numberPage+1
 
-		_appTabsSize.value = _appTabs.value.size
-	}
-	fun setFirstPage( scope: CoroutineScope) = scope.launch {
-		_statePage.value=1
-		_appTabs.value.clear()
-		_appTabs.value.addAll(AppTab.firstPage.toList())
+		var from = 0
 
-		_appTabsSize.value = _appTabs.value.size
+		for(i in 0 until numberPage){
+			from += pagesSize[i]
+
+		}
+
+		return AppTab.all.toList().subList(from,from+pagesSize[numberPage])
 
 	}
 }

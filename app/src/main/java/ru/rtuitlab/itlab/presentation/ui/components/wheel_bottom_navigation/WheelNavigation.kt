@@ -1,26 +1,19 @@
 package ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation
 
-import android.util.Log
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -29,11 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -53,26 +42,19 @@ import kotlin.math.sqrt
 @Composable
 fun WheelNavigation(
 	modifier: Modifier = Modifier,
+	pagesSize: IntArray,
 	appTabsViewModel: AppTabsViewModel = singletonViewModel(),
 	wheelNavigationViewModel: WheelNavigationViewModel = singletonViewModel(),
 	onClickWheel: () -> Unit,
-	content: @Composable (
+	content: @Composable (CustomWheelNavItem: @Composable (modifier: Modifier, indexOfTab: Int, sizeAppTabs: Int, onClick: () -> Unit, icon: @Composable () -> Unit, label: @Composable() (() -> Unit)?, selected: Boolean, alwaysShowLabel: Boolean) -> Unit ,MutableList<AppTab>) -> Unit,
 
-	                      CustomWheelNavItem:  @Composable (
-		                      modifier:Modifier,
-		                      indexOfTab:Int,
-
-		                      sizeAppTabs:Int,
-		                      onClick: () -> Unit,
-		                      icon: @Composable () -> Unit,
-		                      label: @Composable (() -> Unit)?,
-		                      selected:Boolean,
-		                      alwaysShowLabel: Boolean,
-
-
-		                      ) -> Unit
-	) -> Unit
 ) {
+
+	val appsPage by remember { mutableStateOf(appTabsViewModel.changePage(
+		pagesSize,
+		1
+	) as MutableList<AppTab>)}
+
 	val SIZEVIEWNAVIGATION = 300.dp
 
 	val isVisible by wheelNavigationViewModel.currentState.collectAsState()
@@ -154,11 +136,25 @@ fun WheelNavigation(
 								animationSpec = tween(durationMillis = 250),
 								finishedListener = {
 									if (it == with(density) { sizeNavWidth.value.toPx() }) {
-										if (statePage == 1) {
-											appTabsViewModel.setSecondPage(coroutineScope)
-										} else {
-											appTabsViewModel.setFirstPage(coroutineScope)
+
+										//changePage to the RIGHT
+										if(swipeableState.direction > 0) {
+											appsPage.clear()
+											appsPage.addAll(appTabsViewModel.changePage(
+												pagesSize,
+												statePage - 1
+											)
+											)
+										}else{ //changePage to the LEFT
+											appsPage.clear()
+
+											appsPage.addAll(appTabsViewModel.changePage(
+												pagesSize,
+												statePage + 1
+											)
+											)
 										}
+
 										//monitoring when elements is hiden
 										//important reverse
 										currentDirectionState =
@@ -215,10 +211,8 @@ fun WheelNavigation(
 						}
 
 							content(
-
-								/*marginDown,
-						*/
-								customWheel
+								customWheel,
+								appsPage
 							)
 						}
 					}
