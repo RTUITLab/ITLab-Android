@@ -26,8 +26,12 @@ stages:
             displayName: Decode Keystore
             env:
               KEYSTORE: $(keystore)
-          - script: docker compose up --build
-            displayName: Build dev api debug
+          - script: |
+              pwd
+              ls -al
+              mkdir output-release && docker compose up --build
+              ls -alR $BUILD_SOURCE_DIRECTORY
+            displayName: Build apk
             env:
               SIGNING_KEY_ALIAS: $(alias)
               SIGNING_KEY_PASSWORD: $(key_password)
