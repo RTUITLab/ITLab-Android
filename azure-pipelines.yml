@@ -32,6 +32,7 @@ stages:
               SIGNING_KEY_ALIAS: $(alias)
               SIGNING_KEY_PASSWORD: $(key_password)
               SIGNING_STORE_PASSWORD: $(keystore_password)
+              BUILD_SOURCE_DIRECTORY: $(Build.SourcesDirectory)
           # - script: chmod +x ./gradlew
           #   displayName: Change wrapper permissions
           # - script: ./gradlew :app:assembleProdApiRelease
