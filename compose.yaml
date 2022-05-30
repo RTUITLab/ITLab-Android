@@ -4,7 +4,7 @@ services:
       dockerfile: deploy/Dockerfile-release
       context: .
     volumes:
-      - ${BUILD_SOURCE_DIRECTORY:-.}/output-release:/app/app/build/outputs/apk/
+      - ./output-release:/app/app/build/outputs/apk/
     environment:
       - SIGNING_KEY_ALIAS=${SIGNING_KEY_ALIAS?Set environment variable for key alias SIGNING_KEY_ALIAS}
       - SIGNING_KEY_PASSWORD=${SIGNING_KEY_PASSWORD?Set environment variable for key password SIGNING_KEY_PASSWORD}
