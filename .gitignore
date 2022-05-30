@@ -83,3 +83,5 @@ lint/tmp/
 
 output/
 test*
+.env
+**/*.jks

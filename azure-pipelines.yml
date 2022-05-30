@@ -22,21 +22,25 @@ stages:
       - job: buildApp
         displayName: Build App
         steps:
+          - script: echo $KEYSTORE | base64 --decode > keystore.jks
+            displayName: Decode Keystore
+            env:
+              KEYSTORE: $(keystore)
           - script: docker compose up --build
             displayName: Build dev api debug
+            env:
+              SIGNING_KEY_ALIAS: $(alias)
+              SIGNING_KEY_PASSWORD: $(key_password)
+              SIGNING_STORE_PASSWORD: $(keystore_password)
           # - script: chmod +x ./gradlew
           #   displayName: Change wrapper permissions
-          # - script: echo $KEYSTORE | base64 --decode > keystore.jks
-          #   displayName: Decode Keystore
-          #   env:
-          #     KEYSTORE: $(keystore)
           # - script: ./gradlew :app:assembleProdApiRelease
           #   displayName: Assemble Release
           #   env:
           #     SIGNING_KEY_ALIAS: $(alias)
           #     SIGNING_KEY_PASSWORD: $(key_password)
           #     SIGNING_STORE_PASSWORD: $(keystore_password)
-          - publish: $(Build.SourcesDirectory)/output
+          - publish: $(Build.SourcesDirectory)/output-release
             artifact: itlab-mobile-android
       # - job: createRelease
       #   displayName: Create Release
