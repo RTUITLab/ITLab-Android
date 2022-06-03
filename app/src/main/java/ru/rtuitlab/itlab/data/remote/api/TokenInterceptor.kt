@@ -2,6 +2,7 @@ package ru.rtuitlab.itlab.data.remote.api
 
 import android.util.Log
 import kotlinx.coroutines.runBlocking
+import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationService
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -35,19 +36,33 @@ class TokenInterceptor @Inject constructor(
         val authState = authStateStorage.latestAuthState
         val isNeedToUpdateToken = authState.needsTokenRefresh
 
+        Log.v(TAG, "Token needs to be refreshed? $isNeedToUpdateToken")
+
+        authState.jsonSerializeString().chunked(500).forEach {
+            Log.v(TAG, it)
+        }
+
         suspendCoroutine { continuation ->
             authState.performActionWithFreshTokens(authService) { accessToken, _, exception ->
                 exception?.let {
                     Log.e(TAG, "Exception in token process: ", it)
+                    Log.e(TAG, "Exception in token process: $it")
+
+                    // If token refreshing failed due to an absent internet connection,
+                    // resume the continuation with whatever token since it will never reach the server
+                    if (it == AuthorizationException.GeneralErrors.NETWORK_ERROR) {
+                        continuation.resume("")
+                        return@let
+                    }
+
+                    // If however there was a more severe error, end the session
                     runBlocking {
                         authStateStorage.endSession()
                     }
                     continuation.resume("No token")
                 } ?: run {
-                    if (isNeedToUpdateToken) {
-                        runBlocking {
-                            authStateStorage.updateAuthState(authState)
-                        }
+                    runBlocking {
+                        authStateStorage.updateAuthState(authState)
                     }
                     continuation.resume(accessToken!!)
                 }
