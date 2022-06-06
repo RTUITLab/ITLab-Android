@@ -80,3 +80,8 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+output/
+test*
+.env
+**/*.jks

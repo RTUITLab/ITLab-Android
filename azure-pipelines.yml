@@ -22,14 +22,23 @@ stages:
       - job: buildApp
         displayName: Build App
         steps:
-          - script: chmod +x ./gradlew
-            displayName: Change wrapper permissions
           - script: echo $KEYSTORE | base64 --decode > keystore.jks
             displayName: Decode Keystore
             env:
               KEYSTORE: $(keystore)
-          - script: ./gradlew :app:assembleProdApiRelease
-            displayName: Assemble Release
+          - script: |
+              apt-get update || true
+              apt-get install -y wget unzip dos2unix openjdk-11-jdk
+              wget -O tools.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
+              unzip -d android tools.zip
+              export ANDROID_HOME=$PWD/android
+              export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+              export PATH=$PATH:$ANDROID_HOME:$ANDROID_HOME/cmdline-tools:$ANDROID_HOME/cmdline-tools/bin:$JAVA_HOME/bin:$JAVA_HOME
+              yes | sdkmanager --sdk_root=$ANDROID_HOME --licenses
+              dos2unix gradlew
+              ./gradlew :app:assembleProdApiRelease --stacktrace
+              ls -alR app/build/outputs/apk/
+            displayName: Build andoird app not in docker
             env:
               SIGNING_KEY_ALIAS: $(alias)
               SIGNING_KEY_PASSWORD: $(key_password)
