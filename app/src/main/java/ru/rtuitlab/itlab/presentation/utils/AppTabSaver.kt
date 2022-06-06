@@ -28,7 +28,6 @@ sealed class AppTab(
     object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback,)
     object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, )
     object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description)
-    object Null: AppTab("","", R.string.Null, Icons.Default.HourglassEmpty)
 
 
     fun saveState() = bundleOf(SCREEN_KEY to route)
@@ -41,7 +40,6 @@ sealed class AppTab(
         Feedback -> AppScreen.Feedback
         Profile -> AppScreen.Profile
         Reports -> AppScreen.Reports
-        Null -> AppScreen.Null
     }
 
     companion object {
@@ -63,6 +61,7 @@ sealed class AppTab(
                 Devices,
                 Employees,
                 Feedback,
+
             )
         val secondPage
             get() = listOf(
