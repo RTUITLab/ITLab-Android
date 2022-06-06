@@ -36,36 +36,42 @@ class TokenInterceptor @Inject constructor(
         val authState = authStateStorage.latestAuthState
         val isNeedToUpdateToken = authState.needsTokenRefresh
 
-        Log.v(TAG, "Token needs to be refreshed? $isNeedToUpdateToken")
-
-        authState.jsonSerializeString().chunked(500).forEach {
-            Log.v(TAG, it)
-        }
-
         suspendCoroutine { continuation ->
-            authState.performActionWithFreshTokens(authService) { accessToken, _, exception ->
-                exception?.let {
-                    Log.e(TAG, "Exception in token process: ", it)
-                    Log.e(TAG, "Exception in token process: $it")
+            // If there was a fatal internal exception before AuthStateAction is ever invoked,
+            // we want to end current session since most of those exceptions are unrecoverable
+            try {
+                authState.performActionWithFreshTokens(authService) { accessToken, _, exception ->
+                    exception?.let {
+                        Log.e(TAG, "Exception in token process: ", it)
+                        Log.e(TAG, "Exception in token process: $it")
 
-                    // If token refreshing failed due to an absent internet connection,
-                    // resume the continuation with whatever token since it will never reach the server
-                    if (it == AuthorizationException.GeneralErrors.NETWORK_ERROR) {
-                        continuation.resume("")
-                        return@let
-                    }
+                        // If token refreshing failed due to an absent internet connection,
+                        // resume the continuation with whatever token since it will never reach the server
+                        if (it == AuthorizationException.GeneralErrors.NETWORK_ERROR) {
+                            continuation.resume("")
+                            return@let
+                        }
 
-                    // If however there was a more severe error, end the session
-                    runBlocking {
-                        authStateStorage.endSession()
+                        // If however there was a more severe error, end the session
+                        runBlocking {
+                            authStateStorage.endSession()
+                        }
+                        continuation.resume("No token")
+                    } ?: run {
+                        if (isNeedToUpdateToken) {
+                            runBlocking {
+                                authStateStorage.updateAuthState(authState)
+                            }
+                        }
+                        continuation.resume(accessToken!!)
                     }
-                    continuation.resume("No token")
-                } ?: run {
-                    runBlocking {
-                        authStateStorage.updateAuthState(authState)
-                    }
-                    continuation.resume(accessToken!!)
                 }
+            } catch (e: Throwable) {
+                Log.e(TAG, "Fatal internal authorization exception", e)
+                runBlocking {
+                    authStateStorage.endSession()
+                }
+                continuation.resume("")
             }
         }
     }
