@@ -24,7 +24,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.devices.DevicesApi
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MFSApi
-import ru.rtuitlab.itlab.data.remote.api.reports.ReportApi
+import ru.rtuitlab.itlab.data.remote.api.reports.ReportsApi
 import javax.inject.Singleton
 
 @Module
@@ -103,7 +103,7 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun provideReportApi(retrofit: Retrofit): ReportApi = retrofit.create()
+    fun provideReportApi(retrofit: Retrofit): ReportsApi = retrofit.create()
 
     @Singleton
     @Provides

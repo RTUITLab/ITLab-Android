@@ -25,6 +25,7 @@ import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceNewBottom
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileEventsBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileSettingsBottomSheet
+import ru.rtuitlab.itlab.presentation.screens.reports.components.UserSelectionBottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
@@ -98,6 +99,12 @@ fun BottomSheet(
 				DeviceNewBottomSheet(devicesViewModel,  bottomSheetViewModel)
 
 
+			}
+			is AppBottomSheet.UserSelection -> {
+				UserSelectionBottomSheet(
+					onSelect = (currentSheet as AppBottomSheet.UserSelection).onSelect,
+					bottomSheetViewModel = viewModel
+				)
 			}
 			else -> {}
 		}

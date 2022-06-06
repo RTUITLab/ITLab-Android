@@ -123,7 +123,6 @@
     <string name="show_only_free">Show only free</string>
 
 
-
     <!--    Reports    -->
     <string name="reports">Reports</string>
     <string name="report">Report</string>
@@ -138,6 +137,24 @@
     <string name="reports_files">Files</string>
     <string name="report_write">Write</string>
     <string name="report_preview">Preview</string>
+    <string name="report_title">Report title</string>
+    <string name="report_send">Send</string>
+    <string name="report_new_about_who">Who this report is about</string>
+    <string name="report_uploading_file">Uploading file</string>
+    <string name="report_uploading_file_dialog">Are you sure you want to upload selected file? %1$s</string>
+
+
+    <!--    Markdown    -->
+    <string name="md_heading">Heading</string>
+    <string name="md_bold">Bold</string>
+    <string name="md_italics">Italics</string>
+    <string name="md_quote">Quote</string>
+    <string name="md_code">Code</string>
+    <string name="md_link">Link</string>
+    <string name="md_ul">Unorderd list</string>
+    <string name="md_ol">Ordered list</string>
+    <string name="md_task">Task</string>
+    <string name="md_attach">Attach…</string>
     <string name="Null">null</string>
     <string name="Select_a_file">Select a file</string>
     <string name="Upload_a_file">Upload a file</string>
@@ -145,5 +162,6 @@
     <string name="byDate">by date</string>
     <string name="byUser">by user</string>
     <string name="filter">filter</string>
+    <string name="no_files">Файлы отсутствуют</string>
 
 </resources>

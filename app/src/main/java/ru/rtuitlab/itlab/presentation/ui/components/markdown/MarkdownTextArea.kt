@@ -10,10 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.core.MarkwonTheme
+import io.noties.markwon.image.DefaultDownScalingMediaDecoder
 import io.noties.markwon.image.ImagesPlugin
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
@@ -29,6 +31,8 @@ fun MarkdownTextArea(
 	val textColor = LocalContentColor.current.toArgb()
 	val linkColor = AppColors.accent.collectAsState().value
 
+	val maxWidth = LocalView.current.width
+
 	val mdRenderer = Markwon.builder(LocalContext.current)
 		.usePlugin(
 			object : AbstractMarkwonPlugin() {
@@ -40,7 +44,9 @@ fun MarkdownTextArea(
 			}
 		)
 		.usePlugin(
-			ImagesPlugin.create()
+			ImagesPlugin.create {
+				it.defaultMediaDecoder(DefaultDownScalingMediaDecoder.create(maxWidth, 0))
+			}
 		)
 		.build()
 

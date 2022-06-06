@@ -2,19 +2,16 @@ package ru.rtuitlab.itlab.presentation.screens.devices
 
 import android.util.Log
 import androidx.compose.material.SnackbarHostState
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.emitInIO
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.devices.models.*
-import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.data.repository.DevicesRepository
@@ -231,17 +228,12 @@ class DevicesViewModel @Inject constructor(
         //Owner
 
         private val _userResponsesFlow = MutableStateFlow<Resource<List<UserResponse>>>(Resource.Loading)
-        val userResponsesFlow = _userResponsesFlow.asStateFlow().also { fetchUsers() }
+        val userResponsesFlow = usersRepository.usersResponsesFlow
 
         var cachedUsers = emptyList<UserResponse>()
 
         private val _usersFlow = MutableStateFlow(cachedUsers)
         val usersFlow = _usersFlow.asStateFlow()
-
-        private fun fetchUsers() =
-                _userResponsesFlow.emitInIO(viewModelScope) {
-                        usersRepository.fetchUsers()
-                }
 
         fun onUserResourceSuccess(users: List<UserResponse>) {
                 cachedUsers = users

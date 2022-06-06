@@ -1,10 +1,5 @@
 package ru.rtuitlab.itlab.presentation
 
-import android.app.DownloadManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
@@ -48,7 +43,6 @@ class MainActivity : AppCompatActivity() {
 	private val authViewModel: AuthViewModel by viewModels()
 
 
-
 	private val authPageLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
 			authViewModel.handleAuthResult(requireNotNull(it.data))
@@ -64,19 +58,20 @@ class MainActivity : AppCompatActivity() {
 		}
 
 	private val mfsContract =
-		registerForActivityResult(ActivityResultContracts.OpenDocument()){ selectedFile ->
-			mfsViewModel.setFilePath(this,selectedFile)
-	}
+		registerForActivityResult(ActivityResultContracts.OpenDocument()) { selectedFile ->
+			mfsViewModel.setFilePath(this, selectedFile)
+		}
 
-	private val requestDownloadLauncher =  registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-		Log.d("Main", it.data.toString())
-	}
+	private val requestDownloadLauncher =
+		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+			Log.d("Main", it.data.toString())
+		}
 
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		mfsViewModel.provideRequestPermissionLauncher(this,requestPermissionLauncher)
+		mfsViewModel.provideRequestPermissionLauncher(this, requestPermissionLauncher)
 		mfsViewModel.provideMFSContract(mfsContract)
 		mfsViewModel.provideDownloadLauncher(requestDownloadLauncher)
 
@@ -101,7 +96,6 @@ class MainActivity : AppCompatActivity() {
 				}
 			}
 		}
-
 
 
 	}
