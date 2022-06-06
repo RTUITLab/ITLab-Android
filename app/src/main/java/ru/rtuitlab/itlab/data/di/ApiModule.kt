@@ -55,8 +55,8 @@ object ApiModule {
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient =
         OkHttpClient().newBuilder()
-            .addInterceptor(tokenInterceptor)
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(tokenInterceptor)
             .build()
 
     private val defaultJson = Json {
