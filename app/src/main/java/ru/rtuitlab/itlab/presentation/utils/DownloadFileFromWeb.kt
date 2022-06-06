@@ -16,6 +16,7 @@ import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfo
 import java.io.File
 import java.io.FileNotFoundException
@@ -164,7 +165,7 @@ object DownloadFileFromWeb {
 				val file = File(attachmentUri.path!!)
 				Log.d("OPEN","${attachmentUri.path}")
 				attachmentUri =
-					FileProvider.getUriForFile(context, "ru.rtuitlab.itlab.domain.provider", file)
+					FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", file)
 				Log.d("OPEN","${attachmentUri}")
 
 			}

@@ -42,6 +42,11 @@ import androidx.compose.ui.unit.*
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.DirectionWheelNavigation
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.xCoordinate
+import ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation.yCoordinate
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppTab
 import kotlin.math.abs
@@ -80,8 +85,17 @@ fun CustomWheelNavigation(
 }
 
 
+
+@ExperimentalMaterialApi
 @Composable
 fun CustomWheelNavigationItem(
+	stateDirection: Int,
+	sizeAppTabs: Int,
+	rotationPosition:Float,
+	marginDown: MutableState<Dp>,
+	sizeNavWidth: Dp,
+	sizeNavHeight: Dp,
+	indexOfTab: Int,
 	selected: Boolean,
 	onClick: () -> Unit,
 	icon: @Composable () -> Unit,
@@ -93,9 +107,16 @@ fun CustomWheelNavigationItem(
 	selectedContentColor: Color = LocalContentColor.current,
 	unselectedContentColor: Color = selectedContentColor.copy(alpha = ContentAlpha.medium),
 
-) {
+
+	) {
 	val styledLabel: @Composable (() -> Unit)? = label?.let {
 		@Composable {
+			Box(
+				modifier =Modifier
+					.onSizeChanged {
+						marginDown.value = (-10).dp
+					}
+			)
 			val style = MaterialTheme.typography.caption.copy(textAlign = TextAlign.Center)
 			ProvideTextStyle(style, content = label)
 		}
@@ -106,8 +127,55 @@ fun CustomWheelNavigationItem(
 	// provided by BottomNavigationTransition.
 	val ripple = rememberRipple(bounded = false, color = selectedContentColor)
 
+	val density = LocalDensity.current
+
+	val sizeItemWidth = remember { mutableStateOf(0.dp) }
+	val sizeItemHeight = remember { mutableStateOf(0.dp) }
+
+	var size=sizeAppTabs
+	var index = indexOfTab
+	if(sizeAppTabs < 4){
+		size+=2
+		index++
+		if(sizeAppTabs == 1){
+			size+=2
+			index++
+		}
+	}
+
+	val xCoordinate = xCoordinate(
+		stateDirection,
+		density,
+		rotationPosition,
+		sizeNavWidth,
+		size,
+		index,
+		sizeItemWidth.value
+	)
+	val yCoordinate = yCoordinate(
+		(sizeNavHeight - sizeItemHeight.value),
+		sizeNavWidth,
+		size,
+		xCoordinate,
+		sizeItemWidth.value,
+		marginDown.value,
+		sizeNavWidth,
+
+	)
+
 	Box(
-		modifier
+		modifier =modifier
+			.onSizeChanged {
+				sizeItemWidth.value = with(density) {
+					it.width.toDp()
+				}
+				sizeItemHeight.value = with(density) {
+					it.height.toDp()
+				}
+			}
+			.offset {
+				IntOffset(with(density) {xCoordinate.toPx().roundToInt()}, with(density) {yCoordinate.toPx().roundToInt()})
+			}
 			.selectable(
 				selected = selected,
 				onClick = onClick,

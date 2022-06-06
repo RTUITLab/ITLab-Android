@@ -144,14 +144,14 @@
     //MFS
     <string name="Select_a_file">Выбрать файл</string>
     <string name="Upload_a_file">Загрузить файл</string>
-    <string name="download">Download</string>
-    <string name="byDate">by date</string>
-    <string name="byUser">by user</string>
-    <string name="filter">filter</string>
     <string name="report_title">Заголовок отчёта</string>
     <string name="report_send">Отправить</string>
     <string name="report_new_about_who">О ком отчёт</string>
     <string name="report_uploading_file">Загрузка файла</string>
     <string name="report_uploading_file_dialog">Вы уверены, что хотите загрузить выбранный файл? %1$s</string>
     <string name="no_files">Файлы отсутствуют</string>
+    <string name="download">Скачать</string>
+    <string name="byDate">По дате</string>
+    <string name="byUser">По пользователю</string>
+    <string name="filter">Фильтр</string>
 </resources>
