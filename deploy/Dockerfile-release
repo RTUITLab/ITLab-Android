@@ -16,4 +16,4 @@ COPY . .
 RUN apt-get install -y dos2unix \
  && dos2unix gradlew
 
-CMD ./gradlew :app:assembleDevApiDebug --stacktrace
+CMD ./gradlew :app:assembleProdApiRelease --stacktrace

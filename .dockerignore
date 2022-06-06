@@ -11,3 +11,4 @@ compose*.yaml
 azure-pipelines.yml
 .*ignore
 output/
+.env
