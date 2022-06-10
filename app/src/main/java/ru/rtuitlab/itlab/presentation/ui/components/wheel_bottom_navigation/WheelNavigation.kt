@@ -119,7 +119,7 @@ fun WheelNavigation(
 									}
 								}
 								.swipeable(
-									enabled = pagesSize.size>1,
+									enabled = pagesSize.size>1 && pagesSize[0]>appTabsViewModel.allAppTabsAccess().size,
 									state = swipeableState,
 									anchors = anchors,
 									thresholds = { _, _ -> FractionalThreshold(0.3f) },

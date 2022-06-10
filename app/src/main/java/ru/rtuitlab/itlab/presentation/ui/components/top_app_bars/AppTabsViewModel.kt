@@ -21,7 +21,7 @@ class AppTabsViewModel @Inject constructor(
 	private val _statePage = MutableStateFlow(1)
 	val statePage = _statePage.asStateFlow()
 
-	private val _pagesSize = MutableStateFlow(intArrayOf(5))
+	private val _pagesSize = MutableStateFlow(intArrayOf(5,1))
 	val pagesSize = _pagesSize.asStateFlow()
 
 
@@ -33,12 +33,26 @@ class AppTabsViewModel @Inject constructor(
 		viewModelScope.launch {
 			userClaimsFlow.collect {
 				AppTab.applyClaims(it)
+
+				var from = 0
+				val appTabsAccess = allAppTabsAccess()
+
+				var several =1
+
+				for(i in 0 until pagesSize.value.size){
+					from += pagesSize.value[i]
+					if(from >=appTabsAccess.size){
+						if(several<i+1)
+							several=i+1
+					}
+				}
+				_pagesSize.value=_pagesSize.value.copyOfRange(0,several)
 			}
 		}
 	}
 
 	fun changePage(pagesSize:IntArray,number:Int):List<AppTab>{
-		val numberPage = (number+pagesSize.size - 1) % pagesSize.size
+		var numberPage = (number+pagesSize.size - 1) % pagesSize.size
 		_statePage.value = numberPage+1
 
 		var from = 0
@@ -47,8 +61,22 @@ class AppTabsViewModel @Inject constructor(
 			from += pagesSize[i]
 
 		}
+		val appTabsAccess = allAppTabsAccess()
 
-		return AppTab.all.toList().filter { it.accessible }.subList(from,from+pagesSize[numberPage])
+		if(from >=appTabsAccess.size){
+			from =0
+			numberPage=0
+			_statePage.value = numberPage+1
+		}
+		if(from+pagesSize[numberPage]>appTabsAccess.size){
+			return appTabsAccess.subList(from,appTabsAccess.size)
 
+		}else {
+			return appTabsAccess.subList(from, from + pagesSize[numberPage])
+		}
+	}
+
+	fun allAppTabsAccess():List<AppTab>{
+		return AppTab.all.toList().filter { it.accessible }
 	}
 }
