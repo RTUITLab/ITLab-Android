@@ -21,7 +21,7 @@ class AppTabsViewModel @Inject constructor(
 	private val _statePage = MutableStateFlow(1)
 	val statePage = _statePage.asStateFlow()
 
-	private val _pagesSize = MutableStateFlow(intArrayOf(4,3))
+	private val _pagesSize = MutableStateFlow(intArrayOf(5))
 	val pagesSize = _pagesSize.asStateFlow()
 
 
@@ -33,19 +33,6 @@ class AppTabsViewModel @Inject constructor(
 		viewModelScope.launch {
 			userClaimsFlow.collect {
 				AppTab.applyClaims(it)
-				val number = 1  //first page
-				val numberPage = (number + _pagesSize.value.size - 1) % _pagesSize.value.size
-				_statePage.value = numberPage+1
-				var from = 0
-
-				for(i in 0 until numberPage){
-					from += _pagesSize.value[i]
-
-				}
-				Log.d("AppTabs","$number -> $numberPage $from ${from+_pagesSize.value[numberPage]} ${_pagesSize.value.size} ${_statePage.value}")
-
-
-
 			}
 		}
 	}
@@ -61,7 +48,7 @@ class AppTabsViewModel @Inject constructor(
 
 		}
 
-		return AppTab.all.toList().subList(from,from+pagesSize[numberPage])
+		return AppTab.all.toList().filter { it.accessible }.subList(from,from+pagesSize[numberPage])
 
 	}
 }
