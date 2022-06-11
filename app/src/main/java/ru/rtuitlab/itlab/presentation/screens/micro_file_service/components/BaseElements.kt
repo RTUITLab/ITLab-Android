@@ -229,14 +229,14 @@ fun BaseElements(
 			}
 			SwipeRefresh(
 				modifier = Modifier
-					.fillMaxWidth(),
+					.fillMaxSize(),
 				state = rememberSwipeRefreshState(isRefreshing),
 				onRefresh = mfsViewModel::onRefresh
 			) {
 
 				Column(
 					modifier = Modifier
-						.fillMaxWidth()
+						.fillMaxSize()
 				) {
 					filesResource.handle(
 						onLoading = {
@@ -253,7 +253,8 @@ fun BaseElements(
 								LoadingError(msg = stringResource(R.string.no_files))
 							else {
 								mfsViewModel.onResourceSuccess(it)
-								FileList(mfsViewModel)
+								if(mfsViewModel.accesibleFlow.collectAsState().value)
+									FileList(mfsViewModel)
 							}
 
 						}
@@ -274,7 +275,8 @@ fun BaseElements(
 private fun FileList(
 	mfsViewModel: MFSViewModel
 ) {
-	val files = mfsViewModel.listFileInfoFlow.collectAsState().value.reversed()
+
+		val files = mfsViewModel.listFileInfoFlow.collectAsState().value.reversed()
 
 
 

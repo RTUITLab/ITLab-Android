@@ -24,7 +24,8 @@ class AppTabsViewModel @Inject constructor(
 	private val _pagesSize = MutableStateFlow(intArrayOf(5,1))
 	val pagesSize = _pagesSize.asStateFlow()
 
-
+	val _appTabs = MutableStateFlow(AppTab.all)
+	val appTabs = _appTabs.asStateFlow()
 
 
 
@@ -47,6 +48,7 @@ class AppTabsViewModel @Inject constructor(
 					}
 				}
 				_pagesSize.value=_pagesSize.value.copyOfRange(0,several)
+				_appTabs.emit(AppTab.all.toList())
 			}
 		}
 	}
@@ -74,9 +76,10 @@ class AppTabsViewModel @Inject constructor(
 		}else {
 			return appTabsAccess.subList(from, from + pagesSize[numberPage])
 		}
+
 	}
 
 	fun allAppTabsAccess():List<AppTab>{
-		return AppTab.all.toList().filter { it.accessible }
+		return _appTabs.value.filter { it.accessible }
 	}
 }
