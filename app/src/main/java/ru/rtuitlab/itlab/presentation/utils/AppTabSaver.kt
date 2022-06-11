@@ -54,23 +54,7 @@ sealed class AppTab(
                 Profile,
                 Reports
             )
-        val firstPage
-            get() = listOf(
-                Events,
-                Devices,
-                Employees,
-                Feedback,
 
-            )
-        val secondPage
-            get() = listOf(
-                Profile,
-                Projects,
-                Reports
-
-
-
-            )
 
         fun saver() = Saver<AppTab, Bundle>(
             save = { it.saveState() },
@@ -143,7 +127,6 @@ open class AppScreen(
     object NewReport: AppScreen(R.string.report_new, "reports/new")
 
 
-    object Null: AppScreen(R.string.Null,"null")
     companion object {
         fun getAll(context: Context) = listOf(
             Employees,

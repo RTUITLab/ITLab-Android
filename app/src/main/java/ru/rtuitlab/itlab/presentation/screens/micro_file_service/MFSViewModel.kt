@@ -34,6 +34,7 @@ import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb
 import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb.saveToInternalStorage
 import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb.toBitmap
 import java.io.File
+import java.lang.reflect.TypeVariable
 import java.net.URL
 import javax.inject.Inject
 
@@ -46,16 +47,13 @@ class MFSViewModel @Inject constructor(
 ): ViewModel() {
 
 	private val userClaimsFlow = authStateStorage.userClaimsFlow
-	private var isAccesible:Boolean = false
-	private var _accesibleFlow = MutableStateFlow(isAccesible)
+	private var _accesibleFlow = MutableStateFlow(false)
 	val accesibleFlow = _accesibleFlow.asStateFlow()
 	init {
 		viewModelScope.launch {
 			userClaimsFlow.collect {
 
-				isAccesible = it.contains(UserClaimCategories.REPORTS.ADMIN)
-				Log.d("MFSViewModel","$isAccesible")
-				_accesibleFlow.value = isAccesible
+				_accesibleFlow.emit( it.contains(UserClaimCategories.REPORTS.ADMIN))
 			}
 		}
 	}
@@ -120,13 +118,14 @@ class MFSViewModel @Inject constructor(
 
 		_listFileInfoFlow.value = cachedFileInfoList
 	}
-	private fun fetchListFileInfoResponse(userId: String?=null,sortedBy: String?=null) {
+	private fun fetchListFileInfoResponse(userId: String?=null,sortedBy: String?=null)  = _listFileInfoResponseFlow.emitInIO(viewModelScope){
+
 		if (_accesibleFlow.value)
 			fetchListFileInfoResponseAdmin(userId = userId, sortedBy = sortedBy)
 		else
 			fetchListFileInfoResponseUser(sortedBy = sortedBy)
 	}
-	private fun fetchListFileInfoResponseUser(sortedBy:String?=null) = _listFileInfoResponseFlow.emitInIO(viewModelScope) {
+	private suspend fun fetchListFileInfoResponseUser(sortedBy:String?=null):Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>> {
 		var resources: Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>> =
 			Resource.Loading
 		lateinit var userId: String
@@ -155,10 +154,10 @@ class MFSViewModel @Inject constructor(
 			},
 			onError = { resources = Resource.Error(it) }
 		)
-		resources
+		return resources
 
 	}
-	private fun fetchListFileInfoResponseAdmin(userId:String?=null,sortedBy:String?=null) = _listFileInfoResponseFlow.emitInIO(viewModelScope) {
+	private suspend fun fetchListFileInfoResponseAdmin(userId:String?=null,sortedBy:String?=null):Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>> {
 
 		var resources: Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>> =
 			Resource.Loading
@@ -184,7 +183,7 @@ class MFSViewModel @Inject constructor(
 			},
 			onError = { resources = Resource.Error(it) }
 		)
-		resources
+		return resources
 	}
 	//sortedBy - date or name
 	//userId - id of user hmmmm
