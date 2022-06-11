@@ -1,5 +1,7 @@
 package ru.rtuitlab.itlab.data.remote.api.users.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -37,6 +39,7 @@ data class UserResponse (
 	val fullName = "${firstName ?: ""} ${lastName ?: ""}"
 }
 
+@Parcelize
 data class User(
 	val id : String,
 	val firstName : String? = null,
@@ -49,7 +52,7 @@ data class User(
 	val discordId: String? = null,
 	val skypeId: String? = null,
 	val properties: List<UserPropertyModel>? = null
-){
+) : Parcelable {
 	fun toUserResponse() = UserResponse(
 		id = id,
 		firstName = firstName,

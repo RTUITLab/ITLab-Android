@@ -1,13 +1,16 @@
 package ru.rtuitlab.itlab.data.remote.api.users.models
 
+import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.School
 import androidx.compose.ui.graphics.vector.ImageVector
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import ru.rtuitlab.itlab.R
 
+@Parcelize
 @Serializable
 data class UserPropertyTypeModel (
 	val id : String,
@@ -15,7 +18,7 @@ data class UserPropertyTypeModel (
 	val description : String? = null,
 	val instancesCount : Int,
 	val isLocked : Boolean
-) {
+) : Parcelable {
 	fun toUiPropertyType() = when(title) {
 		"Учебная группа" -> UserPropertyType.StudyGroup(id)
 		"VKID" -> UserPropertyType.VkId(id)

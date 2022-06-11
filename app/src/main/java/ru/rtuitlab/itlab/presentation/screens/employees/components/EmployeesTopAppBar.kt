@@ -42,12 +42,12 @@ fun EmployeesTopAppBar(
 		hideOptions = searchActivated,
 		onBackAction = {
 			searchActivated = false
-			employeesViewModel.onSearch("")
+			employeesViewModel.onSearchQueryChange("")
 		}
 	) {
 		if (searchActivated) {
 			SearchBar(
-				onSearch = employeesViewModel::onSearch
+				onSearch = employeesViewModel::onSearchQueryChange
 			)
 		} else {
 			Text(

@@ -53,6 +53,7 @@ fun Reports(
 	reportsViewModel: ReportsViewModel = singletonViewModel()
 ) {
 	val reportsResource by reportsViewModel.reportsResponseFlow.collectAsState()
+	val searchQuery by reportsViewModel.searchQuery.collectAsState()
 
 	var isRefreshing by remember { mutableStateOf(false) }
 	val userId by reportsViewModel.userIdFlow.collectAsState()
@@ -109,11 +110,13 @@ fun Reports(
 										reports
 											.filter { it.implementer.id == userId }
 											.sortedByDescending { it.id }
+											.performQuery(searchQuery)
 									)
 									ReportsTab.FromUser -> ReportsList(
 										reports
 											.filter { it.applicant.id == userId }
 											.sortedByDescending { it.id }
+											.performQuery(searchQuery)
 									)
 									ReportsTab.Files -> {
 										BaseElements(mfsViewModel)
@@ -234,7 +237,7 @@ fun ReportCard(
 								spacing = 8.dp
 							) {
 								Text(
-									text = "${report.applicationDate}Z".fromIso8601(LocalContext.current),
+									text = report.applicationDate.fromIso8601(LocalContext.current),
 									style = MaterialTheme.typography.subtitle1
 								)
 							}

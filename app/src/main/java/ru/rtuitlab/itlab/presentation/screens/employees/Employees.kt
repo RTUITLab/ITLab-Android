@@ -38,7 +38,6 @@ fun Employees(
 			},
 			onSuccess = {
 				isRefreshing = false
-				employeesViewModel.onResourceSuccess(it)
 				EmployeeList(employeesViewModel)
 			}
 		)

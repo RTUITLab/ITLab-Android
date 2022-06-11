@@ -3,7 +3,7 @@ package ru.rtuitlab.itlab.presentation.ui.extensions
 import android.content.Context
 import kotlinx.datetime.*
 import ru.rtuitlab.itlab.R
-import kotlinx.datetime.TimeZone
+import java.time.DateTimeException
 import java.time.format.DateTimeFormatter
 
 private val timeZone = TimeZone.of("UTC+3")
@@ -31,7 +31,7 @@ fun Long.toClientDate() = toMoscowDateTime().run {
 fun String.fromIso8601(
 	context: Context,
 	dateTimeDelimiter: String = " ${context.resources.getString(R.string.at)}"
-) =
+) = try {
 	fromIso8601ToInstant().run {
 		val day = dayOfMonth.toString().padStart(2, '0')
 		val month = monthNumber.toString().padStart(2, '0')
@@ -39,6 +39,9 @@ fun String.fromIso8601(
 		val minute = minute.toString().padStart(2, '0')
 		"$day.$month.$year$dateTimeDelimiter $hour:$minute"
 	}
+} catch (e: DateTimeException) {
+	"Time parsing error"
+}
 
 fun String.fromIso8601ToInstant() =
 	java.time.Instant.from(

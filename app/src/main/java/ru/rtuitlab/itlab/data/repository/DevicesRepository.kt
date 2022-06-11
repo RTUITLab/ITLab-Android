@@ -49,7 +49,6 @@ class DevicesRepository @Inject constructor(
                 devicesApi.deleteOwner(ownerid,  EquipmentIdRequest( equipmentId))
         }
 
-
         //Filtering
         suspend fun fetchFreeEquipmentList() = handler{
                 devicesApi.getFreeEquipments()

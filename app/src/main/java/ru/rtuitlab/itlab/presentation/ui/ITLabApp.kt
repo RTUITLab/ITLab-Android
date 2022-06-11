@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.presentation.ui
 
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.layout.Box
@@ -167,14 +168,11 @@ fun ITLabApp(
 					val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
 
 
-
 					appsPage
-						.filter { it.accessible }
 						.forEach { tab ->
 							WheelItem(
 								modifier = Modifier,
-								indexOfTab = appsPage.filter { it.accessible }
-									.indexOf(tab),
+								indexOfTab = appsPage.indexOf(tab),
 								sizeAppTabs = appsPage.size,
 								icon = {
 									BadgedBox(

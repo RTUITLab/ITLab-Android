@@ -2,19 +2,18 @@ package ru.rtuitlab.itlab.presentation.screens.devices
 
 import android.util.Log
 import androidx.compose.material.SnackbarHostState
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.emitInIO
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.devices.models.*
-import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.data.repository.DevicesRepository
@@ -231,17 +230,12 @@ class DevicesViewModel @Inject constructor(
         //Owner
 
         private val _userResponsesFlow = MutableStateFlow<Resource<List<UserResponse>>>(Resource.Loading)
-        val userResponsesFlow = _userResponsesFlow.asStateFlow().also { fetchUsers() }
+        val userResponsesFlow = usersRepository.usersResponsesFlow
 
         var cachedUsers = emptyList<UserResponse>()
 
         private val _usersFlow = MutableStateFlow(cachedUsers)
         val usersFlow = _usersFlow.asStateFlow()
-
-        private fun fetchUsers() =
-                _userResponsesFlow.emitInIO(viewModelScope) {
-                        usersRepository.fetchUsers()
-                }
 
         fun onUserResourceSuccess(users: List<UserResponse>) {
                 cachedUsers = users
@@ -295,8 +289,6 @@ class DevicesViewModel @Inject constructor(
 
         //Filtering
 
-        fun onFreeRefresh() = fetchFreeDevices()
-
 
         fun onChangeFiltering(){
                 _freeFilteringIs.value = !_freeFilteringIs.value
@@ -304,23 +296,23 @@ class DevicesViewModel @Inject constructor(
         }
 
 
-        private fun fetchFreeDevices() = _devicesResponsesFlow.emitInIO(viewModelScope){
+        private fun fetchFreeDevices() = viewModelScope.launch(Dispatchers.IO) {
                 var resources: Resource<MutableList<Pair<DeviceDetailDto, UserResponse?>>> = Resource.Loading
+                _devicesResponsesFlow.emit(resources)
+                val users = async { usersRepository.fetchUsers() }
+                val devices = async { devicesRepo.fetchFreeEquipmentList() }
 
-                devicesRepo.fetchFreeEquipmentList().handle (
-                        onSuccess = { details ->
+                (users.await() + devices.await()).handle (
+
+                        onSuccess = {  (u, d) ->
                                 val listPair = mutableListOf<Pair<DeviceDetailDto, UserResponse?>>()
 
-                                details.map {
+                                (d as List<DeviceDetailDto>).map { detail ->
                                         var resource: Pair<DeviceDetailDto, UserResponse?>
-                                        resource = it to null
-                                        Log.d("DeviceViewModel",it.toString())
-                                        if(it.ownerId!=null) {
-                                                devicesRepo.fetchOwner(it.ownerId).handle(
-                                                        onSuccess = { userResponce ->
-                                                                resource = it to userResponce
-                                                        }
-                                                )
+                                        resource = detail to null
+                                        if(detail.ownerId!=null) {
+                                                val sender = (u as MutableList<UserResponse>)?.find { it.id == detail.ownerId }
+                                                resource = detail to sender
                                         }
                                         listPair.add(resource)
 
@@ -330,7 +322,8 @@ class DevicesViewModel @Inject constructor(
                         },
                         onError = {resources = Resource.Error(it)}
                 )
-                resources
+                _devicesResponsesFlow.emit(resources)
+
 
         }
 

@@ -66,8 +66,7 @@ fun BaseElements(
 
 	) {
 		//for attach files
-		/*
-		Column(
+		/*Column(
 
 		) {
 
@@ -100,6 +99,7 @@ fun BaseElements(
 							.weight(1f),
 						onClick = {
 							mfsViewModel.setFileNull()
+							fileDescription.value =""
 						}
 					) {
 						Icon(Icons.Outlined.Delete, contentDescription = null)
@@ -111,6 +111,7 @@ fun BaseElements(
 			//UploadFile
 			Button(onClick = {
 				mfsViewModel.uploadFile(fileDescription.value)
+				fileDescription.value =""
 			}){
 				Text(text = stringResource(R.string.Upload_a_file))
 
@@ -121,7 +122,6 @@ fun BaseElements(
 				value = fileDescription.value,
 				onValueChange = {
 					fileDescription.value = it
-
 				},
 				placeholder = {
 					Text(text = stringResource(R.string.description))
@@ -136,8 +136,7 @@ fun BaseElements(
 			)
 		}
 
-
-		 */
+*/
 		Column(
 			modifier = Modifier
 				.fillMaxWidth()
@@ -246,13 +245,16 @@ fun BaseElements(
 						onError = { msg ->
 							isRefreshing = false
 							LoadingError(msg = msg)
+
 						},
 						onSuccess = {
 							isRefreshing = false
-							mfsViewModel.onResourceSuccess(it)
-
-							FileList(mfsViewModel)
-
+							if (it.isEmpty())
+								LoadingError(msg = stringResource(R.string.no_files))
+							else {
+								mfsViewModel.onResourceSuccess(it)
+								FileList(mfsViewModel)
+							}
 
 						}
 

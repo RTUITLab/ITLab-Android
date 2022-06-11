@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation.ui.components.wheel_bottom_navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateFloatAsState
@@ -54,6 +55,8 @@ fun WheelNavigation(
 		pagesSize,
 		1
 	) as MutableList<AppTab>)}
+
+
 
 	val SIZEVIEWNAVIGATION = 300.dp
 
@@ -116,6 +119,7 @@ fun WheelNavigation(
 									}
 								}
 								.swipeable(
+									enabled = pagesSize.size>1 && pagesSize[0]>appTabsViewModel.allAppTabsAccess().size,
 									state = swipeableState,
 									anchors = anchors,
 									thresholds = { _, _ -> FractionalThreshold(0.3f) },

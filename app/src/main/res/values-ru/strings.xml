@@ -130,10 +130,26 @@
     <string name="reports_files">Файлы</string>
     <string name="report_write">Писать</string>
     <string name="report_preview">Просмотр</string>
+    <string name="md_heading">Заголовок</string>
+    <string name="md_bold">Жирный</string>
+    <string name="md_italics">Курсив</string>
+    <string name="md_quote">Цитата</string>
+    <string name="md_code">Код</string>
+    <string name="md_link">Ссылка</string>
+    <string name="md_ul">Ненумерованный список</string>
+    <string name="md_ol">Нумерованный список</string>
+    <string name="md_task">Чекбокс</string>
+    <string name="md_attach">Прикрепить…</string>
 
     //MFS
     <string name="Select_a_file">Выбрать файл</string>
     <string name="Upload_a_file">Загрузить файл</string>
+    <string name="report_title">Заголовок отчёта</string>
+    <string name="report_send">Отправить</string>
+    <string name="report_new_about_who">О ком отчёт</string>
+    <string name="report_uploading_file">Загрузка файла</string>
+    <string name="report_uploading_file_dialog">Вы уверены, что хотите загрузить выбранный файл? %1$s</string>
+    <string name="no_files">Файлы отсутствуют</string>
     <string name="download">Скачать</string>
     <string name="byDate">По дате</string>
     <string name="byUser">По пользователю</string>

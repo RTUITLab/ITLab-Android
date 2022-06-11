@@ -38,7 +38,9 @@ fun LabelledRadioButton(
 			selected = state,
 			onClick = {onCheckedChange(!state)},
 			colors = RadioButtonDefaults.colors(
-				selectedColor = Color.White
+				selectedColor = MaterialTheme.colors.onSurface,
+				unselectedColor = MaterialTheme.colors.onSurface,
+				disabledColor = MaterialTheme.colors.onSurface
 			)
 		)
 
