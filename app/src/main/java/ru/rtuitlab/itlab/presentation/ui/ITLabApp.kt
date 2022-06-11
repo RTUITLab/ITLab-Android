@@ -1,7 +1,6 @@
 package ru.rtuitlab.itlab.presentation.ui
 
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.layout.Box
@@ -56,188 +55,187 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 @ExperimentalPagerApi
 @Composable
 fun ITLabApp(
-	appBarViewModel: AppBarViewModel = viewModel(),
-	appTabsViewModel: AppTabsViewModel = singletonViewModel(),
-	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
-	eventsViewModel: EventsViewModel = viewModel(),
-	wheelNavigationViewModel: WheelNavigationViewModel = viewModel()
+    appBarViewModel: AppBarViewModel = viewModel(),
+    appTabsViewModel: AppTabsViewModel = singletonViewModel(),
+    bottomSheetViewModel: BottomSheetViewModel = viewModel(),
+    eventsViewModel: EventsViewModel = viewModel(),
+    wheelNavigationViewModel: WheelNavigationViewModel = viewModel()
 ) {
 
 
-	val currentScreen by appBarViewModel.currentScreen.collectAsState()
+    val currentScreen by appBarViewModel.currentScreen.collectAsState()
 
-	val navController = LocalNavController.current
+    val navController = LocalNavController.current
 
-	var sharedElementScope = LocalSharedElementsRootScope.current
+    var sharedElementScope = LocalSharedElementsRootScope.current
 
-	val onBackAction: () -> Unit = {
-		if (sharedElementScope?.isRunningTransition == false)
-			if (!navController.popBackStack()) appBarViewModel.handleDeepLinkPop()
-	}
+    val onBackAction: () -> Unit = {
+        if (sharedElementScope?.isRunningTransition == false)
+            if (!navController.popBackStack()) appBarViewModel.handleDeepLinkPop()
+    }
 
-	LaunchedEffect(bottomSheetViewModel.bottomSheetState.currentValue) {
-		if (bottomSheetViewModel.bottomSheetState.currentValue == ModalBottomSheetValue.Hidden)
-			bottomSheetViewModel.hide(this)
-	}
+    LaunchedEffect(bottomSheetViewModel.bottomSheetState.currentValue) {
+        if (bottomSheetViewModel.bottomSheetState.currentValue == ModalBottomSheetValue.Hidden)
+            bottomSheetViewModel.hide(this)
+    }
 
-	ModalBottomSheetLayout(
-		sheetState = bottomSheetViewModel.bottomSheetState,
-		sheetContent = { BottomSheet() },
-		sheetShape = RoundedCornerShape(
-			topStart = 16.dp,
-			topEnd = 16.dp
-		),
-		scrimColor = Color.Black.copy(.25f)
-	) {
-		Custom_Scaffold(
-			topBar = {
-				when (currentScreen) {
-					AppScreen.Events -> EventsTopAppBar()
-					is AppScreen.EventDetails -> BasicTopAppBar(
-						text = stringResource(
-							currentScreen.screenNameResource,
-							(currentScreen as AppScreen.EventDetails).title
-						),
-						onBackAction = onBackAction
-					)
-					AppScreen.EventNew,
-					AppScreen.EmployeeDetails -> BasicTopAppBar(
-						text = stringResource(currentScreen.screenNameResource),
-						onBackAction = onBackAction
-					)
-					AppScreen.Profile -> ProfileTopAppBar(
-						text = stringResource(currentScreen.screenNameResource),
-						onBackAction = onBackAction
-					)
-					AppScreen.Employees -> EmployeesTopAppBar()
-					AppScreen.Feedback -> FeedbackTopAppBar()
-					AppScreen.Devices -> DevicesTopAppBar()
-					AppScreen.Reports -> ReportsTopAppBar()
-					is AppScreen.ReportDetails -> BasicTopAppBar(
-						text = stringResource(
-							currentScreen.screenNameResource,
-							(currentScreen as AppScreen.ReportDetails).title
-						),
-						onBackAction = onBackAction
-					)
-					else -> BasicTopAppBar(
-						text = stringResource(currentScreen.screenNameResource),
-						onBackAction = onBackAction
-					)
-				}
-			},
-			content = {
-				Box(
-					modifier = Modifier.padding(
-						bottom = it.calculateBottomPadding(),
-						top = it.calculateTopPadding()
-					)
-				) {
-					SharedElementsRoot {
-						sharedElementScope = LocalSharedElementsRootScope.current
-						AppNavigation(navController)
-					}
-				}
-
-
-				},
-
-			bottomBar = {
-
-				//WheelNavigation is there
-
-				val currentTab by appBarViewModel.currentTab.collectAsState()
-
-				val pagesSize by appTabsViewModel.pagesSize.collectAsState()
+    ModalBottomSheetLayout(
+        sheetState = bottomSheetViewModel.bottomSheetState,
+        sheetContent = { BottomSheet() },
+        sheetShape = RoundedCornerShape(
+            topStart = 16.dp,
+            topEnd = 16.dp
+        ),
+        scrimColor = Color.Black.copy(.25f)
+    ) {
+        Custom_Scaffold(
+            topBar = {
+                when (currentScreen) {
+                    AppScreen.Events -> EventsTopAppBar()
+                    is AppScreen.EventDetails -> BasicTopAppBar(
+                        text = stringResource(
+                            currentScreen.screenNameResource,
+                            (currentScreen as AppScreen.EventDetails).title
+                        ),
+                        onBackAction = onBackAction
+                    )
+                    AppScreen.EventNew,
+                    AppScreen.EmployeeDetails -> BasicTopAppBar(
+                        text = stringResource(currentScreen.screenNameResource),
+                        onBackAction = onBackAction
+                    )
+                    AppScreen.Profile -> ProfileTopAppBar(
+                        text = stringResource(currentScreen.screenNameResource),
+                        onBackAction = onBackAction
+                    )
+                    AppScreen.Employees -> EmployeesTopAppBar()
+                    AppScreen.Feedback -> FeedbackTopAppBar()
+                    AppScreen.Devices -> DevicesTopAppBar()
+                    AppScreen.Reports -> ReportsTopAppBar()
+                    is AppScreen.ReportDetails -> BasicTopAppBar(
+                        text = stringResource(
+                            currentScreen.screenNameResource,
+                            (currentScreen as AppScreen.ReportDetails).title
+                        ),
+                        onBackAction = onBackAction
+                    )
+                    else -> BasicTopAppBar(
+                        text = stringResource(currentScreen.screenNameResource),
+                        onBackAction = onBackAction
+                    )
+                }
+            },
+            content = {
+                Box(
+                    modifier = Modifier.padding(
+                        bottom = it.calculateBottomPadding(),
+                        top = it.calculateTopPadding()
+                    )
+                ) {
+                    SharedElementsRoot {
+                        sharedElementScope = LocalSharedElementsRootScope.current
+                        AppNavigation(navController)
+                    }
+                }
 
 
-				WheelNavigation(
-					pagesSize = pagesSize,
-					onClickWheel = {
-						//hide and show
-						wheelNavigationViewModel.changeVisible()
-					},
+            },
 
-					) {
-						WheelItem,appsPage ->
+            bottomBar = {
 
-					val navBackStackEntry by navController.currentBackStackEntryAsState()
-					val currentDestination = navBackStackEntry?.destination
+                //WheelNavigation is there
+
+                val currentTab by appBarViewModel.currentTab.collectAsState()
+
+                val pagesSize by appTabsViewModel.pagesSize.collectAsState()
 
 
-					val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
+                WheelNavigation(
+                    pagesSize = pagesSize,
+                    onClickWheel = {
+                        //hide and show
+                        wheelNavigationViewModel.changeVisible()
+                    },
+
+                    ) { WheelItem, appsPage ->
+
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentDestination = navBackStackEntry?.destination
 
 
-					appsPage
-						.forEach { tab ->
-							WheelItem(
-								modifier = Modifier,
-								indexOfTab = appsPage.indexOf(tab),
-								sizeAppTabs = appsPage.size,
-								icon = {
-									BadgedBox(
-										badge = {
-											if (tab is AppTab.Events && invitationsCount > 0)
-												Badge(
-													backgroundColor = Color.Red,
-													contentColor = Color.White
-												) {
-													Text(invitationsCount.toString())
-												}
-										}
-									) {
+                    val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
 
-											Icon(tab.icon, null)
 
-									}
-								},
-								label = {
+                    appsPage
+                        .forEach { tab ->
+                            WheelItem(
+                                modifier = Modifier,
+                                indexOfTab = appsPage.indexOf(tab),
+                                sizeAppTabs = appsPage.size,
+                                icon = {
+                                    BadgedBox(
+                                        badge = {
+                                            if (tab is AppTab.Events && invitationsCount > 0)
+                                                Badge(
+                                                    backgroundColor = Color.Red,
+                                                    contentColor = Color.White
+                                                ) {
+                                                    Text(invitationsCount.toString())
+                                                }
+                                        }
+                                    ) {
 
-										Text(
-											text = stringResource(tab.resourceId),
-											fontSize = 9.sp,
-											lineHeight = 16.sp,
+                                        Icon(tab.icon, null)
 
-										)
+                                    }
+                                },
+                                label = {
 
-								},
-								selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
-								alwaysShowLabel = true,
-								onClick = {
-										//hide and show
-										wheelNavigationViewModel.changeVisible()
+                                    Text(
+                                        text = stringResource(tab.resourceId),
+                                        fontSize = 9.sp,
+                                        lineHeight = 16.sp,
 
-										// As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
+                                        )
 
-										// it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once by the means
-										// of Jetpack Navigation APIs, but only two of the above.
-										// This code provides resetting and singleTop behavior for the default tab.
-										if (tab == currentTab) {
-											navController.popBackStack(
-												route = tab.startDestination,
-												inclusive = false
-											)
-											return@WheelItem
-										}
-										// This code always leaves default tab's start destination on the bottom of the stack. Workaround needed?
-										navController.navigate(tab.route) {
-											popUpTo(navController.graph.findStartDestination().id) {
-												saveState = true
-											}
-											launchSingleTop = true
+                                },
+                                selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true,
+                                alwaysShowLabel = true,
+                                onClick = {
+                                    //hide and show
+                                    wheelNavigationViewModel.changeVisible()
 
-											// We want to reset the graph if it is clicked while already selected
-											restoreState = tab != currentTab
-										}
-										appBarViewModel.setCurrentTab(tab)
+                                    // As per https://stackoverflow.com/questions/71789903/does-navoptionsbuilder-launchsingletop-work-with-nested-navigation-graphs-in-jet,
 
-								}
-							)
+                                    // it seems to not be possible to have all three of multiple back stacks, resetting tabs and single top behavior at once by the means
+                                    // of Jetpack Navigation APIs, but only two of the above.
+                                    // This code provides resetting and singleTop behavior for the default tab.
+                                    if (tab == currentTab) {
+                                        navController.popBackStack(
+                                            route = tab.startDestination,
+                                            inclusive = false
+                                        )
+                                        return@WheelItem
+                                    }
+                                    // This code always leaves default tab's start destination on the bottom of the stack. Workaround needed?
+                                    navController.navigate(tab.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
 
-						}
+                                        // We want to reset the graph if it is clicked while already selected
+                                        restoreState = tab != currentTab
+                                    }
+                                    appBarViewModel.setCurrentTab(tab)
 
-				}
-			}
-		)
-	}
+                                }
+                            )
+
+                        }
+
+                }
+            }
+        )
+    }
 }

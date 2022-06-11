@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.utils
 
-import android.R
 import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.*
@@ -10,7 +9,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
-import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +17,6 @@ import kotlinx.coroutines.runBlocking
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfo
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.net.URL
@@ -59,7 +56,6 @@ object DownloadFileFromWeb {
 
 		val downloadId = downloadManager.enqueue(request)
 
-		val c: Cursor = downloadManager.query(DownloadManager.Query().setFilterById(downloadId))
 
 
 		val query = DownloadManager.Query().setFilterById(downloadId)
