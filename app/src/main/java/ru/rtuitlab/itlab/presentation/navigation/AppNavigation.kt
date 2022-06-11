@@ -160,7 +160,8 @@ private fun NavGraphBuilder.employeesGraph(
 		}
 		composable(AppScreen.Profile.route) {
 			Profile(
-				bottomSheetViewModel = bottomSheetViewModel
+				bottomSheetViewModel = bottomSheetViewModel,
+				profileViewModel = it.hiltViewModel()
 			)
 		}
 	}
