@@ -52,12 +52,11 @@ import ru.rtuitlab.itlab.presentation.utils.AppScreen
 fun BaseElements(
     mfsViewModel: MFSViewModel
 ) {
-    val file = mfsViewModel.file.collectAsState().value
 
     val filesResource by mfsViewModel.listFileInfoResponseFlow.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
 
-
+    var files = mfsViewModel.listFileInfoFlow.collectAsState().value.reversed()
 
 
     Scaffold(
@@ -65,78 +64,7 @@ fun BaseElements(
             .fillMaxSize(),
 
         ) {
-        //for attach files
-        /*Column(
 
-        ) {
-
-            val fileDescription = remember { mutableStateOf("") }
-
-            Row() {
-
-                //provideFile
-                Button(
-                    modifier = Modifier
-                        .weight(3f),
-                    onClick = {
-                        mfsViewModel.provideFile()
-                    }
-                ) {
-                    Text(text = stringResource(R.string.Select_a_file))
-                }
-
-                if(file!=null) {
-                    Text(
-                        modifier = Modifier
-                            .weight(3f),
-                        text = file.name,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    //FileNull
-                    IconButton(
-                        modifier = Modifier
-                            .background(Color.Cyan)
-                            .weight(1f),
-                        onClick = {
-                            mfsViewModel.setFileNull()
-                            fileDescription.value =""
-                        }
-                    ) {
-                        Icon(Icons.Outlined.Delete, contentDescription = null)
-
-                    }
-                }
-            }
-
-            //UploadFile
-            Button(onClick = {
-                mfsViewModel.uploadFile(fileDescription.value)
-                fileDescription.value =""
-            }){
-                Text(text = stringResource(R.string.Upload_a_file))
-
-            }
-
-            //fileDescription
-            OutlinedTextField(
-                value = fileDescription.value,
-                onValueChange = {
-                    fileDescription.value = it
-                },
-                placeholder = {
-                    Text(text = stringResource(R.string.description))
-                },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    backgroundColor = MaterialTheme.colors.background,
-                    focusedBorderColor = MaterialTheme.colors.onSurface
-
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-        }
-
-*/
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -147,8 +75,8 @@ fun BaseElements(
 
             Row(
                 modifier = Modifier
-	                .fillMaxWidth()
-	                .padding(10.dp),
+                    .fillMaxWidth()
+                    .padding(10.dp),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -157,9 +85,9 @@ fun BaseElements(
                 }
                 OutlinedTextField(
                     modifier = Modifier
-	                    .fillMaxWidth()
-	                    .weight(0.9f)
-	                    .focusRequester(focusRequester),
+                        .fillMaxWidth()
+                        .weight(0.9f)
+                        .focusRequester(focusRequester),
                     value = stringSearch.value,
                     onValueChange = {
                         stringSearch.value = it
@@ -187,13 +115,13 @@ fun BaseElements(
                 }
                 AppDropdownMenu(
                     modifier = Modifier
-	                    .fillMaxWidth()
-	                    .weight(0.1f),
+                        .fillMaxWidth()
+                        .weight(0.1f),
                     anchor = {
                         IconButton(
                             modifier = Modifier
-	                            .height(36.dp)
-	                            .width(36.dp),
+                                .height(36.dp)
+                                .width(36.dp),
                             onClick = it
                         ) {
                             Icon(
@@ -252,8 +180,10 @@ fun BaseElements(
                                 LoadingError(msg = stringResource(R.string.no_files))
                             else {
                                 mfsViewModel.onResourceSuccess(it)
-                                if (mfsViewModel.accesibleFlow.collectAsState().value)
-                                    FileList(mfsViewModel)
+
+                                FileList(
+                                    files
+                                    ,mfsViewModel)
                             }
 
                         }
@@ -273,11 +203,9 @@ fun BaseElements(
 @ExperimentalAnimationApi
 @Composable
 private fun FileList(
+    files: List<FileInfo>,
     mfsViewModel: MFSViewModel
 ) {
-
-    val files = mfsViewModel.listFileInfoFlow.collectAsState().value.reversed()
-
 
 
     LazyColumn(
@@ -316,8 +244,8 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
     ) {
         Column(
             modifier = Modifier
-	            .fillMaxWidth()
-	            .padding(10.dp),
+                .fillMaxWidth()
+                .padding(10.dp),
         ) {
             SharedElement(
                 key = "${file.id}/time",
@@ -341,8 +269,8 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
             Row {
                 Column(
                     modifier = Modifier
-	                    .weight(1f)
-	                    .padding(10.dp),
+                        .weight(1f)
+                        .padding(10.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -371,8 +299,8 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
                 }
                 Column(
                     modifier = Modifier
-	                    .weight(1f)
-	                    .padding(10.dp),
+                        .weight(1f)
+                        .padding(10.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
