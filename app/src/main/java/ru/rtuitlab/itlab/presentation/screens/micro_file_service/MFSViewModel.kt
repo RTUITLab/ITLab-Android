@@ -18,9 +18,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.emitInIO
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
@@ -45,18 +45,6 @@ class MFSViewModel @Inject constructor(
 	private val authStateStorage: AuthStateStorage
 
 ): ViewModel() {
-
-	private val userClaimsFlow = authStateStorage.userClaimsFlow
-	private var _accesibleFlow = MutableStateFlow(false)
-	val accesibleFlow = _accesibleFlow.asStateFlow()
-	init {
-		viewModelScope.launch {
-			userClaimsFlow.collect {
-
-				_accesibleFlow.emit( it.contains(UserClaimCategories.REPORTS.ADMIN))
-			}
-		}
-	}
 
 	private var _requestPermissionLauncher = MutableStateFlow< ActivityResultLauncher<String>?>(null)
 	val requestPermissionLauncher = _requestPermissionLauncher.asStateFlow()
@@ -120,43 +108,10 @@ class MFSViewModel @Inject constructor(
 	}
 	private fun fetchListFileInfoResponse(userId: String?=null,sortedBy: String?=null)  = _listFileInfoResponseFlow.emitInIO(viewModelScope){
 
-		if (_accesibleFlow.value)
-			fetchListFileInfoResponseAdmin(userId = userId, sortedBy = sortedBy)
-		else
-			fetchListFileInfoResponseUser(sortedBy = sortedBy)
-	}
-	private suspend fun fetchListFileInfoResponseUser(sortedBy:String?=null):Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>> {
-		var resources: Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>> =
-			Resource.Loading
-		lateinit var userId: String
-		lateinit var userResponse:UserResponse
-		authStateStorage.userIdFlow.collect {
-			userId = it
-			usersRepository.getUserById(it).handle(
-				onSuccess = { user ->
-					userResponse = user
-				}
-			)
-		}
-		repository.fetchFilesInfo(userId,sortedBy).handle(
-			onSuccess = { files ->
-				val listPair = mutableListOf<Pair<FileInfoResponse, UserResponse?>>()
-
-				files.map { file ->
-					var resource: Pair<FileInfoResponse, UserResponse?>
-
-					val sender = userResponse
-					resource = file to sender
-					listPair.add(resource)
-				}
-				resources = Resource.Success(listPair)
-
-			},
-			onError = { resources = Resource.Error(it) }
-		)
-		return resources
+		fetchListFileInfoResponseAdmin(userId = userId, sortedBy = sortedBy)
 
 	}
+
 	private suspend fun fetchListFileInfoResponseAdmin(userId:String?=null,sortedBy:String?=null):Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>> {
 
 		var resources: Resource<MutableList<Pair<FileInfoResponse, UserResponse?>>> =
