@@ -11,5 +11,5 @@ data class ReportSalary(
     val approvingDate: String,
     val approverId: String,
     val count: Int,
-    val description: String
+    val description: String?
 )
