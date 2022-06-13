@@ -1,13 +1,14 @@
 trigger:
   tags:
     include:
-      - "v[0-9]+.[0-9]+.[0-9]+"
-      - "v[0-9]+.[0-9]+.[0-9]+-dev"
+      - "v*"
 
 variables:
   prerelase: false
-  ${{ if contains(variables['Build.SourceBranch'], '-dev') }}:
+  ${{ if endsWith(variables['Build.SourceBranch'], '-dev') }}:
     prerelease: true
+
+pool: PublicBuilds
 
 name: $(BuildID)-$(Build.SourceBranchName)
 
