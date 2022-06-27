@@ -61,6 +61,7 @@ object ApiModule {
 
     private val defaultJson = Json {
         ignoreUnknownKeys = true
+        explicitNulls = false
     }
 
     @ExperimentalSerializationApi

@@ -11,6 +11,8 @@ data class ReportDto(
     val assignees: Assignees,
     val date: String,
     val text: String,
+    @SerialName("name")
+    val title: String?,
     @SerialName("archived")
     val isArchived: Boolean? = null
 ) {
@@ -21,7 +23,7 @@ data class ReportDto(
         implementer: UserResponse
     ) = Report(
         id = id,
-        title = text.substringBefore("@\n\t\n@"),
+        title = if (title.isNullOrBlank()) text.substringBefore("@\n\t\n@") else title,
         applicant = applicant,
         applicationDate = date,
         applicationCommentMd = text.substringAfter("@\n\t\n@"),
