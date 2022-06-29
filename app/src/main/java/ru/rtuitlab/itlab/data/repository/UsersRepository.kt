@@ -12,7 +12,9 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class UsersRepository @Inject constructor(
 	private val usersApi: UsersApi,
 	private val handler: ResponseHandler,

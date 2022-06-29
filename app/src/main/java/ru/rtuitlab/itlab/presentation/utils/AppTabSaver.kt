@@ -27,6 +27,7 @@ sealed class AppTab(
     object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback,)
     object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, false)
     object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description)
+    object Purchases: AppTab("purchases_tab", AppScreen.Purchases.route, R.string.purchases, Icons.Default.Payments)
 
 
     fun saveState() = bundleOf(SCREEN_KEY to route)
@@ -39,6 +40,7 @@ sealed class AppTab(
         Feedback -> AppScreen.Feedback
         Profile -> AppScreen.Profile
         Reports -> AppScreen.Reports
+        Purchases -> AppScreen.Purchases
     }
 
     companion object {
@@ -48,6 +50,7 @@ sealed class AppTab(
             get() = listOf(
                 Events,
                 Projects,
+                Purchases,
                 Devices,
                 Employees,
                 Feedback,
@@ -127,6 +130,16 @@ open class AppScreen(
     object NewReport: AppScreen(R.string.report_new, "reports/new")
 
 
+    // Purchases-related
+    object Purchases: AppScreen(R.string.purchases, "purchases")
+    class PurchaseDetails(val title: String): AppScreen(R.string.details_name, "purchases/{purchaseId}") {
+        companion object {
+            const val route = "purchases/{purchaseId}"
+            val navLink: String = route.substringBefore("/{")
+        }
+    }
+
+
     companion object {
         fun getAll(context: Context) = listOf(
             Employees,
@@ -140,7 +153,9 @@ open class AppScreen(
             Profile,
             Reports,
             ReportDetails(context.resources.getString(R.string.report)),
-            NewReport
+            NewReport,
+            Purchases,
+            PurchaseDetails(context.getString(R.string.projects))
         )
     }
 }

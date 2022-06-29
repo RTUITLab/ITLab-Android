@@ -28,6 +28,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.EventsNotifications
 import ru.rtuitlab.itlab.presentation.screens.feedback.Feedback
 
 import ru.rtuitlab.itlab.presentation.screens.profile.Profile
+import ru.rtuitlab.itlab.presentation.screens.purchases.Purchases
 import ru.rtuitlab.itlab.presentation.screens.reports.NewReport
 import ru.rtuitlab.itlab.presentation.screens.reports.Report
 import ru.rtuitlab.itlab.presentation.screens.reports.Reports
@@ -69,7 +70,9 @@ fun AppNavigation(
 			// To correctly reflect that in bottom navigation, this code is needed
 			if (navBackStackEntry?.destination?.route == appBarViewModel.defaultTab.startDestination)
 				appBarViewModel.setCurrentTab(appBarViewModel.defaultTab)
-		} catch (e: NullPointerException) {}
+		} catch (e: NullPointerException) {
+			e.printStackTrace()
+		}
 	}
 
 	// Disabling system "Back" button during transition
@@ -99,6 +102,8 @@ fun AppNavigation(
 			appBarViewModel,
 			bottomSheetViewModel
 		)
+
+		purchasesGraph()
 	}
 }
 
@@ -225,6 +230,18 @@ private fun NavGraphBuilder.reportsGraph(
 			NewReport(
 				bottomSheetViewModel = bottomSheetViewModel
 			)
+		}
+	}
+}
+
+@ExperimentalMaterialApi
+private fun NavGraphBuilder.purchasesGraph() {
+	navigation(
+		startDestination = AppTab.Purchases.startDestination,
+		route = AppTab.Purchases.route
+	) {
+		composable(AppScreen.Purchases.route) {
+			Purchases()
 		}
 	}
 }
