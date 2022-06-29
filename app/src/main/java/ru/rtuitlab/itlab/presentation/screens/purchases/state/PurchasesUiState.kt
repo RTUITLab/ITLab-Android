@@ -17,5 +17,6 @@ data class PurchasesUiState(
     val selectedStatus: PurchaseStatus = PurchaseStatusUi.ALL,
     val selectedSortingOrder: PurchaseSortingOrder = PurchaseSortingOrder.ADDITION_DATE,
     val selectedSortingDirection: PurchaseSortingDirection = PurchaseSortingDirection.DESC,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false
 )

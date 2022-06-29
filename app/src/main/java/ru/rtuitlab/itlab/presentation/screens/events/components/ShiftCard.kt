@@ -83,7 +83,7 @@ fun ShiftCard(
 				imageWidth = 14.dp
 			) {
 				Text(
-					text = if (salary != null) stringResource(R.string.salary, salary) else stringResource(R.string.salary_not_specified),
+					text = if (salary != null) stringResource(R.string.salary_int, salary) else stringResource(R.string.salary_not_specified),
 					style = MaterialTheme.typography.subtitle1,
 					color = AppColors.greyText.collectAsState().value
 				)

@@ -159,4 +159,9 @@
     <string name="by_price">По цене</string>
     <string name="by_addition_date">По дате создания</string>
     <string name="by_purchase_date">По дате покупки</string>
+    <string name="purchases">Покупки</string>
+    <string name="status_all">Все</string>
+    <string name="status_await">В ожидании</string>
+    <string name="status_confirmed">Подтверждены</string>
+    <string name="status_rejected">Отклонены</string>
 </resources>

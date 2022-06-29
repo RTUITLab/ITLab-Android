@@ -3,6 +3,7 @@ package ru.rtuitlab.itlab.data.remote.api.purchases
 import retrofit2.Response
 import retrofit2.http.*
 import ru.rtuitlab.itlab.data.remote.api.purchases.models.*
+import ru.rtuitlab.itlab.data.remote.api.purchases.models.pagination.PaginationResult
 
 private const val base = "purchases/v2"
 
@@ -25,8 +26,8 @@ interface PurchasesApi {
         @Query("sortBy") sortBy: String = PurchaseSortingBy.purchaseDate,
         @Query("purchaseStartDate") purchaseStartDate: String? = null,
         @Query("purchaseEndDate") purchaseEndDate: String? = null,
-        @Query("purchaseStatus") purchaseStatus: String = PurchaseStatusApi.AWAIT.toString()
-    ): List<PurchaseDto>
+        @Query("purchaseStatus") purchaseStatus: String? = PurchaseStatusApi.AWAIT.toString()
+    ): PaginationResult
 
     @PUT("$base/{id}/solve")
     suspend fun resolvePurchase(

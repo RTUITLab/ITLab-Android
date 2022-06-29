@@ -5,10 +5,10 @@ import ru.rtuitlab.itlab.common.Resource
 class Paginator<Key, Item>(
     private val initialKey: Key,
     private inline val onLoadingUpdated: (Boolean) -> Unit,
-    private inline val onRequest: suspend (nextKey: Key) -> Resource<List<Item>>,
-    private inline val getNextKey: suspend (List<Item>) -> Key,
+    private inline val onRequest: suspend (nextKey: Key) -> Resource<Item>,
+    private inline val getNextKey: suspend (Item) -> Key,
     private inline val onError: suspend (String) -> Unit,
-    private inline val onSuccess: suspend (items: List<Item>, newKey: Key) -> Unit
+    private inline val onSuccess: suspend (item: Item, newKey: Key) -> Unit
 ) {
     private var currentKey = initialKey
     private var isMakingRequest = false

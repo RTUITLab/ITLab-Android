@@ -169,7 +169,7 @@ private fun ReportDetails(
 						) {
 							Text(
 								text = if (report.salary != null) stringResource(
-									R.string.salary,
+									R.string.salary_int,
 									report.salary
 								) else stringResource(R.string.salary_not_specified)
 							)

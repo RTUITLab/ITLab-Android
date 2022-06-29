@@ -1,7 +1,9 @@
 package ru.rtuitlab.itlab.data.remote.api.purchases
 
 import androidx.annotation.StringRes
+import androidx.compose.ui.graphics.Color
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 enum class PurchaseSortingDirection {
     ASC, DESC
@@ -17,11 +19,11 @@ enum class PurchaseStatusApi: PurchaseStatus {
     UNDEFINED
 }
 
-enum class PurchaseStatusUi: PurchaseStatus {
-    AWAIT,
-    ACCEPT,
-    DECLINE,
-    ALL
+enum class PurchaseStatusUi(@StringRes val nameResource: Int, val color: Color): PurchaseStatus {
+    ALL(R.string.status_all, AppColors.accent.value),
+    AWAIT(R.string.status_await, AppColors.orange),
+    ACCEPT(R.string.status_confirmed, AppColors.green),
+    DECLINE(R.string.status_rejected, AppColors.red)
 }
 
 enum class PurchaseSortingOrder(val key: String, @StringRes val nameResource: Int) {

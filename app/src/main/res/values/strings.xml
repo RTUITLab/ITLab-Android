@@ -40,7 +40,8 @@
     <string name="event_no_description">No description</string>
     <string name="no_pending_events">No pending events</string>
     <string name="no_user_events">No events in selected period</string>
-    <string name="salary" translatable="false">%1$d ₽</string>
+    <string name="salary_int" translatable="false">%1$d ₽</string>
+    <string name="salary_float" translatable="false">%1$.2f ₽</string>
     <string name="shifts">Shifts</string>
     <plurals name="n_hours">
         <item quantity="one">%d hour</item>
@@ -133,6 +134,10 @@
     <string name="by_price">By price</string>
     <string name="by_addition_date">By date of addition</string>
     <string name="by_purchase_date">By date of purchase</string>
+    <string name="status_all">All</string>
+    <string name="status_await">Pending</string>
+    <string name="status_confirmed">Confirmed</string>
+    <string name="status_rejected">Rejected</string>
 
     <!--    Reports    -->
     <string name="reports">Reports</string>
@@ -166,5 +171,6 @@
     <string name="md_ol">Ordered list</string>
     <string name="md_task">Task</string>
     <string name="md_attach">Attach…</string>
+    <string name="purchases">Purchases</string>
 
 </resources>

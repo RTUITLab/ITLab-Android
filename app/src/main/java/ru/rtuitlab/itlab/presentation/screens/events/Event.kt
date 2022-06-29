@@ -200,7 +200,7 @@ private fun EventInfo(
 			) {
 				Text(
 					text = if (event.salary != null) stringResource(
-						R.string.salary,
+						R.string.salary_int,
 						event.salary
 					) else stringResource(R.string.salary_not_specified)
 				)

@@ -33,7 +33,7 @@ class PurchasesRepository @Inject constructor(
             sortBy.key,
             purchaseStartDate,
             purchaseEndDate,
-            purchaseStatus.toString()
+            if (purchaseStatus == PurchaseStatusUi.ALL) null else purchaseStatus.toString()
         )
     }
 }

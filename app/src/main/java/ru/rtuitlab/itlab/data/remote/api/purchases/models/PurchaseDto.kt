@@ -2,13 +2,14 @@ package ru.rtuitlab.itlab.data.remote.api.purchases.models
 
 
 import kotlinx.serialization.Serializable
+import ru.rtuitlab.itlab.data.remote.api.users.models.User
 
 @Serializable
 data class PurchaseDto(
     val id: Int,
     val purchaserId: String,
     val name: String,
-    val price: Int,
+    val price: Float,
     val description: String?,
     val purchaseDate: String,
     val additionDate: String,
@@ -16,10 +17,13 @@ data class PurchaseDto(
     val purchasePhotoUrl: String?,
     val solution: PurchaseSolutionDto
 ) {
-    fun toPurchase() =
+    fun toPurchase(
+        purchaser: User,
+        solver: User?
+    ) =
         Purchase(
             id,
-            purchaserId,
+            purchaser,
             name,
             price,
             description,
@@ -27,15 +31,15 @@ data class PurchaseDto(
             additionDate,
             checkPhotoUrl,
             purchasePhotoUrl,
-            solution.toPurchaseSolution()
+            solution.toPurchaseSolution(solver)
         )
 }
 
 data class Purchase(
     val id: Int,
-    val purchaserId: String,
+    val purchaser: User,
     val name: String,
-    val price: Int,
+    val price: Float,
     val description: String?,
     val purchaseDate: String,
     val additionDate: String,
