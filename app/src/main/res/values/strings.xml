@@ -28,6 +28,7 @@
         <item quantity="other">%d minutes</item>
     </plurals>
     <string name="details_name">%1$s</string>
+    <string name="time_parsing_error">Time parsing error</string>
 
     <!--    Events    -->
     <string name="events">Events</string>
@@ -98,17 +99,22 @@
     <string name="edit">Edit</string>
     <string name="title">Title</string>
     <string name="equipmentType">Equipment Type</string>
-
-
     <string name="number">Number</string>
     <string name="add_device">Add Device</string>
     <string name="confirm">Подтвердить</string>
     <string name="dismiss">Отменить</string>
-
     <string name="shortTitle">Short Title</string>
     <string name="to_create">Create</string>
     <string name="to_choose">Chose</string>
     <string name="laboratory">Laboratory</string>
+    <string name="Null">null</string>
+    <string name="Select_a_file">Select a file</string>
+    <string name="Upload_a_file">Upload a file</string>
+    <string name="download">Download</string>
+    <string name="byDate">by date</string>
+    <string name="byUser">by user</string>
+    <string name="filter">filter</string>
+    <string name="no_files">Файлы отсутствуют</string>
 
     <!--    Feedback    -->
     <string name="feedback">Feedback</string>
@@ -122,6 +128,11 @@
     <string name="pick_up">Pick up</string>
     <string name="show_only_free">Show only free</string>
 
+    <!--    Purchases    -->
+    <string name="by_name">By name</string>
+    <string name="by_price">By price</string>
+    <string name="by_addition_date">By date of addition</string>
+    <string name="by_purchase_date">By date of purchase</string>
 
     <!--    Reports    -->
     <string name="reports">Reports</string>
@@ -155,14 +166,5 @@
     <string name="md_ol">Ordered list</string>
     <string name="md_task">Task</string>
     <string name="md_attach">Attach…</string>
-    <string name="Null">null</string>
-    <string name="Select_a_file">Select a file</string>
-    <string name="Upload_a_file">Upload a file</string>
-    <string name="download">Download</string>
-    <string name="byDate">by date</string>
-    <string name="byUser">by user</string>
-    <string name="filter">filter</string>
-    <string name="no_files">Файлы отсутствуют</string>
-    <string name="time_parsing_error">Time parsing error</string>
 
 </resources>
