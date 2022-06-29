@@ -281,7 +281,7 @@ private fun UserPicker(
     val scope = rememberCoroutineScope()
     IconizedRow(
         modifier = Modifier
-            .clip(RoundedCornerShape(4.dp))
+            .clip(MaterialTheme.shapes.small)
             .clickable {
                 bottomSheetViewModel.show(
                     sheet = AppBottomSheet.UserSelection(onSelect),

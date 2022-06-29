@@ -4,10 +4,7 @@ import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -41,7 +38,7 @@ fun FeedbackCard(
 	Card(
 		modifier = modifier,
 		elevation = 2.dp,
-		shape = RoundedCornerShape(5.dp)
+		shape = MaterialTheme.shapes.medium
 	) {
 		Column(
 			modifier = Modifier

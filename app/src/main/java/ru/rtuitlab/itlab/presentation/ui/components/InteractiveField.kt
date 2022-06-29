@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateNext
@@ -28,7 +29,7 @@ fun InteractiveField(
 ) {
 	Row(
 		modifier = Modifier
-			.clip(RoundedCornerShape(4.dp))
+			.clip(MaterialTheme.shapes.small)
 			.clickable { onClick() }
 			.padding(horizontal = if (hasPadding) 8.dp else 0.dp),
 		horizontalArrangement = Arrangement.SpaceBetween,

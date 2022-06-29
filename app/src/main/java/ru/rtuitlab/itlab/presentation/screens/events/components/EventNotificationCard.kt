@@ -35,7 +35,7 @@ fun EventNotificationCard(
 	Card(
 		modifier = Modifier
 			.fillMaxWidth()
-			.clip(RoundedCornerShape(5.dp))
+			.clip(MaterialTheme.shapes.medium)
 	) {
 		Column(
 			modifier = Modifier

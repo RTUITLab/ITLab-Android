@@ -188,7 +188,7 @@ fun ReportCard(
 				navController.navigate("${AppScreen.ReportDetails.navLink}/${report.id}")
 			},
 		elevation = 2.dp,
-		shape = RoundedCornerShape(5.dp)
+		shape = MaterialTheme.shapes.medium
 	) {
 
 		Box {

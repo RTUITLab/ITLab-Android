@@ -7,10 +7,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
@@ -52,7 +49,7 @@ fun DeviceCard(
 				Log.d("DeviceCard", device.toString())
 			},
 		elevation = 2.dp,
-		shape = RoundedCornerShape(5.dp)
+		shape = MaterialTheme.shapes.medium
 	) {
 		device.run {
 			Column(

@@ -200,7 +200,7 @@ private fun ProfileSettingsItem(
 	IconizedRow(
 		modifier = Modifier
 			.fillMaxWidth()
-			.clip(RoundedCornerShape(4.dp))
+			.clip(MaterialTheme.shapes.small)
 			.clickable {
 				onClick()
 			}
@@ -229,7 +229,7 @@ private fun ProfileSettingsItem(
 	IconizedRow(
 		modifier = Modifier
 			.fillMaxWidth()
-			.clip(RoundedCornerShape(4.dp))
+			.clip(MaterialTheme.shapes.small)
 			.clickable {
 				onClick()
 			}

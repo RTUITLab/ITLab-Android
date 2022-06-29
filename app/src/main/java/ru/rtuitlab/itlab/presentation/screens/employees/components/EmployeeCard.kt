@@ -26,7 +26,7 @@ fun EmployeeCard(
 	Card(
 		modifier = modifier,
 		elevation = elevation,
-		shape = RoundedCornerShape(5.dp)
+		shape = MaterialTheme.shapes.medium
 	) {
 		user.run {
 			Column(

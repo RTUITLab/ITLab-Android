@@ -33,7 +33,7 @@ fun ShiftCard(
 	Card(
 		modifier = modifier,
 		elevation = 2.dp,
-		shape = RoundedCornerShape(5.dp)
+		shape = MaterialTheme.shapes.medium
 	) {
 		Column(
 			modifier = Modifier

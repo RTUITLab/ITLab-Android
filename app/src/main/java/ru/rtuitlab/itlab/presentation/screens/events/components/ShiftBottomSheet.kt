@@ -107,7 +107,7 @@ private fun ShiftPlaceCard(
 				dialogIsShown = true
 			}
 			.fillMaxWidth(),
-		shape = RoundedCornerShape(5.dp),
+		shape = MaterialTheme.shapes.medium,
 		elevation = 8.dp
 	) {
 		Box(
