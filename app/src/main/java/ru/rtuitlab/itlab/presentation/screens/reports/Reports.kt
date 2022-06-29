@@ -33,6 +33,7 @@ import ru.rtuitlab.itlab.presentation.screens.micro_file_service.components.Base
 import ru.rtuitlab.itlab.presentation.screens.reports.components.NewReportFab
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
+import ru.rtuitlab.itlab.presentation.ui.components.SideColoredCard
 import ru.rtuitlab.itlab.presentation.ui.components.UserLink
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
@@ -181,7 +182,7 @@ fun ReportCard(
 
 	val navController = LocalNavController.current
 
-	Card(
+	SideColoredCard(
 		modifier = Modifier
 			.fillMaxWidth()
 			.clickable {
@@ -190,118 +191,100 @@ fun ReportCard(
 		elevation = 2.dp,
 		shape = MaterialTheme.shapes.medium
 	) {
-
-		Box {
-			Canvas(
-				modifier = Modifier.matchParentSize()
-			) {
-				drawRect(
-					color = if (report.approver != null) AppColors.green else accentColor
+		Column(
+			modifier = Modifier
+				.padding(
+					top = 10.dp,
+					bottom = 8.dp,
+					start = 15.dp,
+					end = 15.dp
 				)
-			}
-			Surface(
-				modifier = Modifier
-					.padding(
-						start = 4.dp
+		) {
+			Text(
+				text = report.title,
+				style = MaterialTheme.typography.h6
+			)
+
+			Spacer(modifier = Modifier.height(10.dp))
+
+			Column(
+				verticalArrangement = Arrangement.spacedBy(8.dp)
+			){
+				SharedElement(
+					key = "${report.id}/time",
+					screenKey = AppScreen.Reports.route,
+					transitionSpec = SharedElementsTransitionSpec(
+						durationMillis = duration
 					)
-					.fillMaxWidth()
-			) {
-				Column(
-					modifier = Modifier
-						.padding(
-							top = 10.dp,
-							bottom = 8.dp,
-							start = 15.dp,
-							end = 15.dp
-						)
 				) {
-					Text(
-						text = report.title,
-						style = MaterialTheme.typography.h6
-					)
-
-					Spacer(modifier = Modifier.height(10.dp))
-
-					Column(
-						verticalArrangement = Arrangement.spacedBy(8.dp)
-					){
-						SharedElement(
-							key = "${report.id}/time",
-							screenKey = AppScreen.Reports.route,
-							transitionSpec = SharedElementsTransitionSpec(
-								durationMillis = duration
-							)
-						) {
-							IconizedRow(
-								imageVector = Icons.Default.Schedule,
-								imageWidth = 18.dp,
-								imageHeight = 18.dp,
-								spacing = 8.dp
-							) {
-								Text(
-									text = report.applicationDate.fromIso8601(LocalContext.current),
-									style = MaterialTheme.typography.subtitle1
-								)
-							}
-						}
-
-						// Applicant
-						SharedElement(
-							key = "${report.id}/applicant",
-							screenKey = AppScreen.Reports.route,
-							transitionSpec = SharedElementsTransitionSpec(
-								durationMillis = duration
-							)
-						) {
-							IconizedRow(
-								imageVector = Icons.Default.ManageAccounts,
-								spacing = 0.dp
-							) {
-								UserLink(user = report.applicant)
-							}
-						}
-
-						// Implementer
-						SharedElement(
-							key = "${report.id}/implementer",
-							screenKey = AppScreen.Reports.route,
-							transitionSpec = SharedElementsTransitionSpec(
-								durationMillis = duration
-							)
-						) {
-							IconizedRow(
-								imageVector = Icons.Default.Person,
-								spacing = 0.dp
-							) {
-								UserLink(user = report.implementer)
-							}
-						}
-
-						// Salary
-						SharedElement(
-							key = "${report.id}/salary",
-							screenKey = AppScreen.Reports.route,
-							transitionSpec = SharedElementsTransitionSpec(
-								durationMillis = duration
-							)
-						) {
-							IconizedRow(
-								imageVector = Icons.Default.Payment
-							) {
-								Text(
-									text = if (report.salary != null) stringResource(
-										R.string.salary,
-										report.salary
-									) else stringResource(
-										R.string.salary_not_specified
-									),
-									style = MaterialTheme.typography.subtitle1
-								)
-							}
-						}
-
+					IconizedRow(
+						imageVector = Icons.Default.Schedule,
+						imageWidth = 18.dp,
+						imageHeight = 18.dp,
+						spacing = 8.dp
+					) {
+						Text(
+							text = report.applicationDate.fromIso8601(LocalContext.current),
+							style = MaterialTheme.typography.subtitle1
+						)
 					}
 				}
+
+				// Applicant
+				SharedElement(
+					key = "${report.id}/applicant",
+					screenKey = AppScreen.Reports.route,
+					transitionSpec = SharedElementsTransitionSpec(
+						durationMillis = duration
+					)
+				) {
+					IconizedRow(
+						imageVector = Icons.Default.ManageAccounts,
+						spacing = 0.dp
+					) {
+						UserLink(user = report.applicant)
+					}
+				}
+
+				// Implementer
+				SharedElement(
+					key = "${report.id}/implementer",
+					screenKey = AppScreen.Reports.route,
+					transitionSpec = SharedElementsTransitionSpec(
+						durationMillis = duration
+					)
+				) {
+					IconizedRow(
+						imageVector = Icons.Default.Person,
+						spacing = 0.dp
+					) {
+						UserLink(user = report.implementer)
+					}
+				}
+
+				// Salary
+				SharedElement(
+					key = "${report.id}/salary",
+					screenKey = AppScreen.Reports.route,
+					transitionSpec = SharedElementsTransitionSpec(
+						durationMillis = duration
+					)
+				) {
+					IconizedRow(
+						imageVector = Icons.Default.Payment
+					) {
+						Text(
+							text = if (report.salary != null) stringResource(
+								R.string.salary_int,
+								report.salary
+							) else stringResource(
+								R.string.salary_not_specified
+							),
+							style = MaterialTheme.typography.subtitle1
+						)
+					}
+				}
+
 			}
 		}
 	}
