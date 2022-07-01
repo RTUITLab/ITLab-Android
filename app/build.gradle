@@ -130,6 +130,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager-indicators:0.20.0"
     implementation "com.google.accompanist:accompanist-swiperefresh:0.21.1-beta"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
+    implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.3'
 
     // Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"

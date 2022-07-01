@@ -23,6 +23,8 @@ class PurchasesViewModel @Inject constructor(
 ): ViewModel() {
     private val searchQuery = MutableStateFlow("")
 
+    val pageSize = 10
+
     private val _state = MutableStateFlow(PurchasesUiState())
     val state = searchQuery.flatMapLatest { query ->
         _state.asStateFlow().map {
@@ -42,6 +44,7 @@ class PurchasesViewModel @Inject constructor(
         onRequest = { nextPage ->
             repository.fetchPurchases(
                 pageNumber = nextPage,
+                pageSize = pageSize,
                 sortingDirection = _state.value.selectedSortingDirection,
                 sortBy = _state.value.selectedSortingOrder,
                 purchaseStartDate = _state.value.startDate,
@@ -62,6 +65,7 @@ class PurchasesViewModel @Inject constructor(
                         solver = usersRepository.cachedUsersFlow.value.find { it.id == purchaseDto.solution.solverId }
                     )
                 },
+                paginationState = result,
                 errorMessage = null,
                 isLoading = false,
                 endReached = result.content.isEmpty()

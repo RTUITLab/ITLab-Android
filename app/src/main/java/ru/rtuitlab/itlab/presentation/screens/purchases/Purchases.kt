@@ -3,7 +3,6 @@ package ru.rtuitlab.itlab.presentation.screens.purchases
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -16,7 +15,6 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -24,6 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.valentinilk.shimmer.ShimmerBounds
+import com.valentinilk.shimmer.rememberShimmer
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusApi
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusUi
@@ -34,6 +34,8 @@ import ru.rtuitlab.itlab.presentation.ui.components.SideColoredCard
 import ru.rtuitlab.itlab.presentation.ui.components.UserLink
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
+import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerBox
+import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerThemes
 import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
@@ -52,12 +54,6 @@ fun Purchases(
         state = rememberSwipeRefreshState(state.isRefreshing),
         onRefresh = viewModel::onRefresh
     ) {
-        /*Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 15.dp)
-        ) {
-        }*/
         LazyColumn(
             modifier = Modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -113,19 +109,18 @@ fun Purchases(
                     purchase = purchase
                 )
             }
-            if (state.isLoading)
-                item {
-                    Box(
+            if (state.paginationState?.totalElements == null || state.paginationState!!.totalElements > state.purchases.size) {
+                items(
+                    count = (state.paginationState?.totalElements ?: 0 - state.purchases.size).coerceAtLeast(viewModel.pageSize)
+                ) {
+                    ShimmeredPurchaseCard(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            color = AppColors.accent.collectAsState().value,
-                            strokeWidth = ProgressIndicatorDefaults.StrokeWidth
-                        )
-                    }
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp),
+                        isResolved = state.selectedStatus == PurchaseStatusUi.ACCEPT || state.selectedStatus == PurchaseStatusUi.DECLINE
+                    )
                 }
+            }
         }
     }
 }
@@ -235,6 +230,77 @@ fun PurchaseCard(
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShimmeredPurchaseCard(
+    modifier: Modifier = Modifier,
+    isResolved: Boolean
+) {
+    val defaultShimmer = rememberShimmer(
+        shimmerBounds = ShimmerBounds.Window,
+        theme = ShimmerThemes.defaultShimmerTheme
+    )
+    val accentColor by AppColors.accent.collectAsState()
+    SideColoredCard(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.medium,
+        color = Color.LightGray
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    top = 10.dp,
+                    bottom = 8.dp,
+                    start = 15.dp,
+                    end = 15.dp
+                )
+                .fillMaxWidth()
+        ) {
+            ShimmerBox(
+                modifier = Modifier
+                    .fillMaxSize(.5f)
+                    .height(20.dp),
+                shimmer = defaultShimmer
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ShimmerBox(
+                    modifier = Modifier
+                        .fillMaxSize(.5f)
+                        .height(20.dp),
+                    shimmer = defaultShimmer
+                )
+
+                if (isResolved)
+                    ShimmerBox(
+                        modifier = Modifier
+                            .fillMaxSize(.5f)
+                            .height(20.dp),
+                        shimmer = defaultShimmer,
+                        color = accentColor.copy(alpha = .4f)
+                    )
+
+                ShimmerBox(
+                    modifier = Modifier
+                        .fillMaxSize(.5f)
+                        .height(20.dp),
+                    shimmer = defaultShimmer,
+                    color = accentColor.copy(alpha = .4f)
+                )
+
+                ShimmerBox(
+                    modifier = Modifier
+                        .fillMaxSize(.25f)
+                        .height(20.dp),
+                    shimmer = defaultShimmer
+                )
             }
         }
     }
