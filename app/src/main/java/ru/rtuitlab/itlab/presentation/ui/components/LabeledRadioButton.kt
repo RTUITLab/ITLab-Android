@@ -1,46 +1,52 @@
 package ru.rtuitlab.itlab.presentation.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.*
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @Composable
-fun LabelledRadioButton(
+fun LabeledRadioButton(
 	state: Boolean,
 	onCheckedChange: ((Boolean) -> Unit),
 	label: String,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	paddingValues: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
 ) {
+
+	val accentColor by AppColors.accent.collectAsState()
+
 	Row(
 		verticalAlignment = Alignment.CenterVertically,
 		modifier = modifier
-			.clickable(
+			.selectable(
+				selected = state,
+				role = Role.RadioButton,
 				indication = rememberRipple(color = MaterialTheme.colors.onSurface),
 				interactionSource = remember { MutableInteractionSource() },
 				onClick = { onCheckedChange(!state) }
 			)
-			.padding(horizontal = 16.dp, vertical = 8.dp)
+			.padding(paddingValues)
 	) {
 
 		RadioButton(
 			selected = state,
-			onClick = {onCheckedChange(!state)},
+			onClick = null,
 			colors = RadioButtonDefaults.colors(
-				selectedColor = MaterialTheme.colors.onSurface,
-				unselectedColor = MaterialTheme.colors.onSurface,
-				disabledColor = MaterialTheme.colors.onSurface
+				selectedColor = accentColor,
+				unselectedColor = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+				disabledColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled)
 			)
 		)
 
