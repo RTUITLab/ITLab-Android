@@ -155,7 +155,7 @@
     <string name="byUser">По пользователю</string>
     <string name="filter">Фильтр</string>
     <string name="time_parsing_error">Ошибка обработки времени</string>
-    <string name="by_name">По имени</string>
+    <string name="by_name">По названию</string>
     <string name="by_price">По цене</string>
     <string name="by_addition_date">По дате создания</string>
     <string name="by_purchase_date">По дате покупки</string>
@@ -165,4 +165,5 @@
     <string name="status_confirmed">Подтверждены</string>
     <string name="status_rejected">Отклонены</string>
     <string name="retry">Попробовать снова</string>
+    <string name="sort_asc">В порядке возрастания</string>
 </resources>

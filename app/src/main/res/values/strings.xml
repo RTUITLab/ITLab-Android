@@ -30,6 +30,7 @@
     <string name="details_name">%1$s</string>
     <string name="time_parsing_error">Time parsing error</string>
     <string name="retry">Retry</string>
+    <string name="sort_asc">In ascending order</string>
 
     <!--    Events    -->
     <string name="events">Events</string>

@@ -31,6 +31,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
+import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchasesTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.reports.components.ReportsTopAppBar
 import ru.rtuitlab.itlab.presentation.ui.components.Custom_Scaffold
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
@@ -119,6 +120,7 @@ fun ITLabApp(
                         ),
                         onBackAction = onBackAction
                     )
+                    AppScreen.Purchases -> PurchasesTopAppBar()
                     else -> BasicTopAppBar(
                         text = stringResource(currentScreen.screenNameResource),
                         onBackAction = onBackAction

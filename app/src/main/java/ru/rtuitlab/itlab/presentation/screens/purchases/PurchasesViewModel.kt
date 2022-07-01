@@ -9,6 +9,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingDirection
+import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingOrder
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusUi
 import ru.rtuitlab.itlab.data.remote.pagination.Paginator
 import ru.rtuitlab.itlab.data.repository.PurchasesRepository
@@ -119,6 +121,20 @@ class PurchasesViewModel @Inject constructor(
     fun onStatusChange(status: PurchaseStatusUi) {
         _state.value = _state.value.copy(
             selectedStatus = status
+        )
+        onRefresh()
+    }
+
+    fun onSortingOrderChange(order: PurchaseSortingOrder) {
+        _state.value = _state.value.copy(
+            selectedSortingOrder = order
+        )
+        onRefresh()
+    }
+
+    fun onSortingDirectionChange(direction: PurchaseSortingDirection) {
+        _state.value = _state.value.copy(
+            selectedSortingDirection = direction
         )
         onRefresh()
     }
