@@ -29,9 +29,7 @@ import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusApi
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusUi
 import ru.rtuitlab.itlab.data.remote.api.purchases.models.Purchase
 import ru.rtuitlab.itlab.presentation.screens.reports.duration
-import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
-import ru.rtuitlab.itlab.presentation.ui.components.SideColoredCard
-import ru.rtuitlab.itlab.presentation.ui.components.UserLink
+import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerBox
@@ -98,7 +96,7 @@ fun Purchases(
                 // Normally this is an unhandled side-effect, but in this case we have precise
                 // control over its execution through concrete conditions, so no random calls
                 // to fetchNextItems() will be performed.
-                if (index >= state.purchases.size - 1 && !state.endReached && !state.isLoading) {
+                if (index >= state.purchases.size - 1 && !state.endReached && !state.isLoading && state.errorMessage == null) {
                     viewModel.fetchNextItems()
                 }
 
@@ -110,6 +108,17 @@ fun Purchases(
                 )
             }
             if (state.paginationState?.totalElements == null || state.paginationState!!.totalElements > state.purchases.size) {
+                state.errorMessage?.let {
+                    item {
+                        LoadingErrorRetry(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp),
+                            errorMessage = it,
+                            onRetry = viewModel::fetchNextItems
+                        )
+                    }
+                } ?:
                 items(
                     count = (state.paginationState?.totalElements ?: 0 - state.purchases.size).coerceAtLeast(viewModel.pageSize)
                 ) {
@@ -173,7 +182,10 @@ fun PurchaseCard(
                         spacing = 8.dp
                     ) {
                         Text(
-                            text = purchase.purchaseDate.fromIso8601(LocalContext.current),
+                            text = purchase.purchaseDate.fromIso8601(
+                                context = LocalContext.current,
+                                parseWithTime = false
+                            ),
                             style = MaterialTheme.typography.subtitle1
                         )
                     }

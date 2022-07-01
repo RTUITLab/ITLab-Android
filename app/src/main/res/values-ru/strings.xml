@@ -164,4 +164,5 @@
     <string name="status_await">В ожидании</string>
     <string name="status_confirmed">Подтверждены</string>
     <string name="status_rejected">Отклонены</string>
+    <string name="retry">Попробовать снова</string>
 </resources>

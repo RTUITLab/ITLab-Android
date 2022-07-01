@@ -39,6 +39,9 @@ class UsersRepository @Inject constructor(
 				it.handle(
 					onSuccess = {
 						_cachedUsersFlow.value = it.map { it.toUser() }
+					},
+					onError = {
+						updateUsersFlow()
 					}
 				)
 			}

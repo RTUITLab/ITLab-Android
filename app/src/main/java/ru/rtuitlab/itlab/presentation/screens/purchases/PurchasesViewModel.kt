@@ -42,6 +42,7 @@ class PurchasesViewModel @Inject constructor(
             _state.value = _state.value.copy(isLoading = it)
         },
         onRequest = { nextPage ->
+            _state.value = _state.value.copy(errorMessage = null)
             repository.fetchPurchases(
                 pageNumber = nextPage,
                 pageSize = pageSize,
@@ -54,7 +55,11 @@ class PurchasesViewModel @Inject constructor(
         },
         getNextKey = { _state.value.page + 1 },
         onError = {
-            _state.value = _state.value.copy(errorMessage = it)
+            _state.value = _state.value.copy(
+                errorMessage = it,
+                isLoading = false,
+                isRefreshing = false
+            )
         },
         onSuccess = { result, newPage ->
             _state.value = _state.value.copy(
@@ -84,6 +89,12 @@ class PurchasesViewModel @Inject constructor(
                                 fetchNextItems()
                                 _state.value = _state.value.copy(isRefreshing = false)
                                 cancel()
+                            },
+                            onError = {
+                                _state.value = _state.value.copy(
+                                    isRefreshing = false,
+                                    errorMessage = it
+                                )
                             }
                         )
                     }
@@ -99,7 +110,8 @@ class PurchasesViewModel @Inject constructor(
     fun onRefresh() {
         paginator.reset()
         _state.value = _state.value.copy(
-            purchases = emptyList()
+            purchases = emptyList(),
+            paginationState = null
         )
         fetchNextItems()
     }
