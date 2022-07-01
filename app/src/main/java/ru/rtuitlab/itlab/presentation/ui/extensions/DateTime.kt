@@ -31,7 +31,8 @@ fun Long.toClientDate() = toMoscowDateTime().run {
 
 fun String.fromIso8601(
 	context: Context,
-	dateTimeDelimiter: String = " ${context.resources.getString(R.string.at)}"
+	dateTimeDelimiter: String = " ${context.resources.getString(R.string.at)}",
+	parseWithTime: Boolean = true
 ) = try {
 	// ITLab uses both normalized and non-normalized
 	// ISO8601 strings. This is a workaround to always
@@ -40,9 +41,12 @@ fun String.fromIso8601(
 		.fromIso8601ToInstant().run {
 			val day = dayOfMonth.toString().padStart(2, '0')
 			val month = monthNumber.toString().padStart(2, '0')
-			val hour = hour.toString().padStart(2, '0')
-			val minute = minute.toString().padStart(2, '0')
-			"$day.$month.$year$dateTimeDelimiter $hour:$minute"
+			if (parseWithTime) {
+				val hour = hour.toString().padStart(2, '0')
+				val minute = minute.toString().padStart(2, '0')
+				return "$day.$month.$year$dateTimeDelimiter $hour:$minute"
+			}
+			"$day.$month.$year"
 		}
 } catch (e: DateTimeException) {
 	e.printStackTrace()
