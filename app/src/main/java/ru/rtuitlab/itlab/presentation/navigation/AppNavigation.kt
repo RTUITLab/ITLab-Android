@@ -28,6 +28,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.EventsNotifications
 import ru.rtuitlab.itlab.presentation.screens.feedback.Feedback
 
 import ru.rtuitlab.itlab.presentation.screens.profile.Profile
+import ru.rtuitlab.itlab.presentation.screens.purchases.Purchase
 import ru.rtuitlab.itlab.presentation.screens.purchases.Purchases
 import ru.rtuitlab.itlab.presentation.screens.reports.NewReport
 import ru.rtuitlab.itlab.presentation.screens.reports.Report
@@ -234,6 +235,7 @@ private fun NavGraphBuilder.reportsGraph(
 	}
 }
 
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 private fun NavGraphBuilder.purchasesGraph() {
 	navigation(
@@ -242,6 +244,12 @@ private fun NavGraphBuilder.purchasesGraph() {
 	) {
 		composable(AppScreen.Purchases.route) {
 			Purchases()
+		}
+
+		composable(AppScreen.PurchaseDetails.route) {
+			Purchase(
+				id = it.arguments?.getString("purchaseId")!!.toInt()
+			)
 		}
 	}
 }

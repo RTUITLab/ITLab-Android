@@ -17,6 +17,10 @@ class PurchasesRepository @Inject constructor(
         purchasesApi.updatePurchase(purchase)
     }
 
+    suspend fun deletePurchase(id: Int) = handler {
+        purchasesApi.deletePurchase(id)
+    }
+
     suspend fun fetchPurchases(
         pageNumber: Int,
         pageSize: Int = 10,

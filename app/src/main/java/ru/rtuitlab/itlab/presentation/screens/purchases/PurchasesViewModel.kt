@@ -4,17 +4,16 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingDirection
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingOrder
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusUi
+import ru.rtuitlab.itlab.data.remote.api.purchases.models.Purchase
 import ru.rtuitlab.itlab.data.remote.pagination.Paginator
 import ru.rtuitlab.itlab.data.repository.PurchasesRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
+import ru.rtuitlab.itlab.presentation.screens.purchases.state.PurchaseUiState
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.PurchasesUiState
 import javax.inject.Inject
 
@@ -37,6 +36,13 @@ class PurchasesViewModel @Inject constructor(
             )
         }
     }.stateIn(viewModelScope, SharingStarted.Lazily, _state.value)
+
+    private val _events = MutableSharedFlow<PurchaseEvent>()
+    val events = _events.asSharedFlow()
+
+    sealed class PurchaseEvent {
+        data class Snackbar(val message: String): PurchaseEvent()
+    }
 
     private val paginator = Paginator(
         initialKey = state.value.page,
@@ -137,5 +143,68 @@ class PurchasesViewModel @Inject constructor(
             selectedSortingDirection = direction
         )
         onRefresh()
+    }
+
+
+    // Single-purchase-related methods
+
+    fun onPurchaseOpened(purchase: Purchase) {
+        _state.value = _state.value.copy(
+            selectedPurchaseState = PurchaseUiState(purchase)
+        )
+    }
+
+    fun showDeletingDialog() {
+        _state.value = _state.value.copy(
+            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
+                isDeletionDialogShown = true
+            )
+        )
+    }
+
+    fun hideDeletingDialog() {
+        _state.value = _state.value.copy(
+            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
+                isDeletionDialogShown = false
+            )
+        )
+    }
+
+    private fun setIsDeletionInProgress(isIt: Boolean) {
+        _state.value = _state.value.copy(
+            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
+                isDeletionInProgress = isIt
+            )
+        )
+    }
+
+    fun onDeletePurchase(
+        purchase: Purchase,
+        successMessage: String,
+        onFinish: (isSuccessful: Boolean) -> Unit
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        setIsDeletionInProgress(true)
+        repository.deletePurchase(purchase.id).handle(
+            onSuccess = {
+                withContext(Dispatchers.Main) {
+                    onFinish(true)
+                }
+                _state.value = _state.value.copy(
+                    purchases = _state.value.purchases - purchase,
+                    paginationState = _state.value.paginationState?.copy(
+                        totalPages = _state.value.paginationState!!.totalPages - 1
+                    )
+                )
+                delay(500)
+                _events.emit(PurchaseEvent.Snackbar(successMessage))
+            },
+            onError = {
+                withContext(Dispatchers.Main) {
+                    onFinish(false)
+                }
+                _events.emit(PurchaseEvent.Snackbar(it))
+            }
+        )
+        setIsDeletionInProgress(false)
     }
 }

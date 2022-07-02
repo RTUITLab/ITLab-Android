@@ -132,7 +132,7 @@ fun BaseElements(
                         }
                     },
                     content = { collapseAction ->
-                        LabelledRadioButton(
+                        LabeledRadioButton(
                             state = !state.value,
                             onCheckedChange = {
                                 mfsViewModel.setSortedBy("date")
@@ -141,7 +141,7 @@ fun BaseElements(
                             },
                             label = stringResource(R.string.byDate)
                         )
-                        LabelledRadioButton(
+                        LabeledRadioButton(
                             state = state.value,
                             onCheckedChange = {
                                 mfsViewModel.setSortedBy("user")

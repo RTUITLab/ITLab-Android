@@ -11,6 +11,7 @@ data class PurchasesUiState(
     val page: Int = 0,
     val purchases: List<Purchase> = emptyList(),
     val paginationState: PaginationResult? = null,
+    val selectedPurchaseState: PurchaseUiState? = null,
     val errorMessage: String? = null,
     val endReached: Boolean = false,
     val searchQuery: String = "",

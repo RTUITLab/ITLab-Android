@@ -155,7 +155,7 @@ open class AppScreen(
             ReportDetails(context.resources.getString(R.string.report)),
             NewReport,
             Purchases,
-            PurchaseDetails(context.getString(R.string.projects))
+            PurchaseDetails(context.resources.getString(R.string.purchase))
         )
     }
 }

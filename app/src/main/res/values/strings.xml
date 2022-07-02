@@ -132,6 +132,8 @@
     <string name="show_only_free">Show only free</string>
 
     <!--    Purchases    -->
+    <string name="purchases">Purchases</string>
+    <string name="purchase">Purchase</string>
     <string name="by_name">By name</string>
     <string name="by_price">By price</string>
     <string name="by_addition_date">By date of addition</string>
@@ -140,6 +142,14 @@
     <string name="status_await">Pending</string>
     <string name="status_confirmed">Confirmed</string>
     <string name="status_rejected">Rejected</string>
+    <string name="purchase_date">Purchase date: </string>
+    <string name="purchase_buyer">Purchaser: </string>
+    <string name="purchase_approved_by">Approved by: </string>
+    <string name="purchase_rejected_by">Rejected by: </string>
+    <string name="purchase_price">Price: </string>
+    <string name="purchase_delete">Delete purchase</string>
+    <string name="purchase_delete_confirmation">A you sure you want to delete the purchase “%1$s”?</string>
+    <string name="purchase_delete_success">Purchase deleted successfully</string>
 
     <!--    Reports    -->
     <string name="reports">Reports</string>
@@ -173,6 +183,5 @@
     <string name="md_ol">Ordered list</string>
     <string name="md_task">Task</string>
     <string name="md_attach">Attach…</string>
-    <string name="purchases">Purchases</string>
 
 </resources>
