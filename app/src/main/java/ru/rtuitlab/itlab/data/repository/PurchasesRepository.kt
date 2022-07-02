@@ -40,4 +40,8 @@ class PurchasesRepository @Inject constructor(
             if (purchaseStatus == PurchaseStatusUi.ALL) null else purchaseStatus.toString()
         )
     }
+
+    suspend fun createPurchase(request: PurchaseCreateRequest) = handler {
+        purchasesApi.createPurchase(request)
+    }
 }

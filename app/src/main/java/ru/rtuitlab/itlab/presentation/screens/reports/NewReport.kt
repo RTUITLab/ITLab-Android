@@ -254,7 +254,7 @@ fun NewReport(
                                 }
                             }
                         },
-                        text = stringResource(R.string.report_send),
+                        text = stringResource(R.string.send),
                         enabled = state.isSendButtonEnabled
                     ) { text ->
                         LoadableButtonContent(
@@ -316,7 +316,7 @@ private fun UserPicker(
 }
 
 @Composable
-private fun UploadConfirmationDialog(
+fun UploadConfirmationDialog(
     isUploading: Boolean = false,
     providedFile: File,
     onResult: (isConfirmed: Boolean) -> Unit

@@ -19,7 +19,7 @@ data class PurchaseDto(
 ) {
     fun toPurchase(
         purchaser: User,
-        solver: User?
+        solver: User? = null
     ) =
         Purchase(
             id,

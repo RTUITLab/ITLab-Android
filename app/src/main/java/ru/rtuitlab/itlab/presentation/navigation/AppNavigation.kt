@@ -28,6 +28,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.EventsNotifications
 import ru.rtuitlab.itlab.presentation.screens.feedback.Feedback
 
 import ru.rtuitlab.itlab.presentation.screens.profile.Profile
+import ru.rtuitlab.itlab.presentation.screens.purchases.NewPurchase
 import ru.rtuitlab.itlab.presentation.screens.purchases.Purchase
 import ru.rtuitlab.itlab.presentation.screens.purchases.Purchases
 import ru.rtuitlab.itlab.presentation.screens.reports.NewReport
@@ -250,6 +251,10 @@ private fun NavGraphBuilder.purchasesGraph() {
 			Purchase(
 				id = it.arguments?.getString("purchaseId")!!.toInt()
 			)
+		}
+
+		composable(AppScreen.NewPurchase.route) {
+			NewPurchase()
 		}
 	}
 }

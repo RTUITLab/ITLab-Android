@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation.screens.purchases
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -8,14 +9,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ManageAccounts
-import androidx.compose.material.icons.filled.Payment
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -63,106 +58,127 @@ fun Purchases(
             }
         }
     }
+    val (transitionProgress, transitionProgressSetter) = remember { mutableStateOf(0f) }
 
     Scaffold(
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        floatingActionButton = {
+            TransitionFloatingActionButton(
+                key = "Purchases/New",
+                screenKey = AppScreen.Purchases.route,
+                icon = Icons.Default.Add,
+                onClick = {
+                    navController.navigate(AppScreen.NewPurchase.route)
+                },
+                transitionProgressSetter = transitionProgressSetter
+            )
+        }
     ) {
-        SwipeRefresh(
-            modifier = Modifier
-                .fillMaxSize(),
-            state = rememberSwipeRefreshState(state.isRefreshing),
-            onRefresh = viewModel::onRefresh
-        ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                contentPadding = PaddingValues(bottom = 15.dp, top = 10.dp)
+        Box {
+            SwipeRefresh(
+                modifier = Modifier
+                    .fillMaxSize(),
+                state = rememberSwipeRefreshState(state.isRefreshing),
+                onRefresh = viewModel::onRefresh
             ) {
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Spacer(modifier = Modifier.width(15.dp))
-                        PurchaseStatusUi.values().forEach {
-                            Chip(
-                                onClick = {
-                                    if (state.selectedStatus != it)
-                                        viewModel.onStatusChange(it)
-                                },
-                                colors = ChipDefaults.outlinedChipColors(
-                                    backgroundColor = if (state.selectedStatus == it) it.color else Color.Transparent,
-                                    contentColor = (if (state.selectedStatus == it) Color.White else it.color)
-                                        .copy(alpha = ChipDefaults.ContentOpacity)
-                                ),
-                                border = ChipDefaults.outlinedBorder
-                            ) {
-                                Text(
-                                    text = stringResource(it.nameResource),
-                                    style = MaterialTheme.typography.body1
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.width(15.dp))
-
-                    }
-                }
-                itemsIndexed(
-                    items = state.purchases,
-                    key = { _, it -> it.id }
-                ) { index, purchase ->
-
-                    // Normally this is an unhandled side-effect, but in this case we have precise
-                    // control over its execution through concrete conditions, so no random calls
-                    // to fetchNextItems() will be performed.
-                    if (index >= state.purchases.size - 1 && !state.endReached && !state.isLoading && state.errorMessage == null) {
-                        viewModel.fetchNextItems()
-                    }
-                    SharedElement(
-                        key = purchase.id,
-                        screenKey = AppScreen.Reports.route,
-                        transitionSpec = SharedElementsTransitionSpec(
-                            durationMillis = duration
-                        )
-                    ) {
-                        PurchaseCard(
+                LazyColumn(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    contentPadding = PaddingValues(bottom = 15.dp, top = 10.dp)
+                ) {
+                    item {
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 15.dp)
-                                .clickable {
-                                    viewModel.onPurchaseOpened(purchase)
-                                    navController.navigate("${AppScreen.PurchaseDetails.navLink}/${purchase.id}")
-                                },
-                            purchase = purchase
-                        )
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Spacer(modifier = Modifier.width(15.dp))
+                            PurchaseStatusUi.values().forEach {
+                                Chip(
+                                    onClick = {
+                                        if (state.selectedStatus != it)
+                                            viewModel.onStatusChange(it)
+                                    },
+                                    colors = ChipDefaults.outlinedChipColors(
+                                        backgroundColor = if (state.selectedStatus == it) it.color else Color.Transparent,
+                                        contentColor = (if (state.selectedStatus == it) Color.White else it.color)
+                                            .copy(alpha = ChipDefaults.ContentOpacity)
+                                    ),
+                                    border = ChipDefaults.outlinedBorder
+                                ) {
+                                    Text(
+                                        text = stringResource(it.nameResource),
+                                        style = MaterialTheme.typography.body1
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(15.dp))
+
+                        }
                     }
-                }
-                if (state.paginationState?.totalElements == null || state.paginationState!!.totalElements > state.purchases.size) {
-                    state.errorMessage?.let {
-                        item {
-                            LoadingErrorRetry(
+                    itemsIndexed(
+                        items = state.purchases,
+                        key = { _, it -> it.id }
+                    ) { index, purchase ->
+
+                        // Normally this is an unhandled side-effect, but in this case we have precise
+                        // control over its execution through concrete conditions, so no random calls
+                        // to fetchNextItems() will be performed.
+                        if (index >= state.purchases.size - 1 && !state.endReached && !state.isLoading && state.errorMessage == null) {
+                            viewModel.fetchNextItems()
+                        }
+                        SharedElement(
+                            key = purchase.id,
+                            screenKey = AppScreen.Reports.route,
+                            transitionSpec = SharedElementsTransitionSpec(
+                                durationMillis = duration
+                            )
+                        ) {
+                            PurchaseCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 16.dp),
-                                errorMessage = it,
-                                onRetry = viewModel::fetchNextItems
+                                    .padding(horizontal = 15.dp)
+                                    .clickable {
+                                        viewModel.onPurchaseOpened(purchase)
+                                        navController.navigate("${AppScreen.PurchaseDetails.navLink}/${purchase.id}")
+                                    },
+                                purchase = purchase
                             )
                         }
-                    } ?: items(
-                        count = (state.paginationState?.totalElements
-                            ?: 0 - state.purchases.size).coerceAtLeast(viewModel.pageSize)
-                    ) {
-                        ShimmeredPurchaseCard(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp),
-                            isResolved = state.selectedStatus == PurchaseStatusUi.ACCEPT || state.selectedStatus == PurchaseStatusUi.DECLINE
-                        )
+                    }
+                    if (state.paginationState?.totalElements == null || state.paginationState!!.totalElements > state.purchases.size) {
+                        state.errorMessage?.let {
+                            item {
+                                LoadingErrorRetry(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 16.dp),
+                                    errorMessage = it,
+                                    onRetry = viewModel::fetchNextItems
+                                )
+                            }
+                        } ?: items(
+                            count = (state.paginationState?.totalElements
+                                ?: 0 - state.purchases.size).coerceAtLeast(viewModel.pageSize)
+                        ) {
+                            ShimmeredPurchaseCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 15.dp),
+                                isResolved = state.selectedStatus == PurchaseStatusUi.ACCEPT || state.selectedStatus == PurchaseStatusUi.DECLINE
+                            )
+                        }
                     }
                 }
             }
+            // Providing scrimming during fab transition
+            Canvas(
+                modifier = Modifier.fillMaxSize(),
+                onDraw = {
+                    drawRect(color = Color.Black.copy(alpha = 0.32f * (transitionProgress)))
+                }
+            )
         }
     }
 }

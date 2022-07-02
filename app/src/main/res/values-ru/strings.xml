@@ -145,7 +145,7 @@
     <string name="Select_a_file">Выбрать файл</string>
     <string name="Upload_a_file">Загрузить файл</string>
     <string name="report_title">Заголовок отчёта</string>
-    <string name="report_send">Отправить</string>
+    <string name="send">Отправить</string>
     <string name="report_new_about_who">О ком отчёт</string>
     <string name="report_uploading_file">Загрузка файла</string>
     <string name="report_uploading_file_dialog">Вы уверены, что хотите загрузить выбранный файл? %1$s</string>
@@ -166,13 +166,18 @@
     <string name="status_rejected">Отклонены</string>
     <string name="retry">Попробовать снова</string>
     <string name="sort_asc">В порядке возрастания</string>
-    <string name="purchase_date">"Дата покупки: "</string>
-    <string name="purchase_buyer">"Покупатель: "</string>
-    <string name="purchase_approved_by">"Принято: "</string>
-    <string name="purchase_rejected_by">"Отклонено: "</string>
-    <string name="purchase_price">"Стоимость: "</string>
+    <string name="purchase_date">"Дата покупки"</string>
+    <string name="purchase_buyer">"Покупатель"</string>
+    <string name="purchase_approved_by">"Принято"</string>
+    <string name="purchase_rejected_by">"Отклонено"</string>
+    <string name="purchase_price">"Стоимость"</string>
     <string name="purchase">Покупка</string>
     <string name="purchase_delete">Удалить покупку</string>
     <string name="purchase_delete_confirmation">Вы уверены, что хотите удалить покупку “%1$s”?</string>
     <string name="purchase_delete_success">Покупока успешно удалена</string>
+    <string name="purchase_new">Новая покупка</string>
+    <string name="purchase_name">Название</string>
+    <string name="purchase_check">Чек</string>
+    <string name="purchase_photo">Фото покупки</string>
+    <string name="purchase_created">Покупка успешно отправлена</string>
 </resources>

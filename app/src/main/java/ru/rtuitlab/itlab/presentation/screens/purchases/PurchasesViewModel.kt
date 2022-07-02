@@ -6,15 +6,24 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.datetime.UtcOffset
+import kotlinx.datetime.toInstant
+import ru.rtuitlab.itlab.BuildConfig
+import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingDirection
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingOrder
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusUi
 import ru.rtuitlab.itlab.data.remote.api.purchases.models.Purchase
+import ru.rtuitlab.itlab.data.remote.api.purchases.models.PurchaseCreateRequest
 import ru.rtuitlab.itlab.data.remote.pagination.Paginator
 import ru.rtuitlab.itlab.data.repository.PurchasesRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
+import ru.rtuitlab.itlab.presentation.screens.purchases.state.NewPurchaseUiState
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.PurchaseUiState
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.PurchasesUiState
+import ru.rtuitlab.itlab.presentation.ui.extensions.toIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.toMoscowDateTime
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -207,4 +216,186 @@ class PurchasesViewModel @Inject constructor(
         )
         setIsDeletionInProgress(false)
     }
+
+
+    // New purchase
+
+    sealed class FileType(val mimeTypes: Array<String>) {
+        object Check: FileType(arrayOf("image/*", "application/pdf"))
+        object Photo: FileType(arrayOf("image/*"))
+    }
+
+    fun onNameChange(name: String) {
+        if (name.length > 63) return
+        _state.value = _state.value.copy(
+            newPurchaseState = _state.value.newPurchaseState.copy(
+                name = name
+            )
+        )
+    }
+
+    fun onPriceChange(price: String) {
+        val formattedInput = price.filter { it.isDigit() }
+        if (formattedInput.isBlank()) {
+            _state.value = _state.value.copy(
+                newPurchaseState = _state.value.newPurchaseState.copy(
+                    price = null
+                )
+            )
+            return
+        }
+        if (formattedInput.length > 5) return
+        val priceInt = formattedInput.toInt()
+        if (priceInt < 1) return
+        _state.value = _state.value.copy(
+            newPurchaseState = _state.value.newPurchaseState.copy(
+                price = priceInt
+            )
+        )
+    }
+
+    fun onDescriptionChange(description: String) {
+        if (description.length > 255) return
+        _state.value = _state.value.copy(
+            newPurchaseState = _state.value.newPurchaseState.copy(
+                description = description
+            )
+        )
+    }
+
+    fun onAttachFile(type: FileType, file: File) {
+        Log.v("Purchases", "Called onAttach for $type")
+        _state.value = _state.value.copy(
+            newPurchaseState =
+            if (type == FileType.Check)
+                _state.value.newPurchaseState.copy(
+                    checkFile = file,
+                    isCheckFileDialogShown = true
+                )
+            else _state.value.newPurchaseState.copy(
+                purchasePhotoFile = file,
+                isPurchasePhotoDialogShown = true
+            )
+        )
+    }
+
+    fun onUploadFile(type: FileType) {
+        _state.value = _state.value.copy(
+            newPurchaseState = _state.value.newPurchaseState.copy(
+                isCheckFileUploading = type == FileType.Check,
+                isPurchasePhotoUploading = type == FileType.Photo
+            )
+        )
+    }
+
+    fun onFileUploadingError(message: String) = viewModelScope.launch {
+        _events.emit(PurchaseEvent.Snackbar(message))
+    }
+
+    fun onConfirmationDialogDismissed(ofType: FileType) {
+        _state.value = _state.value.copy(
+            newPurchaseState = _state.value.newPurchaseState.copy(
+                isPurchasePhotoDialogShown = if (ofType == FileType.Photo) false
+                    else _state.value.newPurchaseState.isPurchasePhotoDialogShown,
+                isCheckFileDialogShown = if (ofType == FileType.Check) false
+                    else _state.value.newPurchaseState.isCheckFileDialogShown
+            )
+        )
+    }
+
+    fun onFileUploaded(fileInfo: FileInfoResponse, type: FileType) {
+        _state.value = _state.value.copy(
+            newPurchaseState =
+            if (type == FileType.Check)
+                _state.value.newPurchaseState.copy(
+                    checkFileId = fileInfo.id
+                )
+            else _state.value.newPurchaseState.copy(
+                purchasePhotoId = fileInfo.id
+            )
+        )
+    }
+
+    fun onRemoveFile(type: FileType) {
+        _state.value = _state.value.copy(
+            newPurchaseState =
+            if (type == FileType.Check)
+                _state.value.newPurchaseState.copy(
+                    checkFileId = null,
+                    checkFile = null
+                )
+            else _state.value.newPurchaseState.copy(
+                purchasePhotoId = null,
+                purchasePhotoFile = null
+            )
+        )
+    }
+
+    fun onSendPurchase(
+        successMessage: String,
+        onFinish: (newPurchase: Purchase?) -> Unit
+    ) {
+        _state.value = _state.value.copy(
+            newPurchaseState = _state.value.newPurchaseState.copy(
+                isPurchaseUploading = true
+            )
+        )
+        val state = _state.value.newPurchaseState
+        val request = PurchaseCreateRequest(
+            name = state.name,
+            price = state.price!!.toInt(),
+            description = state.description,
+            purchaseDate = state.purchaseDate.toIso8601(),
+            receiptPhotoUrl = "${BuildConfig.API_URI}mfs/download/${state.checkFileId}",
+            itemPhotoUrl = state.purchasePhotoId?.let {
+                "${BuildConfig.API_URI}mfs/download/$it"
+            }
+        )
+
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.createPurchase(request).handle(
+                onSuccess = { newPurchase ->
+                    val purchase = newPurchase.toPurchase(
+                        purchaser = usersRepository.cachedUsersFlow.value.find { it.id == newPurchase.purchaserId }!!
+                    )
+                    withContext(Dispatchers.Main) {
+                        onFinish(purchase)
+                    }
+                    _state.value = _state.value.copy(
+                        purchases = listOf(purchase) + _state.value.purchases,
+                        paginationState = _state.value.paginationState?.copy(
+                            totalElements = _state.value.paginationState!!.totalElements + 1
+                        ),
+                        newPurchaseState = NewPurchaseUiState()
+                    )
+                    delay(500)
+                    _events.emit(PurchaseEvent.Snackbar(successMessage))
+                },
+                onError = {
+                    withContext(Dispatchers.Main) {
+                        onFinish(null)
+                    }
+                    _events.emit(PurchaseEvent.Snackbar(it))
+                }
+            )
+            onPurchaseUploadingFinished()
+        }
+    }
+
+    private fun onPurchaseUploadingFinished() {
+        _state.value = _state.value.copy(
+            newPurchaseState = _state.value.newPurchaseState.copy(
+                isPurchaseUploading = false
+            )
+        )
+    }
+
+    fun onDateSelected(epochMilliseconds: Long) {
+        _state.value = _state.value.copy(
+            newPurchaseState = _state.value.newPurchaseState.copy(
+                purchaseDate = epochMilliseconds.toMoscowDateTime().toInstant(UtcOffset.ZERO)
+            )
+        )
+    }
+
 }

@@ -15,6 +15,11 @@ fun Instant.minus(value: Long, unit: DateTimeUnit) = plus(-value, unit)
 
 fun Instant.toMoscowDateTime() = toLocalDateTime(timeZone)
 
+fun Instant.toIso8601(): String {
+	val formatter = DateTimeFormatter.ISO_INSTANT
+	return formatter.format(this.toJavaInstant())
+}
+
 fun LocalDate.toUiString() = run {
 	val day = dayOfMonth.toString().padStart(2, '0')
 	val month = monthNumber.toString().padStart(2, '0')

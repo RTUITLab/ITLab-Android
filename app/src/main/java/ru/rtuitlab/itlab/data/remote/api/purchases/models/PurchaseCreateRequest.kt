@@ -13,5 +13,5 @@ data class PurchaseCreateRequest(
     @SerialName("checkPhotoUrl")
     val receiptPhotoUrl: String,
     @SerialName("purchasePhotoUrl")
-    val itemPhotoUrl: String
+    val itemPhotoUrl: String? = null
 )

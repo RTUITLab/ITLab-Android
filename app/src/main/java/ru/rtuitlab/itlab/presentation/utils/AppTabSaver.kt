@@ -138,6 +138,7 @@ open class AppScreen(
             val navLink: String = route.substringBefore("/{")
         }
     }
+    object NewPurchase: AppScreen(R.string.purchase_new, "purchases/new")
 
 
     companion object {
@@ -155,7 +156,8 @@ open class AppScreen(
             ReportDetails(context.resources.getString(R.string.report)),
             NewReport,
             Purchases,
-            PurchaseDetails(context.resources.getString(R.string.purchase))
+            PurchaseDetails(context.resources.getString(R.string.purchase)),
+            NewPurchase
         )
     }
 }

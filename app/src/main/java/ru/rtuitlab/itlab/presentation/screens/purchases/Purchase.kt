@@ -110,7 +110,7 @@ fun Purchase(
                                 opacity = .7f,
                                 spacing = 10.dp
                             ) {
-                                Text(text = stringResource(R.string.purchase_date))
+                                Text(text = "${stringResource(R.string.purchase_date)}: ")
                                 Text(
                                     text = purchase.purchaseDate.fromIso8601(
                                         context = LocalContext.current,
@@ -134,7 +134,7 @@ fun Purchase(
                                 opacity = .7f,
                                 spacing = 10.dp
                             ) {
-                                Text(text = stringResource(R.string.purchase_buyer))
+                                Text(text = "${stringResource(R.string.purchase_buyer)}:")
                                 UserLink(user = purchase.purchaser)
                             }
                         }
@@ -154,11 +154,13 @@ fun Purchase(
                                     spacing = 10.dp
                                 ) {
                                     Text(
-                                        text = stringResource(
-                                            if (purchase.solution.status == PurchaseStatusApi.ACCEPT)
-                                                R.string.purchase_approved_by
-                                            else R.string.purchase_rejected_by
-                                        )
+                                        text = "${
+                                            stringResource(
+                                                if (purchase.solution.status == PurchaseStatusApi.ACCEPT)
+                                                    R.string.purchase_approved_by
+                                                else R.string.purchase_rejected_by
+                                            )
+                                        }:"
                                     )
                                     UserLink(user = it)
                                 }
@@ -178,7 +180,7 @@ fun Purchase(
                                 opacity = .7f,
                                 spacing = 10.dp
                             ) {
-                                Text(text = stringResource(R.string.purchase_price))
+                                Text(text = "${stringResource(R.string.purchase_price)}: ")
                                 Text(
                                     text = stringResource(R.string.salary_float, purchase.price),
                                     style = MaterialTheme.typography.subtitle1
