@@ -192,7 +192,7 @@ class PurchasesViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     purchases = _state.value.purchases - purchase,
                     paginationState = _state.value.paginationState?.copy(
-                        totalPages = _state.value.paginationState!!.totalPages - 1
+                        totalElements = _state.value.paginationState!!.totalElements - 1
                     )
                 )
                 delay(500)
