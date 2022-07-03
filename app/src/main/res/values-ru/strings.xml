@@ -180,4 +180,8 @@
     <string name="purchase_check">Чек</string>
     <string name="purchase_photo">Фото покупки</string>
     <string name="purchase_created">Покупка успешно отправлена</string>
+    <string name="purchase_approve">Принять</string>
+    <string name="purchase_reject">Отклонить</string>
+    <string name="purchase_rejected">Покупка успешно отклонена</string>
+    <string name="purchase_approved">Покупка успешно принята</string>
 </resources>

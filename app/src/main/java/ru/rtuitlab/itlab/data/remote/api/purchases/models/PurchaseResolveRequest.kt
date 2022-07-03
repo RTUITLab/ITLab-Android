@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PurchaseResolveRequest(
     val status: String,
-    val decisionComment: String
+    val decisionComment: String? = null
 )

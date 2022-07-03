@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusApi
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.purchases.PurchasesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.LoadableButtonContent
@@ -40,14 +41,14 @@ fun PurchaseTopAppBar(
             currentScreen.screenNameResource,
             (currentScreen as AppScreen.PurchaseDetails).title
         ),
-        options = listOf(
+        options = if (purchaseState.purchase.solution.status == PurchaseStatusApi.AWAIT) listOf(
             AppBarOption.Clickable(
                 icon = ImageVector.vectorResource(R.drawable.ic_delete),
                 onClick = {
                     purchasesViewModel.showDeletingDialog()
                 }
             )
-        ),
+        ) else listOf(),
         onBackAction = {
             navController.popBackStack()
         }

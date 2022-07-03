@@ -12,6 +12,7 @@ import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingDirection
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingOrder
+import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusApi
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusUi
 import ru.rtuitlab.itlab.data.remote.api.purchases.models.Purchase
 import ru.rtuitlab.itlab.data.remote.api.purchases.models.PurchaseCreateRequest
@@ -215,6 +216,76 @@ class PurchasesViewModel @Inject constructor(
             }
         )
         setIsDeletionInProgress(false)
+    }
+
+    fun onApprove(
+        successMessage: String
+    ) {
+        _state.value = _state.value.copy(
+            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
+                isApprovingInProgress = true
+            )
+        )
+
+        onResolve(
+            status = PurchaseStatusApi.ACCEPT,
+            successMessage = successMessage
+        )
+    }
+
+    fun onReject(
+        successMessage: String
+    ) {
+        _state.value = _state.value.copy(
+            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
+                isRejectingInProgress = true
+            )
+        )
+
+        onResolve(
+            status = PurchaseStatusApi.DECLINE,
+            successMessage = successMessage
+        )
+    }
+    
+    private fun onResolve(
+        status: PurchaseStatusApi,
+        successMessage: String
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        repository.resolvePurchase(
+            id = _state.value.selectedPurchaseState!!.purchase.id,
+            status = status
+        ).handle(
+            onSuccess = { newPurchase ->
+                val purchase = newPurchase.toPurchase(
+                    purchaser = usersRepository.cachedUsersFlow.value.find { it.id == newPurchase.purchaserId }!!,
+                    solver = usersRepository.cachedUsersFlow.value.find { it.id == newPurchase.solution.solverId!! }!!
+                )
+                _events.emit(PurchaseEvent.Snackbar(successMessage))
+                _state.value = _state.value.copy(
+                    selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
+                        purchase = purchase
+                    ),
+                    purchases = _state.value.purchases - _state.value.purchases.find { it.id == purchase.id }!!,
+                    paginationState = _state.value.paginationState?.copy(
+                        totalElements = _state.value.paginationState!!.totalElements - 1
+                    )
+                )
+            },
+            onError = {
+                _events.emit(PurchaseEvent.Snackbar(it))
+            }
+        )
+        onLoadingStop()
+    }
+
+    private fun onLoadingStop() {
+        _state.value = _state.value.copy(
+            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
+                isRejectingInProgress = false,
+                isApprovingInProgress = false
+            )
+        )
     }
 
 

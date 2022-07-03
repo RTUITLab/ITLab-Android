@@ -6,8 +6,16 @@ data class PurchaseUiState(
     val purchase: Purchase,
     val isDeletionDialogShown: Boolean = false,
     val isDeletionInProgress: Boolean = false,
+
     val isApprovingInProgress: Boolean = false,
+    val isApprovingDialogShown: Boolean = false,
+
     val isRejectingInProgress: Boolean = false,
+    val isRejectingDialogShown: Boolean = false,
+
     val isBeingEdited: Boolean = false,
     val isEditRequestInProgress: Boolean = false
-)
+) {
+    val areSolutionButtonsEnabled: Boolean
+        get() = !isApprovingInProgress && !isRejectingInProgress
+}

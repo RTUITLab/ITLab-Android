@@ -3,6 +3,7 @@ package ru.rtuitlab.itlab.data.repository
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.data.remote.api.purchases.*
 import ru.rtuitlab.itlab.data.remote.api.purchases.models.PurchaseCreateRequest
+import ru.rtuitlab.itlab.data.remote.api.purchases.models.PurchaseResolveRequest
 import javax.inject.Inject
 
 class PurchasesRepository @Inject constructor(
@@ -43,5 +44,19 @@ class PurchasesRepository @Inject constructor(
 
     suspend fun createPurchase(request: PurchaseCreateRequest) = handler {
         purchasesApi.createPurchase(request)
+    }
+
+    suspend fun resolvePurchase(
+        id: Int,
+        status: PurchaseStatusApi,
+        comment: String? = null
+    ) = handler {
+        purchasesApi.resolvePurchase(
+            id,
+            PurchaseResolveRequest(
+                status = status.name,
+                decisionComment = comment
+            )
+        )
     }
 }

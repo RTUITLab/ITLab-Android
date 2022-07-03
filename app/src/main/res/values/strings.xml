@@ -143,6 +143,10 @@
     <string name="purchase_approved_by">Approved by</string>
     <string name="purchase_rejected_by">Rejected by</string>
     <string name="purchase_price">Price</string>
+    <string name="purchase_reject">Reject</string>
+    <string name="purchase_rejected">Purchase rejected successfully</string>
+    <string name="purchase_approve">Approve</string>
+    <string name="purchase_approved">Purchase approved successfully</string>
     <string name="by_name">By name</string>
     <string name="by_price">By price</string>
     <string name="by_addition_date">By date of addition</string>

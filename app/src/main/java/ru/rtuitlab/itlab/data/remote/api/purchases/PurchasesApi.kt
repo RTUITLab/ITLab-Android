@@ -31,6 +31,7 @@ interface PurchasesApi {
 
     @PUT("$base/{id}/solve")
     suspend fun resolvePurchase(
+        @Path("id") id: Int,
         @Body resolveRequest: PurchaseResolveRequest
     ): PurchaseDto
 
