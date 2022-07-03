@@ -1,23 +1,24 @@
 package ru.rtuitlab.itlab.presentation.screens.purchases
 
+import android.util.Patterns
 import androidx.compose.animation.*
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusApi
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
@@ -25,6 +26,7 @@ import ru.rtuitlab.itlab.presentation.screens.reports.duration
 import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
+import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
@@ -95,7 +97,8 @@ fun Purchase(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp),
+                            .padding(20.dp)
+                            .animateContentSize(),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
 
@@ -278,7 +281,7 @@ fun Purchase(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            if (!purchase.description.isNullOrBlank())
+            if (!purchase.description.isNullOrBlank()) {
                 PurchaseDescription(
                     header = {
                         Text(
@@ -289,6 +292,28 @@ fun Purchase(
                     description = purchase.description,
                     visibleState = animationState
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            if (Patterns.WEB_URL.matcher(purchase.checkPhotoUrl).matches()) {
+                PurchaseFile(
+                    description = stringResource(R.string.purchase_check),
+                    visibleState = animationState,
+                    url = purchase.checkPhotoUrl
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
+            if (!purchase.purchasePhotoUrl.isNullOrBlank() && Patterns.WEB_URL.matcher(purchase.purchasePhotoUrl).matches()) {
+                PurchaseFile(
+                    description = stringResource(R.string.purchase_photo),
+                    visibleState = animationState,
+                    url = purchase.purchasePhotoUrl
+                )
+            }
+
         }
     }
 }
@@ -330,6 +355,64 @@ private fun PurchaseDescription(
                     text = description
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun PurchaseFile(
+    description: String,
+    url: String,
+    visibleState: MutableTransitionState<Boolean>
+) {
+
+    val handler = LocalUriHandler.current
+
+    AnimatedVisibility(
+        visibleState = visibleState,
+        enter = slideInVertically(
+            animationSpec = spring(stiffness = Spring.StiffnessLow),
+            initialOffsetY = { it }
+        ) + fadeIn(
+            animationSpec = spring(stiffness = Spring.StiffnessLow)
+        )
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            border = ButtonDefaults.outlinedBorder
+        ) {
+            OutlinedAppTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(TextFieldDefaults.OutlinedTextFieldShape)
+                    .clickable {
+                        handler.openUri(url)
+                    },
+                value = "",
+                onValueChange = {},
+                enabled = false,
+                label = {
+                    Row {
+                        Text(
+                            text = description,
+                            color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
+                        )
+                    }
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    disabledTextColor = LocalContentColor.current.copy(LocalContentAlpha.current),
+                    disabledBorderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled),
+                    disabledLabelColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.medium)
+                ),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.PictureAsPdf,
+                        contentDescription = null
+                    )
+                }
+            )
         }
     }
 }
