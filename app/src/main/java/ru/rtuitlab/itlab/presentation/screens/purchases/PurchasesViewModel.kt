@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import ru.rtuitlab.itlab.BuildConfig
+import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingDirection
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingOrder
@@ -30,8 +31,12 @@ import javax.inject.Inject
 @HiltViewModel
 class PurchasesViewModel @Inject constructor(
     private val repository: PurchasesRepository,
-    private val usersRepository: UsersRepository
+    private val usersRepository: UsersRepository,
+    authStateStorage: AuthStateStorage
 ): ViewModel() {
+
+    val userClaimsFlow = authStateStorage.userClaimsFlow
+
     private val searchQuery = MutableStateFlow("")
 
     val pageSize = 10

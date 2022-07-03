@@ -77,6 +77,7 @@ sealed class AppTab(
 
         fun applyClaims(claims: List<Any>) {
             Feedback.accessible = claims.contains(UserClaimCategories.FEEDBACK.ADMIN)
+            Purchases.accessible = claims.contains(UserClaimCategories.PURCHASES.USER)
         }
     }
 }

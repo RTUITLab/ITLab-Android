@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusApi
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.presentation.screens.reports.duration
 import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
@@ -44,6 +45,8 @@ fun Purchase(
     val animationState by remember {
         mutableStateOf(MutableTransitionState(false))
     }
+
+    val claims by purchasesViewModel.userClaimsFlow.collectAsState(listOf())
 
     val context = LocalContext.current
 
@@ -188,7 +191,7 @@ fun Purchase(
                         }
 
                         AnimatedVisibility(
-                            visible = purchase.solution.status == PurchaseStatusApi.AWAIT
+                            visible = purchase.solution.status == PurchaseStatusApi.AWAIT && claims.contains(UserClaimCategories.PURCHASES.ADMIN)
                         ) {
                             Row(
                                 modifier = Modifier
