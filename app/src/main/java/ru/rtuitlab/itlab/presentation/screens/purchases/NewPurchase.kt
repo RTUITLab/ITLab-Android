@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -120,6 +121,7 @@ fun NewPurchase(
                                 )
                             }
                         },
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                         trailingIcon = {
                             Text(
                                 text = "${state.name.length}/63",
@@ -166,6 +168,7 @@ fun NewPurchase(
                                 color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
                             )
                         },
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                         trailingIcon = {
                             Text(
                                 text = "${state.description.length}/255",

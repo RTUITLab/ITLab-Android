@@ -17,12 +17,16 @@ import ru.rtuitlab.itlab.R
 @Composable
 fun LoadingError(
 	modifier: Modifier = Modifier,
+	isScrollable: Boolean = true,
 	msg: String
 ) {
+
+	var mod = modifier
+		.fillMaxSize()
+	if (isScrollable) mod = mod.verticalScroll(rememberScrollState())
+
 	Box(
-		modifier = modifier
-			.fillMaxSize()
-			.verticalScroll(rememberScrollState()),
+		modifier = mod,
 		contentAlignment = Alignment.Center
 	) {
 		Text(text = msg)

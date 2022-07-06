@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -300,7 +301,8 @@ fun Purchase(
                 PurchaseFile(
                     description = stringResource(R.string.purchase_check),
                     visibleState = animationState,
-                    url = purchase.checkPhotoUrl
+                    url = purchase.checkPhotoUrl,
+                    icon = Icons.Default.PictureAsPdf
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -310,7 +312,8 @@ fun Purchase(
                 PurchaseFile(
                     description = stringResource(R.string.purchase_photo),
                     visibleState = animationState,
-                    url = purchase.purchasePhotoUrl
+                    url = purchase.purchasePhotoUrl,
+                    icon = Icons.Default.Image
                 )
             }
 
@@ -363,7 +366,8 @@ private fun PurchaseDescription(
 private fun PurchaseFile(
     description: String,
     url: String,
-    visibleState: MutableTransitionState<Boolean>
+    visibleState: MutableTransitionState<Boolean>,
+    icon: ImageVector
 ) {
 
     val handler = LocalUriHandler.current
@@ -408,7 +412,7 @@ private fun PurchaseFile(
                 ),
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Default.PictureAsPdf,
+                        imageVector = icon,
                         contentDescription = null
                     )
                 }

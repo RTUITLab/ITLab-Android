@@ -1,12 +1,9 @@
 package ru.rtuitlab.itlab.presentation.screens.purchases
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -115,6 +112,18 @@ fun Purchases(
                             }
                             Spacer(modifier = Modifier.width(15.dp))
 
+                        }
+                    }
+
+                    if ((state.paginationState?.totalElements ?: 0) == 0 && !state.isLoading && !state.isRefreshing) {
+                        item {
+                            LoadingError(
+                                modifier = Modifier
+                                    .fillParentMaxSize(),
+                                msg = stringResource(R.string.purchases_empty),
+                                isScrollable = false
+                            )
+                            return@item
                         }
                     }
                     itemsIndexed(

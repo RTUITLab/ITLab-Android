@@ -136,6 +136,7 @@
     <!--    Purchases    -->
     <string name="purchases">Purchases</string>
     <string name="purchase">Purchase</string>
+    <string name="purchases_empty">No purchases found with selected filters</string>
     <string name="purchase_new">New purchase</string>
     <string name="purchase_name">Purchase name</string>
     <string name="purchase_date">Purchase date</string>
@@ -158,7 +159,7 @@
     <string name="purchase_delete">Delete purchase</string>
     <string name="purchase_delete_confirmation">A you sure you want to delete the purchase “%1$s”?</string>
     <string name="purchase_delete_success">Purchase deleted successfully</string>
-    <string name="purchase_check">Check</string>
+    <string name="purchase_check">Receipt</string>
     <string name="purchase_photo">Photo of purchase</string>
     <string name="purchase_created">Purchase sent successfully</string>
 
