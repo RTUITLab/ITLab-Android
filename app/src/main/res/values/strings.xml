@@ -163,5 +163,6 @@
     <string name="byUser">by user</string>
     <string name="filter">filter</string>
     <string name="no_files">Файлы отсутствуют</string>
+    <string name="time_parsing_error">Time parsing error</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.presentation.ui.extensions
 
 import android.content.Context
+import android.util.Log
 import kotlinx.datetime.*
 import ru.rtuitlab.itlab.R
 import java.time.DateTimeException
@@ -32,15 +33,21 @@ fun String.fromIso8601(
 	context: Context,
 	dateTimeDelimiter: String = " ${context.resources.getString(R.string.at)}"
 ) = try {
-	fromIso8601ToInstant().run {
-		val day = dayOfMonth.toString().padStart(2, '0')
-		val month = monthNumber.toString().padStart(2, '0')
-		val hour = hour.toString().padStart(2, '0')
-		val minute = minute.toString().padStart(2, '0')
-		"$day.$month.$year$dateTimeDelimiter $hour:$minute"
-	}
+	// ITLab uses both normalized and non-normalized
+	// ISO8601 strings. This is a workaround to always
+	// parse normalized strings
+	(if (this.contains("Z")) this else this + "Z")
+		.fromIso8601ToInstant().run {
+			val day = dayOfMonth.toString().padStart(2, '0')
+			val month = monthNumber.toString().padStart(2, '0')
+			val hour = hour.toString().padStart(2, '0')
+			val minute = minute.toString().padStart(2, '0')
+			"$day.$month.$year$dateTimeDelimiter $hour:$minute"
+		}
 } catch (e: DateTimeException) {
-	"Time parsing error"
+	e.printStackTrace()
+	Log.e("DateTime", "Unable to parse ${if (this.contains("Z")) this else this + "Z"}")
+	context.getString(R.string.time_parsing_error)
 }
 
 fun String.fromIso8601ToInstant() =
