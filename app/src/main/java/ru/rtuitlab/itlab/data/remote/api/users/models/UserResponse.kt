@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.data.remote.api.users.models
 
+import android.graphics.Bitmap
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
@@ -14,7 +15,7 @@ data class UserResponse (
 	val email : String? = null,
 	val properties : List<UserPropertyModel> = listOf()
 ) {
-	fun toUser() = User(
+	fun toUser(gravatar: Bitmap? = null) = User(
 			id = id,
 			firstName = firstName,
 			lastName = lastName,
@@ -24,7 +25,8 @@ data class UserResponse (
 			vkId = properties.firstOrNull { it.userPropertyType.title == "VKID" }?.value,
 			group = properties.firstOrNull { it.userPropertyType.title == "Учебная группа" }?.value,
 			skypeId = properties.firstOrNull { it.userPropertyType.title == "Skype" }?.value,
-			properties = properties
+			properties = properties,
+			gravatar = gravatar
 		)
 
 
@@ -51,7 +53,8 @@ data class User(
 	val group: String? = null,
 	val discordId: String? = null,
 	val skypeId: String? = null,
-	val properties: List<UserPropertyModel>? = null
+	val properties: List<UserPropertyModel>? = null,
+	val gravatar:Bitmap? = null
 ) : Parcelable {
 	fun toUserResponse() = UserResponse(
 		id = id,
