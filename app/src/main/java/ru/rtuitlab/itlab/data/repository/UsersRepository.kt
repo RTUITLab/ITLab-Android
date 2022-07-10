@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
+import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.common.emitInIO
@@ -112,9 +113,9 @@ class UsersRepository @Inject constructor(
 		handler{
 			lateinit var grav: Bitmap
 			if(user.email!=null){
-				grav = picasso.load("https://www.gravatar.com/avatar/"+toMd5(user.email)+"?s=800").get()
+				grav = picasso.load(BuildConfig.GRAVATAR_URI+toMd5(user.email)+"?s=800").get()
 			}else{
-				grav = picasso.load("https://www.gravatar.com/avatar/"+toMd5("default")+"?s=800").get()
+				grav = picasso.load(BuildConfig.GRAVATAR_URI+toMd5("default")+"?s=800").get()
 
 			}
 			grav
