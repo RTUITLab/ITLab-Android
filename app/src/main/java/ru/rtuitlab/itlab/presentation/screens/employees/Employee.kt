@@ -1,12 +1,16 @@
 package ru.rtuitlab.itlab.presentation.screens.employees
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,6 +27,7 @@ import ru.rtuitlab.itlab.presentation.screens.employees.components.UserEvents
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingIndicator
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
@@ -48,7 +53,12 @@ fun Employee(
 }
 
 @Composable
-fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
+fun EmployeeCredentials(
+	userCredentialsResource: Resource<UserResponse>,
+	employeesViewModel: EmployeesViewModel = singletonViewModel()
+) {
+	val users by employeesViewModel.usersFlow.collectAsState()
+
 	userCredentialsResource.handle(
 		onLoading = {
 			LoadingIndicator()
@@ -60,6 +70,28 @@ fun EmployeeCredentials(userCredentialsResource: Resource<UserResponse>) {
 			val user = response.toUser()
 			val context = LocalContext.current
 
+			Column(
+				verticalArrangement = Arrangement.Center,
+				horizontalAlignment = Alignment.CenterHorizontally,
+				modifier = Modifier
+						.fillMaxWidth()
+						.padding(
+						top = 10.dp,
+			),
+			) {
+				Card(
+					shape = RoundedCornerShape(10.dp)
+				) {
+					Image(
+						bitmap = users.find { tempuser ->
+							tempuser.id==user.id
+						}!!.gravatar!!.asImageBitmap(),
+						contentDescription = stringResource(R.string.gravatar),
+						modifier = Modifier.width(150.dp)
+
+					)
+				}
+			}
 			Column(
 				modifier = Modifier
 					.fillMaxSize()
