@@ -112,9 +112,9 @@ class UsersRepository @Inject constructor(
 		handler{
 			lateinit var grav: Bitmap
 			if(user.email!=null){
-				grav = picasso.load("https://www.gravatar.com/avatar/"+toMd5(user.email)).get()
+				grav = picasso.load("https://www.gravatar.com/avatar/"+toMd5(user.email)+"?s=800").get()
 			}else{
-				grav = picasso.load("https://www.gravatar.com/avatar/"+toMd5("default")).get()
+				grav = picasso.load("https://www.gravatar.com/avatar/"+toMd5("default")+"?s=800").get()
 
 			}
 			grav
