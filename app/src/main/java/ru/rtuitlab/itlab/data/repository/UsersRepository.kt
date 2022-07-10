@@ -26,7 +26,8 @@ class UsersRepository @Inject constructor(
 	private val usersApi: UsersApi,
 	private val handler: ResponseHandler,
 	private val authStateStorage: AuthStateStorage,
-	private val coroutineScope: CoroutineScope
+	private val coroutineScope: CoroutineScope,
+	private val picasso: Picasso
 ) {
 
 	private val _cachedUsersFlow = MutableStateFlow<List<User>>(emptyList())
@@ -41,7 +42,6 @@ class UsersRepository @Inject constructor(
 	 * Downstream flows that ViewModels create should be transformations of this flow.
 	 * For re-fetching users use [updateUsersFlow]
 	 */
-	val picasso = Picasso.get()
 
 
 	val usersResponsesFlow by lazy {
