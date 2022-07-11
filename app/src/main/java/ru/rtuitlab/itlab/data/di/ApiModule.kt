@@ -1,7 +1,6 @@
 package ru.rtuitlab.itlab.data.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,9 +59,7 @@ object ApiModule {
             .addInterceptor(tokenInterceptor)
             .build()
 
-    @Singleton
-    @Provides
-    fun providePicasso(): Picasso = Picasso.get()
+
 
     private val defaultJson = Json {
         ignoreUnknownKeys = true

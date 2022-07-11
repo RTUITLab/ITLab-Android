@@ -2,7 +2,6 @@ package ru.rtuitlab.itlab.data.repository
 
 import android.graphics.Bitmap
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -28,7 +27,6 @@ class UsersRepository @Inject constructor(
 	private val handler: ResponseHandler,
 	private val authStateStorage: AuthStateStorage,
 	private val coroutineScope: CoroutineScope,
-	private val picasso: Picasso
 ) {
 
 	private val _cachedUsersFlow = MutableStateFlow<List<User>>(emptyList())
@@ -54,11 +52,7 @@ class UsersRepository @Inject constructor(
 					onSuccess = {
 						var userList= arrayListOf<User>()
 						it.forEach { user ->
-							getGravatars(user).handle(
-								onSuccess = { grav ->
-									userList.add(user.toUser(grav))
-								}
-							)
+									userList.add(user.toUser())
 						}
 						_cachedUsersFlow.value = userList
 
@@ -67,16 +61,7 @@ class UsersRepository @Inject constructor(
 			}
 			.stateIn(coroutineScope, SharingStarted.Eagerly, Resource.Loading)
 	}
-	fun toMd5(text:String):String{
-		val email = text.trim().lowercase(Locale.getDefault())
-		val md = MessageDigest.getInstance("MD5")
-		val hashInBytes = md.digest(email.toByteArray(StandardCharsets.UTF_8))
-		val sb = StringBuilder()
-		for (b in hashInBytes) {
-			sb.append(String.format("%02x", b))
-		}
-		return sb.toString()
-	}
+
 
 	val currentUserFlow = authStateStorage.userIdFlow.map { userId ->
 		cachedUsersFlow.value.find { it.id == userId }
@@ -108,18 +93,6 @@ class UsersRepository @Inject constructor(
 			usersApi.getUsers()
 		}
 
-	}
-	fun getGravatars(user:UserResponse) = runBlocking(Dispatchers.IO) {
-		handler{
-			lateinit var grav: Bitmap
-			if(user.email!=null){
-				grav = picasso.load(BuildConfig.GRAVATAR_URI+toMd5(user.email)+"?s=800").get()
-			}else{
-				grav = picasso.load(BuildConfig.GRAVATAR_URI+toMd5("default")+"?s=800").get()
-
-			}
-			grav
-		}
 	}
 
 	suspend fun editUserInfo(info: UserEditRequest) = handler {

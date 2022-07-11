@@ -15,7 +15,7 @@ data class UserResponse (
 	val email : String? = null,
 	val properties : List<UserPropertyModel> = listOf()
 ) {
-	fun toUser(gravatar: Bitmap? = null) = User(
+	fun toUser() = User(
 			id = id,
 			firstName = firstName,
 			lastName = lastName,
@@ -26,7 +26,6 @@ data class UserResponse (
 			group = properties.firstOrNull { it.userPropertyType.title == "Учебная группа" }?.value,
 			skypeId = properties.firstOrNull { it.userPropertyType.title == "Skype" }?.value,
 			properties = properties,
-			gravatar = gravatar
 		)
 
 
