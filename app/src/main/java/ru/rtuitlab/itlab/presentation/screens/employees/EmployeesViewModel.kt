@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.repository.UsersRepository
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,4 +48,15 @@ class EmployeesViewModel @Inject constructor(
 	}
 
 	fun onRefresh() = usersRepo.updateUsersFlow()
+
+	fun toMd5(text:String):String{
+		val email = text.trim().lowercase(Locale.getDefault())
+		val md = MessageDigest.getInstance("MD5")
+		val hashInBytes = md.digest(email.toByteArray(StandardCharsets.UTF_8))
+		val sb = StringBuilder()
+		for (b in hashInBytes) {
+			sb.append(String.format("%02x", b))
+		}
+		return sb.toString()
+	}
 }
