@@ -9,15 +9,20 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
+import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
@@ -27,6 +32,7 @@ import ru.rtuitlab.itlab.presentation.screens.employees.components.UserEvents
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingIndicator
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.utils.GravatarGetter
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @ExperimentalPagerApi
@@ -79,18 +85,21 @@ fun EmployeeCredentials(
 						top = 10.dp,
 			),
 			) {
-				Card(
-					shape = RoundedCornerShape(10.dp)
-				) {
-					Image(
-						bitmap = users.find { tempuser ->
-							tempuser.id==user.id
-						}!!.gravatar!!.asImageBitmap(),
-						contentDescription = stringResource(R.string.gravatar),
-						modifier = Modifier.width(150.dp)
+
+				AsyncImage(
+					modifier = Modifier
+						.clip(RoundedCornerShape(10.dp))
+						.width(150.dp)
+						.height(150.dp),
+					model = ImageRequest.Builder(LocalContext.current)
+						.data(GravatarGetter.requestLinkToGetGravatar(user.email!!,800))
+						.crossfade(true)
+						.build(),
+					placeholder = painterResource(R.drawable.ic_itlab),
+					contentScale = ContentScale.FillBounds,
+					contentDescription = stringResource(R.string.description),
 
 					)
-				}
 			}
 			Column(
 				modifier = Modifier

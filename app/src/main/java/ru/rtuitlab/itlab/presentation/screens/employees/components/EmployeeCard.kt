@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.presentation.screens.employees.components
 
 import android.graphics.drawable.shapes.Shape
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,9 +12,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -21,15 +24,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
+import ru.rtuitlab.itlab.presentation.screens.employees.EmployeesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
+import ru.rtuitlab.itlab.presentation.ui.extensions.nowAsIso8601
+import ru.rtuitlab.itlab.presentation.utils.GravatarGetter
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @Composable
 fun EmployeeCard(
 	user: User,
 	modifier: Modifier,
 	elevation: Dp = 2.dp,
+	employeesViewModel: EmployeesViewModel = singletonViewModel()
 ) {
 	val context = LocalContext.current
 	Card(
@@ -51,7 +62,7 @@ fun EmployeeCard(
 					verticalArrangement = Arrangement.Center,
 					horizontalAlignment = Alignment.CenterHorizontally
 					) {
-					Card(
+					/*Card(
 						shape = RoundedCornerShape(10.dp)
 					) {
 						Image(
@@ -60,7 +71,21 @@ fun EmployeeCard(
 							modifier = Modifier.width(50.dp)
 
 							)
-					}
+					}*/
+					AsyncImage(
+						modifier = Modifier
+							.clip(RoundedCornerShape(10.dp))
+							.width(50.dp)
+							.height(50.dp),
+						model = ImageRequest.Builder(LocalContext.current)
+							.data(GravatarGetter.requestLinkToGetGravatar(user.email!!,200))
+							.crossfade(true)
+							.build(),
+						placeholder = painterResource(R.drawable.ic_itlab),
+						contentScale = ContentScale.FillBounds,
+						contentDescription = stringResource(R.string.description),
+
+					)
 				}
 				Column(
 					modifier = Modifier
