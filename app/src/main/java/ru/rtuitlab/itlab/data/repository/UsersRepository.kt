@@ -1,13 +1,7 @@
 package ru.rtuitlab.itlab.data.repository
 
-import android.graphics.Bitmap
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.runBlocking
-import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.common.emitInIO
@@ -17,9 +11,6 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
-import java.util.*
 import javax.inject.Inject
 
 class UsersRepository @Inject constructor(
