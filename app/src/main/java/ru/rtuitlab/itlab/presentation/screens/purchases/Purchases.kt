@@ -115,7 +115,7 @@ fun Purchases(
                         }
                     }
 
-                    if ((state.paginationState?.totalElements ?: 0) == 0 && !state.isLoading && !state.isRefreshing) {
+                    if ((state.paginationState?.totalElements ?: 0) == 0 && !state.isLoading && !state.isRefreshing && state.errorMessage == null) {
                         item {
                             LoadingError(
                                 modifier = Modifier
