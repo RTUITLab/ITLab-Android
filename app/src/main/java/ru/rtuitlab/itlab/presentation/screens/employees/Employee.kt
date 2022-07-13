@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.screens.employees
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -22,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
-import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
@@ -32,8 +29,6 @@ import ru.rtuitlab.itlab.presentation.screens.employees.components.UserEvents
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingIndicator
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.utils.GravatarGetter
-import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
@@ -50,7 +45,6 @@ fun Employee(
 			.verticalScroll(rememberScrollState())
 	) {
 		EmployeeCredentials(userCredentialsResource)
-		//UserDevices(userDevicesResource)
 		UserEvents(
 			employeeViewModel,
 			bottomSheetViewModel
@@ -61,9 +55,7 @@ fun Employee(
 @Composable
 fun EmployeeCredentials(
 	userCredentialsResource: Resource<UserResponse>,
-	employeesViewModel: EmployeesViewModel = singletonViewModel()
 ) {
-	val users by employeesViewModel.usersFlow.collectAsState()
 
 	userCredentialsResource.handle(
 		onLoading = {
@@ -92,7 +84,7 @@ fun EmployeeCredentials(
 						.width(150.dp)
 						.height(150.dp),
 					model = ImageRequest.Builder(LocalContext.current)
-						.data(GravatarGetter.requestLinkToGetGravatar(user.email!!,800))
+						.data(user.getGravatarWithSize(800))
 						.crossfade(true)
 						.build(),
 					placeholder = painterResource(R.drawable.ic_itlab),
