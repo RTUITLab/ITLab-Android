@@ -38,178 +38,178 @@ import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetView
 @ExperimentalMaterialApi
 @Composable
 fun Employee(
-	employeeViewModel: EmployeeViewModel,
-	bottomSheetViewModel: BottomSheetViewModel
+    employeeViewModel: EmployeeViewModel,
+    bottomSheetViewModel: BottomSheetViewModel
 ) {
-	val userCredentialsResource by employeeViewModel.userCredentialsFlow.collectAsState()
+    val userCredentialsResource by employeeViewModel.userCredentialsFlow.collectAsState()
 
-	Column(
-		modifier = Modifier
-			.fillMaxSize()
-			.verticalScroll(rememberScrollState())
-	) {
-		EmployeeCredentials(userCredentialsResource)
-		UserEvents(
-			employeeViewModel,
-			bottomSheetViewModel
-		)
-	}
+    Column(
+        modifier = Modifier
+	        .fillMaxSize()
+	        .verticalScroll(rememberScrollState())
+    ) {
+        EmployeeCredentials(userCredentialsResource)
+        UserEvents(
+            employeeViewModel,
+            bottomSheetViewModel
+        )
+    }
 }
 
 @Composable
 fun EmployeeCredentials(
-	userCredentialsResource: Resource<UserResponse>,
+    userCredentialsResource: Resource<UserResponse>,
 ) {
 
-	userCredentialsResource.handle(
-		onLoading = {
-			LoadingIndicator()
-		},
-		onError = { msg ->
-			Text(text = msg)
-		},
-		onSuccess = { response ->
-			val user = response.toUser()
-			val context = LocalContext.current
+    userCredentialsResource.handle(
+        onLoading = {
+            LoadingIndicator()
+        },
+        onError = { msg ->
+            Text(text = msg)
+        },
+        onSuccess = { response ->
+            val user = response.toUser()
+            val context = LocalContext.current
 
-			Column(
-				verticalArrangement = Arrangement.Center,
-				horizontalAlignment = Alignment.CenterHorizontally,
-				modifier = Modifier
-						.fillMaxWidth()
-						.padding(
-						top = 10.dp,
-			),
-			) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+	                .fillMaxWidth()
+	                .padding(
+		                top = 10.dp,
+	                ),
+            ) {
 
-				AsyncImage(
-					modifier = Modifier
-						.clip(RoundedCornerShape(10.dp))
-						.width(150.dp)
-						.height(150.dp),
-					model = ImageRequest.Builder(LocalContext.current)
-						.data(user.getGravatarWithSize(800))
-						.crossfade(true)
-						.build(),
-					placeholder = painterResource(R.drawable.ic_itlab),
-					contentScale = ContentScale.FillBounds,
-					contentDescription = stringResource(R.string.description),
+                AsyncImage(
+                    modifier = Modifier
+	                    .clip(RoundedCornerShape(10.dp))
+	                    .width(150.dp)
+	                    .height(150.dp),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(user.getGravatarWithSize(800))
+                        .crossfade(true)
+                        .build(),
+                    placeholder = painterResource(R.drawable.ic_itlab),
+                    contentScale = ContentScale.FillBounds,
+                    contentDescription = stringResource(R.string.description),
 
-					)
-			}
-			Column(
-				modifier = Modifier
-					.fillMaxSize()
-					.padding(vertical = 15.dp, horizontal = 20.dp)
-			) {
-				Text(
-					text = "${user.lastName} ${user.firstName} ${user.middleName}",
-					fontWeight = FontWeight(500),
-					fontSize = 20.sp,
-					lineHeight = 28.sp
-				)
-				Spacer(modifier = Modifier.height(10.dp))
+                    )
+            }
+            Column(
+                modifier = Modifier
+	                .fillMaxSize()
+	                .padding(vertical = 15.dp, horizontal = 20.dp)
+            ) {
+                Text(
+                    text = "${user.lastName} ${user.firstName} ${user.middleName}",
+                    fontWeight = FontWeight(500),
+                    fontSize = 20.sp,
+                    lineHeight = 28.sp
+                )
+                Spacer(modifier = Modifier.height(10.dp))
 
-				IconizedRow(
-					painter = painterResource(R.drawable.ic_mail),
-					contentDescription = stringResource(R.string.email),
-					spacing = 0.dp
-				) {
-					EmailField(value = user.email, context = context)
-				}
-				Spacer(Modifier.height(8.dp))
+                IconizedRow(
+                    painter = painterResource(R.drawable.ic_mail),
+                    contentDescription = stringResource(R.string.email),
+                    spacing = 0.dp
+                ) {
+                    EmailField(value = user.email, context = context)
+                }
+                Spacer(Modifier.height(8.dp))
 
-				IconizedRow(
-					painter = painterResource(R.drawable.ic_phone),
-					contentDescription = stringResource(R.string.phone_number),
-					spacing = 0.dp
-				) {
-					PhoneField(user = user, context = context)
-				}
-				Spacer(Modifier.height(8.dp))
+                IconizedRow(
+                    painter = painterResource(R.drawable.ic_phone),
+                    contentDescription = stringResource(R.string.phone_number),
+                    spacing = 0.dp
+                ) {
+                    PhoneField(user = user, context = context)
+                }
+                Spacer(Modifier.height(8.dp))
 
-				// Not implemented at API level?
+                // Not implemented at API level?
 
-				if (user.group != null) {
-					IconizedRow(
-						painter = painterResource(R.drawable.ic_hat),
-						contentDescription = stringResource(R.string.study_group)
-					) {
-						Text(text = user.group)
-					}
-					Spacer(Modifier.height(8.dp))
-				}
-				if (user.vkId != null) {
-					IconizedRow(
-						painter = painterResource(R.drawable.ic_vk),
-						contentDescription = stringResource(R.string.vk_id)
-					) {
-						Text(text = user.vkId)
-					}
-					Spacer(Modifier.height(8.dp))
-				}
+                if (user.group != null) {
+                    IconizedRow(
+                        painter = painterResource(R.drawable.ic_hat),
+                        contentDescription = stringResource(R.string.study_group)
+                    ) {
+                        Text(text = user.group)
+                    }
+                    Spacer(Modifier.height(8.dp))
+                }
+                if (user.vkId != null) {
+                    IconizedRow(
+                        painter = painterResource(R.drawable.ic_vk),
+                        contentDescription = stringResource(R.string.vk_id)
+                    ) {
+                        Text(text = user.vkId)
+                    }
+                    Spacer(Modifier.height(8.dp))
+                }
 
-				if (user.discordId != null) {
-					IconizedRow(
-						painter = painterResource(R.drawable.ic_discord),
-						contentDescription = stringResource(R.string.discord_id)
-					) {
-						Text(text = user.discordId)
-					}
-					Spacer(Modifier.height(8.dp))
-				}
+                if (user.discordId != null) {
+                    IconizedRow(
+                        painter = painterResource(R.drawable.ic_discord),
+                        contentDescription = stringResource(R.string.discord_id)
+                    ) {
+                        Text(text = user.discordId)
+                    }
+                    Spacer(Modifier.height(8.dp))
+                }
 
-				if (user.skypeId != null) {
-					IconizedRow(
-						painter = painterResource(R.drawable.ic_skype),
-						contentDescription = stringResource(R.string.skype_id)
-					) {
-						Text(
-							text = user.skypeId
-						)
-					}
-					Spacer(Modifier.height(8.dp))
-				}
+                if (user.skypeId != null) {
+                    IconizedRow(
+                        painter = painterResource(R.drawable.ic_skype),
+                        contentDescription = stringResource(R.string.skype_id)
+                    ) {
+                        Text(
+                            text = user.skypeId
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                }
 
-				Spacer(modifier = Modifier.height(6.dp))
-				Divider(color = Color.Gray, thickness = 1.dp)
-				Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
+                Divider(color = Color.Gray, thickness = 1.dp)
+                Spacer(modifier = Modifier.height(8.dp))
 
-				/*FlowRow(
-					mainAxisSpacing = 10.dp,
-					crossAxisSpacing = 10.dp
-				) {
-					user.properties.forEach {
-						UserTagComponent(tag = it.value!!)
-					}
-				}*/
-
-
-			}
+                /*FlowRow(
+                    mainAxisSpacing = 10.dp,
+                    crossAxisSpacing = 10.dp
+                ) {
+                    user.properties.forEach {
+                        UserTagComponent(tag = it.value!!)
+                    }
+                }*/
 
 
-			/*Card(
-			 modifier = Modifier
-			  .fillMaxWidth()
-			  .padding(16.dp)
-			) {
-			 Column(
-			  modifier = Modifier
-			   .padding(16.dp)
-			 ) {
-			  Text("${stringResource(R.string.last_name)}: ${user.lastName}")
-			  Text("${stringResource(R.string.first_name)}: ${user.firstName}")
-			  Text("${stringResource(R.string.middle_name)}: ${user.middleName}")
-			  PhoneField(
-			   user = user,
-			   context = context
-			  )
-			  Text("${stringResource(R.string.email)}: ${user.email}")
-			  user.properties?.forEach {
-			   Text("${it.userPropertyType.title}: ${it.value}")
-			  }
-			 }
-			}*/
-		}
-	)
+            }
+
+
+            /*Card(
+             modifier = Modifier
+              .fillMaxWidth()
+              .padding(16.dp)
+            ) {
+             Column(
+              modifier = Modifier
+               .padding(16.dp)
+             ) {
+              Text("${stringResource(R.string.last_name)}: ${user.lastName}")
+              Text("${stringResource(R.string.first_name)}: ${user.firstName}")
+              Text("${stringResource(R.string.middle_name)}: ${user.middleName}")
+              PhoneField(
+               user = user,
+               context = context
+              )
+              Text("${stringResource(R.string.email)}: ${user.email}")
+              user.properties?.forEach {
+               Text("${it.userPropertyType.title}: ${it.value}")
+              }
+             }
+            }*/
+        }
+    )
 }

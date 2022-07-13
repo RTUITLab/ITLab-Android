@@ -24,99 +24,99 @@ import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 
 @Composable
 fun EmployeeCard(
-	user: User,
-	modifier: Modifier,
-	elevation: Dp = 2.dp,
+    user: User,
+    modifier: Modifier,
+    elevation: Dp = 2.dp,
 ) {
-	val context = LocalContext.current
-	Card(
-		modifier = modifier,
-		elevation = elevation,
-		shape = RoundedCornerShape(5.dp)
-	) {
-		user.run {
-			Row {
-				Column(
-					modifier = Modifier
-						.padding(
-							top = 10.dp,
-							start = 10.dp,
-						),
-					verticalArrangement = Arrangement.Center,
-					horizontalAlignment = Alignment.CenterHorizontally
-					) {
-					AsyncImage(
-						modifier = Modifier
-							.clip(RoundedCornerShape(10.dp))
-							.width(50.dp)
-							.height(50.dp),
-						model = ImageRequest.Builder(LocalContext.current)
-							.data(getGravatarWithSize(200))
-							.crossfade(true)
-							.build(),
-						placeholder = painterResource(R.drawable.ic_itlab),
-						contentScale = ContentScale.FillBounds,
-						contentDescription = stringResource(R.string.description),
+    val context = LocalContext.current
+    Card(
+        modifier = modifier,
+        elevation = elevation,
+        shape = RoundedCornerShape(5.dp)
+    ) {
+        user.run {
+            Row {
+                Column(
+                    modifier = Modifier
+                        .padding(
+                            top = 10.dp,
+                            start = 10.dp,
+                        ),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        modifier = Modifier
+	                        .clip(RoundedCornerShape(10.dp))
+	                        .width(50.dp)
+	                        .height(50.dp),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(getGravatarWithSize(200))
+                            .crossfade(true)
+                            .build(),
+                        placeholder = painterResource(R.drawable.ic_itlab),
+                        contentScale = ContentScale.FillBounds,
+                        contentDescription = stringResource(R.string.description),
 
-					)
-				}
-				Column(
-					modifier = Modifier
+                        )
+                }
+                Column(
+                    modifier = Modifier
 
-						.padding(
-							top = 10.dp,
-							bottom = 8.dp,
-							start = 15.dp,
-							end = 15.dp
-						)
-						.fillMaxWidth(),
-				) {
-					Text(
-						text = "$lastName $firstName $middleName",
-						fontWeight = FontWeight(500),
-						fontSize = 17.sp,
-						lineHeight = 22.sp
-					)
-					Spacer(Modifier.height(10.dp))
-					if (email != null) {
-						IconizedRow(
-							painter = painterResource(R.drawable.ic_mail),
-							contentDescription = stringResource(R.string.email),
-							imageWidth = 16.dp,
-							imageHeight = 12.dp,
-							spacing = 0.dp
-						) {
-							EmailField(value = email, context = LocalContext.current)
-						}
-						Spacer(Modifier.height(8.dp))
-					}
+	                    .padding(
+		                    top = 10.dp,
+		                    bottom = 8.dp,
+		                    start = 15.dp,
+		                    end = 15.dp
+	                    )
+	                    .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = "$lastName $firstName $middleName",
+                        fontWeight = FontWeight(500),
+                        fontSize = 17.sp,
+                        lineHeight = 22.sp
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    if (email != null) {
+                        IconizedRow(
+                            painter = painterResource(R.drawable.ic_mail),
+                            contentDescription = stringResource(R.string.email),
+                            imageWidth = 16.dp,
+                            imageHeight = 12.dp,
+                            spacing = 0.dp
+                        ) {
+                            EmailField(value = email, context = LocalContext.current)
+                        }
+                        Spacer(Modifier.height(8.dp))
+                    }
 
-					if (phoneNumber != null) {
-						IconizedRow(
-							painter = painterResource(R.drawable.ic_phone),
-							contentDescription = stringResource(R.string.phone_number),
-							imageWidth = 16.dp,
-							imageHeight = 12.dp,
-							spacing = 0.dp
-						) {
-							PhoneField(user = this@run, context = context)
-						}
-						Spacer(Modifier.height(8.dp))
-					}
-					/*if (properties.isNotEmpty()) {
-					Spacer(modifier = Modifier.height(14.dp))
-					LazyRow {
-						items(properties) { prop ->
-							if (prop.value != null) {
-								UserTagComponent(tag = prop.value)
-								Spacer(modifier = Modifier.width(10.dp))
-							}
-						}
-					}
-				}*/
-				}
-			}
+                    if (phoneNumber != null) {
+                        IconizedRow(
+                            painter = painterResource(R.drawable.ic_phone),
+                            contentDescription = stringResource(R.string.phone_number),
+                            imageWidth = 16.dp,
+                            imageHeight = 12.dp,
+                            spacing = 0.dp
+                        ) {
+                            PhoneField(user = this@run, context = context)
+                        }
+                        Spacer(Modifier.height(8.dp))
+                    }
+                    /*if (properties.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(14.dp))
+                    LazyRow {
+                        items(properties) { prop ->
+                            if (prop.value != null) {
+                                UserTagComponent(tag = prop.value)
+                                Spacer(modifier = Modifier.width(10.dp))
+                            }
+                        }
+                    }
+                }*/
+                }
+            }
 
-		}
-	}
+        }
+    }
 }
