@@ -35,6 +35,8 @@ android {
     def REDIRECT_URI_LOGIN = "REDIRECT_URI_LOGIN"
     def REDIRECT_URI_LOGOUT = "REDIRECT_URI_LOGOUT"
     def API_SCOPES = "SCOPES"
+    def GRAVATAR_URI = "GRAVATAR_URI"
+
 
     def CONFIG = { k -> "\"${project.properties.get(k)}\"" }
     def CONFIG_RAW = { k -> "${project.properties.get(k)}" }
@@ -57,6 +59,8 @@ android {
         buildConfigField("String", REDIRECT_URI_LOGIN, CONFIG("redirect.uri.login"))
         buildConfigField("String", REDIRECT_URI_LOGOUT, CONFIG("redirect.uri.logout"))
         buildConfigField("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
+        buildConfigField("String", GRAVATAR_URI, CONFIG("gravatar.uri"))
+
     }
 
     flavorDimensions "api"
@@ -164,5 +168,9 @@ dependencies {
 
     // Splash
     implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
+
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.1.0")
+
 
 }
