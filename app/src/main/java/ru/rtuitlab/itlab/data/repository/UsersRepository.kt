@@ -41,11 +41,7 @@ class UsersRepository @Inject constructor(
 
 				it.handle(
 					onSuccess = {
-						var userList= arrayListOf<User>()
-						it.forEach { user ->
-									userList.add(user.toUser())
-						}
-						_cachedUsersFlow.value = userList
+						_cachedUsersFlow.value = it.map { it.toUser() }
 
 					}
 				)
