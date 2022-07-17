@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 data class EventSalary(
     val eventId: String,
     val created: String,
-    val shiftSalaries: List<Int>,
-    val placeSalaries: List<Int>,
+    val shiftSalaries: List<EventShiftSalary>,
+    val placeSalaries: List<EventPlaceSalary>,
     val authorId: String,
     val modificationDate: String,
     val count: Int,

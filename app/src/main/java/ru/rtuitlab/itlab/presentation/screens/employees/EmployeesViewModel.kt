@@ -45,4 +45,5 @@ class EmployeesViewModel @Inject constructor(
 	}
 
 	fun onRefresh() = usersRepo.updateUsersFlow()
+
 }

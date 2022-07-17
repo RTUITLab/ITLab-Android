@@ -3,6 +3,10 @@ package ru.rtuitlab.itlab.data.remote.api.users.models
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import ru.rtuitlab.itlab.BuildConfig
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+import java.util.*
 
 @Serializable
 data class UserResponse (
@@ -24,8 +28,14 @@ data class UserResponse (
 			vkId = properties.firstOrNull { it.userPropertyType.title == "VKID" }?.value,
 			group = properties.firstOrNull { it.userPropertyType.title == "Учебная группа" }?.value,
 			skypeId = properties.firstOrNull { it.userPropertyType.title == "Skype" }?.value,
-			properties = properties
+			properties = properties,
+			gravatarUrl = BuildConfig.GRAVATAR_URI+email?.toMd5()
 		)
+
+	fun String.toMd5() = MessageDigest.getInstance("MD5")
+		.digest(this.trim().lowercase(Locale.getDefault()).toByteArray(StandardCharsets.UTF_8))
+		.joinToString(""){"%02x".format(it)}
+
 
 
 	fun getEditRequest() =
@@ -51,7 +61,8 @@ data class User(
 	val group: String? = null,
 	val discordId: String? = null,
 	val skypeId: String? = null,
-	val properties: List<UserPropertyModel>? = null
+	val properties: List<UserPropertyModel>? = null,
+	val gravatarUrl:String? = null
 ) : Parcelable {
 	fun toUserResponse() = UserResponse(
 		id = id,
@@ -62,4 +73,7 @@ data class User(
 		email = email,
 		properties = properties ?: emptyList<UserPropertyModel>()
 	)
+
+	fun getGravatarWithSize(sizeOfImage:Int) = "$gravatarUrl?s=$sizeOfImage"
+
 }

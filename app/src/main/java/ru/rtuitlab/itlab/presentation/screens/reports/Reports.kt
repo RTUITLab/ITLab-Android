@@ -119,6 +119,8 @@ fun Reports(
 											.performQuery(searchQuery)
 									)
 									ReportsTab.Files -> {
+										mfsViewModel.onRefresh()
+
 										BaseElements(mfsViewModel)
 									}
 								}

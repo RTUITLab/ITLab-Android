@@ -293,12 +293,18 @@ private fun EventShifts(
 							bottomSheetViewModel.show(
 								AppBottomSheet.EventShift(
 									shift,
-									salaries = shift.places.mapIndexed { index, _ ->
-										event.placeSalaries.getOrElse(index) {
-											event.shiftSalaries.getOrElse(event.shifts.indexOf(shift)) {
-												event.salary ?: -1
-											}
-										}
+									// If places salaries are specified, pass them
+									// Else, if this shift salary is specified, pass it - all places will be worth their shift
+									// If neither shift, nor places salary is specified, use event salary as default
+									// If none of the above is specified, pass -1.
+									salaries = shift.places.map { place ->
+										event.placeSalaries.find { placeSalary ->
+											place.id == placeSalary.placeId
+										}?.count ?:
+										event.shiftSalaries.find { shiftSalary ->
+											shift.id == shiftSalary.shiftId
+										}?.count ?:
+										event.salary ?: -1
 									},
 									eventViewModel = eventViewModel
 								),
@@ -306,7 +312,7 @@ private fun EventShifts(
 							)
 						},
 					shift = shift,
-					salary = event.shiftSalaries.getOrElse(event.shifts.indexOf(shift)) { event.salary }
+					salary = event.shiftSalaries.find { it.shiftId == shift.id }?.count ?: event.salary
 				)
 			}
 		}

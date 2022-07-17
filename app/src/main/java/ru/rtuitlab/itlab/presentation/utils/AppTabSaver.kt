@@ -21,12 +21,11 @@ sealed class AppTab(
     var accessible: Boolean = true
 ) {
     object Events: AppTab("events_tab", AppScreen.Events.route, R.string.events, Icons.Default.EventNote)
-
-    object Projects: AppTab("projects_tab", AppScreen.Projects.route, R.string.projects, Icons.Default.Widgets, )
+    object Projects: AppTab("projects_tab", AppScreen.Projects.route, R.string.projects, Icons.Default.Widgets, false)
     object Devices: AppTab("devices_tab", AppScreen.Devices.route, R.string.devices, Icons.Default.DevicesOther,)
     object Employees: AppTab("employees_tab", AppScreen.Employees.route, R.string.employees, Icons.Default.People,)
     object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback,)
-    object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, )
+    object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, false)
     object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description)
 
 
@@ -55,23 +54,7 @@ sealed class AppTab(
                 Profile,
                 Reports
             )
-        val firstPage
-            get() = listOf(
-                Events,
-                Devices,
-                Employees,
-                Feedback,
 
-            )
-        val secondPage
-            get() = listOf(
-                Profile,
-                Projects,
-                Reports
-
-
-
-            )
 
         fun saver() = Saver<AppTab, Bundle>(
             save = { it.saveState() },
@@ -144,7 +127,6 @@ open class AppScreen(
     object NewReport: AppScreen(R.string.report_new, "reports/new")
 
 
-    object Null: AppScreen(R.string.Null,"null")
     companion object {
         fun getAll(context: Context) = listOf(
             Employees,

@@ -21,7 +21,7 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 @ExperimentalMaterialApi
 @Composable
 fun Profile(
-	profileViewModel: ProfileViewModel = singletonViewModel(),
+	profileViewModel: ProfileViewModel,
 	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val userCredentialsResource by profileViewModel.userCredentialsFlow.collectAsState()

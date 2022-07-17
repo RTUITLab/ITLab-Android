@@ -99,35 +99,4 @@ class MainActivity : AppCompatActivity() {
 
 
 	}
-
-	/*var attachmentDownloadCompleteReceive: BroadcastReceiver = object : BroadcastReceiver() {
-		override fun onReceive(context: Context, intent: Intent) {
-			val action = intent.action
-			if (DownloadManager.ACTION_DOWNLOAD_COMPLETE == action) {
-				val downloadId = intent.getLongExtra(
-					DownloadManager.EXTRA_DOWNLOAD_ID, 0
-				)
-				openDownloadedAttachment(context, downloadId)
-			}
-		}
-	}*/
-
-
-	/*private fun openDownloadedAttachment(context: Context, downloadId: Long) {
-		val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-		val query = DownloadManager.Query()
-		query.setFilterById(downloadId)
-		val cursor = downloadManager.query(query)
-		if (cursor.moveToFirst()) {
-			val downloadStatus = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
-			val downloadLocalUri =
-				cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
-			val downloadMimeType =
-				cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_MEDIA_TYPE))
-			if (downloadStatus == DownloadManager.STATUS_SUCCESSFUL && downloadLocalUri != null) {
-				openDownloadedAttachment(context, Uri.parse(downloadLocalUri), downloadMimeType)
-			}
-		}
-		cursor.close()
-	}*/
 }

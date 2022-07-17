@@ -155,4 +155,8 @@
     <string name="byUser">По пользователю</string>
     <string name="filter">Фильтр</string>
     <string name="time_parsing_error">Ошибка обработки времени</string>
+
+    //Users
+    <string name="gravatar">Граватар</string>
+
 </resources>
