@@ -22,9 +22,9 @@ sealed class AppTab(
 ) {
     object Events: AppTab("events_tab", AppScreen.Events.route, R.string.events, Icons.Default.EventNote)
     object Projects: AppTab("projects_tab", AppScreen.Projects.route, R.string.projects, Icons.Default.Widgets, false)
-    object Devices: AppTab("devices_tab", AppScreen.Devices.route, R.string.devices, Icons.Default.DevicesOther,)
-    object Employees: AppTab("employees_tab", AppScreen.Employees.route, R.string.employees, Icons.Default.People,)
-    object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback,)
+    object Devices: AppTab("devices_tab", AppScreen.Devices.route, R.string.devices, Icons.Default.DevicesOther)
+    object Employees: AppTab("employees_tab", AppScreen.Employees.route, R.string.employees, Icons.Default.People)
+    object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback)
     object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, false)
     object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description)
     object Purchases: AppTab("purchases_tab", AppScreen.Purchases.route, R.string.purchases, Icons.Default.Payments)
@@ -49,13 +49,13 @@ sealed class AppTab(
         val all
             get() = listOf(
                 Events,
+                Employees,
+                Reports,
                 Projects,
                 Purchases,
                 Devices,
-                Employees,
                 Feedback,
-                Profile,
-                Reports
+                Profile
             )
 
 
