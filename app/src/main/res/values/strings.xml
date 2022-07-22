@@ -95,6 +95,7 @@
     <string name="vk_id">VK id</string>
     <string name="discord_id" translatable="false">Discord</string>
     <string name="skype_id" translatable="false">Skype</string>
+    <string name="gravatar">Gravatar</string>
 
     <!--    Devices    -->
     <string name="devices">Devices</string>
