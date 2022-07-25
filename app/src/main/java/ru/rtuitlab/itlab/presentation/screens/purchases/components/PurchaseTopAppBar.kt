@@ -49,6 +49,7 @@ fun PurchaseTopAppBar(
                 }
             )
         ) else listOf(),
+        titleSharedElementKey = "${state.selectedPurchaseState?.purchase?.id}/name",
         onBackAction = {
             navController.popBackStack()
         }

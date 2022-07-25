@@ -23,6 +23,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.presentation.ui.components.AppDropdownMenu
+import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppBarTab
 import java.util.*
@@ -31,6 +32,7 @@ import java.util.*
 fun BasicTopAppBar(
 	text: String,
 	onBackAction: () -> Unit = emptyBackAction,
+	titleSharedElementKey: String? = null,
 	options: List<AppBarOption> = emptyList()
 ) {
 	TopAppBar {
@@ -56,15 +58,17 @@ fun BasicTopAppBar(
 					Spacer(modifier = Modifier.width(16.dp))
 				}
 
-				Text(
-					text = text,
-					fontSize = 20.sp,
-					fontWeight = FontWeight(500),
-					textAlign = TextAlign.Start,
-					color = MaterialTheme.colors.onSurface,
-					maxLines = 1,
-					overflow = TextOverflow.Ellipsis
-				)
+				SharedElement(key = titleSharedElementKey.toString(), screenKey = "Whatever") {
+					Text(
+						text = text,
+						fontSize = 20.sp,
+						fontWeight = FontWeight(500),
+						textAlign = TextAlign.Start,
+						color = MaterialTheme.colors.onSurface,
+						maxLines = 1,
+						overflow = TextOverflow.Ellipsis
+					)
+				}
 			}
 
 			OptionsRow(options)

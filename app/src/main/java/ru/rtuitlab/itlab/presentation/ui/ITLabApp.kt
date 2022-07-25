@@ -69,7 +69,7 @@ fun ITLabApp(
 
     val navController = LocalNavController.current
 
-    var sharedElementScope = LocalSharedElementsRootScope.current
+    val sharedElementScope = LocalSharedElementsRootScope.current
 
     val onBackAction: () -> Unit = {
         if (sharedElementScope?.isRunningTransition == false)
@@ -136,10 +136,7 @@ fun ITLabApp(
                         top = it.calculateTopPadding()
                     )
                 ) {
-                    SharedElementsRoot {
-                        sharedElementScope = LocalSharedElementsRootScope.current
-                        AppNavigation(navController)
-                    }
+                    AppNavigation(navController)
                 }
 
 

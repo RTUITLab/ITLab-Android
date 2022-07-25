@@ -217,10 +217,15 @@ fun PurchaseCard(
                 )
                 .fillMaxWidth()
         ) {
-            Text(
-                text = purchase.name,
-                style = MaterialTheme.typography.h6
-            )
+            SharedElement(
+                key = "${purchase.id}/name",
+                screenKey = AppScreen.Purchases.route
+            ) {
+                Text(
+                    text = purchase.name,
+                    style = MaterialTheme.typography.h6
+                )
+            }
 
             Spacer(modifier = Modifier.height(10.dp))
             Column(
