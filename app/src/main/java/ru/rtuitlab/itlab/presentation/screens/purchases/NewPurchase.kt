@@ -46,8 +46,7 @@ import java.io.File
 
 @Composable
 fun NewPurchase(
-    purchasesViewModel: PurchasesViewModel = singletonViewModel(),
-    mfsViewModel: MFSViewModel = singletonViewModel()
+    purchasesViewModel: PurchasesViewModel = singletonViewModel()
 ) {
 
     val purchasesState by purchasesViewModel.state.collectAsState()

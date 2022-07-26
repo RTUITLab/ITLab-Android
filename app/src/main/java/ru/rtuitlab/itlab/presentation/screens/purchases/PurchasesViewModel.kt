@@ -252,7 +252,7 @@ class PurchasesViewModel @Inject constructor(
             successMessage = successMessage
         )
     }
-    
+
     private fun onResolve(
         status: PurchaseStatusApi,
         successMessage: String
@@ -340,7 +340,6 @@ class PurchasesViewModel @Inject constructor(
     }
 
     fun onAttachFile(type: FileType, file: File) {
-        Log.v("Purchases", "Called onAttach for $type")
         _state.value = _state.value.copy(
             newPurchaseState =
             if (type == FileType.Check)

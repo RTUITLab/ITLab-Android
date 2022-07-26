@@ -23,7 +23,7 @@ interface PurchasesApi {
         @Query("pageNumber") pageNumber: Int = 0,
         @Query("pageSize") pageSize: Int = 10,
         @Query("sortDirection") sortDirection: String = PurchaseSortingDirection.ASC.toString(),
-        @Query("sortBy") sortBy: String = PurchaseSortingBy.purchaseDate,
+        @Query("sortBy") sortBy: String = PurchaseSortingOrder.PURCHASE_DATE.key,
         @Query("purchaseStartDate") purchaseStartDate: String? = null,
         @Query("purchaseEndDate") purchaseEndDate: String? = null,
         @Query("purchaseStatus") purchaseStatus: String? = PurchaseStatusApi.AWAIT.toString()
