@@ -78,7 +78,7 @@ fun NewPurchase(
     SharedElement(
         key = sharedElementKey,
         screenKey = AppScreen.NewPurchase.route,
-        isFullscreen = true,
+        isFullscreen = false,
         transitionSpec = SharedElementsTransitionSpec(
             fadeMode = FadeMode.Through,
             fadeProgressThresholds = ProgressThresholds(.2f, 1f),

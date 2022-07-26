@@ -109,7 +109,7 @@ fun NewReport(
     SharedElement(
         key = sharedElementKey,
         screenKey = AppScreen.NewReport.route,
-        isFullscreen = true,
+        isFullscreen = false,
         transitionSpec = SharedElementsTransitionSpec(
             durationMillis = duration,
             fadeMode = FadeMode.Through,
