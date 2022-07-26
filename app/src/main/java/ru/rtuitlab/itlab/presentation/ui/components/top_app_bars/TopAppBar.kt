@@ -48,6 +48,7 @@ fun BasicTopAppBar(
 			horizontalArrangement = Arrangement.SpaceBetween
 		) {
 			Row(
+				modifier = Modifier.weight(1f),
 				horizontalArrangement = Arrangement.Start,
 				verticalAlignment = Alignment.CenterVertically
 			) {
