@@ -1,12 +1,7 @@
 ## What's new
 
-### Reports
-1. Viewing reports
-1. Writing reports
-1. Viewing files
+### Purchases
+This version features full purchases functionality.
 
-### Navigation
-1. New bottom navigation menu
-
-### Miscellaneous
-1. Various bugfixes
+### Users
+User avatars are showing next to the username and in profiles
