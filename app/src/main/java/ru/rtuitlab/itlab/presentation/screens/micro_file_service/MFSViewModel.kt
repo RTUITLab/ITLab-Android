@@ -202,6 +202,7 @@ class MFSViewModel @Inject constructor(
 		_file.value = null
 	}
 	fun provideFile(
+		mimeTypes: Array<String> = arrayOf("*/*"),
 		onFileProvided: ((File) -> Unit)? = null
 	) = viewModelScope.launch(Dispatchers.IO) {
 
@@ -210,7 +211,7 @@ class MFSViewModel @Inject constructor(
 				if (onFileProvided != null) {
 					onFileSelectedListeners.add(onFileProvided)
 				}
-				_mfsContract.value?.launch(arrayOf("*/*"))
+				_mfsContract.value?.launch(mimeTypes)
 			}
 			else {
 				Log.d("MFS","${_activity.value} ----------")
@@ -219,7 +220,7 @@ class MFSViewModel @Inject constructor(
 					if (onFileProvided != null) {
 						onFileSelectedListeners.add(onFileProvided)
 					}
-					_mfsContract.value?.launch(arrayOf("*/*"))
+					_mfsContract.value?.launch(mimeTypes)
 				}
 			}
 		}

@@ -8,7 +8,7 @@ object UserClaimCategories {
 	val DEVICES = UserRole.DEVICES()
 
 	object USER
-	object PURCHASE
+	val PURCHASES = UserClaimCategory()
 
 	private val roleMap = mapOf(
 		"CanEditEquipment" to DEVICES.EDIT,
@@ -57,7 +57,13 @@ object UserClaimCategories {
 				else -> PROJECTS
 			}
 		}
-		string.startsWith("purchase") -> PURCHASE
+		string.startsWith("purchase") -> {
+			when {
+				string.contains("admin") -> PURCHASES.ADMIN
+				string.contains("user") -> PURCHASES.USER
+				else -> PURCHASES
+			}
+		}
 		else -> null
 	}
 

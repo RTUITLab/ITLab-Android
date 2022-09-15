@@ -109,7 +109,7 @@ fun NewReport(
     SharedElement(
         key = sharedElementKey,
         screenKey = AppScreen.NewReport.route,
-        isFullscreen = true,
+        isFullscreen = false,
         transitionSpec = SharedElementsTransitionSpec(
             durationMillis = duration,
             fadeMode = FadeMode.Through,
@@ -254,7 +254,7 @@ fun NewReport(
                                 }
                             }
                         },
-                        text = stringResource(R.string.report_send),
+                        text = stringResource(R.string.send),
                         enabled = state.isSendButtonEnabled
                     ) { text ->
                         LoadableButtonContent(
@@ -281,7 +281,7 @@ private fun UserPicker(
     val scope = rememberCoroutineScope()
     IconizedRow(
         modifier = Modifier
-            .clip(RoundedCornerShape(4.dp))
+            .clip(MaterialTheme.shapes.small)
             .clickable {
                 bottomSheetViewModel.show(
                     sheet = AppBottomSheet.UserSelection(onSelect),
@@ -316,7 +316,7 @@ private fun UserPicker(
 }
 
 @Composable
-private fun UploadConfirmationDialog(
+fun UploadConfirmationDialog(
     isUploading: Boolean = false,
     providedFile: File,
     onResult: (isConfirmed: Boolean) -> Unit

@@ -21,7 +21,7 @@ class AppTabsViewModel @Inject constructor(
     private val _statePage = MutableStateFlow(1)
     val statePage = _statePage.asStateFlow()
 
-    private val _pagesSize = MutableStateFlow(intArrayOf(5, 1))
+    private val _pagesSize = MutableStateFlow(intArrayOf(3, 3))
     val pagesSize = _pagesSize.asStateFlow()
 
     val _appTabs = MutableStateFlow(AppTab.all)

@@ -24,6 +24,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.devices.DevicesApi
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MFSApi
+import ru.rtuitlab.itlab.data.remote.api.purchases.PurchasesApi
 import ru.rtuitlab.itlab.data.remote.api.reports.ReportsApi
 import javax.inject.Singleton
 
@@ -111,4 +112,8 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideMFSApi(retrofit: Retrofit): MFSApi = retrofit.create()
+
+    @Singleton
+    @Provides
+    fun providePurchasesApi(retrofit: Retrofit): PurchasesApi = retrofit.create()
 }

@@ -2,8 +2,7 @@ package ru.rtuitlab.itlab.presentation.screens.employees.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,9 +23,9 @@ import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 
 @Composable
 fun EmployeeCard(
-    user: User,
-    modifier: Modifier,
-    elevation: Dp = 2.dp,
+	user: User,
+	modifier: Modifier,
+	elevation: Dp = 2.dp
 ) {
     val context = LocalContext.current
     Card(

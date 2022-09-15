@@ -12,18 +12,18 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class UsersRepository @Inject constructor(
 	private val usersApi: UsersApi,
 	private val handler: ResponseHandler,
 	private val authStateStorage: AuthStateStorage,
-	private val coroutineScope: CoroutineScope,
+	private val coroutineScope: CoroutineScope
 ) {
 
 	private val _cachedUsersFlow = MutableStateFlow<List<User>>(emptyList())
 	val cachedUsersFlow = _cachedUsersFlow.asStateFlow()
-
-
 
 	private val _usersResponsesFlow = MutableStateFlow<Resource<List<UserResponse>>>(Resource.Empty)
 
@@ -32,17 +32,16 @@ class UsersRepository @Inject constructor(
 	 * Downstream flows that ViewModels create should be transformations of this flow.
 	 * For re-fetching users use [updateUsersFlow]
 	 */
-
-
 	val usersResponsesFlow by lazy {
 		updateUsersFlow()
 		_usersResponsesFlow.asStateFlow()
 			.onEach {
-
 				it.handle(
 					onSuccess = {
 						_cachedUsersFlow.value = it.map { it.toUser() }
-
+					},
+					onError = {
+						updateUsersFlow()
 					}
 				)
 			}
@@ -75,11 +74,9 @@ class UsersRepository @Inject constructor(
 	}
 
 	fun updateUsersFlow() = _usersResponsesFlow.emitInIO(coroutineScope) {
-
 		handler {
 			usersApi.getUsers()
 		}
-
 	}
 
 	suspend fun editUserInfo(info: UserEditRequest) = handler {

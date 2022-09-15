@@ -25,6 +25,7 @@ import ru.rtuitlab.itlab.presentation.screens.auth.AuthScreen
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthViewModel
 import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
 import ru.rtuitlab.itlab.presentation.ui.ITLabApp
+import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElementsRoot
 import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
 import ru.rtuitlab.itlab.presentation.utils.LocalActivity
 
@@ -87,7 +88,9 @@ class MainActivity : AppCompatActivity() {
 								LocalNavController provides rememberNavController(),
 								LocalActivity provides this
 							) {
-								ITLabApp()
+								SharedElementsRoot {
+									ITLabApp()
+								}
 							}
 						}
 						false -> AuthScreen { authViewModel.onLoginEvent(authPageLauncher) }

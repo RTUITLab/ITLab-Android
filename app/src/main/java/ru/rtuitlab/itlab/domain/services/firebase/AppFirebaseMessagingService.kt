@@ -87,6 +87,10 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
 				.setSmallIcon(R.drawable.ic_notification_default)
 				.setContentTitle(title)
 				.setContentText(message)
+				.setStyle(
+					NotificationCompat.BigTextStyle()
+						.bigText(message)
+				)
 				.setAutoCancel(true)
 				.setSound(defaultSoundUri)
 				.setContentIntent(pendingIntent)

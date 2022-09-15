@@ -28,6 +28,11 @@
         <item quantity="other">%d minutes</item>
     </plurals>
     <string name="details_name">%1$s</string>
+    <string name="time_parsing_error">Time parsing error</string>
+    <string name="retry">Retry</string>
+    <string name="sort_asc">In ascending order</string>
+    <string name="send">Send</string>
+
 
     <!--    Events    -->
     <string name="events">Events</string>
@@ -39,7 +44,8 @@
     <string name="event_no_description">No description</string>
     <string name="no_pending_events">No pending events</string>
     <string name="no_user_events">No events in selected period</string>
-    <string name="salary" translatable="false">%1$d ₽</string>
+    <string name="salary_int" translatable="false">%1$d ₽</string>
+    <string name="salary_float" translatable="false">%1$.2f ₽</string>
     <string name="shifts">Shifts</string>
     <plurals name="n_hours">
         <item quantity="one">%d hour</item>
@@ -89,6 +95,7 @@
     <string name="vk_id">VK id</string>
     <string name="discord_id" translatable="false">Discord</string>
     <string name="skype_id" translatable="false">Skype</string>
+    <string name="gravatar">Gravatar</string>
 
     <!--    Devices    -->
     <string name="devices">Devices</string>
@@ -98,17 +105,22 @@
     <string name="edit">Edit</string>
     <string name="title">Title</string>
     <string name="equipmentType">Equipment Type</string>
-
-
     <string name="number">Number</string>
     <string name="add_device">Add Device</string>
     <string name="confirm">Подтвердить</string>
     <string name="dismiss">Отменить</string>
-
     <string name="shortTitle">Short Title</string>
     <string name="to_create">Create</string>
     <string name="to_choose">Chose</string>
     <string name="laboratory">Laboratory</string>
+    <string name="Null">null</string>
+    <string name="Select_a_file">Select a file</string>
+    <string name="Upload_a_file">Upload a file</string>
+    <string name="download">Download</string>
+    <string name="byDate">by date</string>
+    <string name="byUser">by user</string>
+    <string name="filter">filter</string>
+    <string name="no_files">Файлы отсутствуют</string>
 
     <!--    Feedback    -->
     <string name="feedback">Feedback</string>
@@ -122,6 +134,35 @@
     <string name="pick_up">Pick up</string>
     <string name="show_only_free">Show only free</string>
 
+    <!--    Purchases    -->
+    <string name="purchases">Purchases</string>
+    <string name="purchase">Purchase</string>
+    <string name="purchases_empty">No purchases found with selected filters</string>
+    <string name="purchase_new">New purchase</string>
+    <string name="purchase_name">Purchase name</string>
+    <string name="purchase_date">Purchase date</string>
+    <string name="purchase_buyer">Purchaser</string>
+    <string name="purchase_approved_by">Approved by</string>
+    <string name="purchase_rejected_by">Rejected by</string>
+    <string name="purchase_price">Price</string>
+    <string name="purchase_reject">Reject</string>
+    <string name="purchase_rejected">Purchase rejected successfully</string>
+    <string name="purchase_approve">Approve</string>
+    <string name="purchase_approved">Purchase approved successfully</string>
+    <string name="by_name">By name</string>
+    <string name="by_price">By price</string>
+    <string name="by_addition_date">By date of addition</string>
+    <string name="by_purchase_date">By date of purchase</string>
+    <string name="status_all">All</string>
+    <string name="status_await">Pending</string>
+    <string name="status_confirmed">Confirmed</string>
+    <string name="status_rejected">Rejected</string>
+    <string name="purchase_delete">Delete purchase</string>
+    <string name="purchase_delete_confirmation">A you sure you want to delete the purchase “%1$s”?</string>
+    <string name="purchase_delete_success">Purchase deleted successfully</string>
+    <string name="purchase_check">Receipt</string>
+    <string name="purchase_photo">Photo of purchase</string>
+    <string name="purchase_created">Purchase sent successfully</string>
 
     <!--    Reports    -->
     <string name="reports">Reports</string>
@@ -138,7 +179,6 @@
     <string name="report_write">Write</string>
     <string name="report_preview">Preview</string>
     <string name="report_title">Report title</string>
-    <string name="report_send">Send</string>
     <string name="report_new_about_who">Who this report is about</string>
     <string name="report_uploading_file">Uploading file</string>
     <string name="report_uploading_file_dialog">Are you sure you want to upload selected file? %1$s</string>
@@ -155,15 +195,5 @@
     <string name="md_ol">Ordered list</string>
     <string name="md_task">Task</string>
     <string name="md_attach">Attach…</string>
-    <string name="Null">null</string>
-    <string name="Select_a_file">Select a file</string>
-    <string name="Upload_a_file">Upload a file</string>
-    <string name="download">Download</string>
-    <string name="byDate">by date</string>
-    <string name="byUser">by user</string>
-    <string name="filter">filter</string>
-    <string name="no_files">Файлы отсутствуют</string>
-    <string name="time_parsing_error">Time parsing error</string>
-    <string name="gravatar">Gravatar</string>
 
 </resources>

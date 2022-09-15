@@ -64,21 +64,6 @@ class ScaffoldState(
 )*/
 
 /**
- * Creates a [ScaffoldState] with the default animation clock and memoizes it.
- *
- * @param drawerState the drawer state
- * @param snackbarHostState instance of [SnackbarHostState] to be used to show [Snackbar]s
- * inside of the [Scaffold]
- */
-@Composable
-fun rememberScaffoldState(
-	drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
-	snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
-): ScaffoldState = remember {
-	ScaffoldState(drawerState, snackbarHostState)
-}
-
-/**
  * The possible positions for a [FloatingActionButton] attached to a [Scaffold].
  */
 @Suppress("INLINE_CLASS_DEPRECATED", "EXPERIMENTAL_FEATURE_WARNING")

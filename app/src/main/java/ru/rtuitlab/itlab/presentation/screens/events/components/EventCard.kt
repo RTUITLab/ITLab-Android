@@ -36,7 +36,7 @@ fun EventCard(
 	Card(
 		modifier = modifier,
 		elevation = 2.dp,
-		shape = RoundedCornerShape(5.dp)
+		shape = MaterialTheme.shapes.medium
 	) {
 		event.run {
 			Column(
@@ -112,7 +112,7 @@ fun UserEventCard(
 	Card(
 		modifier = modifier,
 		elevation = 2.dp,
-		shape = RoundedCornerShape(5.dp)
+		shape = MaterialTheme.shapes.medium
 	) {
 		Column(
 			modifier = Modifier

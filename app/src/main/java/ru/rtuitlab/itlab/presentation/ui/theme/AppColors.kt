@@ -23,6 +23,7 @@ object AppColors {
 		else Color.White.copy(alpha = .6f)
 	)
 	val green = Color(0xff28a745)
+	val orange = Color(0xffFF8F00)
 	val greyText = _greyText.asStateFlow()
 	val red = Color(0xFFFF3B30)
 	val tag = Color(0xFFE0E0E0)
