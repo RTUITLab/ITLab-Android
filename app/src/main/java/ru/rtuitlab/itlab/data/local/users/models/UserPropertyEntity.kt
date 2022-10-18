@@ -22,20 +22,19 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
     ]
 )
 data class UserPropertyEntity(
-    @PrimaryKey val id: String,
+    @PrimaryKey val userId: String, // FK
     val typeId: String, // FK
-    val userId: String, // FK
-    val value: String,
-    val status: String,
+    val value: String? = null,
+    val status: String? = null,
 )
 
 data class PropertyWithType(
-    @Embedded val type: UserPropertyTypeModel,
+    @Embedded val property: UserPropertyEntity,
     @Relation(
-        parentColumn = "id",
-        entityColumn = "typeId"
+        parentColumn = "typeId",
+        entityColumn = "id"
     )
-    val property: UserPropertyEntity
+    val type: UserPropertyTypeModel
 ) {
     fun toUserPropertyModel() = UserPropertyModel(
         value = property.value,

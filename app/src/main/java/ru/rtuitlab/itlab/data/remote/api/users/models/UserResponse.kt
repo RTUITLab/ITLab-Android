@@ -4,6 +4,8 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import ru.rtuitlab.itlab.BuildConfig
+import ru.rtuitlab.itlab.data.local.users.models.UserEntity
+import ru.rtuitlab.itlab.data.local.users.models.UserWithProperties
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.*
@@ -45,6 +47,20 @@ data class UserResponse (
 			middleName = middleName,
 			phoneNumber = phoneNumber
 		)
+
+	fun toUserEntity() = UserEntity(
+		id = id,
+		firstName = firstName,
+		lastName = lastName,
+		middleName = middleName,
+		phoneNumber = phoneNumber,
+		email = email
+	)
+
+	fun toUserWithProperties() = UserWithProperties(
+		userEntity = this.toUserEntity(),
+		properties = properties.map { it.toPropertyWithType(this.id) }
+	)
 
 	val fullName = "${firstName ?: ""} ${lastName ?: ""}"
 }

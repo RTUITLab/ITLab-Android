@@ -11,6 +11,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import ru.rtuitlab.itlab.data.local.AppDatabase
+import ru.rtuitlab.itlab.data.repository.UsersRepositoryImpl
+import ru.rtuitlab.itlab.domain.repository.UsersRepositoryInterface
 import javax.inject.Singleton
 
 @Module
@@ -30,4 +32,10 @@ object RepositoriesModule {
         AppDatabase::class.java,
         AppDatabase.NAME
     ).build()
+
+    @Provides
+    @Singleton
+    fun provideUsersRepository(
+        usersRepo: UsersRepositoryImpl
+    ) = usersRepo as UsersRepositoryInterface
 }
