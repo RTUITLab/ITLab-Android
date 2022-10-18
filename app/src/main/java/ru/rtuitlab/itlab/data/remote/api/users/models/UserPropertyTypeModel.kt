@@ -6,14 +6,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.School
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import ru.rtuitlab.itlab.R
 
 @Parcelize
 @Serializable
+@Entity
 data class UserPropertyTypeModel (
-	val id : String,
+	@PrimaryKey val id : String,
 	val title : String,
 	val description : String? = null,
 	val instancesCount : Int,
