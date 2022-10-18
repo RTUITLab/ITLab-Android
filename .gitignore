@@ -83,7 +83,6 @@ lint/tmp/
 # lint/reports/
 
 output/
-test*
 .env
 **/*.jks
 keystore.properties

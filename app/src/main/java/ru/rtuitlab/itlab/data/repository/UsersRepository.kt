@@ -6,6 +6,7 @@ import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.common.emitInIO
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.data.local.AppDatabase
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
@@ -19,8 +20,11 @@ class UsersRepository @Inject constructor(
 	private val usersApi: UsersApi,
 	private val handler: ResponseHandler,
 	private val authStateStorage: AuthStateStorage,
-	private val coroutineScope: CoroutineScope
+	private val coroutineScope: CoroutineScope,
+	db: AppDatabase
 ) {
+
+	private val dao = db.dao
 
 	private val _cachedUsersFlow = MutableStateFlow<List<User>>(emptyList())
 	val cachedUsersFlow = _cachedUsersFlow.asStateFlow()
@@ -52,6 +56,8 @@ class UsersRepository @Inject constructor(
 	val currentUserFlow = authStateStorage.userIdFlow.map { userId ->
 		cachedUsersFlow.value.find { it.id == userId }
 	}.stateIn(coroutineScope, SharingStarted.Lazily, null)
+
+	fun getAllUsers() = dao.getUsers()
 
 	suspend fun fetchUserInfo(url: String, accessToken: String) = handler {
 		usersApi.getUserInfo(url, "Bearer $accessToken")
