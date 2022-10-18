@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 
 @Entity
 data class UserEntity(
@@ -21,5 +22,15 @@ data class UserWithProperties(
         parentColumn = "id",
         entityColumn = "userId"
     )
-    val properties: List<UserPropertyEntity>
-)
+    val properties: List<PropertyWithType>
+) {
+    fun toUserResponse() = UserResponse(
+        id = userEntity.id,
+        firstName = userEntity.firstName,
+        lastName = userEntity.lastName,
+        middleName = userEntity.middleName,
+        phoneNumber = userEntity.phoneNumber,
+        email = userEntity.email,
+        properties = properties.map { it.toUserPropertyModel() }
+    )
+}

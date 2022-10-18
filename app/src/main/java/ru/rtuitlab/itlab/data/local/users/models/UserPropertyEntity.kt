@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.data.local.users.models
 
 import androidx.room.*
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
 
 
@@ -35,4 +36,10 @@ data class PropertyWithType(
         entityColumn = "typeId"
     )
     val property: UserPropertyEntity
-)
+) {
+    fun toUserPropertyModel() = UserPropertyModel(
+        value = property.value,
+        status = property.status,
+        userPropertyType = type
+    )
+}
