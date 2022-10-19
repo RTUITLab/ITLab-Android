@@ -24,6 +24,7 @@ import kotlinx.coroutines.runBlocking
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.emitInIO
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfo
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
@@ -42,7 +43,7 @@ import javax.inject.Inject
 class MFSViewModel @Inject constructor(
 	private val repository: MFSRepository,
 	private val usersRepository: UsersRepository,
-	private val authStateStorage: AuthStateStorage
+	private val authStateStorage: IAuthStateStorage
 
 ): ViewModel() {
 

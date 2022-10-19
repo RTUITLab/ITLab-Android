@@ -16,16 +16,16 @@ import retrofit2.Retrofit
 import retrofit2.create
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.common.ResponseHandler
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.TokenInterceptor
+import ru.rtuitlab.itlab.data.remote.api.devices.DevicesApi
 import ru.rtuitlab.itlab.data.remote.api.events.EventsApi
 import ru.rtuitlab.itlab.data.remote.api.feedback.FeedbackApi
-import ru.rtuitlab.itlab.data.remote.api.notifications.NotificationsApi
-import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
-import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
-import ru.rtuitlab.itlab.data.remote.api.devices.DevicesApi
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MFSApi
+import ru.rtuitlab.itlab.data.remote.api.notifications.NotificationsApi
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchasesApi
 import ru.rtuitlab.itlab.data.remote.api.reports.ReportsApi
+import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import javax.inject.Singleton
 
 @Module
@@ -35,7 +35,7 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideTokenInterceptor(
-        authStateStorage: AuthStateStorage,
+        authStateStorage: IAuthStateStorage,
         authService: AuthorizationService
     ) = TokenInterceptor(authStateStorage, authService)
 

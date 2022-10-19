@@ -9,12 +9,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.presentation.utils.AppTab
 import javax.inject.Inject
 
 @HiltViewModel
 class AppTabsViewModel @Inject constructor(
-    authStateStorage: AuthStateStorage
+    authStateStorage: IAuthStateStorage
 ) : ViewModel() {
     private val userClaimsFlow = authStateStorage.userClaimsFlow
 

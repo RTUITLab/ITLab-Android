@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.*
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.common.emitInIO
-import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.local.AppDatabase
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
@@ -19,7 +19,7 @@ import javax.inject.Singleton
 class UsersRepository @Inject constructor(
 	private val usersApi: UsersApi,
 	private val handler: ResponseHandler,
-	private val authStateStorage: AuthStateStorage,
+	private val authStateStorage: IAuthStateStorage,
 	private val coroutineScope: CoroutineScope,
 	db: AppDatabase
 ) {

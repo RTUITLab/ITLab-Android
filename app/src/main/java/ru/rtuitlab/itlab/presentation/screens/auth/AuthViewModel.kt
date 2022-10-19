@@ -17,17 +17,16 @@ import net.openid.appauth.*
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
-import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserInfoModel
 import ru.rtuitlab.itlab.data.repository.NotificationsRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
 import ru.rtuitlab.itlab.domain.services.firebase.FirebaseTokenUtils
-import ru.rtuitlab.itlab.presentation.utils.LogoutUrlBuilder
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-	private val authStateStorage: AuthStateStorage,
+	private val authStateStorage: IAuthStateStorage,
 	private val authService: AuthorizationService,
 	private val usersRepo: UsersRepository,
 	private val handler: ResponseHandler,

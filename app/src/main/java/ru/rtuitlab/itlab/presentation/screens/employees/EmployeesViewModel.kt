@@ -6,13 +6,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.repository.UsersRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class EmployeesViewModel @Inject constructor(
 	private val usersRepo: UsersRepository,
-	private val authStateStorage: AuthStateStorage
+	private val authStateStorage: IAuthStateStorage
 ) : ViewModel() {
 
 	private var _userIdFlow = MutableStateFlow("")

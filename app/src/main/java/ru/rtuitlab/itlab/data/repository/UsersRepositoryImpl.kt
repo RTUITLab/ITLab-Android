@@ -5,20 +5,22 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
-import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.local.AppDatabase
+import ru.rtuitlab.itlab.data.local.users.models.PropertyWithType
 import ru.rtuitlab.itlab.data.local.users.models.UserEntity
 import ru.rtuitlab.itlab.data.local.users.models.UserPropertyEntity
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyEditRequest
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
 import ru.rtuitlab.itlab.domain.repository.UsersRepositoryInterface
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class UsersRepositoryImpl @Inject constructor(
-    private val authStateStorage: AuthStateStorage,
+    private val authStateStorage: IAuthStateStorage,
     private val usersApi: UsersApi,
     private val handler: ResponseHandler,
     private val coroutineScope: CoroutineScope,
@@ -36,6 +38,15 @@ class UsersRepositoryImpl @Inject constructor(
     override suspend fun getCurrentUser() = usersDao.getUserById(
         id = authStateStorage.userIdFlow.first()
     )
+
+    override suspend fun getPropertyTypes(): List<UserPropertyTypeModel> =
+        usersDao.getPropertyTypes()
+
+    override suspend fun getProperties(): List<UserPropertyEntity> =
+        usersDao.getProperties()
+
+    override suspend fun getPropertiesWithTypes(): List<PropertyWithType> =
+        usersDao.getPropertiesWithTypes()
 
     override suspend fun insertUser(
         user: UserEntity,
@@ -216,8 +227,7 @@ class UsersRepositoryImpl @Inject constructor(
     )
 
     override suspend fun deleteUser(
-        user: UserEntity,
-        properties: List<UserPropertyEntity>
-    ) = usersDao.deleteUser(user, properties)
+        user: UserEntity
+    ) = usersDao.deleteUser(user)
 
 }

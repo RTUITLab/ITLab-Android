@@ -10,6 +10,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.reports.models.Report
 import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportDto
 import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportSalary
@@ -23,7 +24,7 @@ import javax.inject.Inject
 class ReportsViewModel @Inject constructor(
 	private val repository: ReportsRepository,
 	private val usersRepository: UsersRepository,
-	private val authStateStorage: AuthStateStorage
+	private val authStateStorage: IAuthStateStorage
 ) : ViewModel() {
 
 	val userIdFlow = authStateStorage.userIdFlow.stateIn(

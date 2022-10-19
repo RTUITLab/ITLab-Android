@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import net.openid.appauth.AppAuthConfiguration
 import net.openid.appauth.AuthorizationService
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import javax.inject.Singleton
 
 @Module
@@ -17,7 +18,8 @@ object AuthModule {
 
     @Singleton
     @Provides
-    fun provideAuthStateStorage(@ApplicationContext context: Context) = AuthStateStorage(context)
+    fun provideAuthStateStorage(@ApplicationContext context: Context): IAuthStateStorage =
+        AuthStateStorage(context)
 
     @Singleton
     @Provides

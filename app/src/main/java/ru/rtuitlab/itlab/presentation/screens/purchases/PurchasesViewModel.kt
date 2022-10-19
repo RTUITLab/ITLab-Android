@@ -10,6 +10,7 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingDirection
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingOrder
@@ -32,7 +33,7 @@ import javax.inject.Inject
 class PurchasesViewModel @Inject constructor(
     private val repository: PurchasesRepository,
     private val usersRepository: UsersRepository,
-    authStateStorage: AuthStateStorage
+    authStateStorage: IAuthStateStorage
 ): ViewModel() {
 
     val userClaimsFlow = authStateStorage.userClaimsFlow

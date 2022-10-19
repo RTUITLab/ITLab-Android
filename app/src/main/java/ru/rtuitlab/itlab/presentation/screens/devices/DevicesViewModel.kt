@@ -12,21 +12,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.emitInIO
-import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.devices.models.*
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.data.repository.DevicesRepository
 import ru.rtuitlab.itlab.data.repository.UsersRepository
-import java.sql.Time
-import java.time.Instant
 import javax.inject.Inject
 
 @HiltViewModel
 class DevicesViewModel @Inject constructor(
         private val devicesRepo: DevicesRepository,
         private val usersRepository: UsersRepository,
-        private val authStateStorage:  AuthStateStorage
+        private val authStateStorage: IAuthStateStorage
 ) : ViewModel() {
 
         private val userClaimsFlow = authStateStorage.userClaimsFlow

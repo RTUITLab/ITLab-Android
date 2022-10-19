@@ -7,13 +7,12 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.createDataStore
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import net.openid.appauth.*
 import ru.rtuitlab.itlab.presentation.utils.UserClaimParser
 
-class AuthStateStorage(context: Context) {
+class AuthStateStorage(context: Context): IAuthStateStorage {
     private companion object {
         const val AUTH_STATE_PREFS_NAME = "auth_state_prefs"
         val AUTH_STATE_KEY = stringPreferencesKey("auth_state_key")
@@ -27,10 +26,10 @@ class AuthStateStorage(context: Context) {
         AuthState.jsonDeserialize(it)
     } ?: AuthState()
 
-    val authStateFlow = dataStore.data.map { it.getAuthState() }
+    override val authStateFlow = dataStore.data.map { it.getAuthState() }
 
     // This is a workaround for token refreshment, since authStateFlow.last() in TokenInterceptor.getAccessToken() freezes HTTP requests
-    var latestAuthState: AuthState = runBlocking { authStateFlow.first() }
+    override var latestAuthState: AuthState = runBlocking { authStateFlow.first() }
         private set
 
     init {
@@ -43,22 +42,22 @@ class AuthStateStorage(context: Context) {
 
     private fun Preferences.getUserClaims(): List<Any> = UserClaimParser.parse(this[USER_PAYLOAD_KEY])
 
-    val userClaimsFlow = dataStore.data.map { it.getUserClaims() }
+    override val userClaimsFlow = dataStore.data.map { it.getUserClaims() }
 
-    suspend fun resetAuthStateWithConfig(config: AuthorizationServiceConfiguration?) {
+    override suspend fun resetAuthStateWithConfig(config: AuthorizationServiceConfiguration?) {
         val clearedAuthState = config?.let { AuthState(it) } ?: AuthState()
         dataStore.edit { prefs ->
             prefs[AUTH_STATE_KEY] = clearedAuthState.jsonSerializeString()
         }
     }
 
-    suspend fun resetUserClaims() {
+    override suspend fun resetUserClaims() {
         dataStore.edit { prefs ->
             prefs.remove(USER_PAYLOAD_KEY)
         }
     }
 
-    suspend fun updateAuthState(
+    override suspend fun updateAuthState(
         authResponse: AuthorizationResponse,
         authException: AuthorizationException?
     ) {
@@ -69,7 +68,7 @@ class AuthStateStorage(context: Context) {
         }
     }
 
-    suspend fun updateAuthState(
+    override suspend fun updateAuthState(
         tokenResponse: TokenResponse,
         tokenException: AuthorizationException?
     ) {
@@ -80,7 +79,7 @@ class AuthStateStorage(context: Context) {
         }
     }
 
-    suspend fun updateAuthState(
+    override suspend fun updateAuthState(
         authState: AuthState
     ) {
         dataStore.edit { prefs ->
@@ -88,15 +87,15 @@ class AuthStateStorage(context: Context) {
         }
     }
 
-    val userIdFlow = dataStore.data.map { it[USER_ID_KEY] ?: "" }
+    override val userIdFlow = dataStore.data.map { it[USER_ID_KEY] ?: "" }
 
-    suspend fun updateUserId(userId: String) {
+    override suspend fun updateUserId(userId: String) {
         dataStore.edit { prefs ->
             prefs[USER_ID_KEY] = userId
         }
     }
 
-    suspend fun updateUserPayload(accessToken: String) {
+    override suspend fun updateUserPayload(accessToken: String) {
         val payload = Base64.decode(
             accessToken.substringAfter('.').substringBefore('.'),
             Base64.DEFAULT
@@ -106,7 +105,7 @@ class AuthStateStorage(context: Context) {
         }
     }
 
-    suspend fun endSession() {
+    override suspend fun endSession() {
         val config = latestAuthState.authorizationServiceConfiguration
         resetAuthStateWithConfig(config)
         resetUserClaims()

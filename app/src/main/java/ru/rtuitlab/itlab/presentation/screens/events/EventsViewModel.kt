@@ -19,6 +19,7 @@ import kotlinx.datetime.DateTimeUnit
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.emitInIO
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventInvitationDto
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
@@ -34,7 +35,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EventsViewModel @Inject constructor(
 	private val repository: EventsRepository,
-	private val authStateStorage: AuthStateStorage
+	private val authStateStorage: IAuthStateStorage
 ) : ViewModel() {
 
 	private val userId = runBlocking { authStateStorage.userIdFlow.first() }

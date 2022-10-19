@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.data.repository.EventsRepository
@@ -18,7 +19,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
 	private val usersRepo: UsersRepository,
 	eventsRepo: EventsRepository,
-	authStateStorage: AuthStateStorage
+	authStateStorage: IAuthStateStorage
 ) : UserViewModel(
 	usersRepo,
 	eventsRepo,
