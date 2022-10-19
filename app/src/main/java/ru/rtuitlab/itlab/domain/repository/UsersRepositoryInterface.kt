@@ -2,11 +2,13 @@ package ru.rtuitlab.itlab.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.rtuitlab.itlab.common.Resource
+import ru.rtuitlab.itlab.data.local.users.models.PropertyWithType
 import ru.rtuitlab.itlab.data.local.users.models.UserEntity
 import ru.rtuitlab.itlab.data.local.users.models.UserPropertyEntity
 import ru.rtuitlab.itlab.data.local.users.models.UserWithProperties
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyModel
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 
 interface UsersRepositoryInterface {
@@ -17,6 +19,12 @@ interface UsersRepositoryInterface {
     suspend fun getUserById(id: String): UserWithProperties
 
     suspend fun getCurrentUser(): UserWithProperties
+
+    suspend fun getPropertyTypes(): List<UserPropertyTypeModel>
+
+    suspend fun getProperties(): List<UserPropertyEntity>
+
+    suspend fun getPropertiesWithTypes(): List<PropertyWithType>
 
     suspend fun editUserInfo(info: UserEditRequest): Resource<UserResponse>
 
@@ -35,7 +43,6 @@ interface UsersRepositoryInterface {
     suspend fun updateUser(id: String): Resource<UserResponse>
 
     suspend fun deleteUser(
-        user: UserEntity,
-        properties: List<UserPropertyEntity>
+        user: UserEntity
     )
 }
