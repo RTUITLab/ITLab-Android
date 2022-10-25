@@ -76,7 +76,7 @@ class UsersRepositoryImplTest {
     fun setUp() {
         hiltRule.inject()
         Dispatchers.setMain(testDispatcher)
-        val dao = db.dao
+        val dao = db.usersDao
 
 
         runBlocking {
@@ -203,7 +203,7 @@ class UsersRepositoryImplTest {
         }
 
         assertThat(result).containsExactlyElementsIn(
-            db.dao.getUsers().first()
+            db.usersDao.getUsers().first()
         )
     }
 

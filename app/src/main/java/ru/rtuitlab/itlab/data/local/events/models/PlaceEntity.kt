@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.data.local.events.models
 
 import androidx.room.*
+import ru.rtuitlab.itlab.data.remote.api.events.models.EventPlaceSalary
 
 @Entity(
     foreignKeys = [
@@ -19,11 +20,17 @@ data class PlaceEntity(
     val shiftId: String // FK
 )
 
-data class PlaceWithRoles(
+data class PlaceWithUsersAndSalary(
     @Embedded val place: PlaceEntity,
+    @Relation(
+        entity = UserEventRoleEntity::class,
+        parentColumn = "id",
+        entityColumn = "placeId"
+    )
+    val usersWithRoles: List<UserWithRole>,
     @Relation(
         parentColumn = "id",
         entityColumn = "placeId"
     )
-    val roles: List<EventRoleEntity>
+    val salary: EventPlaceSalary? = null
 )

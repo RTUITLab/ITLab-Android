@@ -24,7 +24,7 @@ class UsersRepository @Inject constructor(
 	db: AppDatabase
 ) {
 
-	private val dao = db.dao
+	private val dao = db.usersDao
 
 	private val _cachedUsersFlow = MutableStateFlow<List<User>>(emptyList())
 	val cachedUsersFlow = _cachedUsersFlow.asStateFlow()

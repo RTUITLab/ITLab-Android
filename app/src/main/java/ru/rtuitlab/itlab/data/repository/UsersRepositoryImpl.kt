@@ -2,8 +2,6 @@ package ru.rtuitlab.itlab.data.repository
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
-import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.local.AppDatabase
@@ -14,6 +12,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
+import ru.rtuitlab.itlab.data.repository.util.tryUpdate
 import ru.rtuitlab.itlab.domain.repository.UsersRepositoryInterface
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,7 +26,7 @@ class UsersRepositoryImpl @Inject constructor(
     db: AppDatabase
 ): UsersRepositoryInterface {
 
-    private val usersDao = db.dao
+    private val usersDao = db.usersDao
 
     override fun getAllUsers() = usersDao.getUsers()
 
@@ -70,39 +69,14 @@ class UsersRepositoryImpl @Inject constructor(
     }*/
 
     override suspend fun editUserInfo(info: UserEditRequest) = tryUpdate(
+        inScope = coroutineScope,
+        withHandler = handler,
         from = { usersApi.editUserInfo(info) },
         into = { usersDao.updateUser(it.toUserEntity()) }
     )
 
 
-    /**
-     * This method performs a specified [from] function, typically an API request,
-     * and if successful, calls [into], typically a DB write, with result of the
-     * [from] function as an argument
-     * @return [Resource] indicating the status of the result
-     */
-    private suspend fun <T> tryUpdate(
-        from: suspend () -> T,
-        into: suspend (T) -> Unit
-    ): Resource<T> {
-        var resource: Resource<T> = Resource.Loading
 
-        // Using SupervisorScope to ensure this request completes even if
-        // parent coroutine scope is cancelled
-        withContext(coroutineScope.coroutineContext) {
-            handler { from() }.handle(
-                onSuccess = {
-                    resource = Resource.Success(it)
-                    into(it)
-                },
-                onError = {
-                    resource = Resource.Error(it)
-                }
-            )
-        }
-
-        return resource
-    }
 
     /*override suspend fun editUserProperty(
         propertyId: String,
@@ -129,6 +103,8 @@ class UsersRepositoryImpl @Inject constructor(
         propertyId: String,
         newValue: String
     ) = tryUpdate(
+        inScope = coroutineScope,
+        withHandler = handler,
         from = {
             usersApi.editUserProperty(
                 UserPropertyEditRequest(propertyId, newValue)
@@ -175,6 +151,8 @@ class UsersRepositoryImpl @Inject constructor(
     }*/
 
     override suspend fun updateAllUsers() = tryUpdate(
+        inScope = coroutineScope,
+        withHandler = handler,
         from = { usersApi.getUsers() },
         into = {
             val usersWithProperties = it.map { it.toUserWithProperties() }
@@ -214,6 +192,8 @@ class UsersRepositoryImpl @Inject constructor(
     }*/
 
     override suspend fun updateUser(id: String) = tryUpdate(
+        inScope = coroutineScope,
+        withHandler = handler,
         from = { usersApi.getUser(id) },
         into = {
             val userWithProperties = it.toUserWithProperties()

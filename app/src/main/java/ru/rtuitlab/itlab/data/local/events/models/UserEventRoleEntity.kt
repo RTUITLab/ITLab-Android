@@ -20,22 +20,22 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventRoleModel
             entity = PlaceEntity::class,
             parentColumns = ["id"],
             childColumns = ["placeId"]
-        )
+        ),
+
     ]
 )
-data class EventRoleEntity(
+data class UserEventRoleEntity(
     @PrimaryKey val userId: String,
-    val roleId: String, // FK
-    val placeId: String, // FK
-    val creationTime: String? = null,
-    val doneTime: String? = null
+    val roleId: String,
+    val placeId: String,
+    val participationType: UserParticipationType
 )
 
-data class RoleWithUser(
-    @Embedded val role: EventRoleEntity,
+data class UserWithRole(
+    @Embedded val userRole: UserEventRoleEntity,
     @Relation(
-        parentColumn = "userId",
-        entityColumn = "userId"
+        parentColumn = "roleId",
+        entityColumn = "id"
     )
-    val user: UserEntity
+    val role: EventRoleModel
 )

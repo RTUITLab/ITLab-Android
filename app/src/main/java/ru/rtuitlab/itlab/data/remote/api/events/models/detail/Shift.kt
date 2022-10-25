@@ -2,8 +2,8 @@ package ru.rtuitlab.itlab.data.remote.api.events.models.detail
 
 
 import android.content.Context
-import androidx.compose.ui.platform.LocalContext
 import kotlinx.serialization.Serializable
+import ru.rtuitlab.itlab.data.local.events.models.ShiftEntity
 import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601ToInstant
 import java.time.format.TextStyle
@@ -36,4 +36,20 @@ data class Shift(
     }
 
     val duration = endTime.fromIso8601ToInstant().hour - beginTime.fromIso8601ToInstant().hour
+
+    fun toShiftEntity(eventId: String) = ShiftEntity(
+        id = id,
+        beginTime = beginTime,
+        endTime = endTime,
+        description = description,
+        eventId = eventId
+    )
+
+    fun extractPlaceEntities() = places.map {
+        it.toPlaceEntity(id)
+    }
+
+    fun extractUserRoles() = places.flatMap {
+        it.extractUserRoles()
+    }
 }

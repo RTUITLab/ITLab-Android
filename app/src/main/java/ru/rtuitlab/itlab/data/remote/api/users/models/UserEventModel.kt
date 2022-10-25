@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.data.remote.api.users.models
 
 import kotlinx.serialization.Serializable
+import ru.rtuitlab.itlab.data.local.events.models.UserEventEntity
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventRoleModel
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventTypeModel
 
@@ -12,4 +13,13 @@ data class UserEventModel(
 	val eventType: EventTypeModel,
 	val beginTime: String,
 	val role: EventRoleModel
-)
+) {
+	fun toEntity() = UserEventEntity(
+		id = id,
+		address = address,
+		title = title,
+		typeId = eventType.id,
+		beginTime = beginTime,
+		roleId = role.id
+	)
+}
