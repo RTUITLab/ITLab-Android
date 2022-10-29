@@ -50,7 +50,7 @@ class UsersRepositoryImpl @Inject constructor(
     override suspend fun insertUser(
         user: UserEntity,
         properties: List<UserPropertyEntity>
-    ) = usersDao.insertUser(user, properties)
+    ) = usersDao.upsertUser(user, properties)
 
     /*override suspend fun editUserInfo(info: UserEditRequest): Resource<UserResponse> {
         var resource: Resource<UserResponse> = Resource.Loading
@@ -156,7 +156,7 @@ class UsersRepositoryImpl @Inject constructor(
         from = { usersApi.getUsers() },
         into = {
             val usersWithProperties = it.map { it.toUserWithProperties() }
-            usersDao.insertAll(
+            usersDao.upsertAll(
                 users = usersWithProperties.map { it.userEntity },
                 properties = usersWithProperties.flatMap {
                     it.properties.map {
@@ -197,7 +197,7 @@ class UsersRepositoryImpl @Inject constructor(
         from = { usersApi.getUser(id) },
         into = {
             val userWithProperties = it.toUserWithProperties()
-            usersDao.insertUser(
+            usersDao.upsertUser(
                 user = userWithProperties.userEntity,
                 properties = userWithProperties.properties.map {
                     it.property

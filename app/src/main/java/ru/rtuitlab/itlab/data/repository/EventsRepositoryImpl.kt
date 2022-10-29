@@ -32,7 +32,7 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getEvents(begin, end) },
         into = {
-            dao.insertEvents(
+            dao.upsertEvents(
                 it.map { it.toEventEntity() }
             )
         }
@@ -47,7 +47,7 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getUserEvents(userId, begin, end) },
         into = {
-            dao.insertUserEvents(
+            dao.upsertUserEvents(
                 it.map { it.toEntity() }
             )
         }
@@ -58,7 +58,7 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getEvent(eventId) },
         into = {
-            dao.insertEventDetail(
+            dao.upsertEventDetail(
                 event = it.toEventDetailEntity(),
                 shifts = it.extractShiftEntities(),
                 places = it.extractPlaceEntities(),
@@ -72,7 +72,7 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getEventSalary(eventId) },
         into = {
-            dao.insertFullEventSalary(
+            dao.upsertFullEventSalary(
                 eventSalary = it.toEventSalaryEntity(),
                 shiftSalaries = it.shiftSalaries,
                 placeSalaries = it.placeSalaries
@@ -89,7 +89,7 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getEventRoles() },
         into = {
-            dao.insertEventRoles(it)
+            dao.upsertEventRoles(it)
         }
     )
 
@@ -98,7 +98,7 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getInvitations() },
         into = {
-            dao.insertInvitations(it.map { it.toInvitationEntity() })
+            dao.upsertInvitations(it.map { it.toInvitationEntity() })
         }
     )
 

@@ -80,11 +80,11 @@ class UsersRepositoryImplTest {
 
 
         runBlocking {
-            dao.insertAll(users)
+            dao.upsertAll(users)
 
-            dao.insertPropertyTypes(propertyTypes)
+            dao.upsertPropertyTypes(propertyTypes)
 
-            dao.insertProperties(props)
+            dao.upsertProperties(props)
         }
 
     }
