@@ -18,7 +18,7 @@ interface UsersDao {
     suspend fun getProperties(): List<UserPropertyEntity>
 
     @Query("SELECT * FROM UserPropertyTypeModel WHERE id = :typeId")
-    suspend fun getPropertyTypeById(typeId: String): UserPropertyTypeModel
+    suspend fun getPropertyTypeById(typeId: String): UserPropertyTypeModel?
 
     @Query("SELECT * FROM UserPropertyTypeModel")
     suspend fun getPropertyTypes(): List<UserPropertyTypeModel>

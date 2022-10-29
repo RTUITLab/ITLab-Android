@@ -7,6 +7,7 @@ import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventPlaceSalary
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventRoleModel
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventShiftSalary
+import ru.rtuitlab.itlab.data.remote.api.events.models.EventTypeModel
 
 @Dao
 interface EventsDao {
@@ -27,6 +28,9 @@ interface EventsDao {
     @Query("SELECT * FROM UserEventEntity")
     fun getUserEvents(): Flow<List<UserEventWithTypeAndRole>>
 
+    @Query("SELECT * FROM EventRoleModel")
+    suspend fun getEventRoles(): List<EventRoleModel>
+
     @Transaction
     @Query("SELECT * FROM UserEventRoleEntity")
     suspend fun getRolesWithUsers(): List<UserWithRole>
@@ -36,6 +40,10 @@ interface EventsDao {
     suspend fun insertEvent(
         event: EventEntity
     )
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertEventTypes(types: List<EventTypeModel>)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -109,5 +117,11 @@ interface EventsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEventRoles(
         roles: List<EventRoleModel>
+    )
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUserEventRoles(
+        roles: List<UserEventRoleEntity>
     )
 }

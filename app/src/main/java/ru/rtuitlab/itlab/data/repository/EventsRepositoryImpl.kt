@@ -1,9 +1,12 @@
 package ru.rtuitlab.itlab.data.repository
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.data.local.AppDatabase
+import ru.rtuitlab.itlab.data.local.events.models.EventWithShiftsAndSalary
+import ru.rtuitlab.itlab.data.local.events.models.EventWithType
 import ru.rtuitlab.itlab.data.remote.api.events.EventsApi
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.data.repository.util.tryUpdate
@@ -27,6 +30,12 @@ class EventsRepositoryImpl @Inject constructor(
         end = null
     )
 
+    override fun getEvents(): Flow<List<EventWithType>> = dao.getAllEvents()
+
+    override fun searchEvents(query: String): Flow<List<EventWithType>> = dao.searchEvents(query)
+
+    override fun getEventDetail(eventId: String): Flow<EventWithShiftsAndSalary?> = dao.getEventDetail(eventId)
+
     override suspend fun updateEvents(begin: String?, end: String?) = tryUpdate(
         inScope = coroutineScope,
         withHandler = handler,
@@ -47,6 +56,12 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getUserEvents(userId, begin, end) },
         into = {
+            dao.insertEventRoles(
+                it.map { it.role }
+            )
+            dao.insertEventTypes(
+                it.map { it.eventType }
+            )
             dao.insertUserEvents(
                 it.map { it.toEntity() }
             )
@@ -58,12 +73,14 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getEvent(eventId) },
         into = {
+            updateEventRoles()
             dao.insertEventDetail(
                 event = it.toEventDetailEntity(),
                 shifts = it.extractShiftEntities(),
                 places = it.extractPlaceEntities(),
                 roles = it.extractRoles()
             )
+            updateEventSalary(eventId)
         }
     )
 
@@ -98,7 +115,21 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getInvitations() },
         into = {
-            dao.insertInvitations(it.map { it.toInvitationEntity() })
+            updateEventRoles()
+            dao.insertInvitations(
+                it.map {
+                    it.toInvitationEntity()
+                }
+            )
+        }
+    )
+
+    override suspend fun updateEventTypes() = tryUpdate(
+        inScope = coroutineScope,
+        withHandler = handler,
+        from = { eventsApi.getEventTypes() },
+        into = {
+            dao.insertEventTypes(it)
         }
     )
 
