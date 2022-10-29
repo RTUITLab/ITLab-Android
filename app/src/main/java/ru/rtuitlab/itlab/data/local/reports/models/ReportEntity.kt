@@ -1,7 +1,8 @@
-package ru.rtuitlab.itlab.data.local.reports
+package ru.rtuitlab.itlab.data.local.reports.models
 
 import androidx.room.*
 import ru.rtuitlab.itlab.data.local.users.models.UserEntity
+import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportSalary
 
 @Entity(
     foreignKeys = [
@@ -28,7 +29,7 @@ data class ReportEntity(
     val implementerId: String // The person that this report is about, FK
 )
 
-data class ReportWithUsers(
+data class ReportWithUsersAndSalary(
     @Embedded val report: ReportEntity,
     @Relation(
         parentColumn = "reporterId",
@@ -40,4 +41,9 @@ data class ReportWithUsers(
         entityColumn = "id"
     )
     val implementer: UserEntity,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "reportId"
+    )
+    val salary: ReportSalary? = null
 )
