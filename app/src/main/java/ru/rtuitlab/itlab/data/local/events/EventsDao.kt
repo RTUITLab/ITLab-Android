@@ -36,18 +36,18 @@ interface EventsDao {
     suspend fun getRolesWithUsers(): List<UserWithRole>
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertEvent(
+    @Upsert
+    suspend fun upsertEvent(
         event: EventEntity
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertEventTypes(types: List<EventTypeModel>)
+    @Upsert
+    suspend fun upsertEventTypes(types: List<EventTypeModel>)
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertEventDetail(
+    @Upsert
+    suspend fun upsertEventDetail(
         event: EventDetailEntity,
         shifts: List<ShiftEntity>,
         places: List<PlaceEntity>,
@@ -55,8 +55,8 @@ interface EventsDao {
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserEvents(
+    @Upsert
+    suspend fun upsertUserEvents(
         events: List<UserEventEntity>
     )
 
@@ -67,14 +67,14 @@ interface EventsDao {
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertEvents(
+    @Upsert
+    suspend fun upsertEvents(
         events: List<EventEntity>
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertInvitations(
+    @Upsert
+    suspend fun upsertInvitations(
         invitations: List<EventInvitationEntity>
     )
 
@@ -88,40 +88,40 @@ interface EventsDao {
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertEventSalaries(
+    @Upsert
+    suspend fun upsertEventSalaries(
         salaries: List<EventSalaryEntity>
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertShiftSalaries(
+    @Upsert
+    suspend fun upsertShiftSalaries(
         salaries: List<EventShiftSalary>
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPlaceSalaries(
+    @Upsert
+    suspend fun upsertPlaceSalaries(
         salaries: List<EventPlaceSalary>
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFullEventSalary(
+    @Upsert
+    suspend fun upsertFullEventSalary(
         eventSalary: EventSalaryEntity,
         shiftSalaries: List<EventShiftSalary>,
         placeSalaries: List<EventPlaceSalary>
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertEventRoles(
+    @Upsert
+    suspend fun upsertEventRoles(
         roles: List<EventRoleModel>
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserEventRoles(
+    @Upsert
+    suspend fun upsertUserEventRoles(
         roles: List<UserEventRoleEntity>
     )
 }

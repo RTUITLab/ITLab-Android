@@ -41,7 +41,7 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getEvents(begin, end) },
         into = {
-            dao.insertEvents(
+            dao.upsertEvents(
                 it.map { it.toEventEntity() }
             )
         }
@@ -56,13 +56,13 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getUserEvents(userId, begin, end) },
         into = {
-            dao.insertEventRoles(
+            dao.upsertEventRoles(
                 it.map { it.role }
             )
-            dao.insertEventTypes(
+            dao.upsertEventTypes(
                 it.map { it.eventType }
             )
-            dao.insertUserEvents(
+            dao.upsertUserEvents(
                 it.map { it.toEntity() }
             )
         }
@@ -74,7 +74,7 @@ class EventsRepositoryImpl @Inject constructor(
         from = { eventsApi.getEvent(eventId) },
         into = {
             updateEventRoles()
-            dao.insertEventDetail(
+            dao.upsertEventDetail(
                 event = it.toEventDetailEntity(),
                 shifts = it.extractShiftEntities(),
                 places = it.extractPlaceEntities(),
@@ -89,7 +89,7 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getEventSalary(eventId) },
         into = {
-            dao.insertFullEventSalary(
+            dao.upsertFullEventSalary(
                 eventSalary = it.toEventSalaryEntity(),
                 shiftSalaries = it.shiftSalaries,
                 placeSalaries = it.placeSalaries
@@ -106,7 +106,7 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getEventRoles() },
         into = {
-            dao.insertEventRoles(it)
+            dao.upsertEventRoles(it)
         }
     )
 
@@ -116,7 +116,7 @@ class EventsRepositoryImpl @Inject constructor(
         from = { eventsApi.getInvitations() },
         into = {
             updateEventRoles()
-            dao.insertInvitations(
+            dao.upsertInvitations(
                 it.map {
                     it.toInvitationEntity()
                 }
@@ -129,7 +129,7 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getEventTypes() },
         into = {
-            dao.insertEventTypes(it)
+            dao.upsertEventTypes(it)
         }
     )
 

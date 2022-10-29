@@ -3,6 +3,7 @@ package ru.rtuitlab.itlab.data.remote.api.reports.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import ru.rtuitlab.itlab.data.local.reports.models.ReportEntity
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 
 @Serializable
@@ -32,6 +33,16 @@ data class ReportDto(
         salary = salary?.count,
         approvingCommentMd = salary?.description,
         implementer = implementer
+    )
+
+    fun toReportEntity() = ReportEntity(
+        id = id,
+        date = date,
+        text = text,
+        title = title,
+        isArchived = isArchived,
+        reporterId = assignees.reporterId,
+        implementerId = assignees.implementerId
     )
 }
 

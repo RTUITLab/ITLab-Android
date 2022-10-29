@@ -41,29 +41,29 @@ interface UsersDao {
     suspend fun getUserById(id: String): UserWithProperties
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(
+    @Upsert
+    suspend fun upsertUser(
         user: UserEntity,
         properties: List<UserPropertyEntity>
     )
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: UserEntity)
+    @Upsert
+    suspend fun upsertUser(user: UserEntity)
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertProperties(properties: List<UserPropertyEntity>)
+    @Upsert
+    suspend fun upsertProperties(properties: List<UserPropertyEntity>)
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(
+    @Upsert
+    suspend fun upsertAll(
         users: List<UserEntity>,
         properties: List<UserPropertyEntity>
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(users: List<UserEntity>)
+    @Upsert
+    suspend fun upsertAll(users: List<UserEntity>)
 
     @Transaction
     @Update
@@ -85,6 +85,6 @@ interface UsersDao {
     )
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPropertyTypes(types: List<UserPropertyTypeModel>)
+    @Upsert
+    suspend fun upsertPropertyTypes(types: List<UserPropertyTypeModel>)
 }
