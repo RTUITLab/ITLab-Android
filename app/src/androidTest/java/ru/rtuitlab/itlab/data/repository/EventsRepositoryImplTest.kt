@@ -56,9 +56,9 @@ class EventsRepositoryImplTest {
         dao = db.eventsDao
 
         runBlocking {
-            dao.insertEventTypes(eventTypes)
-            dao.insertEvents(eventEntities)
-            db.usersDao.insertAll(
+            dao.upsertEventTypes(eventTypes)
+            dao.upsertEvents(eventEntities)
+            db.usersDao.upsertAll(
                 Generator.users
             )
         }

@@ -10,7 +10,7 @@ interface ReportsRepositoryInterface {
 
     suspend fun updateReportSalaries(userId: String): Resource<List<ReportSalary>>
 
-    suspend fun updateReports(sortedBy: String): Resource<List<ReportDto>>
+    suspend fun updateReports(sortedBy: String = "date"): Resource<List<ReportDto>>
 
     suspend fun createReport(
         implementerId: String? = null,
