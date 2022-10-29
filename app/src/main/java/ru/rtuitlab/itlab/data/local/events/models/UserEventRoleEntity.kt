@@ -20,12 +20,13 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventRoleModel
             entity = PlaceEntity::class,
             parentColumns = ["id"],
             childColumns = ["placeId"]
-        ),
-
-    ]
+        )
+    ],
+    primaryKeys = ["userId", "roleId", "placeId"],
+    indices = [Index(value = ["userId", "roleId", "placeId"])]
 )
 data class UserEventRoleEntity(
-    @PrimaryKey val userId: String,
+    val userId: String,
     val roleId: String,
     val placeId: String,
     val participationType: UserParticipationType
