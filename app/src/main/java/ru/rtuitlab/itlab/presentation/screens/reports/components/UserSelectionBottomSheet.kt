@@ -25,7 +25,7 @@ fun UserSelectionBottomSheet(
 	onSelect: (User) -> Unit,
 	bottomSheetViewModel: BottomSheetViewModel
 ) {
-	val users by employeesViewModel.usersFlow.collectAsState()
+	val users by employeesViewModel.users.collectAsState()
 	val currentUserId = employeesViewModel.userIdFlow.collectAsState()
 	val currentUser = users.find { it.id == currentUserId.value }
 

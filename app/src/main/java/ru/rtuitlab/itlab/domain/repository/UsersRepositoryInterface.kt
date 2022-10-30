@@ -16,9 +16,13 @@ interface UsersRepositoryInterface {
 
     fun searchUsers(query: String): Flow<List<UserWithProperties>>
 
-    suspend fun getUserById(id: String): UserWithProperties
+    suspend fun getUserById(id: String): UserWithProperties?
 
-    suspend fun getCurrentUser(): UserWithProperties
+    fun observeUserById(id: String): Flow<UserWithProperties?>
+
+    suspend fun getCurrentUser(): UserWithProperties?
+
+    fun observeCurrentUser(): Flow<UserWithProperties?>
 
     suspend fun getPropertyTypes(): List<UserPropertyTypeModel>
 

@@ -2,6 +2,8 @@ package ru.rtuitlab.itlab.data.repository
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.local.AppDatabase
@@ -28,14 +30,26 @@ class UsersRepositoryImpl @Inject constructor(
 
     private val usersDao = db.usersDao
 
+    init {
+        coroutineScope.launch {
+            updateAllUsers()
+        }
+    }
+
     override fun getAllUsers() = usersDao.getUsers()
 
     override fun searchUsers(query: String) = usersDao.searchUsers(query)
 
     override suspend fun getUserById(id: String) = usersDao.getUserById(id)
 
+    override fun observeUserById(id: String) = usersDao.observeUserById(id)
+
     override suspend fun getCurrentUser() = usersDao.getUserById(
         id = authStateStorage.userIdFlow.first()
+    )
+
+    override fun observeCurrentUser() = usersDao.observeUserById(
+        id = runBlocking { authStateStorage.userIdFlow.first() }
     )
 
     override suspend fun getPropertyTypes(): List<UserPropertyTypeModel> =
@@ -52,52 +66,12 @@ class UsersRepositoryImpl @Inject constructor(
         properties: List<UserPropertyEntity>
     ) = usersDao.upsertUser(user, properties)
 
-    /*override suspend fun editUserInfo(info: UserEditRequest): Resource<UserResponse> {
-        var resource: Resource<UserResponse> = Resource.Loading
-
-        handler { usersApi.editUserInfo(info) }.handle(
-            onSuccess = {
-                resource = Resource.Success(it)
-                usersDao.updateUser(it.toUserEntity())
-            },
-            onError = {
-                resource = Resource.Error(it)
-            }
-        )
-
-        return resource
-    }*/
-
     override suspend fun editUserInfo(info: UserEditRequest) = tryUpdate(
         inScope = coroutineScope,
         withHandler = handler,
         from = { usersApi.editUserInfo(info) },
         into = { usersDao.updateUser(it.toUserEntity()) }
     )
-
-
-
-
-    /*override suspend fun editUserProperty(
-        propertyId: String,
-        newValue: String
-    ): Resource<UserPropertyModel> {
-        var resource: Resource<UserPropertyModel> = Resource.Loading
-
-        handler { usersApi.editUserProperty(
-            UserPropertyEditRequest(propertyId, newValue)
-        ) }.handle(
-            onSuccess = {
-                resource = Resource.Success(it)
-                usersDao.updateUserProperty(
-                    UserPropertyEntity(
-                        userId = getCurrentUser().userEntity.id,
-
-                    )
-                )
-            }
-        )
-    }*/
 
     override suspend fun editUserProperty(
         propertyId: String,
@@ -110,45 +84,19 @@ class UsersRepositoryImpl @Inject constructor(
                 UserPropertyEditRequest(propertyId, newValue)
             )
         },
-        into = {
-            usersDao.updateUserProperty(
-                UserPropertyEntity(
-                    userId = getCurrentUser().userEntity.id,
-                    typeId = it.userPropertyType.id,
-                    value = it.value,
-                    status = it.status
+        into = { prop ->
+            getCurrentUser()?.let {
+                usersDao.updateUserProperty(
+                    UserPropertyEntity(
+                        userId = it.userEntity.id,
+                        typeId = prop.userPropertyType.id,
+                        value = prop.value,
+                        status = prop.status
+                    )
                 )
-            )
+            }
         }
     )
-
-    /*override suspend fun updateAllUsers(): Resource<List<UserResponse>> {
-        var resource: Resource<List<UserResponse>> = Resource.Loading
-
-        // Using SupervisorScope to ensure this request completes even if
-        // parent coroutine scope is cancelled
-        withContext(coroutineScope.coroutineContext) {
-            handler { usersApi.getUsers() }.handle(
-                onSuccess = {
-                    resource = Resource.Success(it)
-                    val usersWithProperties = it.map { it.toUserWithProperties() }
-                    usersDao.insertAll(
-                        users = usersWithProperties.map { it.userEntity },
-                        properties = usersWithProperties.flatMap {
-                            it.properties.map {
-                                it.property
-                            }
-                        }
-                    )
-                },
-                onError = {
-                    resource = Resource.Error(it)
-                }
-            )
-        }
-
-        return resource
-    }*/
 
     override suspend fun updateAllUsers() = tryUpdate(
         inScope = coroutineScope,
@@ -166,30 +114,6 @@ class UsersRepositoryImpl @Inject constructor(
             )
         }
     )
-
-    /*override suspend fun updateUser(id: String): Resource<UserResponse> {
-        var resource: Resource<UserResponse> = Resource.Loading
-
-        withContext(coroutineScope.coroutineContext) {
-            handler { usersApi.getUser(id) }.handle(
-                onSuccess = {
-                    val userWithProperties = it.toUserWithProperties()
-                    resource = Resource.Success(it)
-                    usersDao.insertUser(
-                        user = userWithProperties.userEntity,
-                        properties = userWithProperties.properties.map {
-                            it.property
-                        }
-                    )
-                },
-                onError = {
-                    resource = Resource.Error(it)
-                }
-            )
-        }
-
-        return resource
-    }*/
 
     override suspend fun updateUser(id: String) = tryUpdate(
         inScope = coroutineScope,

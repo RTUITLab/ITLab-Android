@@ -38,7 +38,10 @@ interface UsersDao {
 
     @Transaction
     @Query("SELECT * FROM UserEntity WHERE id = :id")
-    suspend fun getUserById(id: String): UserWithProperties
+    suspend fun getUserById(id: String): UserWithProperties?
+
+    @Query("SELECT * FROM UserEntity WHERE id = :id")
+    fun observeUserById(id: String): Flow<UserWithProperties?>
 
     @Transaction
     @Upsert
