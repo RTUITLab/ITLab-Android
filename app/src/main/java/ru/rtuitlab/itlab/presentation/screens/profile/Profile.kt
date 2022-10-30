@@ -15,30 +15,28 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.presentation.screens.employees.EmployeeCredentials
 import ru.rtuitlab.itlab.presentation.screens.employees.components.UserEvents
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
 @Composable
 fun Profile(
-	profileViewModel: ProfileViewModel,
-	bottomSheetViewModel: BottomSheetViewModel
+    profileViewModel: ProfileViewModel,
+    bottomSheetViewModel: BottomSheetViewModel
 ) {
-	val userCredentialsResource by profileViewModel.userCredentialsFlow.collectAsState()
-	LaunchedEffect(true){
-		profileViewModel.fetchUserCredentials()
-	}
-	Column(
-		modifier = Modifier
-			.fillMaxSize()
-			.verticalScroll(rememberScrollState()),
-		horizontalAlignment = Alignment.CenterHorizontally
-	) {
-			EmployeeCredentials(userCredentialsResource)
-			/*UserDevices(userDevicesResource)*/
-			UserEvents(
-				userViewModel = profileViewModel,
-				bottomSheetViewModel = bottomSheetViewModel
-			)
-	}
+    val user by profileViewModel.user.collectAsState()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        user?.let {
+            EmployeeCredentials(it)
+        }
+        /*UserDevices(userDevicesResource)*/
+        UserEvents(
+            userViewModel = profileViewModel,
+            bottomSheetViewModel = bottomSheetViewModel
+        )
+    }
 }

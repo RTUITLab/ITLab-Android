@@ -6,10 +6,7 @@ import ru.rtuitlab.itlab.data.local.users.models.PropertyWithType
 import ru.rtuitlab.itlab.data.local.users.models.UserEntity
 import ru.rtuitlab.itlab.data.local.users.models.UserPropertyEntity
 import ru.rtuitlab.itlab.data.local.users.models.UserWithProperties
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyModel
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
+import ru.rtuitlab.itlab.data.remote.api.users.models.*
 
 interface UsersRepositoryInterface {
     fun getAllUsers(): Flow<List<UserWithProperties>>
@@ -25,6 +22,8 @@ interface UsersRepositoryInterface {
     fun observeCurrentUser(): Flow<UserWithProperties?>
 
     suspend fun getPropertyTypes(): List<UserPropertyTypeModel>
+
+    fun observePropertyTypes(): Flow<List<UserPropertyTypeModel>>
 
     suspend fun getProperties(): List<UserPropertyEntity>
 
@@ -43,6 +42,8 @@ interface UsersRepositoryInterface {
     )
 
     suspend fun updateAllUsers(): Resource<List<UserResponse>>
+
+    suspend fun updatePropertyTypes(): Resource<List<UserPropertyTypeModel>>
 
     suspend fun updateUser(id: String): Resource<UserResponse>
 

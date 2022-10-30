@@ -92,4 +92,10 @@ data class User(
 
 	fun getGravatarWithSize(sizeOfImage:Int) = "$gravatarUrl?s=$sizeOfImage"
 
+	fun getEditRequest() = UserEditRequest(
+		firstName = firstName,
+		lastName = lastName,
+		middleName = middleName,
+		phoneNumber = phoneNumber
+	)
 }

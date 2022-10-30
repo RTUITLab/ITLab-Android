@@ -55,6 +55,8 @@ class UsersRepositoryImpl @Inject constructor(
     override suspend fun getPropertyTypes(): List<UserPropertyTypeModel> =
         usersDao.getPropertyTypes()
 
+    override fun observePropertyTypes() = usersDao.observePropertyTypes()
+
     override suspend fun getProperties(): List<UserPropertyEntity> =
         usersDao.getProperties()
 
@@ -103,6 +105,7 @@ class UsersRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { usersApi.getUsers() },
         into = {
+            updatePropertyTypes()
             val usersWithProperties = it.map { it.toUserWithProperties() }
             usersDao.upsertAll(
                 users = usersWithProperties.map { it.userEntity },
@@ -113,6 +116,13 @@ class UsersRepositoryImpl @Inject constructor(
                 }
             )
         }
+    )
+
+    override suspend fun updatePropertyTypes() = tryUpdate(
+        inScope = coroutineScope,
+        withHandler = handler,
+        from = { usersApi.getPropertyTypes() },
+        into = { usersDao.upsertPropertyTypes(it) }
     )
 
     override suspend fun updateUser(id: String) = tryUpdate(

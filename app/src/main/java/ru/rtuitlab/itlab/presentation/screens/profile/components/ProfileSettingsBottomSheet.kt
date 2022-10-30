@@ -44,7 +44,7 @@ fun ProfileSettingsBottomSheet(
 	authViewModel: AuthViewModel = viewModel()
 ) {
 
-	val credentials by profileViewModel.userCredentialsFlow.collectAsState()
+	val user by profileViewModel.user.collectAsState()
 	val properties by profileViewModel.properties.collectAsState()
 
 	var selectedFieldText: String? by remember{ mutableStateOf("")}
@@ -55,139 +55,126 @@ fun ProfileSettingsBottomSheet(
 
 	val scope = rememberCoroutineScope()
 
-	credentials.handle(
-		onSuccess = { userResponse ->
-
-			var isLoading by remember { mutableStateOf(false) }
-			var open by remember{ mutableStateOf(false)}
-			userResponse.toUser().run {
-				Column(
-					modifier = Modifier
-						.padding(bottom = 15.dp)
-				) {
-					ProfileSettingsItem(
-						painter = painterResource(R.drawable.ic_last_name),
-						contentDescription = stringResource(R.string.last_name),
-						text = lastName
-					) {
-						selectedFieldText = lastName
-						fieldEditedNow = EditableField.LAST_NAME
-						open = true
-					}
-
-					ProfileSettingsItem(
-						painter = painterResource(R.drawable.ic_first_name),
-						contentDescription = stringResource(R.string.first_name),
-						text = firstName
-					) {
-						selectedFieldText = firstName
-						fieldEditedNow = EditableField.FIRST_NAME
-						open = true
-					}
-
-					ProfileSettingsItem(
-						painter = painterResource(R.drawable.ic_middle_name),
-						contentDescription = stringResource(R.string.middle_name),
-						text = middleName
-					) {
-						selectedFieldText = middleName
-						fieldEditedNow = EditableField.MIDDLE_NAME
-						open = true
-					}
-
-					ProfileSettingsItem(
-						icon = Icons.Default.Mail,
-						contentDescription = stringResource(R.string.email),
-						text = email
-					) {}
-
-					ProfileSettingsItem(
-						icon = Icons.Default.Phone,
-						contentDescription = stringResource(R.string.phone_number),
-						text = phoneNumber
-					) {
-						selectedFieldText = phoneNumber
-						fieldEditedNow = EditableField.PHONE_NUMBER
-						open = true
-					}
-
-					properties.handle(
-						onSuccess = { list ->
-							list.map { it.toUiPropertyType() }.forEach { prop ->
-								val userPropValue = userResponse.properties.find { it.userPropertyType.id == prop.id }?.value ?: ""
-								ProfileSettingsItem(
-									icon = prop.icon ?: ImageVector.vectorResource(prop.vectorResource!!),
-									contentDescription = prop.nameResource?.let { stringResource(it) } ?: prop.name!!,
-									text = userPropValue
-								) {
-									selectedFieldText = userPropValue
-									selectedProperty = prop
-									open = true
-								}
-							}
-						}
-					)
-
-					Divider()
-
-					ProfileSettingsItem(
-						icon = Icons.Default.Logout,
-						contentDescription = stringResource(R.string.logout),
-						text = stringResource(R.string.logout),
-						tint = AppColors.red,
-						onClick = {
-							authViewModel.enterLogoutFlow()
-							bottomSheetViewModel.hide(scope)
-						}
-					)
-
-				}
-				if (open)
-					SettingsDialog(
-						initialValue = selectedFieldText,
-						isLoading = isLoading,
-						title = selectedProperty?.name ?: stringResource(selectedProperty?.nameResource ?: fieldEditedNow!!.nameResource)
-					) { newValue ->
-						newValue?.let {
-							if (isLoading) return@let
-							selectedProperty?.let {
-								isLoading = true
-								profileViewModel.editUserProperty(
-									id = it.id,
-									value = newValue,
-									credentials = userResponse
-								) {
-									isLoading = false
-									selectedProperty = null
-									open = false
-								}
-							} ?:
-							fieldEditedNow?.let {
-								profileViewModel.editUserInfo(
-									info =
-										when(fieldEditedNow) {
-											EditableField.FIRST_NAME -> userResponse.getEditRequest().copy(firstName = newValue)
-											EditableField.MIDDLE_NAME -> userResponse.getEditRequest().copy(middleName = newValue)
-											EditableField.LAST_NAME -> userResponse.getEditRequest().copy(lastName = newValue)
-											EditableField.PHONE_NUMBER -> userResponse.getEditRequest().copy(phoneNumber = newValue)
-											else -> userResponse.getEditRequest()
-										},
-									userResponse = userResponse
-								) {
-									isLoading = false
-									fieldEditedNow = null
-									open = false
-								}
-							}
-						} ?: run { fieldEditedNow = null; selectedProperty = null }
-						if (!isLoading) open = false
-					}
+	var isLoading by remember { mutableStateOf(false) }
+	var open by remember{ mutableStateOf(false)}
+	user?.run {
+		Column(
+			modifier = Modifier
+				.padding(bottom = 15.dp)
+		) {
+			ProfileSettingsItem(
+				painter = painterResource(R.drawable.ic_last_name),
+				contentDescription = stringResource(R.string.last_name),
+				text = lastName
+			) {
+				selectedFieldText = lastName
+				fieldEditedNow = EditableField.LAST_NAME
+				open = true
 			}
-		},
-		onError = {
-			LoadingError(msg = it)
+
+			ProfileSettingsItem(
+				painter = painterResource(R.drawable.ic_first_name),
+				contentDescription = stringResource(R.string.first_name),
+				text = firstName
+			) {
+				selectedFieldText = firstName
+				fieldEditedNow = EditableField.FIRST_NAME
+				open = true
+			}
+
+			ProfileSettingsItem(
+				painter = painterResource(R.drawable.ic_middle_name),
+				contentDescription = stringResource(R.string.middle_name),
+				text = middleName
+			) {
+				selectedFieldText = middleName
+				fieldEditedNow = EditableField.MIDDLE_NAME
+				open = true
+			}
+
+			ProfileSettingsItem(
+				icon = Icons.Default.Mail,
+				contentDescription = stringResource(R.string.email),
+				text = email
+			) {}
+
+			ProfileSettingsItem(
+				icon = Icons.Default.Phone,
+				contentDescription = stringResource(R.string.phone_number),
+				text = phoneNumber
+			) {
+				selectedFieldText = phoneNumber
+				fieldEditedNow = EditableField.PHONE_NUMBER
+				open = true
+			}
+
+			properties.map { it.toUiPropertyType() }.forEach { prop ->
+				val userPropValue = user?.properties?.find { it.userPropertyType.id == prop.id }?.value ?: ""
+				ProfileSettingsItem(
+					icon = prop.icon ?: ImageVector.vectorResource(prop.vectorResource!!),
+					contentDescription = prop.nameResource?.let { stringResource(it) } ?: prop.name!!,
+					text = userPropValue
+				) {
+					selectedFieldText = userPropValue
+					selectedProperty = prop
+					open = true
+				}
+			}
+
+			Divider()
+
+			ProfileSettingsItem(
+				icon = Icons.Default.Logout,
+				contentDescription = stringResource(R.string.logout),
+				text = stringResource(R.string.logout),
+				tint = AppColors.red,
+				onClick = {
+					authViewModel.enterLogoutFlow()
+					bottomSheetViewModel.hide(scope)
+				}
+			)
+
 		}
-	)
+		if (open)
+			SettingsDialog(
+				initialValue = selectedFieldText,
+				isLoading = isLoading,
+				title = selectedProperty?.name ?: stringResource(selectedProperty?.nameResource ?: fieldEditedNow!!.nameResource)
+			) { newValue ->
+				if (isLoading) return@SettingsDialog
+				newValue?.let {
+					selectedProperty?.let {
+						isLoading = true
+						profileViewModel.editUserProperty(
+							id = it.id,
+							value = newValue
+						) {
+							isLoading = false
+							selectedProperty = null
+							open = false
+						}
+					} ?:
+					fieldEditedNow?.let {
+						isLoading = true
+						profileViewModel.editUserInfo(
+							info =
+							when(fieldEditedNow) {
+								EditableField.FIRST_NAME -> this@run.getEditRequest().copy(firstName = newValue)
+								EditableField.MIDDLE_NAME -> this@run.getEditRequest().copy(middleName = newValue)
+								EditableField.LAST_NAME -> this@run.getEditRequest().copy(lastName = newValue)
+								EditableField.PHONE_NUMBER -> this@run.getEditRequest().copy(phoneNumber = newValue)
+								else -> this@run.getEditRequest()
+							}
+						) {
+							isLoading = false
+							fieldEditedNow = null
+							open = false
+						}
+					}
+				} ?: run { fieldEditedNow = null; selectedProperty = null }
+				if (!isLoading) open = false
+			}
+	}
 }
 
 @Composable

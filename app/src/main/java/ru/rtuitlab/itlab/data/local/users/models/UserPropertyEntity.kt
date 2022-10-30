@@ -19,10 +19,12 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
             childColumns = arrayOf("userId"),
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    primaryKeys = ["userId", "typeId"],
+    indices = [Index(value = ["userId", "typeId"])]
 )
 data class UserPropertyEntity(
-    @PrimaryKey val userId: String, // FK
+    val userId: String, // FK
     val typeId: String, // FK
     val value: String? = null,
     val status: String? = null,
