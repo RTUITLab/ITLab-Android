@@ -23,13 +23,13 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.common.Resource
+import ru.rtuitlab.itlab.common.toClientDate
 import ru.rtuitlab.itlab.presentation.UserViewModel
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.components.UserEventCardContent
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
+import ru.rtuitlab.itlab.presentation.ui.components.LoadingErrorRetry
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.extensions.toClientDate
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
@@ -40,11 +40,15 @@ fun ProfileEventsBottomSheet(
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
 	userViewModel: UserViewModel
 ) {
-	val userEventsResource by userViewModel.userEventsFlow.collectAsState()
 	val beginEventsDate by userViewModel.beginEventsDate.collectAsState()
 	val endEventsDate by userViewModel.endEventsDate.collectAsState()
-	LaunchedEffect(userEventsResource) {
-		if (userEventsResource is Resource.Empty)
+
+	val events by userViewModel.events.collectAsState()
+	val areEventsRefreshing by userViewModel.areEventsRefreshing.collectAsState()
+	val errorMessage by userViewModel.eventUpdateErrorMessage.collectAsState()
+
+	LaunchedEffect(Unit) {
+		if (events.isEmpty())
 			userViewModel.setEventsDates(
 				begin = beginEventsDate,
 				end = endEventsDate
@@ -80,46 +84,48 @@ fun ProfileEventsBottomSheet(
 	) {
 		Text("${beginEventsDate.toClientDate()} — ${endEventsDate.toClientDate()}")
 	}
-	userEventsResource.handle(
-		onLoading = {
-			CircularProgressIndicator(
-				modifier = Modifier.padding(16.dp),
-				color = AppColors.accent.collectAsState().value
-			)
-		},
-		onError = { msg ->
-			Text(text = msg)
-		},
-		onSuccess = { events ->
-			Spacer(modifier = Modifier.height(10.dp))
-			if (events.isEmpty())
-				Box(
-					modifier = Modifier
-						.fillMaxWidth()
-						.padding(16.dp),
-					contentAlignment = Alignment.Center
-				) {
-					Text(stringResource(R.string.events_nothing_in_period))
-				}
-			else
-				LazyColumn {
-					items(
-						items = events.distinctBy { it.id },
-						key = { it.id }
-					) {
-						Column(
-							modifier = Modifier.clickable {
-								navController.navigate("${AppScreen.EventDetails.navLink}/${it.id}")
-								bottomSheetViewModel.hide(scope)
-							}
-						) {
-							Divider()
-							Spacer(modifier = Modifier.height(10.dp))
-							UserEventCardContent(it)
-							Spacer(modifier = Modifier.height(10.dp))
-						}
-					}
-				}
+
+	Spacer(modifier = Modifier.height(10.dp))
+	if (events.isEmpty()) {
+		Box(
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(16.dp),
+			contentAlignment = Alignment.Center
+		) {
+			Text(stringResource(R.string.events_nothing_in_period))
 		}
-	)
+	} else {
+		LazyColumn {
+			items(
+				items = events.distinctBy { it.id },
+				key = { it.id }
+			) {
+				Column(
+					modifier = Modifier.clickable {
+						navController.navigate("${AppScreen.EventDetails.navLink}/${it.id}")
+						bottomSheetViewModel.hide(scope)
+					}
+				) {
+					Divider()
+					Spacer(modifier = Modifier.height(10.dp))
+					UserEventCardContent(it)
+					Spacer(modifier = Modifier.height(10.dp))
+				}
+			}
+		}
+	}
+
+	errorMessage?.let {
+		LoadingErrorRetry(errorMessage = it) {
+			userViewModel.updateEvents()
+		}
+	}
+
+	if (areEventsRefreshing) {
+		CircularProgressIndicator(
+			modifier = Modifier.padding(16.dp),
+			color = AppColors.accent.collectAsState().value
+		)
+	}
 }

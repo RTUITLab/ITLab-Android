@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.screens.purchases
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,7 +8,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import ru.rtuitlab.itlab.BuildConfig
-import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
 import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingDirection
@@ -24,8 +22,8 @@ import ru.rtuitlab.itlab.data.repository.UsersRepository
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.NewPurchaseUiState
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.PurchaseUiState
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.PurchasesUiState
-import ru.rtuitlab.itlab.presentation.ui.extensions.toIso8601
-import ru.rtuitlab.itlab.presentation.ui.extensions.toMoscowDateTime
+import ru.rtuitlab.itlab.common.toIso8601
+import ru.rtuitlab.itlab.common.toMoscowDateTime
 import java.io.File
 import javax.inject.Inject
 

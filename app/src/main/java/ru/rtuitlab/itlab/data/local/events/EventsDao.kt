@@ -12,24 +12,42 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventTypeModel
 @Dao
 interface EventsDao {
     @Transaction
-    @Query("SELECT * FROM EventEntity")
+    @Query("SELECT * FROM EventEntity ORDER BY DATETIME(beginTime)")
     fun getAllEvents(): Flow<List<EventWithType>>
 
-    @Query("SELECT * FROM EventEntity WHERE title LIKE '%' | :query | '%'")
-    fun searchEvents(query: String): Flow<List<EventWithType>>
+    // ISO8601 timestamps are designed to be comparable as strings,
+    // and since ITLab uses only one timezone, there is no need to
+    // use SQLite DATETIME function, so we reduce overhead
+    @Query("""SELECT * FROM EventEntity
+    WHERE (title LIKE '%' || :query || '%') AND
+    endTime >= :begin AND
+    beginTime <= :end
+    ORDER BY DATETIME(beginTime) DESC""")
+    fun searchEvents(
+        query: String,
+        begin: String,
+        end: String
+    ): Flow<List<EventWithType>>
+
+    @Query("""SELECT * FROM UserEventEntity 
+        WHERE title LIKE '%' || :query || '%' 
+        ORDER BY DATETIME(beginTime) DESC""")
+    fun searchUserEvents(query: String): Flow<List<UserEventWithTypeAndRole>>
 
     @Transaction
     @Query("SELECT * FROM EventDetailEntity WHERE id = :id")
     fun getEventDetail(id: String): Flow<EventWithShiftsAndSalary?>
 
     @Query("SELECT * FROM EventInvitationEntity")
-    fun getInvitations(): Flow<List<EventInvitationEntity>>
+    fun getInvitations(): Flow<List<EventInvitationWithTypeAndRole>>
 
-    @Query("SELECT * FROM UserEventEntity")
-    fun getUserEvents(): Flow<List<UserEventWithTypeAndRole>>
+    @Query("""SELECT * FROM UserEventEntity
+        WHERE userId = :userId
+        ORDER BY DATETIME(beginTime)""")
+    fun getUserEvents(userId: String): Flow<List<UserEventWithTypeAndRole>>
 
     @Query("SELECT * FROM EventRoleModel")
-    suspend fun getEventRoles(): List<EventRoleModel>
+    fun getEventRoles(): Flow<List<EventRoleModel>>
 
     @Transaction
     @Query("SELECT * FROM UserEventRoleEntity")
@@ -80,6 +98,9 @@ interface EventsDao {
 
     @Delete
     suspend fun deleteInvitation(invitation: EventInvitationEntity)
+
+    @Query("DELETE FROM EventInvitationEntity WHERE id = :id AND placeId = :placeId")
+    suspend fun deleteInvitation(id: String, placeId: String)
 
     @Transaction
     @Delete

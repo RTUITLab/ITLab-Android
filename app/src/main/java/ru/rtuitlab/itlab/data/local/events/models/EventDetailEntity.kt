@@ -23,7 +23,13 @@ data class EventDetailEntity(
 
 
 data class EventWithShiftsAndSalary(
-    @Embedded val event: EventDetailEntity,
+    @Embedded val eventDetail: EventDetailEntity,
+    @Relation(
+        entity = EventEntity::class,
+        parentColumn = "id",
+        entityColumn = "id"
+    )
+    val eventInfo: EventWithType,
     @Relation(
         entity = ShiftEntity::class,
         parentColumn = "id",
@@ -35,4 +41,11 @@ data class EventWithShiftsAndSalary(
         entityColumn = "eventId"
     )
     val salary: EventSalaryEntity? = null
-)
+) {
+
+    @Ignore
+    val beginTime = shifts.minOf { it.shift.beginTime }
+
+    @Ignore
+    val endTime = shifts.maxOf { it.shift.endTime }
+}

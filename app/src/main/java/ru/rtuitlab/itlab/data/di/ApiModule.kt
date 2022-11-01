@@ -56,8 +56,8 @@ object ApiModule {
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient =
         OkHttpClient().newBuilder()
-            .addInterceptor(loggingInterceptor)
             .addInterceptor(tokenInterceptor)
+            .addInterceptor(loggingInterceptor)
             .build()
 
 

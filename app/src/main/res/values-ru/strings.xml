@@ -188,5 +188,6 @@
 
     //Users
     <string name="gravatar">Граватар</string>
+    <string name="local_copy_inaccessible">Локальная копия данного ресурса недоступна</string>
 
 </resources>

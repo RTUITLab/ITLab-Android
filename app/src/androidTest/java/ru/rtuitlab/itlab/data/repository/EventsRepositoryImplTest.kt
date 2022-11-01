@@ -95,10 +95,10 @@ class EventsRepositoryImplTest {
 
     @Test
     fun fetchEvent() = runTest {
-        val result = eventsRepo.fetchEvent("0") as Resource.Success
+        val result = eventsRepo.updateEventDetails("0") as Resource.Success
 
         val expected = EventWithShiftsAndSalary(
-            event = result.data.toEventDetailEntity(),
+            eventDetail = result.data.toEventDetailEntity(),
             shifts = result.data.extractShiftEntities().mapIndexed { i, shift ->
                 ShiftWithPlacesAndSalary(
                     shift = shift,
@@ -147,7 +147,7 @@ class EventsRepositoryImplTest {
 
     @Test
     fun updateEventSalary() = runTest {
-        eventsRepo.fetchEvent("2")
+        eventsRepo.updateEventDetails("2")
         val result = eventsRepo.updateEventSalary("2") as Resource.Success
         val event = eventsRepo.getEventDetail("2").first()!!
         assertThat(
@@ -174,13 +174,13 @@ class EventsRepositoryImplTest {
         eventsRepo.updateEvents().handle(
             onSuccess = {
                 details = it.map {
-                    (eventsRepo.fetchEvent(it.id) as Resource.Success).data
+                    (eventsRepo.updateEventDetails(it.id) as Resource.Success).data
                 }
             }
         )
 
         assertThat(
-            dao.getEventDetail("3").first()!!.event
+            dao.getEventDetail("3").first()!!.eventDetail
         ).isIn(details.map { it.toEventDetailEntity() })
     }
 
@@ -189,7 +189,7 @@ class EventsRepositoryImplTest {
         eventsRepo.updateEvents().handle(
             onSuccess = {
                 it.forEach {
-                    eventsRepo.fetchEvent(it.id)
+                    eventsRepo.updateEventDetails(it.id)
                 }
             }
         )

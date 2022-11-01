@@ -32,6 +32,7 @@
     <string name="retry">Retry</string>
     <string name="sort_asc">In ascending order</string>
     <string name="send">Send</string>
+    <string name="local_copy_inaccessible">Local copy of this resource is not present</string>
 
 
     <!--    Events    -->

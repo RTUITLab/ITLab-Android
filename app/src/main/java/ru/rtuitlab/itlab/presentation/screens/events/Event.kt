@@ -20,18 +20,20 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.domain.model.EventDetail
+import ru.rtuitlab.itlab.data.local.events.models.EventWithShiftsAndSalary
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftCard
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
-import ru.rtuitlab.itlab.presentation.ui.components.LoadingIndicator
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CollapsibleScrollArea
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.SwipingStates
-import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
+import ru.rtuitlab.itlab.common.fromIso8601
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
@@ -44,37 +46,44 @@ fun Event(
 	bottomSheetViewModel: BottomSheetViewModel = singletonViewModel(),
 	appBarViewModel: AppBarViewModel = singletonViewModel()
 ) {
+	val event by eventViewModel.event.collectAsState()
 
-	val eventResource by eventViewModel.eventResourceFlow.collectAsState()
+	val isRefreshing by eventViewModel.isRefreshing.collectAsState()
+
+	val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
+
+	eventViewModel.uiEvents.collectUiEvents(scaffoldState)
 
 	Scaffold(
-		scaffoldState = rememberScaffoldState(snackbarHostState = eventViewModel.snackbarHostState)
+		scaffoldState = scaffoldState
 	) {
-		Column(
+		SwipeRefresh(
 			modifier = Modifier
-				.fillMaxWidth()
+				.fillMaxSize(),
+			state = rememberSwipeRefreshState(isRefreshing),
+			onRefresh = {
+				eventViewModel.updateDetails()
+			}
 		) {
-			eventResource.handle(
-				onLoading = {
-					LoadingIndicator()
-				},
-				onError = { msg ->
-					LoadingError(msg = msg)
-				},
-				onSuccess = {
+			Column(
+				modifier = Modifier
+					.fillMaxWidth()
+			) {
+				event?.let {
 					LaunchedEffect(null) {
 						if (appBarViewModel.currentScreen.value is AppScreen.EventDetails)
 							appBarViewModel.onNavigate(
-								AppScreen.EventDetails(it.first.title)
+								AppScreen.EventDetails(it.eventDetail.title)
 							)
 					}
 					EventInfoWithList(
-						event = it.first.toEvent(it.second),
+						event = it,
 						eventViewModel = eventViewModel,
 						bottomSheetViewModel = bottomSheetViewModel
 					)
-				}
-			)
+					event
+				} ?: LoadingError(msg = stringResource(R.string.local_copy_inaccessible))
+			}
 		}
 	}
 }
@@ -82,7 +91,7 @@ fun Event(
 @OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun EventInfoWithList(
-	event: EventDetail,
+	event: EventWithShiftsAndSalary,
 	eventViewModel: EventViewModel,
 	bottomSheetViewModel: BottomSheetViewModel
 ) {
@@ -160,7 +169,7 @@ private fun endConstraintSet() = ConstraintSet {
 @ExperimentalMaterialApi
 @Composable
 private fun EventInfo(
-	event: EventDetail,
+	event: EventWithShiftsAndSalary,
 	modifier: Modifier = Modifier,
 	bottomSheetViewModel: BottomSheetViewModel
 ) {
@@ -201,7 +210,7 @@ private fun EventInfo(
 				Text(
 					text = if (event.salary != null) stringResource(
 						R.string.salary_int,
-						event.salary
+						event.salary.count
 					) else stringResource(R.string.salary_not_specified)
 				)
 			}
@@ -212,7 +221,7 @@ private fun EventInfo(
 				spacing = 10.dp
 			) {
 				Text(
-					text = event.address
+					text = event.eventDetail.address
 				)
 			}
 
@@ -222,7 +231,7 @@ private fun EventInfo(
 				spacing = 10.dp
 			) {
 				Text(
-					text = "${event.currentParticipationCount}/${event.targetParticipationCount}"
+					text = "${event.eventInfo.event.currentParticipantsCount}/${event.eventInfo.event.targetParticipantsCount}"
 				)
 			}
 
@@ -237,7 +246,7 @@ private fun EventInfo(
 					horizontalArrangement = Arrangement.SpaceBetween
 				) {
 					Text(
-						text = event.type
+						text = event.eventInfo.type.title
 					)
 
 					InteractiveField(
@@ -245,7 +254,7 @@ private fun EventInfo(
 						hasArrow = true
 					) {
 						bottomSheetViewModel.show(
-							sheet = AppBottomSheet.EventDescription(event.description),
+							sheet = AppBottomSheet.EventDescription(event.eventDetail.description),
 							scope = coroutineScope
 						)
 					}
@@ -260,11 +269,14 @@ private fun EventInfo(
 @ExperimentalMaterialApi
 @Composable
 private fun EventShifts(
-	event: EventDetail,
+	event: EventWithShiftsAndSalary,
 	eventViewModel: EventViewModel,
 	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val coroutineScope = rememberCoroutineScope()
+
+	val shifts = event.shifts
+
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
@@ -283,8 +295,8 @@ private fun EventShifts(
 				)
 			}
 			items(
-				items = event.shifts.sortedBy { it.beginTime },
-				key = { it.id }
+				items = shifts.sortedBy { it.shift.beginTime },
+				key = { it.shift.id }
 			) { shift ->
 				ShiftCard(
 					modifier = Modifier
@@ -293,26 +305,12 @@ private fun EventShifts(
 							bottomSheetViewModel.show(
 								AppBottomSheet.EventShift(
 									shift,
-									// If places salaries are specified, pass them
-									// Else, if this shift salary is specified, pass it - all places will be worth their shift
-									// If neither shift, nor places salary is specified, use event salary as default
-									// If none of the above is specified, pass -1.
-									salaries = shift.places.map { place ->
-										event.placeSalaries.find { placeSalary ->
-											place.id == placeSalary.placeId
-										}?.count ?:
-										event.shiftSalaries.find { shiftSalary ->
-											shift.id == shiftSalary.shiftId
-										}?.count ?:
-										event.salary ?: -1
-									},
 									eventViewModel = eventViewModel
 								),
 								coroutineScope
 							)
 						},
-					shift = shift,
-					salary = event.shiftSalaries.find { it.shiftId == shift.id }?.count ?: event.salary
+					shiftWithPlacesAndSalary = shift
 				)
 			}
 		}

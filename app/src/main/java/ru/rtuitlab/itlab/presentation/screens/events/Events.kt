@@ -6,6 +6,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -25,6 +28,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.components.UserEventCard
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CollapsibleScrollArea
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.heightDelta
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.EventTab
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
@@ -35,14 +39,9 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 fun Events(
 	eventsViewModel: EventsViewModel = singletonViewModel()
 ) {
-	val eventsResource by eventsViewModel.eventsListResponsesFlow.collectAsState()
-	val userEventsResource by eventsViewModel.userEventsListResponsesFlow.collectAsState()
-	val pastEventsResource by eventsViewModel.pastEventsListResponseFlow.collectAsState()
-	val events by eventsViewModel.eventsFlow.collectAsState()
-	val pastEvents by eventsViewModel.pastEventsFlow.collectAsState()
-	val showPastEvents by eventsViewModel.showPastEvents.collectAsState()
+	val userEvents by eventsViewModel.userEvents.collectAsState()
 
-	var isRefreshing by remember { mutableStateOf(false) }
+	val isRefreshing by eventsViewModel.isRefreshing.collectAsState()
 	var secondPageVisited by rememberSaveable { mutableStateOf(false) }
 
 	val pagerState = eventsViewModel.pagerState
@@ -54,85 +53,58 @@ fun Events(
 			if (secondPageVisited) cancel()
 			if (page == 1 && !secondPageVisited) {
 				secondPageVisited = true
-				eventsViewModel.fetchUserEvents()
+				eventsViewModel.updateUserEvents()
 			}
 		}
 
 	}
+	val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
 
-	HorizontalPager(
-		modifier = Modifier
-			.fillMaxSize(),
-		verticalAlignment = Alignment.Top,
-		count = tabs.size,
-		state = pagerState,
-		itemSpacing = 1.dp
-	) { index ->
-		SwipeRefresh(
-			modifier = Modifier.fillMaxSize(),
-			state = rememberSwipeRefreshState(isRefreshing),
-			onRefresh = {
-				eventsViewModel.fetchPendingEvents()
-				eventsViewModel.fetchInvitations()
-			}
-		) {
-			CollapsibleScrollArea(
-				swipingState = swipingState,
-				heightDelta = heightDelta
+	eventsViewModel.uiEvents.collectUiEvents(scaffoldState)
+
+	Scaffold(
+		scaffoldState = scaffoldState
+	) {
+		HorizontalPager(
+			modifier = Modifier
+				.fillMaxSize(),
+			verticalAlignment = Alignment.Top,
+			count = tabs.size,
+			state = pagerState,
+			itemSpacing = 1.dp
+		) { index ->
+			SwipeRefresh(
+				modifier = Modifier.fillMaxSize(),
+				state = rememberSwipeRefreshState(isRefreshing),
+				onRefresh = {
+					eventsViewModel.updatePendingEvents()
+					eventsViewModel.updateNotifications()
+					eventsViewModel.updateUserEvents()
+				}
 			) {
-				when (tabs[index]) {
-					EventTab.All -> {
-						eventsResource.handle(
-							onLoading = {
-								isRefreshing = true
-							},
-							onError = { msg ->
-								isRefreshing = false
-								LoadingError(msg = msg)
-							},
-							onSuccess = {
-								isRefreshing = false
-								eventsViewModel.onResourceSuccess(it)
-
-								EventsList(
-									eventsViewModel = eventsViewModel,
-									listState = eventsViewModel.allEventsListState
+				CollapsibleScrollArea(
+					swipingState = swipingState,
+					heightDelta = heightDelta
+				) {
+					when (tabs[index]) {
+						EventTab.All -> {
+							EventsList(
+								eventsViewModel = eventsViewModel
+							)
+						}
+						EventTab.My -> {
+							if (userEvents.isEmpty()) {
+								LoadingError(msg = stringResource(R.string.no_user_events))
+							} else {
+								UserEventsList(
+									eventsViewModel = eventsViewModel
 								)
 							}
-						)
-						pastEventsResource.handle(
-							onLoading = { isRefreshing = true },
-							onSuccess = {
-								isRefreshing = false
-								eventsViewModel.onPastResourceSuccess(it)
-							}
-						)
-					}
-					EventTab.My -> {
-						userEventsResource.handle(
-							onLoading = {
-								isRefreshing = true
-							},
-							onError = { msg ->
-								isRefreshing = false
-								LoadingError(msg = msg)
-							},
-							onSuccess = {
-								isRefreshing = false
-								eventsViewModel.onUserResourceSuccess(it)
-								if (it.isEmpty())
-									LoadingError(msg = stringResource(R.string.no_user_events))
-								else
-									UserEventsList(
-										eventsViewModel = eventsViewModel,
-										listState = eventsViewModel.userEventsListState
-									)
-							}
-						)
+						}
 					}
 				}
-			}
 
+			}
 		}
 	}
 
@@ -143,11 +115,10 @@ fun Events(
 @ExperimentalMaterialApi
 @Composable
 fun EventsList(
-	eventsViewModel: EventsViewModel,
-	listState: LazyListState
+	eventsViewModel: EventsViewModel
 ) {
-	val events by eventsViewModel.eventsFlow.collectAsState()
-	val pastEvents by eventsViewModel.pastEventsFlow.collectAsState()
+	val events by eventsViewModel.pendingEvents.collectAsState()
+	val pastEvents by eventsViewModel.pastEvents.collectAsState()
 	val showPastEvents by eventsViewModel.showPastEvents.collectAsState()
 
 	val navController = LocalNavController.current
@@ -156,12 +127,11 @@ fun EventsList(
 	else
 		LazyColumn(
 			modifier = Modifier.fillMaxSize(),
-			state = listState,
 			verticalArrangement = Arrangement.spacedBy(10.dp),
 			contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
 		) {
 			items(
-				items = events.sortedByDescending { it.beginTime },
+				items = events,
 				key = { it.id }
 			) {
 				EventCard(
@@ -177,7 +147,7 @@ fun EventsList(
 						Spacer(modifier = Modifier.height(16.dp))
 					}
 				items(
-					items = pastEvents.sortedByDescending { it.beginTime },
+					items = pastEvents,
 					key = { it.id }
 				) {
 					EventCard(
@@ -195,19 +165,17 @@ fun EventsList(
 @ExperimentalMaterialApi
 @Composable
 fun UserEventsList(
-	eventsViewModel: EventsViewModel,
-	listState: LazyListState
+	eventsViewModel: EventsViewModel
 ) {
-	val events by eventsViewModel.userEventsFlow.collectAsState()
+	val events by eventsViewModel.userEvents.collectAsState()
 	val navController = LocalNavController.current
 	LazyColumn(
 		modifier = Modifier.fillMaxSize(),
-		state = listState,
 		verticalArrangement = Arrangement.spacedBy(10.dp),
 		contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
 	) {
 		items(
-			items = events.sortedByDescending { it.beginTime },
+			items = events,
 			key = { it.id }
 		) {
 			UserEventCard(

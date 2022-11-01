@@ -1,13 +1,19 @@
-package ru.rtuitlab.itlab.presentation.ui.extensions
+package ru.rtuitlab.itlab.common
 
 import android.content.Context
 import android.util.Log
 import kotlinx.datetime.*
+import kotlinx.datetime.TimeZone
 import ru.rtuitlab.itlab.R
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.time.DateTimeException
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 private val timeZone = TimeZone.of("UTC+3")
+
+private const val ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 
 fun Instant.plus(value: Long, unit: DateTimeUnit) = plus(value, unit, timeZone)
 
@@ -33,6 +39,10 @@ fun Long.toClientDate() = toMoscowDateTime().run {
 	val month = monthNumber.toString().padStart(2, '0')
 	"$day.$month.$year"
 }
+
+fun Long.toIsoString(
+	addOneDay: Boolean
+) = Date(this + if (addOneDay) 86_400_000 else 0).toIsoString()
 
 fun String.fromIso8601(
 	context: Context,
@@ -64,4 +74,10 @@ fun String.fromIso8601ToInstant() =
 		DateTimeFormatter.ISO_DATE_TIME.parse(this)
 	).toKotlinInstant().toMoscowDateTime()
 
-fun nowAsIso8601() = java.time.Instant.now().toString()
+fun Date.toIsoString(): String {
+	val dateFormat: DateFormat = SimpleDateFormat(ISO_8601_24H_FULL_FORMAT, Locale.getDefault())
+	return dateFormat.format(this)
+}
+
+fun nowAsIso8601() = Date().toIsoString()
+const val endOfTimes = "9999-12-31T23:59:59Z"

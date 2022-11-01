@@ -17,7 +17,7 @@ class EmployeesViewModel @Inject constructor(
 	private val authStateStorage: IAuthStateStorage,
 	private val searchUsers: SearchUsersUseCase,
 	private val updateUsers: UpdateUsersUseCase,
-	private val getCurrentUser: GetCurrentUserUseCase
+	getCurrentUser: GetCurrentUserUseCase
 ) : ViewModel() {
 
 	private var _userIdFlow = MutableStateFlow("")
@@ -62,7 +62,6 @@ class EmployeesViewModel @Inject constructor(
 				_uiEvents.emit(UiEvent.Snackbar(it))
 			}
 		)
-
 		_isRefreshing.emit(false)
 	}
 

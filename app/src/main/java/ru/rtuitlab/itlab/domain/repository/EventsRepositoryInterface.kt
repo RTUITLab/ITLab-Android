@@ -3,8 +3,7 @@ package ru.rtuitlab.itlab.domain.repository
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import ru.rtuitlab.itlab.common.Resource
-import ru.rtuitlab.itlab.data.local.events.models.EventWithShiftsAndSalary
-import ru.rtuitlab.itlab.data.local.events.models.EventWithType
+import ru.rtuitlab.itlab.data.local.events.models.*
 import ru.rtuitlab.itlab.data.remote.api.events.models.*
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 
@@ -13,9 +12,21 @@ interface EventsRepositoryInterface {
 
     fun getEvents(): Flow<List<EventWithType>>
 
-    fun searchEvents(query: String): Flow<List<EventWithType>>
+    fun getUserEvents(userId: String): Flow<List<UserEventWithTypeAndRole>>
+
+    fun getEventRoles(): Flow<List<EventRoleModel>>
+
+    fun searchEvents(
+        query: String,
+        begin: String,
+        end: String
+    ): Flow<List<EventWithType>>
+
+    fun searchUserEvents(query: String): Flow<List<UserEventWithTypeAndRole>>
 
     fun getEventDetail(eventId: String): Flow<EventWithShiftsAndSalary?>
+
+    fun getInvitations(): Flow<List<EventInvitationWithTypeAndRole>>
 
     suspend fun updateEvents(
         begin: String? = null,
@@ -28,7 +39,7 @@ interface EventsRepositoryInterface {
         end: String? = null
     ): Resource<List<UserEventModel>>
 
-    suspend fun fetchEvent(eventId: String): Resource<EventDetailDto>
+    suspend fun updateEventDetails(eventId: String): Resource<EventDetailDto>
 
     suspend fun updateEventSalary(eventId: String): Resource<EventSalary>
 
@@ -43,4 +54,6 @@ interface EventsRepositoryInterface {
     suspend fun rejectInvitation(placeId: String): Resource<Response<Unit>>
 
     suspend fun acceptInvitation(placeId: String): Resource<Response<Unit>>
+
+    suspend fun deleteInvitation(id: String, placeId: String)
 }

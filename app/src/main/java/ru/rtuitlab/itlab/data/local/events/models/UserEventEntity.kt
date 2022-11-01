@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.data.local.events.models
 
 import androidx.room.*
+import ru.rtuitlab.itlab.data.local.users.models.UserEntity
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventRoleModel
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventTypeModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
@@ -16,11 +17,17 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
             entity = EventRoleModel::class,
             parentColumns = ["id"],
             childColumns = ["roleId"]
+        ),
+        ForeignKey(
+            entity = UserEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["userId"]
         )
     ]
 )
 data class UserEventEntity(
     @PrimaryKey val id: String,
+    val userId: String, // FK
     val address: String,
     val title: String,
     val typeId: String,

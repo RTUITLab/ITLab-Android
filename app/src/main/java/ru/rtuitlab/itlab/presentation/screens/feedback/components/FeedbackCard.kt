@@ -3,7 +3,6 @@ package ru.rtuitlab.itlab.presentation.screens.feedback.components
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,7 +20,7 @@ import ru.rtuitlab.itlab.data.remote.api.feedback.models.FeedbackModel
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmailField
 import ru.rtuitlab.itlab.presentation.screens.feedback.FeedbackViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.ButtonLoadingIndicator
-import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
+import ru.rtuitlab.itlab.common.fromIso8601
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @ExperimentalTransitionApi

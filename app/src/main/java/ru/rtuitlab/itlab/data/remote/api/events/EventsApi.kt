@@ -55,6 +55,6 @@ interface EventsApi {
 	@GET("eventRole")
 	suspend fun getEventRoles() : List<EventRoleModel>
 
-	@GET("EventType")
+	@GET("EventType?all=true")
 	suspend fun getEventTypes(): List<EventTypeModel>
 }

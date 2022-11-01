@@ -21,8 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.data.local.events.models.PlaceWithUsersAndSalary
+import ru.rtuitlab.itlab.data.local.events.models.UserParticipationType
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventRole
-import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Place
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.*
@@ -32,9 +33,8 @@ import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 @ExperimentalMaterialApi
 @Composable
 fun PlaceAlertDialog(
-	place: Place,
+	placeWithUsersAndSalary: PlaceWithUsersAndSalary,
 	number: Int,
-	salary: Int?,
 	eventViewModel: EventViewModel,
 	shiftContainsUser: Boolean,
 	onResult: () -> Unit,
@@ -43,9 +43,11 @@ fun PlaceAlertDialog(
 
 	var isLoading by remember { mutableStateOf(false) }
 
-	val eventRoles by eventViewModel.eventRoles.collectAsState()
+	val eventRoles by eventViewModel.roles.collectAsState()
 
-	val navController = LocalNavController.current
+	val place = placeWithUsersAndSalary.place
+	val salary = placeWithUsersAndSalary.salary
+	val users = placeWithUsersAndSalary.usersWithRoles
 
 	Dialog(
 		onDismissRequest = onDismissRequest,
@@ -79,7 +81,7 @@ fun PlaceAlertDialog(
 						imageHeight = 14.dp
 					) {
 						Text(
-							text = "${place.participants.size}/${place.targetParticipantsCount}"
+							text = "${users.size}/${place.targetParticipantsCount}"
 						)
 					}
 				}
@@ -114,8 +116,7 @@ fun PlaceAlertDialog(
 				}
 				Spacer(modifier = Modifier.height(10.dp))
 				Divider()
-				val entireList = place.participants + place.invited + place.wishers
-				if (entireList.isNotEmpty()) {
+				if (users.isNotEmpty()) {
 					Spacer(modifier = Modifier.height(10.dp))
 
 					LazyColumn(
@@ -123,10 +124,10 @@ fun PlaceAlertDialog(
 						verticalArrangement = Arrangement.spacedBy(5.dp)
 					) {
 						items(
-							items = entireList,
-							key = { it.user.id }
+							items = users,
+							key = { it.userRole.userId }
 						) {
-							val role = it.eventRole.toUiRole()
+							val role = it.role.toUiRole()
 							Row(
 								modifier = Modifier.fillMaxWidth(),
 								horizontalArrangement = Arrangement.SpaceBetween,
@@ -137,10 +138,10 @@ fun PlaceAlertDialog(
 									imageWidth = 14.dp,
 									imageHeight = 14.dp,
 									opacity = 1f,
-									tint = when (place.participants.contains(it)) {
-										true -> Color(0xFF44B90D)
-										false -> Color(0xFFE4A400)
-//										else -> Color.Gray
+									tint = when (it.userRole.participationType) {
+										UserParticipationType.PARTICIPANT -> Color(0xFF44B90D)
+										UserParticipationType.INVITED -> Color(0xFFE4A400)
+										else -> Color.Gray
 									},
 									verticalAlignment = Alignment.CenterVertically,
 									spacing = 0.dp

@@ -1,216 +1,209 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package ru.rtuitlab.itlab.presentation.screens.events
 
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SwipeableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
-import ru.rtuitlab.itlab.common.Resource
-import ru.rtuitlab.itlab.common.emitInIO
-import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
-import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventInvitationDto
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
-import ru.rtuitlab.itlab.data.repository.EventsRepository
+import ru.rtuitlab.itlab.common.endOfTimes
+import ru.rtuitlab.itlab.common.minus
+import ru.rtuitlab.itlab.common.nowAsIso8601
+import ru.rtuitlab.itlab.common.toIsoString
+import ru.rtuitlab.itlab.data.remote.api.events.models.EventInvitation
+import ru.rtuitlab.itlab.domain.use_cases.events.*
+import ru.rtuitlab.itlab.domain.use_cases.users.GetCurrentUserUseCase
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.SwipingStates
-import ru.rtuitlab.itlab.presentation.ui.extensions.minus
-import ru.rtuitlab.itlab.presentation.ui.extensions.nowAsIso8601
-import ru.rtuitlab.itlab.presentation.ui.extensions.toMoscowDateTime
+import ru.rtuitlab.itlab.presentation.utils.UiEvent
+import java.time.Instant
 import javax.inject.Inject
 
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
 @HiltViewModel
 class EventsViewModel @Inject constructor(
-	private val repository: EventsRepository,
-	private val authStateStorage: IAuthStateStorage
+	private val getEvents: GetEventsUseCase,
+	private val getUserEvents: GetUserEventsUseCase,
+	private val updateEvents: UpdateEventsUseCase,
+	private val updateInvitations: UpdateInvitationsUseCase,
+	private val answerInvitation: AnswerInvitationUseCase,
+	private val deleteInvitation: DeleteNotificationUseCase,
+	getCurrentUser: GetCurrentUserUseCase,
+	getInvitations: GetInvitationsUseCase
 ) : ViewModel() {
 
-	private val userId = runBlocking { authStateStorage.userIdFlow.first() }
-
-
+	private val userId = getCurrentUser().map {
+		it?.id
+	}.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
 	private var _beginEventsDate = MutableStateFlow(Clock.System.now().minus(7, DateTimeUnit.DAY).toEpochMilliseconds())
 	val beginEventsDate = _beginEventsDate.asStateFlow()
 	private var _endEventsDate = MutableStateFlow(Clock.System.now().toEpochMilliseconds())
 	val endEventsDate = _endEventsDate.asStateFlow()
 
-
 	val pagerState = PagerState()
 
 	val swipingState = SwipeableState(SwipingStates.EXPANDED)
 
-	val allEventsListState = LazyListState()
-	val userEventsListState = LazyListState()
-
 	private var _isDateSelectionMade = MutableStateFlow(false)
 	val isDateSelectionMade = _isDateSelectionMade.asStateFlow()
 
+	private val _isRefreshing = MutableStateFlow(false)
+	val isRefreshing = _isRefreshing.asStateFlow()
 
-	private val _eventsListResponseFlow =
-		MutableStateFlow<Resource<List<EventModel>>>(Resource.Loading)
-	val eventsListResponsesFlow = _eventsListResponseFlow.asStateFlow().also {
-		fetchPendingEvents()
-	}
+	private val _areInvitationsRefreshing = MutableStateFlow(false)
+	val areInvitationsRefreshing = _areInvitationsRefreshing.asStateFlow()
 
-	private val _userEventsListResponseFlow =
-		MutableStateFlow<Resource<List<UserEventModel>>>(Resource.Empty)
-	val userEventsListResponsesFlow = _userEventsListResponseFlow.asStateFlow()
+	private val _uiEvents = MutableSharedFlow<UiEvent>()
+	val uiEvents = _uiEvents.asSharedFlow()
 
-	private val _pastEventsListResponseFlow =
-		MutableStateFlow<Resource<List<EventModel>>>(Resource.Empty)
-	val pastEventsListResponseFlow = _pastEventsListResponseFlow.asStateFlow()
+	private val searchQuery = MutableStateFlow("")
 
-	private var _invitationsResourceFlow = MutableStateFlow<Resource<List<EventInvitationDto>>>(Resource.Loading)
-	val invitationsResourceFlow = _invitationsResourceFlow.asStateFlow().also { fetchInvitations() }
+	val pendingEvents = combine(searchQuery, beginEventsDate, endEventsDate, isDateSelectionMade) { query, begin, end, isDateSelectionMade ->
+		Triple(
+			first = query,
+			second = if (isDateSelectionMade) begin.toIsoString(false) else nowAsIso8601(),
+			third = if (isDateSelectionMade) end.toIsoString(true) else endOfTimes
+		)
+	}.flatMapLatest {
+		getEvents.search(
+			query = it.first,
+			begin = it.second,
+			end = it.third
+		)
+	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-	private var _invitationsCountFlow = MutableStateFlow(0)
-	val invitationsCountFlow = _invitationsCountFlow.asStateFlow()
+	val pastEvents = searchQuery.flatMapLatest {
+		getEvents.search(
+			query = it,
+			begin = Instant.MIN.toString(),
+			end = nowAsIso8601()
+		)
+	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-	private var cachedEventList = emptyList<EventModel>()
-	private var cachedUserEventList = emptyList<UserEventModel>()
-	private var cachedPastEventList = emptyList<EventModel>()
+	val userEvents = searchQuery.flatMapLatest {
+		getUserEvents.search(it)
+	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-	private var _eventsFlow = MutableStateFlow(cachedEventList)
-	val eventsFlow = _eventsFlow.asStateFlow()
+	val invitations = getInvitations()
+		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-	private var _userEventsFlow = MutableStateFlow(cachedUserEventList)
-	val userEventsFlow = _userEventsFlow.asStateFlow()
-
-	private var _pastEventsFlow = MutableStateFlow(cachedPastEventList)
-	val pastEventsFlow = _pastEventsFlow.asStateFlow()
+	val invitationsCount = invitations.map {
+		it.size
+	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0)
 
 	private var _showPastEvents = MutableStateFlow(false)
 	val showPastEvents = _showPastEvents.asStateFlow()
 
 	fun toggleShowPastEvents(show: Boolean) = viewModelScope.launch {
 		_showPastEvents.value = show
-	}.also {
-		if (!show) return@also
-		_pastEventsListResponseFlow.emitInIO(viewModelScope) {
-			repository.fetchAllEvents(
-				end = nowAsIso8601()
-			)
+		if (show) {
+			update(end = nowAsIso8601())
 		}
 	}
 
-	fun fetchAllEvents(begin: String? = null, end: String? = null) = _eventsListResponseFlow.emitInIO(viewModelScope) {
-		repository.fetchAllEvents(begin, end)
+	private fun update(begin: String? = null, end: String? = null) = viewModelScope.launch {
+		_isRefreshing.emit(true)
+		updateEvents(begin, end).handle(
+			onError = {
+				_uiEvents.emit(UiEvent.Snackbar(it))
+			}
+		)
+		_isRefreshing.emit(false)
 	}
 
-	fun fetchPendingEvents() = _eventsListResponseFlow.emitInIO(viewModelScope) {
-		_isDateSelectionMade.value = false
-		repository.fetchPendingEvents()
+	fun updatePendingEvents() = viewModelScope.launch {
+		_isRefreshing.emit(true)
+		updateEvents.pending().handle(
+			onError = {
+				_uiEvents.emit(UiEvent.Snackbar(it))
+			}
+		)
+		_isRefreshing.emit(false)
 	}
 
-	fun fetchUserEvents(begin: String? = null, end: String? = null) = _userEventsListResponseFlow.emitInIO(viewModelScope) {
-		repository.fetchUserEvents(userId, begin, end)
+	fun updateUserEvents() = viewModelScope.launch {
+		userId.value?.let {
+			_isRefreshing.emit(true)
+			updateEvents.user(it).handle(
+				onError = {
+					_uiEvents.emit(UiEvent.Snackbar(it))
+				}
+			)
+			_isRefreshing.emit(false)
+		}
 	}
 
-
-	val snackbarHostState = SnackbarHostState()
+	fun updateNotifications() = viewModelScope.launch {
+		_areInvitationsRefreshing.emit(true)
+		updateInvitations().handle(
+			onError = {
+				_uiEvents.emit(UiEvent.Snackbar(it))
+			}
+		)
+		_areInvitationsRefreshing.emit(false)
+	}
 
 	fun setEventsDates(begin: Long, end: Long) {
 		_showPastEvents.value = false
 		_isDateSelectionMade.value = true
 		_beginEventsDate.value = begin
 		_endEventsDate.value = end
-		fetchAllEvents(
-			begin = begin.toMoscowDateTime().date.toString(),
-			end = end.toMoscowDateTime().date.toString()
+		update(
+			begin = begin.toIsoString(false),
+			end = end.toIsoString(true)
 		)
 	}
 
-	fun fetchInvitations() = _invitationsResourceFlow.emitInIO(viewModelScope) {
-		val resource = repository.fetchInvitations()
-		resource.handle(
-			onSuccess = {
-				_invitationsCountFlow.value = it.size
-			}
-		)
-		resource
+	fun clearDateSelection() {
+		_isDateSelectionMade.value = false
 	}
 
 	fun rejectInvitation(
-		placeId: String,
+		notification: EventInvitation,
 		successMessage: String,
 		onFinish: () -> Unit
 	) = viewModelScope.launch {
-		repository.rejectInvitation(placeId).handle(
+		answerInvitation.accept(notification.placeId).handle(
 			onSuccess = {
 				onFinish()
-				fetchInvitations()
-				snackbarHostState.showSnackbar(it.errorBody()?.string() ?: successMessage)
+				deleteInvitation(notification.eventId, notification.placeId)
+				_uiEvents.emit(UiEvent.Snackbar(it.errorBody()?.string() ?: successMessage))
 			},
 			onError = {
 				onFinish()
-				snackbarHostState.showSnackbar(it)
+				_uiEvents.emit(UiEvent.Snackbar(it))
 			}
 		)
 	}
 	fun acceptInvitation(
-		placeId: String,
+		notification: EventInvitation,
 		successMessage: String,
 		onFinish: () -> Unit
 	) = viewModelScope.launch {
-		repository.acceptInvitation(placeId).handle(
+		answerInvitation.reject(notification.placeId).handle(
 			onSuccess = {
 				onFinish()
-				fetchInvitations()
-				snackbarHostState.showSnackbar(it.errorBody()?.string() ?: successMessage)
+				deleteInvitation(notification.eventId, notification.placeId)
+				_uiEvents.emit(UiEvent.Snackbar(it.errorBody()?.string() ?: successMessage))
 			},
 			onError = {
 				onFinish()
-				snackbarHostState.showSnackbar(it)
+				_uiEvents.emit(UiEvent.Snackbar(it))
 			}
 		)
 	}
 
-
-	private var searchQuery = ""
-
 	fun onSearch(query: String) {
-		searchQuery = query
-		_eventsFlow.value = cachedEventList.filter { filterSearchResult(it, query) }
-		_userEventsFlow.value = cachedUserEventList.filter { filterSearchResult(it, query) }
-		if (showPastEvents.value)
-			_pastEventsFlow.value = cachedPastEventList.filter { filterSearchResult(it, query) }
-	}
-
-	fun onResourceSuccess(events: List<EventModel>) {
-		cachedEventList = events
-		_eventsFlow.value = events
-	}
-
-	fun onUserResourceSuccess(events: List<UserEventModel>) {
-		cachedUserEventList = events.distinctBy { it.id }
-		_userEventsFlow.value = cachedUserEventList
-	}
-
-	fun onPastResourceSuccess(events: List<EventModel>) {
-		cachedPastEventList = events.filterNot { cachedEventList.contains(it) }
-		_pastEventsFlow.value = cachedPastEventList
-	}
-
-	private fun filterSearchResult(event: EventModel, query: String) = event.run {
-		title.contains(query.trim(), ignoreCase = true) ||
-		eventType.title.contains(query.trim(), ignoreCase = true)
-	}
-	private fun filterSearchResult(event: UserEventModel, query: String) = event.run {
-		title.contains(query.trim(), ignoreCase = true) ||
-		eventType.title.contains(query.trim(), ignoreCase = true)
+		searchQuery.update { query }
 	}
 
 }

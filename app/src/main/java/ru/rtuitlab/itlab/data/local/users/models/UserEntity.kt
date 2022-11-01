@@ -1,9 +1,6 @@
 package ru.rtuitlab.itlab.data.local.users.models
 
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.Relation
+import androidx.room.*
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 
 /**
@@ -17,7 +14,10 @@ data class UserEntity(
     val firstName: String? = null,
     val middleName: String? = null,
     val lastName: String? = null,
-)
+) {
+    @Ignore
+    val shortName = "${firstName ?: ""} ${lastName ?: ""}"
+}
 
 /**
  * This class is accessed through the database via Room's [Relation] API

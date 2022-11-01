@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -20,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Place
-import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Shift
+import ru.rtuitlab.itlab.data.local.events.models.PlaceWithUsersAndSalary
+import ru.rtuitlab.itlab.data.local.events.models.ShiftWithPlacesAndSalary
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
@@ -34,8 +33,7 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 @ExperimentalMaterialApi
 @Composable
 fun ShiftBottomSheet(
-	shift: Shift,
-	salaries: List<Int>,
+	shiftAndSalary: ShiftWithPlacesAndSalary,
 	eventViewModel: EventViewModel,
 	profileViewModel: ProfileViewModel = viewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = singletonViewModel()
@@ -48,7 +46,7 @@ fun ShiftBottomSheet(
 			imageVector = Icons.Default.DateRange,
 			spacing = 10.dp
 		) {
-			Text(shift.getTime(LocalContext.current))
+			Text(shiftAndSalary.shift.getTime(LocalContext.current))
 		}
 	}
 	Spacer(Modifier.height(10.dp))
@@ -58,16 +56,19 @@ fun ShiftBottomSheet(
 		contentPadding = PaddingValues(top = 10.dp, bottom = 15.dp)
 	) {
 		itemsIndexed(
-			items = shift.places,
-			key = { _, item -> item.id }
+			items = shiftAndSalary.places,
+			key = { _, item -> item.place.id }
 		) { index, item ->
 			ShiftPlaceCard(
 				number = index + 1,
-				place = item,
-				salary = salaries[index].takeUnless { it == -1 },
+				placeWithUsersAndSalary = item,
 				eventViewModel = eventViewModel,
 				bottomSheetViewModel = bottomSheetViewModel,
-				shiftContainsUser = shift.places.any { (it.participants + it.wishers + it.invited).any { it.user.id == profileViewModel.userId } }
+				shiftContainsUser = shiftAndSalary.places
+					.any {
+						it.usersWithRoles
+							.any { it.userRole.userId == profileViewModel.userId }
+					}
 			)
 		}
 	}
@@ -78,19 +79,22 @@ fun ShiftBottomSheet(
 @Composable
 private fun ShiftPlaceCard(
 	number: Int,
-	place: Place,
-	salary: Int?,
+	placeWithUsersAndSalary: PlaceWithUsersAndSalary,
 	eventViewModel: EventViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
 	shiftContainsUser: Boolean
 ) {
 	var dialogIsShown by remember { mutableStateOf(false) }
 	val scope = rememberCoroutineScope()
+
+	val place = placeWithUsersAndSalary.place
+	val salary = placeWithUsersAndSalary.salary
+	val users = placeWithUsersAndSalary.usersWithRoles
+
 	if (dialogIsShown)
 		PlaceAlertDialog(
 			number = number,
-			place = place,
-			salary = salary,
+			placeWithUsersAndSalary = placeWithUsersAndSalary,
 			eventViewModel = eventViewModel,
 			onResult = {
 				dialogIsShown = false
@@ -117,7 +121,7 @@ private fun ShiftPlaceCard(
 			VerticalLinearProgressIndicator(
 				modifier = Modifier.matchParentSize(),
 				progress = if (place.targetParticipantsCount != 0)
-					(place.participants + place.invited + place.wishers).size.toFloat() / place.targetParticipantsCount.toFloat()
+					users.size.toFloat() / place.targetParticipantsCount.toFloat()
 				else 1f,
 				color = AppColors.accent.collectAsState().value
 			)
@@ -146,7 +150,7 @@ private fun ShiftPlaceCard(
 							imageHeight = 14.dp
 						) {
 							Text(
-								text = "${(place.participants + place.invited + place.wishers).size}/${place.targetParticipantsCount}"
+								text = "${users.size}/${place.targetParticipantsCount}"
 							)
 						}
 					}

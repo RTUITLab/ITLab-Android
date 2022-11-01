@@ -1,7 +1,6 @@
 package ru.rtuitlab.itlab.presentation.screens.events.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -104,7 +103,7 @@ fun EventNotificationCard(
 						if (!isLoadingState) {
 							isLoadingState = true
 							eventsViewModel.acceptInvitation(
-								placeId = notification.placeId,
+								notification = notification,
 								successMessage = resources.getString(R.string.event_invitation_accepted)
 							) {
 								isLoadingState = false
@@ -137,7 +136,7 @@ fun EventNotificationCard(
 						if (!isLoadingState) {
 							isLoadingState = true
 							eventsViewModel.rejectInvitation(
-								placeId = notification.placeId,
+								notification = notification,
 								successMessage = resources.getString(R.string.event_invitation_rejected)
 							) {
 								isLoadingState = false

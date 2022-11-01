@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
@@ -17,6 +18,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventNotificationCard
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @ExperimentalPagerApi
@@ -25,50 +27,44 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 fun EventsNotifications(
 	eventsViewModel: EventsViewModel = singletonViewModel()
 ) {
-	val notificationsResource by eventsViewModel.invitationsResourceFlow.collectAsState()
+	val invitationDtos by eventsViewModel.invitations.collectAsState()
 
-	var isRefreshing by remember { mutableStateOf(false) }
+	val isRefreshing by eventsViewModel.areInvitationsRefreshing.collectAsState()
+
+	val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
+
+	eventsViewModel.uiEvents.collectUiEvents(scaffoldState)
 
 	Scaffold(
-		scaffoldState = rememberScaffoldState(snackbarHostState = eventsViewModel.snackbarHostState)
+		scaffoldState = scaffoldState
 	) {
 		SwipeRefresh(
 			state = rememberSwipeRefreshState(isRefreshing),
-			onRefresh = eventsViewModel::fetchInvitations
+			onRefresh = eventsViewModel::updateNotifications
 		) {
-			notificationsResource.handle(
-				onLoading = {
-					isRefreshing = true
-				},
-				onError =  {
-					isRefreshing = false
-					LoadingError(msg = it)
-				},
-				onSuccess = {
-					isRefreshing = false
-					if (it.isEmpty())
-						LoadingError(
-							msg = stringResource(R.string.events_notifications_empty)
+			if (invitationDtos.isEmpty())
+				LoadingError(
+					msg = stringResource(R.string.events_notifications_empty)
+				)
+			else {
+				val invitations = invitationDtos.map {
+					it.toEventInvitation(LocalContext.current)
+				}
+				LazyColumn(
+					verticalArrangement = Arrangement.spacedBy(10.dp),
+					contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
+				) {
+					items(
+						items = invitations,
+						key = { it.eventId + it.eventRole.id }
+					) {
+						EventNotificationCard(
+							notification = it,
+							eventsViewModel = eventsViewModel
 						)
-					else {
-						val invitations = it.map { it.toEventInvitation(LocalContext.current) }
-						LazyColumn(
-							verticalArrangement = Arrangement.spacedBy(10.dp),
-							contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp)
-						) {
-							items(
-								items = invitations,
-								key = { it.eventId }
-							) {
-								EventNotificationCard(
-									notification = it,
-									eventsViewModel = eventsViewModel
-								)
-							}
-						}
 					}
 				}
-			)
+			}
 		}
 	}
 }

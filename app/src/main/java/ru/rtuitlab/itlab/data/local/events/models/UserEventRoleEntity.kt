@@ -38,5 +38,10 @@ data class UserWithRole(
         parentColumn = "roleId",
         entityColumn = "id"
     )
-    val role: EventRoleModel
+    val role: EventRoleModel,
+    @Relation(
+        parentColumn = "userId",
+        entityColumn = "id"
+    )
+    val user: UserEntity
 )

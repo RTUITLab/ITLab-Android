@@ -7,7 +7,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
-import ru.rtuitlab.itlab.data.repository.EventsRepository
+import ru.rtuitlab.itlab.domain.use_cases.events.GetUserEventsUseCase
+import ru.rtuitlab.itlab.domain.use_cases.events.UpdateUserEventsUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.EditUserUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.GetUserPropertyTypesUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.GetUserUseCase
@@ -17,15 +18,17 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
 	private val editUser: EditUserUseCase,
-	eventsRepo: EventsRepository,
 	getUser: GetUserUseCase,
 	getPropertyTypes: GetUserPropertyTypesUseCase,
+	getUserEvents: GetUserEventsUseCase,
+	updateUserEvents: UpdateUserEventsUseCase,
 	authStateStorage: IAuthStateStorage
 ) : UserViewModel(
-	eventsRepo,
-	getUser,
-	getPropertyTypes,
-	runBlocking { authStateStorage.userIdFlow.first() }
+    getUser,
+    getPropertyTypes,
+    getUserEvents,
+    updateUserEvents,
+    runBlocking { authStateStorage.userIdFlow.first() }
 ) {
 
 	fun editUserInfo(

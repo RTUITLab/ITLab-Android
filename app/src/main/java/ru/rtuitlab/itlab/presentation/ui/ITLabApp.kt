@@ -38,7 +38,6 @@ import ru.rtuitlab.itlab.presentation.ui.components.Custom_Scaffold
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedElementsRootScope
-import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElementsRoot
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
@@ -164,7 +163,7 @@ fun ITLabApp(
                     val currentDestination = navBackStackEntry?.destination
 
 
-                    val invitationsCount by eventsViewModel.invitationsCountFlow.collectAsState()
+                    val invitationsCount by eventsViewModel.invitationsCount.collectAsState()
 
 
                     appsPage
