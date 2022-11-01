@@ -24,10 +24,10 @@ class ProfileViewModel @Inject constructor(
 	updateUserEvents: UpdateUserEventsUseCase,
 	authStateStorage: IAuthStateStorage
 ) : UserViewModel(
-    getUser,
-    getPropertyTypes,
-    getUserEvents,
-    updateUserEvents,
+	updateUserEvents,
+	getPropertyTypes,
+	getUser,
+	getUserEvents,
     runBlocking { authStateStorage.userIdFlow.first() }
 ) {
 

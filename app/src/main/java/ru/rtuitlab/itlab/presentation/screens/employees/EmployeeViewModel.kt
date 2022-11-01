@@ -17,9 +17,9 @@ class EmployeeViewModel @Inject constructor(
 	updateUserEvents: UpdateUserEventsUseCase,
 	state: SavedStateHandle
 ) : UserViewModel(
-    getUser,
-    getPropertyTypes,
-    getUserEvents,
     updateUserEvents,
+    getPropertyTypes,
+    getUser,
+    getUserEvents,
     state.get<String>("userId")!!
 )
