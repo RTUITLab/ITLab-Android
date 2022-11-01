@@ -8,7 +8,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -17,8 +16,8 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeeCard
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
-import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @Composable
@@ -28,15 +27,7 @@ fun Employees(
 	val isRefreshing by employeesViewModel.isRefreshing.collectAsState()
 	val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
 
-	LaunchedEffect(Unit) {
-		employeesViewModel.uiEvents.collect { event ->
-			when (event) {
-				is UiEvent.Snackbar -> {
-					scaffoldState.snackbarHostState.showSnackbar(event.message)
-				}
-			}
-		}
-	}
+	employeesViewModel.uiEvents.collectUiEvents(scaffoldState)
 
 	Scaffold(
 		modifier = Modifier.fillMaxSize(),
