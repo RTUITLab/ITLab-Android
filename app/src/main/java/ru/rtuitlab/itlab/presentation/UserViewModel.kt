@@ -20,6 +20,7 @@ abstract class UserViewModel(
 	val userId: String
 ) : ViewModel() {
 
+	private var eventsUpdated = false
 
 	private var _beginEventsDate = MutableStateFlow(Clock.System.now().minus(7, DateTimeUnit.DAY).toEpochMilliseconds())
 	val beginEventsDate = _beginEventsDate.asStateFlow()
@@ -58,6 +59,12 @@ abstract class UserViewModel(
 			}
 		)
 		_areEventsRefreshing.emit(false)
+	}
+
+	fun ensureEventsUpdated() {
+		if (eventsUpdated) return
+		updateEvents()
+		eventsUpdated = true
 	}
 
 
