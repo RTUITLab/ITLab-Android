@@ -2,6 +2,7 @@ package ru.rtuitlab.itlab.data.repository
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
@@ -13,6 +14,8 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.data.repository.util.tryUpdate
 import ru.rtuitlab.itlab.domain.repository.EventsRepositoryInterface
 import ru.rtuitlab.itlab.common.nowAsIso8601
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
+import ru.rtuitlab.itlab.data.local.events.models.EventEntity
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,6 +23,7 @@ import javax.inject.Singleton
 class EventsRepositoryImpl @Inject constructor(
     private val eventsApi: EventsApi,
     private val handler: ResponseHandler,
+    private val authStateStorage: IAuthStateStorage,
     private val coroutineScope: CoroutineScope,
     db: AppDatabase
 ): EventsRepositoryInterface {
@@ -101,6 +105,40 @@ class EventsRepositoryImpl @Inject constructor(
         from = { eventsApi.getEvent(eventId) },
         into = {
             updateEventRoles()
+
+            val currentUserId = authStateStorage.userIdFlow.first()
+            // Since EventDetailEntity links to an EventEntity with a foreign key,
+            // corresponding EventEntity must be present in the database.
+            // There is no way to fetch this model, so we construct it ourselves.
+            dao.upsertEvent(
+                EventEntity(
+                    id = it.id,
+                    title = it.title,
+                    beginTime = it.shifts.minOf { it.beginTime },
+                    endTime = it.shifts.maxOf { it.endTime },
+                    typeId = it.eventType.id,
+                    address = it.address,
+                    shiftsCount = it.shifts.size,
+                    currentParticipantsCount = it.shifts.sumOf { it.places.sumOf { it.participants.size } },
+                    targetParticipantsCount = it.shifts.sumOf { it.places.sumOf { it.targetParticipantsCount } },
+                    participating = it.shifts.any {
+                        it.places.any {
+                            it.participants.any {
+                                it.user.id == currentUserId
+                            } ||
+                            it.wishers.any {
+                                it.user.id == currentUserId
+                            } ||
+                            it.invited.any {
+                                it.user.id == currentUserId
+                            } ||
+                            it.unknowns.any {
+                                it.user.id == currentUserId
+                            }
+                        }
+                    }
+                )
+            )
             dao.upsertEventDetail(
                 event = it.toEventDetailEntity(),
                 shifts = it.extractShiftEntities(),
