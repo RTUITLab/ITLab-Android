@@ -31,7 +31,7 @@ class EventViewModel @Inject constructor(
 		it.map {
 			it.toUiRole()
 		}
-	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+	}.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 	private val _uiEvents = MutableSharedFlow<UiEvent>()
 	val uiEvents = _uiEvents.asSharedFlow()

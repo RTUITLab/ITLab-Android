@@ -167,7 +167,7 @@ fun PlaceAlertDialog(
 					}
 				}
 
-				if (!shiftContainsUser) {
+				if (!shiftContainsUser && eventRoles.isNotEmpty()) {
 					Spacer(modifier = Modifier.height(20.dp))
 					val choices = remember { eventRoles }
 					var selectedSegment by remember { mutableStateOf(choices[1]) }
