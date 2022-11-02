@@ -12,7 +12,7 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventTypeModel
 @Dao
 interface EventsDao {
     @Transaction
-    @Query("SELECT * FROM EventEntity ORDER BY DATETIME(beginTime)")
+    @Query("SELECT * FROM EventEntity ORDER BY DATETIME(beginTime) DESC")
     fun getAllEvents(): Flow<List<EventWithType>>
 
     // ISO8601 timestamps are designed to be comparable as strings,
@@ -43,7 +43,7 @@ interface EventsDao {
 
     @Query("""SELECT * FROM UserEventEntity
         WHERE userId = :userId
-        ORDER BY DATETIME(beginTime)""")
+        ORDER BY DATETIME(beginTime) DESC""")
     fun getUserEvents(userId: String): Flow<List<UserEventWithTypeAndRole>>
 
     @Query("SELECT * FROM EventRoleModel")
