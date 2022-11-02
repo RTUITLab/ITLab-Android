@@ -27,7 +27,7 @@ abstract class UserViewModel(
 	private var _endEventsDate = MutableStateFlow(Clock.System.now().toEpochMilliseconds())
 	val endEventsDate = _endEventsDate.asStateFlow()
 
-	val user = getUser(userId).map {
+	open val user = getUser(userId).map {
 		it?.toUser()
 	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
