@@ -6,10 +6,17 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.domain.repository.UsersRepositoryInterface
 import javax.inject.Inject
 
-class SearchUsersUseCase @Inject constructor(
+class GetUsersUseCase @Inject constructor(
     private val repo: UsersRepositoryInterface
 ) {
-    operator fun invoke(query: String): Flow<List<UserResponse>> {
+
+    operator fun invoke() = repo.getAllUsers().map {
+        it.map {
+            it.toUserResponse()
+        }
+    }
+
+    fun search(query: String): Flow<List<UserResponse>> {
         return repo.searchUsers(query).map {
             it.map {
                 it.toUserResponse()

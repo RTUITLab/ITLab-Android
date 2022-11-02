@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.domain.use_cases.users.GetCurrentUserUseCase
-import ru.rtuitlab.itlab.domain.use_cases.users.SearchUsersUseCase
+import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.UpdateUsersUseCase
 import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import javax.inject.Inject
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EmployeesViewModel @Inject constructor(
 	private val authStateStorage: IAuthStateStorage,
-	private val searchUsers: SearchUsersUseCase,
+	private val getUsers: GetUsersUseCase,
 	private val updateUsers: UpdateUsersUseCase,
 	getCurrentUser: GetCurrentUserUseCase
 ) : ViewModel() {
@@ -41,7 +41,7 @@ class EmployeesViewModel @Inject constructor(
 	private val searchQuery = MutableStateFlow("")
 
 	val users = searchQuery.flatMapLatest {
-		searchUsers(it).map {
+		getUsers.search(it).map {
 			it.map {
 				it.toUser()
 			}
