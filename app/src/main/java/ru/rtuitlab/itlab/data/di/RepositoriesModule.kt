@@ -12,8 +12,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import ru.rtuitlab.itlab.data.local.AppDatabase
 import ru.rtuitlab.itlab.data.repository.EventsRepositoryImpl
+import ru.rtuitlab.itlab.data.repository.ReportsRepositoryImpl
 import ru.rtuitlab.itlab.data.repository.UsersRepositoryImpl
 import ru.rtuitlab.itlab.domain.repository.EventsRepositoryInterface
+import ru.rtuitlab.itlab.domain.repository.ReportsRepositoryInterface
 import ru.rtuitlab.itlab.domain.repository.UsersRepositoryInterface
 import javax.inject.Singleton
 
@@ -46,4 +48,10 @@ object RepositoriesModule {
     fun provideEventsRepository(
         eventsRepo: EventsRepositoryImpl
     ) = eventsRepo as EventsRepositoryInterface
+
+    @Provides
+    @Singleton
+    fun provideReportsRepository(
+        reportsRepo: ReportsRepositoryImpl
+    ) = reportsRepo as ReportsRepositoryInterface
 }

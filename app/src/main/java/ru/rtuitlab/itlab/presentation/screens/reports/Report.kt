@@ -41,26 +41,14 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 @Composable
 fun Report(
 	id: String,
-	reportsViewModel: ReportsViewModel = singletonViewModel(),
-	appBarViewModel: AppBarViewModel
+	reportsViewModel: ReportsViewModel = singletonViewModel()
 ) {
-	val reports by reportsViewModel.reportsResponseFlow.collectAsState()
 
-	reports.handle(
-		onLoading = {
-			LoadingIndicator()
-		},
-		onSuccess = { reportList ->
-			val thisReport = reportList.find { it.id == id }!!
-			LaunchedEffect(null) {
-				if (appBarViewModel.currentScreen.value is AppScreen.ReportDetails)
-					appBarViewModel.onNavigate(
-						AppScreen.ReportDetails(thisReport.title)
-					)
-			}
-			ReportDetails(report = thisReport)
-		}
-	)
+	val report = reportsViewModel.reports.collectAsState().value.find { it.id == id }
+
+	report?.let {
+		ReportDetails(report)
+	}
 }
 
 @ExperimentalAnimationApi

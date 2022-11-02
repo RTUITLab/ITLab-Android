@@ -44,6 +44,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElemen
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.ProgressThresholds
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
@@ -77,13 +78,9 @@ fun NewReport(
 
     val navController = LocalNavController.current
 
-    val scaffoldState = rememberScaffoldState(snackbarHostState = reportsViewModel.newReportSnackbarHostState)
+    val scaffoldState = rememberScaffoldState()
 
-    LaunchedEffect(state.errorMessage) {
-        if (state.errorMessage != null) {
-            scaffoldState.snackbarHostState.showSnackbar(state.errorMessage!!)
-        }
-    }
+    reportsViewModel.uiEvents.collectUiEvents(scaffoldState)
 
     if (state.isConfirmationDialogShown)
         UploadConfirmationDialog(

@@ -22,11 +22,29 @@ class ReportsRepositoryImpl @Inject constructor(
 
     private val dao = db.reportsDao
 
-    override suspend fun updateUserReports() = tryUpdate(
+    override var reportsUpdatedAtLeastOnce: Boolean = false
+        private set
+
+    override fun getReports() = dao.getReports()
+
+    override fun searchReports(query: String) = dao.searchReports(query)
+
+    override fun searchReportsAboutUser(
+        searchQuery: String,
+        userId: String
+    ) = dao.searchReportsAboutUser(searchQuery, userId)
+
+    override fun searchReportsFromUser(
+        searchQuery: String,
+        userId: String
+    ) = dao.searchReportsFromUser(searchQuery, userId)
+
+    override suspend fun updateReports() = tryUpdate(
         inScope = scope,
         withHandler = handler,
         from = { reportsApi.getReports() },
         into = {
+            reportsUpdatedAtLeastOnce = true
             dao.upsertReports(
                 it.map {
                     it.toReportEntity()
@@ -68,6 +86,7 @@ class ReportsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { reportsApi.getReports(sortedBy) },
         into = {
+            reportsUpdatedAtLeastOnce = true
             dao.upsertReports(
                 it.map {
                     it.toReportEntity()

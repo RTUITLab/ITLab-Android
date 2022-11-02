@@ -6,14 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
-import ru.rtuitlab.itlab.data.repository.UsersRepository
+import ru.rtuitlab.itlab.domain.use_cases.users.GetCurrentUserUseCase
 import ru.rtuitlab.itlab.presentation.screens.reports.state.NewReportUiState
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MdAction
 import java.io.File
@@ -21,14 +21,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewReportViewModel @Inject constructor(
-	private val usersRepository: UsersRepository
-) : ViewModel() {
+	getCurrentUser: GetCurrentUserUseCase
+): ViewModel() {
 
-	private val _reportState = MutableStateFlow(
-		NewReportUiState(
-			selectedImplementer = usersRepository.currentUserFlow.value
-		)
-	)
+	init {
+		viewModelScope.launch {
+			getCurrentUser().onEach {
+				it?.toUser()?.let {
+					onUserSelected(it)
+					cancel()
+				}
+			}.collect()
+		}
+	}
+
+	private val _reportState = MutableStateFlow(NewReportUiState())
+
 	val reportState = _reportState.asStateFlow()
 
 	fun onUserSelected(user: User) = viewModelScope.launch {

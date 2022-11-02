@@ -65,7 +65,7 @@ class ReportsRepositoryImplTest {
 
     @Test
     fun updateUserReports() = runTest {
-        val result = repo.updateUserReports() as Resource.Success
+        val result = repo.updateReports() as Resource.Success
 
         assertThat(dao.getReports().first().map {
             it.report

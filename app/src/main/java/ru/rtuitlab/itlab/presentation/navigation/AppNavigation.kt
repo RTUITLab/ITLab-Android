@@ -49,8 +49,7 @@ import ru.rtuitlab.itlab.presentation.utils.hiltViewModel
 fun AppNavigation(
 	navController: NavHostController,
 	bottomSheetViewModel: BottomSheetViewModel = viewModel(),
-	appBarViewModel: AppBarViewModel = viewModel(),
-
+	appBarViewModel: AppBarViewModel = viewModel()
 ) {
 	val resources = LocalContext.current.resources
 
@@ -85,9 +84,7 @@ fun AppNavigation(
 		startDestination = appBarViewModel.defaultTab.route
 	) {
 		eventsGraph(
-			bottomSheetViewModel,
-			resources,
-			appBarViewModel
+			resources
 		)
 
 		employeesGraph(
@@ -101,7 +98,6 @@ fun AppNavigation(
 		feedbackGraph()
 
 		reportsGraph(
-			appBarViewModel,
 			bottomSheetViewModel
 		)
 
@@ -113,9 +109,7 @@ fun AppNavigation(
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
 private fun NavGraphBuilder.eventsGraph(
-	bottomSheetViewModel: BottomSheetViewModel,
-	resources: Resources,
-	appBarViewModel: AppBarViewModel
+	resources: Resources
 ) {
 
 	navigation(
@@ -210,7 +204,6 @@ private fun NavGraphBuilder.feedbackGraph() {
 @ExperimentalPagerApi
 @ExperimentalAnimationApi
 private fun NavGraphBuilder.reportsGraph(
-	appBarViewModel: AppBarViewModel,
 	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	navigation(
@@ -222,10 +215,7 @@ private fun NavGraphBuilder.reportsGraph(
 		}
 
 		composable(AppScreen.ReportDetails.route) {
-			Report(
-				id = it.arguments?.getString("reportId")!!,
-				appBarViewModel = appBarViewModel
-			)
+			Report(it.arguments?.getString("reportId")!!)
 		}
 
 		composable(AppScreen.NewReport.route) {

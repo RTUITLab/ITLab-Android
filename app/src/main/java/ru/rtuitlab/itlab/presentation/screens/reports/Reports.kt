@@ -31,6 +31,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElemen
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarTabRow
 import ru.rtuitlab.itlab.common.fromIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.ReportsTab
@@ -45,11 +46,14 @@ fun Reports(
 	mfsViewModel: MFSViewModel = singletonViewModel(),
 	reportsViewModel: ReportsViewModel = singletonViewModel()
 ) {
-	val reportsResource by reportsViewModel.reportsResponseFlow.collectAsState()
-	val searchQuery by reportsViewModel.searchQuery.collectAsState()
+	val reportsAboutUser by reportsViewModel.reportsAboutUser.collectAsState()
+	val reportsFromUser by reportsViewModel.reportsFromUser.collectAsState()
 
-	var isRefreshing by remember { mutableStateOf(false) }
-	val userId by reportsViewModel.userIdFlow.collectAsState()
+	val isRefreshing by reportsViewModel.isRefreshing.collectAsState()
+
+	val scaffoldState = rememberScaffoldState()
+
+	reportsViewModel.uiEvents.collectUiEvents(scaffoldState)
 
 	val navController = LocalNavController.current
 
@@ -74,7 +78,7 @@ fun Reports(
 		SwipeRefresh(
 			modifier = Modifier.fillMaxSize(),
 			state = rememberSwipeRefreshState(isRefreshing),
-			onRefresh = reportsViewModel::fetchReports
+			onRefresh = reportsViewModel::update
 		) {
 			val (transitionProgress, transitionProgressSetter) = remember { mutableStateOf(0f) }
 			Scaffold(
@@ -90,7 +94,7 @@ fun Reports(
 							transitionProgressSetter = transitionProgressSetter
 						)
 				},
-				scaffoldState = rememberScaffoldState(snackbarHostState = reportsViewModel.snackbarHostState)
+				scaffoldState = scaffoldState
 			) {
 				HorizontalPager(
 					modifier = Modifier.fillMaxSize(),
@@ -98,47 +102,33 @@ fun Reports(
 					count = tabs.size,
 					state = reportsViewModel.pagerState
 				) { index ->
-					reportsResource.handle(
-						onLoading = {
-							isRefreshing = true
-						},
-						onError = {
-							isRefreshing = false
-							LoadingError(msg = it)
-						},
-						onSuccess = { reports ->
-							isRefreshing = false
-							Box {
-								when(tabs[index]) {
-									ReportsTab.AboutUser -> ReportsList(
-										reports
-											.filter { it.implementer.id == userId }
-											.sortedByDescending { it.id }
-											.performQuery(searchQuery)
-									)
-									ReportsTab.FromUser -> ReportsList(
-										reports
-											.filter { it.applicant.id == userId }
-											.sortedByDescending { it.id }
-											.performQuery(searchQuery)
-									)
-									ReportsTab.Files -> {
-										mfsViewModel.onRefresh()
+					Box {
+						when(tabs[index]) {
+							ReportsTab.AboutUser -> {
+								if (reportsAboutUser.isEmpty())
+									LoadingError(msg = stringResource(R.string.reports_empty))
+								else ReportsList(reportsAboutUser)
+							}
+							ReportsTab.FromUser -> {
+								if (reportsFromUser.isEmpty())
+									LoadingError(msg = stringResource(R.string.reports_empty))
+								else ReportsList(reportsFromUser)
+							}
+							ReportsTab.Files -> {
+								mfsViewModel.onRefresh()
 
-										BaseElements(mfsViewModel)
-									}
-								}
-
-								// Providing scrimming during fab transition
-								Canvas(
-									modifier = Modifier.fillMaxSize(),
-									onDraw = {
-										drawRect(color = Color.Black.copy(alpha = 0.32f * (transitionProgress)))
-									}
-								)
+								BaseElements(mfsViewModel)
 							}
 						}
-					)
+
+						// Providing scrimming during fab transition
+						Canvas(
+							modifier = Modifier.fillMaxSize(),
+							onDraw = {
+								drawRect(color = Color.Black.copy(alpha = 0.32f * (transitionProgress)))
+							}
+						)
+					}
 				}
 			}
 		}
