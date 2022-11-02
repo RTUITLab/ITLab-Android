@@ -51,12 +51,6 @@ class ReportsViewModel @Inject constructor(
 
     private val searchQuery = MutableStateFlow("")
 
-    val reports = searchQuery.flatMapLatest {
-        getReports.search(it).map {
-            it.map { it.toReport() }
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-
     val reportsAboutUser = searchQuery.combine(currentUserId) { query, userId ->
         query to userId
     }.flatMapLatest { (query, userId) ->
