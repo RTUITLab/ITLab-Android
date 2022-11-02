@@ -19,8 +19,10 @@ interface ReportsDao {
     fun searchReports(searchQuery: String): Flow<List<ReportWithUsersAndSalary>>
 
     @Query("""SELECT * FROM ReportEntity
-        WHERE title LIKE '%' || :searchQuery || '%' AND
-        implementerId = :userId
+        WHERE (
+            title LIKE '%' || :searchQuery || '%' OR 
+            text LIKE  '%' || :searchQuery || '%'
+        ) AND implementerId = :userId
         ORDER BY DATETIME(date) DESC""")
     fun searchReportsAboutUser(
         searchQuery: String,
@@ -28,8 +30,10 @@ interface ReportsDao {
     ): Flow<List<ReportWithUsersAndSalary>>
 
     @Query("""SELECT * FROM ReportEntity
-        WHERE title LIKE '%' || :searchQuery || '%' AND
-        reporterId = :userId
+        WHERE (
+            title LIKE '%' || :searchQuery || '%' OR 
+            text LIKE  '%' || :searchQuery || '%'
+        ) AND reporterId = :userId
         ORDER BY DATETIME(date) DESC""")
     fun searchReportsFromUser(
         searchQuery: String,
