@@ -35,7 +35,8 @@ interface UsersDao {
     @Transaction
     @Query("""
         SELECT * FROM UserEntity 
-        WHERE firstName || ' ' || middleName || ' ' || lastName LIKE '%' || :query || '%'
+        WHERE lastName || ' ' || firstName || ' ' || middleName LIKE '%' || TRIM(:query) || '%' OR
+        firstName || ' ' || lastName LIKE '%' || TRIM(:query) || '%'
     """)
     fun searchUsers(query: String): Flow<List<UserWithProperties>>
 
