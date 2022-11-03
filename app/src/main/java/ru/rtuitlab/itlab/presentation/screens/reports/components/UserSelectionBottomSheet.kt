@@ -26,8 +26,7 @@ fun UserSelectionBottomSheet(
 	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val users by employeesViewModel.users.collectAsState()
-	val currentUserId = employeesViewModel.userIdFlow.collectAsState()
-	val currentUser = users.find { it.id == currentUserId.value }
+	val currentUser by employeesViewModel.currentUser.collectAsState(initial = null)
 
 	val scope = rememberCoroutineScope()
 
@@ -40,7 +39,7 @@ fun UserSelectionBottomSheet(
 				employeesViewModel.onSearchQueryChange(it)
 			}
 		}
-		if (currentUser != null)
+		currentUser?.let { currentUser ->
 			item {
 				EmployeeCard(
 					user = currentUser,
@@ -54,17 +53,18 @@ fun UserSelectionBottomSheet(
 				)
 				Spacer(modifier = Modifier.height(8.dp))
 			}
-		items(users.filter { it.id != currentUserId.value }) { user ->
-			EmployeeCard(
-				user = user,
-				modifier = Modifier
-					.fillMaxWidth()
-					.clickable {
-						onSelect(user)
-						bottomSheetViewModel.hide(scope)
-					},
-				elevation = 6.dp
-			)
+			items(users.filter { it.id != currentUser.id }) { user ->
+				EmployeeCard(
+					user = user,
+					modifier = Modifier
+						.fillMaxWidth()
+						.clickable {
+							onSelect(user)
+							bottomSheetViewModel.hide(scope)
+						},
+					elevation = 6.dp
+				)
+			}
 		}
 	}
 }

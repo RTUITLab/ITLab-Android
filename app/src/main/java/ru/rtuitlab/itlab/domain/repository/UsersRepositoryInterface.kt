@@ -41,6 +41,8 @@ interface UsersRepositoryInterface {
         properties: List<UserPropertyEntity>
     )
 
+    suspend fun fetchUserInfo(url: String, accessToken: String): Resource<UserInfoModel>
+
     suspend fun updateAllUsers(): Resource<List<UserResponse>>
 
     suspend fun updatePropertyTypes(): Resource<List<UserPropertyTypeModel>>

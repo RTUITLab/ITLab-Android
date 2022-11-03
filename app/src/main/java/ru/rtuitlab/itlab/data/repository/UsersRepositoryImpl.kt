@@ -68,6 +68,10 @@ class UsersRepositoryImpl @Inject constructor(
         properties: List<UserPropertyEntity>
     ) = usersDao.upsertUser(user, properties)
 
+    override suspend fun fetchUserInfo(url: String, accessToken: String) = handler {
+        usersApi.getUserInfo(url, "Bearer $accessToken")
+    }
+
     override suspend fun editUserInfo(info: UserEditRequest) = tryUpdate(
         inScope = coroutineScope,
         withHandler = handler,

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.domain.use_cases.users.GetCurrentUserUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.UpdateUsersUseCase
@@ -14,14 +13,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EmployeesViewModel @Inject constructor(
-	private val authStateStorage: IAuthStateStorage,
 	private val getUsers: GetUsersUseCase,
 	private val updateUsers: UpdateUsersUseCase,
 	getCurrentUser: GetCurrentUserUseCase
 ) : ViewModel() {
-
-	private var _userIdFlow = MutableStateFlow("")
-	val userIdFlow = _userIdFlow.asStateFlow()
 
 	val currentUser = getCurrentUser().map {
 		it?.toUser()
@@ -29,14 +24,6 @@ class EmployeesViewModel @Inject constructor(
 
 	private val _isRefreshing = MutableStateFlow(false)
 	val isRefreshing = _isRefreshing.asStateFlow()
-
-	init {
-		viewModelScope.launch {
-			authStateStorage.userIdFlow.collect {
-				_userIdFlow.value = it
-			}
-		}
-	}
 
 	private val searchQuery = MutableStateFlow("")
 
