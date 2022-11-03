@@ -1,7 +1,6 @@
 package ru.rtuitlab.itlab.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -23,7 +22,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthScreen
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthViewModel
-import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
+import ru.rtuitlab.itlab.presentation.screens.micro_file_service.FilesViewModel
 import ru.rtuitlab.itlab.presentation.ui.ITLabApp
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElementsRoot
 import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
@@ -40,7 +39,7 @@ import ru.rtuitlab.itlab.presentation.utils.LocalActivity
 @ExperimentalSerializationApi
 class MainActivity : AppCompatActivity() {
 
-	private val mfsViewModel: MFSViewModel by viewModels()
+	private val filesViewModel: FilesViewModel by viewModels()
 	private val authViewModel: AuthViewModel by viewModels()
 
 
@@ -55,26 +54,20 @@ class MainActivity : AppCompatActivity() {
 		}
 	private val requestPermissionLauncher =
 		registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-			mfsViewModel.changeAccess(it)
+			filesViewModel.onPermissionResult(it)
 		}
 
-	private val mfsContract =
+	private val fileSelectionContract =
 		registerForActivityResult(ActivityResultContracts.OpenDocument()) { selectedFile ->
-			mfsViewModel.setFilePath(this, selectedFile)
-		}
-
-	private val requestDownloadLauncher =
-		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-			Log.d("Main", it.data.toString())
+			filesViewModel.onLocalFileSelected(this, selectedFile)
 		}
 
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		mfsViewModel.provideRequestPermissionLauncher(this, requestPermissionLauncher)
-		mfsViewModel.provideMFSContract(mfsContract)
-		mfsViewModel.provideDownloadLauncher(requestDownloadLauncher)
+		filesViewModel.provideRequestPermissionLauncher(requestPermissionLauncher)
+		filesViewModel.provideFileSelectionContract(fileSelectionContract)
 
 		authViewModel.provideLogoutLauncher(logoutPageLauncher)
 		installSplashScreen()

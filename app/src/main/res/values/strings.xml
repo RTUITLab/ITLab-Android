@@ -108,20 +108,18 @@
     <string name="equipmentType">Equipment Type</string>
     <string name="number">Number</string>
     <string name="add_device">Add Device</string>
-    <string name="confirm">Подтвердить</string>
-    <string name="dismiss">Отменить</string>
+    <string name="confirm">Confirm</string>
     <string name="shortTitle">Short Title</string>
     <string name="to_create">Create</string>
-    <string name="to_choose">Chose</string>
+    <string name="to_choose">Choose</string>
     <string name="laboratory">Laboratory</string>
-    <string name="Null">null</string>
     <string name="Select_a_file">Select a file</string>
     <string name="Upload_a_file">Upload a file</string>
     <string name="download">Download</string>
-    <string name="byDate">by date</string>
-    <string name="byUser">by user</string>
+    <string name="by_date">By date</string>
+    <string name="by_user">By user</string>
     <string name="filter">filter</string>
-    <string name="no_files">Файлы отсутствуют</string>
+    <string name="no_files">No files found</string>
 
     <!--    Feedback    -->
     <string name="feedback">Feedback</string>

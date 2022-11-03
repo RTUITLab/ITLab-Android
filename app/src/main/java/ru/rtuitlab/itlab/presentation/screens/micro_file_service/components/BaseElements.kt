@@ -27,37 +27,37 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfo
-import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
+import ru.rtuitlab.itlab.presentation.screens.micro_file_service.FilesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.common.fromIso8601
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
+import ru.rtuitlab.itlab.presentation.utils.LocalActivity
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
 fun BaseElements(
-    mfsViewModel: MFSViewModel
+    filesViewModel: FilesViewModel
 ) {
 
-    val filesResource by mfsViewModel.listFileInfoResponseFlow.collectAsState()
+    val filesResource by filesViewModel.filesResponse.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
 
-    var files = mfsViewModel.listFileInfoFlow.collectAsState().value.reversed()
+    val files by filesViewModel.files.collectAsState()
 
 
     Scaffold(
         modifier = Modifier
-            .fillMaxSize(),
-
+            .fillMaxSize()
         ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            val state = remember { mutableStateOf(false) }
+            val selectedSortingMethod by filesViewModel.selectedSortingMethod.collectAsState()
+
             val stringSearch = remember { mutableStateOf("") }
             val focusRequester = remember { FocusRequester() }
 
@@ -69,7 +69,7 @@ fun BaseElements(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SideEffect {
-                    mfsViewModel.onSearch(stringSearch.value)
+                    filesViewModel.onSearch(stringSearch.value)
                 }
                 OutlinedTextField(
                     modifier = Modifier
@@ -79,28 +79,25 @@ fun BaseElements(
                     value = stringSearch.value,
                     onValueChange = {
                         stringSearch.value = it
-                        mfsViewModel.onSearch(stringSearch.value)
+                        filesViewModel.onSearch(stringSearch.value)
                     },
                     placeholder = {
-
                         Text(text = stringResource(R.string.search))
-
-
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         backgroundColor = MaterialTheme.colors.background,
                         focusedBorderColor = MaterialTheme.colors.onSurface
-
                     )
-
                 )
+
                 DisposableEffect(Unit) {
                     //focusRequester.requestFocus()
                     onDispose {
-                        mfsViewModel.onSearch("")
+                        filesViewModel.onSearch("")
                     }
                 }
+
                 AppDropdownMenu(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -120,35 +117,25 @@ fun BaseElements(
                         }
                     },
                     content = { collapseAction ->
-                        LabeledRadioButton(
-                            state = !state.value,
-                            onCheckedChange = {
-                                mfsViewModel.setSortedBy("date")
-                                state.value = !state.value
-                                collapseAction()
-                            },
-                            label = stringResource(R.string.byDate)
-                        )
-                        LabeledRadioButton(
-                            state = state.value,
-                            onCheckedChange = {
-                                mfsViewModel.setSortedBy("user")
-                                state.value = !state.value
-                                collapseAction()
-                            },
-                            label = stringResource(R.string.byUser)
-                        )
+                        FilesViewModel.SortingMethod.values().forEach { sortingMethod ->
+                            LabeledRadioButton(
+                                state = sortingMethod == selectedSortingMethod,
+                                onCheckedChange = {
+                                    filesViewModel.onSortingChanged(sortingMethod)
+                                    collapseAction()
+                                },
+                                label = stringResource(sortingMethod.nameResource)
+                            )
+                        }
                     }
                 )
-
             }
             SwipeRefresh(
                 modifier = Modifier
                     .fillMaxSize(),
                 state = rememberSwipeRefreshState(isRefreshing),
-                onRefresh = mfsViewModel::onRefresh
+                onRefresh = filesViewModel::onRefresh
             ) {
-
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -160,29 +147,18 @@ fun BaseElements(
                         onError = { msg ->
                             isRefreshing = false
                             LoadingError(msg = msg)
-
                         },
                         onSuccess = {
                             isRefreshing = false
                             if (it.isEmpty())
                                 LoadingError(msg = stringResource(R.string.no_files))
                             else {
-                                mfsViewModel.onResourceSuccess(it)
-
-                                FileList(
-                                    files
-                                    ,mfsViewModel)
+                                FileList(files, filesViewModel)
                             }
-
                         }
-
                     )
                 }
-
-
             }
-
-
         }
     }
 }
@@ -192,40 +168,27 @@ fun BaseElements(
 @Composable
 private fun FileList(
     files: List<FileInfo>,
-    mfsViewModel: MFSViewModel
+    filesViewModel: FilesViewModel
 ) {
-
-
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-
-
         items(files) { file ->
-
             FileCard(
-                mfsViewModel = mfsViewModel,
+                filesViewModel = filesViewModel,
                 file = file,
                 modifier = Modifier
                     .fillMaxWidth()
-
             )
-
-
         }
-
-
     }
-
 }
 
 @Composable
-fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
-    val context = LocalContext.current
-    val exp = file.filename.substring(file.filename.lastIndexOf(".") + 1)
-    val duration = 300
+fun FileCard(filesViewModel: FilesViewModel, file: FileInfo, modifier: Modifier) {
+    val activity = LocalActivity.current
 
     Card(
         modifier = modifier
@@ -235,24 +198,16 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
                 .fillMaxWidth()
                 .padding(10.dp),
         ) {
-            SharedElement(
-                key = "${file.id}/time",
-                screenKey = AppScreen.Reports.route,
-                transitionSpec = SharedElementsTransitionSpec(
-                    durationMillis = duration
-                )
+            IconizedRow(
+                imageVector = Icons.Default.Schedule,
+                imageWidth = 18.dp,
+                imageHeight = 18.dp,
+                spacing = 8.dp
             ) {
-                IconizedRow(
-                    imageVector = Icons.Default.Schedule,
-                    imageWidth = 18.dp,
-                    imageHeight = 18.dp,
-                    spacing = 8.dp
-                ) {
-                    Text(
-                        text = file.uploadDate.fromIso8601(LocalContext.current),
-                        style = MaterialTheme.typography.subtitle1
-                    )
-                }
+                Text(
+                    text = file.uploadDate.fromIso8601(LocalContext.current),
+                    style = MaterialTheme.typography.subtitle1
+                )
             }
             Row {
                 Column(
@@ -278,7 +233,7 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
                         }
                     }
                     TextButton(
-                        onClick = { mfsViewModel.downloadFile(context, file) }) {
+                        onClick = { filesViewModel.downloadFile(activity, file) }) {
                         Text(
                             text = stringResource(R.string.download),
                             color = MaterialTheme.colors.onPrimary
@@ -292,47 +247,14 @@ fun FileCard(mfsViewModel: MFSViewModel, file: FileInfo, modifier: Modifier) {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    val (bitmap, setBitmap) = rememberSaveable { mutableStateOf<Bitmap?>(null) }
-                    Log.d("BASE", "$exp")
-                    if ((exp == "png" || exp == "jpeg" || exp == "jpg" || exp == "gif")) {
-                        if (bitmap == null)
-                            SideEffect {
-                                //mfsViewModel.getBitmapFromFile(context, file, setBitmap)
-                            }
-
-                        if (bitmap != null) {
-                            Image(
-                                bitmap = bitmap.asImageBitmap(),
-                                contentDescription = stringResource(R.string.report),
-                                contentScale = ContentScale.Fit
-                            )
-                        } else {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_attach),
-                                contentDescription = stringResource(R.string.report)
-                            )
-                            Text(
-                                text = file.filename,
-                                overflow = TextOverflow.Clip
-                            )
-                        }
-                        DisposableEffect(Unit) {
-                            //focusRequester.requestFocus()
-                            onDispose {
-                                mfsViewModel.getBitmapFromFile(context, null, setBitmap)
-                            }
-                        }
-                    } else {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_attach),
-                            contentDescription = stringResource(R.string.report)
-                        )
-                        Text(
-                            text = file.filename,
-                            overflow = TextOverflow.Clip
-                        )
-                    }
-
+                    Icon(
+                        painter = painterResource(R.drawable.ic_attach),
+                        contentDescription = stringResource(R.string.report)
+                    )
+                    Text(
+                        text = file.filename,
+                        overflow = TextOverflow.Clip
+                    )
                 }
             }
         }

@@ -11,6 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,10 +22,11 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.cancel
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.reports.models.Report
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
-import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
+import ru.rtuitlab.itlab.presentation.screens.micro_file_service.FilesViewModel
 import ru.rtuitlab.itlab.presentation.screens.micro_file_service.components.BaseElements
 import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
@@ -43,8 +45,8 @@ val duration = 300
 @ExperimentalPagerApi
 @Composable
 fun Reports(
-	mfsViewModel: MFSViewModel = singletonViewModel(),
-	reportsViewModel: ReportsViewModel = singletonViewModel()
+    filesViewModel: FilesViewModel = singletonViewModel(),
+    reportsViewModel: ReportsViewModel = singletonViewModel()
 ) {
 	val reportsAboutUser by reportsViewModel.reportsAboutUser.collectAsState()
 	val reportsFromUser by reportsViewModel.reportsFromUser.collectAsState()
@@ -62,6 +64,20 @@ fun Reports(
 		ReportsTab.FromUser,
 		ReportsTab.Files
 	)
+
+	val pagerState = reportsViewModel.pagerState
+
+	var secondPageVisited by rememberSaveable { mutableStateOf(false) }
+	LaunchedEffect(pagerState) {
+		snapshotFlow { pagerState.currentPage }.collect { page ->
+			if (secondPageVisited) cancel()
+			if (tabs[page] == ReportsTab.Files && !secondPageVisited) {
+				secondPageVisited = true
+				filesViewModel.onRefresh()
+			}
+		}
+	}
+
 	Column {
 		Surface(
 			color = MaterialTheme.colors.primarySurface,
@@ -69,7 +85,7 @@ fun Reports(
 			elevation = AppBarDefaults.TopAppBarElevation
 		) {
 			AppBarTabRow(
-				pagerState = reportsViewModel.pagerState,
+				pagerState = pagerState,
 				tabs = tabs,
 				isScrollable = true
 			)
@@ -115,9 +131,7 @@ fun Reports(
 								else ReportsList(reportsFromUser)
 							}
 							ReportsTab.Files -> {
-								mfsViewModel.onRefresh()
-
-								BaseElements(mfsViewModel)
+								BaseElements(filesViewModel)
 							}
 						}
 

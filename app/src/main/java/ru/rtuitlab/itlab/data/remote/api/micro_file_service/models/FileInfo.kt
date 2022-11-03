@@ -16,7 +16,7 @@ data class FileInfoResponse (
 
 )
 {
-	fun toFileInfo(sender: User?) = FileInfo (
+	fun toFileInfo(sender: User) = FileInfo (
 		chunkSize = chunkSize,
 		filename = filename,
 		id = id,
@@ -24,12 +24,10 @@ data class FileInfoResponse (
 		fileDescription = metadata.fileDescription,
 		fileSender = metadata.fileSender,
 		uploadDate = uploadDate,
-		senderfirstName = sender?.firstName,
-		senderlastName = sender?.lastName,
-		sendermiddleName = sender?.middleName,
-		applicant = sender?.toUserResponse()!!
-
-
+		senderfirstName = sender.firstName,
+		senderlastName = sender.lastName,
+		sendermiddleName = sender.middleName,
+		applicant = sender.toUserResponse()
 	)
 }
 
@@ -45,6 +43,4 @@ data class FileInfo(
 	val senderlastName: String?,
 	val sendermiddleName:String?,
 	val applicant: UserResponse,
-){
-
-}
+)
