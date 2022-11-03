@@ -17,7 +17,6 @@ sealed class AppBottomSheet {
 	): AppBottomSheet()
 	class EventDescription(val markdown: String): AppBottomSheet()
 	class DeviceInfo (
-		val deviceDetails: DeviceDetails?,
 		val devicesViewModel: DevicesViewModel,
 		val bottomSheetViewModel: BottomSheetViewModel
 

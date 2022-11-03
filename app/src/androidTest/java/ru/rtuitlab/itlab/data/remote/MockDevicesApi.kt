@@ -38,7 +38,7 @@ class MockDevicesApi: DevicesApi {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getListEquipmentType(
+    override suspend fun getEquipmentTypes(
         match: String,
         all: Boolean
     ): List<EquipmentTypeResponse> {
@@ -53,7 +53,7 @@ class MockDevicesApi: DevicesApi {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getFreeEquipments(): List<DeviceDetailDto> {
+    override suspend fun getFreeEquipment(): List<DeviceDetailDto> {
         TODO("Not yet implemented")
     }
 }

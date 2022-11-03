@@ -51,7 +51,7 @@ interface DevicesApi {
         ):Response<Unit>
 
         @GET("EquipmentType")
-        suspend fun getListEquipmentType(
+        suspend fun getEquipmentTypes(
                 @Query("match")match:String,
                 @Query("all")all:Boolean
         ): List<EquipmentTypeResponse>
@@ -72,6 +72,6 @@ interface DevicesApi {
 
         //Filtering
         @GET("Equipment/user/free")
-        suspend fun getFreeEquipments(): List<DeviceDetailDto>
+        suspend fun getFreeEquipment(): List<DeviceDetailDto>
 }
 

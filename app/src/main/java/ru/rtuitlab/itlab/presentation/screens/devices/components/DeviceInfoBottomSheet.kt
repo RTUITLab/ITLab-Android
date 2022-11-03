@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.screens.devices.components
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.clickable
@@ -16,16 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetailDto
-import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
-import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentEditRequest
-import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentTypeResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
@@ -35,271 +28,207 @@ import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 @ExperimentalMaterialApi
 @Composable
 fun DeviceInfoBottomSheet(
-	devicesViewModel: DevicesViewModel,
-	bottomSheetViewModel: BottomSheetViewModel,
-	deviceDetails: DeviceDetails?
+    devicesViewModel: DevicesViewModel,
+    bottomSheetViewModel: BottomSheetViewModel
 ) {
 
-	val scope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
+
+    var isTypeDialogShown by remember { mutableStateOf(false) }
+    var isSerialNumberDialogShown by remember { mutableStateOf(false) }
+    var isDescriptionDialogShown by remember { mutableStateOf(false) }
 
 
+    var isConfirmationDialogShown by remember { mutableStateOf(false) }
+
+    val device by devicesViewModel.selectedDevice.collectAsState()
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(25.dp)
+
+    ) {
+        if (isTypeDialogShown)
+            Dialog(
+                onDismissRequest = { isTypeDialogShown = false },
+                content = {
+                    DeviceInfoEditEquipmentTypeDialogContent(
+                        devicesViewModel = devicesViewModel
+                    ) { newType ->
+                        device?.let {
+                            devicesViewModel.updateEquipment(
+                                equipmentEditRequest = it.getEditRequest()
+                                    .copy(equipmentTypeId = newType.id)
+                            )
+                            isTypeDialogShown = false
+                        }
+                    }
+                }
+            )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clickable {
+                    isTypeDialogShown = true
+                }
+                .fillMaxWidth()
+        ) {
+            Icon(
+                modifier = Modifier
+                    .width(20.dp)
+                    .height(20.dp),
+                painter = painterResource(R.drawable.ic_title),
+                contentDescription = stringResource(R.string.equipmentType),
+                tint = colorResource(R.color.accent)
 
 
-
-	val tempDeviceDetails by devicesViewModel.deviceFromSheetFlow.collectAsState()
-	val equipmentIdString = tempDeviceDetails?.equipmentTypeId
-
-
-	var dialogEquipmentTypeIsShown by remember { mutableStateOf(false) }
-	var dialogSerialNumberIsShown by remember { mutableStateOf(false) }
-	var dialogDescriptionIsShown by remember { mutableStateOf(false) }
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = device?.equipmentType?.title.toString(),
+                textDecoration = TextDecoration.Underline
 
 
-	var dialogAcceptIsShown by remember { mutableStateOf(false) }
-
-	val baseRequestOnUpdateDevice:(
-			serialNumber:String?,
-			equipmentTypeId:String?,
-			description:String?,
-			(DeviceDetailDto) -> Unit) -> Unit = {serialNumber,equipmentTypeId,description,it ->
-
-		val equipmentEditRequest = EquipmentEditRequest(
-			serialNumber,
-			equipmentTypeId,
-			description,
-			null,
-			true,
-			tempDeviceDetails?.id
-		)
+            )
 
 
-		devicesViewModel.onUpdateEquipment(
-			equipmentEditRequest,
-			editedDevice = { deviceDetailDto ->
-				Log.d("DeviceIII","$deviceDetailDto")
-				if(deviceDetailDto!= null)
-					it(deviceDetailDto)
-			}
+        }
+        Spacer(Modifier.height(8.dp))
 
-		)
-	}
+        if (isSerialNumberDialogShown)
+            Dialog(
+                onDismissRequest = { isSerialNumberDialogShown = false },
+                content = {
+                    DeviceInfoEditSecondaryDialogContent(
+                        line = device?.serialNumber.toString(),
+                        hint = stringResource(R.string.serial_number),
+                        onConfirm = { newSerialNumber ->
+                            device?.let {
+                                devicesViewModel.updateEquipment(
+                                    equipmentEditRequest = it.getEditRequest()
+                                        .copy(serialNumber = newSerialNumber)
+                                )
+                                isSerialNumberDialogShown = false
+                            }
+                        }
+                    )
+                }
+            )
+        Row(verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clickable {
+                    isSerialNumberDialogShown = true
+                }) {
+            Icon(
+                modifier = Modifier
+                    .width(20.dp)
+                    .height(20.dp),
+                painter = painterResource(R.drawable.ic_serial_number),
+                contentDescription = stringResource(R.string.serial_number),
+                tint = colorResource(R.color.accent)
 
-	val setEquipmentTypeLine: (EquipmentTypeResponse) -> Unit = {
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = device?.serialNumber.toString(),
+                textDecoration = TextDecoration.Underline
 
-		baseRequestOnUpdateDevice(
-			tempDeviceDetails?.serialNumber,
-			it.id,
-			tempDeviceDetails?.description,
-			devicesViewModel::onUpdateCachedDevice)
+            )
+        }
+        Spacer(Modifier.height(8.dp))
 
-		dialogEquipmentTypeIsShown = false
-	}
-	val setSerialNumberLine: (String) -> Unit = {
+        if (isDescriptionDialogShown)
+            Dialog(
+                onDismissRequest = { isDescriptionDialogShown = false },
+                content = {
+                    DeviceInfoEditSecondaryDialogContent(
+                        line = device?.description.toString(),
+                        hint = stringResource(R.string.description),
+                        onConfirm = { newDescription ->
+                            device?.let {
+                                devicesViewModel.updateEquipment(
+                                    equipmentEditRequest = it.getEditRequest()
+                                        .copy(description = newDescription)
+                                )
+                                isDescriptionDialogShown = false
+                            }
+                        }
+                    )
+                }
+            )
+        Row(verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clickable {
 
-		baseRequestOnUpdateDevice(
-			it,
-			tempDeviceDetails?.equipmentTypeId,
-			tempDeviceDetails?.description,
-			devicesViewModel::onUpdateCachedDevice)
-		dialogSerialNumberIsShown = false
-	}
-	val setDescriptionLine: (String) -> Unit = {
-
-
-		baseRequestOnUpdateDevice(
-			tempDeviceDetails?.serialNumber,
-			tempDeviceDetails?.equipmentTypeId,
-			it,
-			devicesViewModel::onUpdateCachedDevice)
-		dialogDescriptionIsShown = false
-	}
-	tempDeviceDetails.run {
-		Column(
-			modifier = Modifier
-				.fillMaxWidth()
-				.padding(25.dp)
-
-		) {
-			if (dialogEquipmentTypeIsShown)
-				Dialog(
-					onDismissRequest = { dialogEquipmentTypeIsShown = false },
-					content = {
-						DeviceInfoEditEquipmentTypeDialogContent(
-							tempDeviceDetails?.equipmentType?.title.toString(),
-							devicesViewModel,
-							setEquipmentTypeLine
-						)
-					}
-				)
-			Row(
-				verticalAlignment = Alignment.CenterVertically,
-				modifier = Modifier
-					.clickable {
-						dialogEquipmentTypeIsShown = true
-					}
-					.fillMaxWidth()
-			) {
-				Icon(
-					modifier = Modifier
-						.width(20.dp)
-						.height(20.dp),
-					painter = painterResource(R.drawable.ic_title),
-					contentDescription = stringResource(R.string.equipmentType),
-					tint = colorResource(R.color.accent)
-
-
-				)
-				Spacer(Modifier.width(8.dp))
-				Text(
-					text = tempDeviceDetails?.equipmentType?.title.toString(),
-					textDecoration = TextDecoration.Underline
+                    isDescriptionDialogShown = true
+                }) {
+            Icon(
+                painter = painterResource(R.drawable.ic_info),
+                contentDescription = stringResource(R.string.description),
+                modifier = Modifier
+                    .width(20.dp)
+                    .height(20.dp),
+                tint = colorResource(R.color.accent)
 
 
-				)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = device?.description.toString(),
+                textDecoration = TextDecoration.Underline
 
 
-			}
-			Spacer(Modifier.height(8.dp))
+            )
+        }
+        Spacer(Modifier.height(8.dp))
 
-			if (dialogSerialNumberIsShown)
-				Dialog(
-					onDismissRequest = { dialogSerialNumberIsShown = false },
-					content = {
-						DeviceInfoEditSecondaryDialogContent(
-							tempDeviceDetails?.serialNumber.toString(),
-							stringResource(R.string.serial_number),
-							setSerialNumberLine
-						)
-					}
-				)
-			Row(verticalAlignment = Alignment.CenterVertically,
-				modifier = Modifier
-					.clickable {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            if (isConfirmationDialogShown)
+                Dialog(
+                    onDismissRequest = { isConfirmationDialogShown = false },
+                    content = {
 
-						dialogSerialNumberIsShown = true
-					}) {
-				Icon(
-					modifier = Modifier
-						.width(20.dp)
-						.height(20.dp),
-					painter = painterResource(R.drawable.ic_serial_number),
-					contentDescription = stringResource(R.string.serial_number),
-					tint = colorResource(R.color.accent)
+                        DeviceAcceptDialogContent(
+                            device?.equipmentType?.title.toString(),
+                            device?.serialNumber.toString(),
+                            device?.description.toString()
+                        ) {
+                            device?.let {
+                                devicesViewModel.onDeleteEquipment(it.id) { isSuccessful ->
+                                    if (!isSuccessful) return@onDeleteEquipment
+                                    bottomSheetViewModel.hide(scope)
+                                    devicesViewModel.onDeleteCachedDevice(it.id)
+                                    isConfirmationDialogShown = false
+                                }
+                            }
 
-				)
-				Spacer(Modifier.width(8.dp))
-				Text(
-					text = tempDeviceDetails?.serialNumber.toString(),
-					textDecoration = TextDecoration.Underline
+                        }
+                    }
+                )
+            Icon(
+                Icons.Outlined.Delete,
+                contentDescription = stringResource(R.string.delete),
+                modifier = Modifier
+                    .padding(10.dp)
+                    .width(40.dp)
+                    .height(30.dp)
+                    .padding(0.dp)
+                    .clickable {
+                        isConfirmationDialogShown = true
 
-				)
-			}
-			Spacer(Modifier.height(8.dp))
-
-			if (dialogDescriptionIsShown)
-				Dialog(
-					onDismissRequest = { dialogDescriptionIsShown = false },
-					content = {
-						DeviceInfoEditSecondaryDialogContent(
-							tempDeviceDetails?.description.toString(),
-							stringResource(R.string.description),
-							setDescriptionLine
-						)
-					}
-				)
-			Row(verticalAlignment = Alignment.CenterVertically,
-				modifier = Modifier
-					.clickable {
-
-						dialogDescriptionIsShown = true
-					}) {
-				Icon(
-					painter = painterResource(R.drawable.ic_info),
-					contentDescription = stringResource(R.string.description),
-					modifier = Modifier
-						.width(20.dp)
-						.height(20.dp),
-					tint = colorResource(R.color.accent)
+                    },
+                tint = AppColors.red
 
 
-				)
-				Spacer(Modifier.width(8.dp))
-				Text(
-					text = tempDeviceDetails?.description.toString(),
-					textDecoration = TextDecoration.Underline
+            )
 
-
-				)
-			}
-			Spacer(Modifier.height(8.dp))
-
-			Row(
-				modifier = Modifier
-					.fillMaxWidth(),
-				horizontalArrangement = Arrangement.End,
-
-				) {
-
-				/*Text(
-				text = "Изменить",
-				fontWeight = FontWeight(500),
-				fontSize = 17.sp,
-				modifier = Modifier
-					.padding(10.dp)
-					.height(30.dp)
-					.padding(0.dp)
-					.clickable {
-
-
-					}
-			)*/
-				if (dialogAcceptIsShown)
-					Dialog(
-						onDismissRequest = { dialogAcceptIsShown = false },
-						content = {
-
-							if (tempDeviceDetails != null) {
-
-								DeviceAcceptDialogContent(
-
-
-									tempDeviceDetails!!.equipmentType?.title.toString(),
-									tempDeviceDetails!!.serialNumber.toString(),
-									tempDeviceDetails!!.description.toString(),
-
-									) {
-									devicesViewModel.onDeleteEquipment(tempDeviceDetails!!.id) { deletedDevice ->
-										if (deletedDevice != null) {
-											bottomSheetViewModel.hide(scope)
-											devicesViewModel.onDeleteCachedDevice(tempDeviceDetails!!.id)
-											dialogAcceptIsShown = false
-										}
-									}
-
-								}
-							}
-						}
-					)
-				Icon(
-					Icons.Outlined.Delete,
-					contentDescription = stringResource(R.string.delete),
-					modifier = Modifier
-						.padding(10.dp)
-						.width(40.dp)
-						.height(30.dp)
-						.padding(0.dp)
-						.clickable {
-							dialogAcceptIsShown = true
-
-						},
-					tint = AppColors.red
-
-
-					)
-
-			}
-		}
-	}
+        }
+    }
 
 }
 

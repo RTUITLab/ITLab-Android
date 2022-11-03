@@ -24,62 +24,62 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 @ExperimentalPagerApi
 @Composable
 fun DevicesTopAppBar(
-        devicesViewModel: DevicesViewModel = singletonViewModel()
+    devicesViewModel: DevicesViewModel = singletonViewModel()
 ) {
-        var searchActivated by rememberSaveable { mutableStateOf(false) }
+    var searchActivated by rememberSaveable { mutableStateOf(false) }
 
-        val showFreeDevicesChecked by devicesViewModel.freeFilteringIs.collectAsState()
+    val showFreeDevicesChecked by devicesViewModel.isFreeFilterChecked.collectAsState()
 
 
-        if (searchActivated)
-                BackHandler {
-                        searchActivated = false
-                }
-
-        ExtendedTopAppBar(
-                options = listOf(
-                        AppBarOption.Dropdown(
-                                icon = Icons.Default.FilterList,
-                                dropdownMenuContent = { collapseAction ->
-                                        LabelledCheckBox(
-                                                checked = showFreeDevicesChecked,
-                                                onCheckedChange = {
-                                                        devicesViewModel.onChangeFiltering()
-                                                        collapseAction()
-                                                },
-                                                label = stringResource(R.string.show_only_free)
-                                        )
-                                }
-                        ),
-                        AppBarOption.Clickable(
-                                icon = Icons.Default.Search,
-                                onClick = {
-                                        searchActivated = true
-                                }
-                        )
-                ),
-                hideBackButton = !searchActivated,
-                hideOptions = searchActivated,
-                onBackAction = {
-                        searchActivated = false
-                        devicesViewModel.onSearch("")
-                }
-        ) {
-                if (searchActivated) {
-                        SearchBar(
-                                onSearch = devicesViewModel::onSearch
-                        )
-                } else {
-                        Text(
-                                text = stringResource(R.string.devices),
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight(500),
-                                textAlign = TextAlign.Start,
-                                color = MaterialTheme.colors.onSurface
-                        )
-                }
-
+    if (searchActivated)
+        BackHandler {
+            searchActivated = false
         }
+
+    ExtendedTopAppBar(
+        options = listOf(
+            AppBarOption.Dropdown(
+                icon = Icons.Default.FilterList,
+                dropdownMenuContent = { collapseAction ->
+                    LabelledCheckBox(
+                        checked = showFreeDevicesChecked,
+                        onCheckedChange = {
+                            devicesViewModel.onFilteringChanged(it)
+                            collapseAction()
+                        },
+                        label = stringResource(R.string.show_only_free)
+                    )
+                }
+            ),
+            AppBarOption.Clickable(
+                icon = Icons.Default.Search,
+                onClick = {
+                    searchActivated = true
+                }
+            )
+        ),
+        hideBackButton = !searchActivated,
+        hideOptions = searchActivated,
+        onBackAction = {
+            searchActivated = false
+            devicesViewModel.onSearch("")
+        }
+    ) {
+        if (searchActivated) {
+            SearchBar(
+                onSearch = devicesViewModel::onSearch
+            )
+        } else {
+            Text(
+                text = stringResource(R.string.devices),
+                fontSize = 20.sp,
+                fontWeight = FontWeight(500),
+                textAlign = TextAlign.Start,
+                color = MaterialTheme.colors.onSurface
+            )
+        }
+
+    }
 }
 
 
