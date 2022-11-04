@@ -9,7 +9,13 @@ import javax.inject.Inject
 class GetUsersUseCase @Inject constructor(
     private val repo: UsersRepositoryInterface
 ) {
-
+    /**
+     * When collecting into a StateFlow via Flow.stateIn do NOT use non-null assertion (!!)
+     * to find a user by ID unless you took necessary steps to **ensure** the resulting
+     * flow is not empty.
+     * A sample of ensuring can be found in *init* block of
+     * [ru.rtuitlab.itlab.presentation.screens.purchases.PurchasesViewModel]
+     */
     operator fun invoke() = repo.getAllUsers().map {
         it.map {
             it.toUserResponse()
