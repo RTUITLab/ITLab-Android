@@ -66,6 +66,7 @@ class ReportsRepositoryImpl @Inject constructor(
             employeeId = userId
         ) },
         into = {
+            updateReportSalaries(userId)
             dao.upsertReports(
                 it.map {
                     it.toReportEntity()
