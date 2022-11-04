@@ -103,6 +103,18 @@ class EventsViewModel @Inject constructor(
 	private var _showPastEvents = MutableStateFlow(false)
 	val showPastEvents = _showPastEvents.asStateFlow()
 
+	init {
+	    viewModelScope.launch {
+	    	updateEvents.pendingFirstTime(
+			    refreshState = _isRefreshing,
+	    	) {
+			    launch {
+				    _uiEvents.emit(UiEvent.Snackbar(it))
+			    }
+		    }
+	    }
+	}
+
 	fun toggleShowPastEvents(show: Boolean) = viewModelScope.launch {
 		_showPastEvents.value = show
 		if (show) {

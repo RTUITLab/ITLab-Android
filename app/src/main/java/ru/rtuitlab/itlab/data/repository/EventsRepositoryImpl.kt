@@ -39,6 +39,9 @@ class EventsRepositoryImpl @Inject constructor(
 
     private val dao = db.eventsDao
 
+    override var eventsUpdatedAtLeastOnce: Boolean = false
+        private set
+
     override suspend fun updatePendingEvents() = updateEvents(
         begin = nowAsIso8601(),
         end = null
@@ -70,6 +73,7 @@ class EventsRepositoryImpl @Inject constructor(
         withHandler = handler,
         from = { eventsApi.getEvents(begin, end) },
         into = {
+            eventsUpdatedAtLeastOnce = true
             updateEventTypes()
             updateEventRoles()
             dao.upsertEvents(
@@ -213,6 +217,7 @@ class EventsRepositoryImpl @Inject constructor(
     override suspend fun clearUserEvents() {
         dao.deleteInvitations()
         dao.deleteUserEvents()
+        eventsUpdatedAtLeastOnce = false
     }
 
 }

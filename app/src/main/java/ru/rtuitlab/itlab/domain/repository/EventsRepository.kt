@@ -8,6 +8,9 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.*
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 
 interface EventsRepository {
+
+    val eventsUpdatedAtLeastOnce: Boolean
+
     suspend fun updatePendingEvents(): Resource<List<EventModel>>
 
     fun getEvents(): Flow<List<EventWithType>>

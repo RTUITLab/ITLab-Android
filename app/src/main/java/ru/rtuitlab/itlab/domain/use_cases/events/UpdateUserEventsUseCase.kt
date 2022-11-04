@@ -10,8 +10,8 @@ class UpdateUserEventsUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         userId: String,
-        begin: String,
-        end: String
+        begin: String?,
+        end: String?
     ) = withContext(Dispatchers.IO) {
         repo.updateUserEvents(userId, begin, end)
     }
