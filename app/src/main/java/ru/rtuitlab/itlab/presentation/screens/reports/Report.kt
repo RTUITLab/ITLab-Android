@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.common.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.data.remote.api.reports.models.Report
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.UserLink

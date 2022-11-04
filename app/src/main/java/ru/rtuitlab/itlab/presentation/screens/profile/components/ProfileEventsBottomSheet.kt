@@ -23,7 +23,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.common.toClientDate
+import ru.rtuitlab.itlab.common.extensions.toClientDate
 import ru.rtuitlab.itlab.presentation.UserViewModel
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.components.UserEventCardContent

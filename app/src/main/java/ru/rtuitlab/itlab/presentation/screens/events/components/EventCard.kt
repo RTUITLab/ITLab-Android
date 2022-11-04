@@ -21,9 +21,9 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.ImagePosition
-import ru.rtuitlab.itlab.common.fromIso8601
-import ru.rtuitlab.itlab.common.fromIso8601ToInstant
-import ru.rtuitlab.itlab.common.toUiString
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601ToInstant
+import ru.rtuitlab.itlab.common.extensions.toUiString
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @Composable

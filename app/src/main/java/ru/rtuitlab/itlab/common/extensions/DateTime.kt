@@ -1,4 +1,4 @@
-package ru.rtuitlab.itlab.common
+package ru.rtuitlab.itlab.common.extensions
 
 import android.content.Context
 import android.util.Log

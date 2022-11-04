@@ -33,7 +33,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CollapsibleScrollArea
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.SwipingStates
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
-import ru.rtuitlab.itlab.common.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel

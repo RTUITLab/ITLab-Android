@@ -13,7 +13,7 @@ import ru.rtuitlab.itlab.data.remote.api.events.EventsApi
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.data.repository.util.tryUpdate
 import ru.rtuitlab.itlab.domain.repository.EventsRepository
-import ru.rtuitlab.itlab.common.nowAsIso8601
+import ru.rtuitlab.itlab.common.extensions.nowAsIso8601
 import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.local.events.models.EventEntity
 import javax.inject.Inject

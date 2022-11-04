@@ -3,8 +3,8 @@ package ru.rtuitlab.itlab.data.local.events.models
 import android.content.Context
 import androidx.room.*
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventShiftSalary
-import ru.rtuitlab.itlab.common.fromIso8601
-import ru.rtuitlab.itlab.common.fromIso8601ToInstant
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601ToInstant
 import java.time.format.TextStyle
 import java.util.*
 

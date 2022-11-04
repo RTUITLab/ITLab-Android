@@ -22,8 +22,8 @@ import ru.rtuitlab.itlab.data.repository.PurchasesRepository
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.NewPurchaseUiState
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.PurchaseUiState
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.PurchasesUiState
-import ru.rtuitlab.itlab.common.toIso8601
-import ru.rtuitlab.itlab.common.toMoscowDateTime
+import ru.rtuitlab.itlab.common.extensions.toIso8601
+import ru.rtuitlab.itlab.common.extensions.toMoscowDateTime
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.domain.use_cases.user.GetUserClaimsUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase

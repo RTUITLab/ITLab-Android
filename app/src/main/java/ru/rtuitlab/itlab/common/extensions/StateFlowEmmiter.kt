@@ -1,10 +1,11 @@
-package ru.rtuitlab.itlab.common
+package ru.rtuitlab.itlab.common.extensions
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.rtuitlab.itlab.common.Resource
 
 fun <T> MutableStateFlow<Resource<T>>.emitInIO(
     scope: CoroutineScope,

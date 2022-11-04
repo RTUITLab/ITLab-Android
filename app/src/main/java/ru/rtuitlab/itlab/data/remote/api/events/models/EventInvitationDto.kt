@@ -4,8 +4,8 @@ import android.content.Context
 import kotlinx.serialization.Serializable
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.local.events.models.EventInvitationEntity
-import ru.rtuitlab.itlab.common.fromIso8601
-import ru.rtuitlab.itlab.common.fromIso8601ToInstant
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601ToInstant
 import java.time.format.TextStyle
 import java.util.*
 import kotlin.math.roundToInt

@@ -32,7 +32,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarTabRow
-import ru.rtuitlab.itlab.common.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen

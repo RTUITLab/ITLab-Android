@@ -10,7 +10,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.common.Resource
-import ru.rtuitlab.itlab.common.emitInIO
+import ru.rtuitlab.itlab.common.extensions.emitInIO
 import ru.rtuitlab.itlab.data.remote.api.devices.models.*
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.data.repository.DevicesRepository

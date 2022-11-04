@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.Resource
-import ru.rtuitlab.itlab.common.emitInIO
+import ru.rtuitlab.itlab.common.extensions.emitInIO
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfo
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 import ru.rtuitlab.itlab.data.repository.MFSRepository

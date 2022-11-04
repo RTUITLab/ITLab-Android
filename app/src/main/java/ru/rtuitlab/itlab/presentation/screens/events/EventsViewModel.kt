@@ -14,10 +14,10 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
-import ru.rtuitlab.itlab.common.endOfTimes
-import ru.rtuitlab.itlab.common.minus
-import ru.rtuitlab.itlab.common.nowAsIso8601
-import ru.rtuitlab.itlab.common.toIsoString
+import ru.rtuitlab.itlab.common.extensions.endOfTimes
+import ru.rtuitlab.itlab.common.extensions.minus
+import ru.rtuitlab.itlab.common.extensions.nowAsIso8601
+import ru.rtuitlab.itlab.common.extensions.toIsoString
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventInvitation
 import ru.rtuitlab.itlab.domain.use_cases.events.*
 import ru.rtuitlab.itlab.domain.use_cases.users.GetCurrentUserUseCase

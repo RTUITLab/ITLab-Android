@@ -4,8 +4,8 @@ package ru.rtuitlab.itlab.data.remote.api.events.models.detail
 import android.content.Context
 import kotlinx.serialization.Serializable
 import ru.rtuitlab.itlab.data.local.events.models.ShiftEntity
-import ru.rtuitlab.itlab.common.fromIso8601
-import ru.rtuitlab.itlab.common.fromIso8601ToInstant
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601ToInstant
 import java.time.format.TextStyle
 import java.util.*
 

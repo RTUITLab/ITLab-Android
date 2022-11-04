@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.data.remote.api.feedback.models.FeedbackModel
 import ru.rtuitlab.itlab.data.repository.FeedbackRepository
-import ru.rtuitlab.itlab.common.emitInIO
+import ru.rtuitlab.itlab.common.extensions.emitInIO
 import javax.inject.Inject
 
 @ExperimentalPagerApi
