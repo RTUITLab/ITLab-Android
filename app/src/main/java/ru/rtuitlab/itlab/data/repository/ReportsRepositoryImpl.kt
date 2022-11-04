@@ -141,4 +141,10 @@ class ReportsRepositoryImpl @Inject constructor(
             dao.upsertReportsSalary(it)
         }
     )
+
+    override suspend fun clearReports() {
+        dao.deleteReportSalaries()
+        dao.deleteReports()
+        reportsUpdatedAtLeastOnce = false
+    }
 }

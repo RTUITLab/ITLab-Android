@@ -51,4 +51,6 @@ interface ReportsRepository {
         reportId: String,
         salary: ReportSalaryRequest
     ): Resource<ReportSalary>
+
+    suspend fun clearReports()
 }

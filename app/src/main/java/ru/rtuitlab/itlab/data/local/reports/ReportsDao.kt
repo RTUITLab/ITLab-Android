@@ -62,4 +62,10 @@ interface ReportsDao {
     suspend fun upsertReportsSalary(
         salary: ReportSalary
     )
+
+    @Query("DELETE FROM ReportEntity")
+    suspend fun deleteReports()
+
+    @Query("DELETE FROM ReportSalary")
+    suspend fun deleteReportSalaries()
 }

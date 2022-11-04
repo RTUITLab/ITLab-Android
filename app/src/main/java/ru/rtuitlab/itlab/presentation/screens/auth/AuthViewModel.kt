@@ -20,6 +20,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserInfoModel
 import ru.rtuitlab.itlab.data.repository.NotificationsRepository
 import ru.rtuitlab.itlab.domain.services.firebase.FirebaseTokenUtils
 import ru.rtuitlab.itlab.domain.use_cases.events.ClearEventsUseCase
+import ru.rtuitlab.itlab.domain.use_cases.reports.ClearReportsUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.FetchUserInfoUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.UpdateUsersUseCase
 import javax.inject.Inject
@@ -31,6 +32,7 @@ class AuthViewModel @Inject constructor(
 	private val fetchUserInfo: FetchUserInfoUseCase,
 	private val updateUsers: UpdateUsersUseCase,
 	private val clearEvents: ClearEventsUseCase,
+	private val clearReports: ClearReportsUseCase,
 	private val notificationsRepo: NotificationsRepository
 ) : ViewModel() {
 
@@ -124,6 +126,7 @@ class AuthViewModel @Inject constructor(
 
 	fun handleLogoutResult(onSessionEnded: () -> Unit) = viewModelScope.launch {
 		clearEvents()
+		clearReports()
 		authStateStorage.endSession()
 		onSessionEnded()
 	}
