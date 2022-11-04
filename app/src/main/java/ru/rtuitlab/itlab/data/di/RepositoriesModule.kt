@@ -16,7 +16,7 @@ import ru.rtuitlab.itlab.data.repository.ReportsRepositoryImpl
 import ru.rtuitlab.itlab.data.repository.UsersRepositoryImpl
 import ru.rtuitlab.itlab.domain.repository.EventsRepositoryInterface
 import ru.rtuitlab.itlab.domain.repository.ReportsRepositoryInterface
-import ru.rtuitlab.itlab.domain.repository.UsersRepositoryInterface
+import ru.rtuitlab.itlab.domain.repository.UsersRepository
 import javax.inject.Singleton
 
 @Module
@@ -41,7 +41,7 @@ object RepositoriesModule {
     @Singleton
     fun provideUsersRepository(
         usersRepo: UsersRepositoryImpl
-    ) = usersRepo as UsersRepositoryInterface
+    ) = usersRepo as UsersRepository
 
     @Provides
     @Singleton

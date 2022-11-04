@@ -1,11 +1,11 @@
 package ru.rtuitlab.itlab.domain.use_cases.users
 
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
-import ru.rtuitlab.itlab.domain.repository.UsersRepositoryInterface
+import ru.rtuitlab.itlab.domain.repository.UsersRepository
 import javax.inject.Inject
 
 class EditUserUseCase @Inject constructor(
-    private val repo: UsersRepositoryInterface
+    private val repo: UsersRepository
 ) {
     suspend fun info(info: UserEditRequest) = repo.editUserInfo(info)
 

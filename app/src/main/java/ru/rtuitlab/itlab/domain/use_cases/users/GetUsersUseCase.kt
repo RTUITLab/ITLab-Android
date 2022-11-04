@@ -3,11 +3,11 @@ package ru.rtuitlab.itlab.domain.use_cases.users
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
-import ru.rtuitlab.itlab.domain.repository.UsersRepositoryInterface
+import ru.rtuitlab.itlab.domain.repository.UsersRepository
 import javax.inject.Inject
 
 class GetUsersUseCase @Inject constructor(
-    private val repo: UsersRepositoryInterface
+    private val repo: UsersRepository
 ) {
     /**
      * When collecting into a StateFlow via Flow.stateIn do NOT use non-null assertion (!!)

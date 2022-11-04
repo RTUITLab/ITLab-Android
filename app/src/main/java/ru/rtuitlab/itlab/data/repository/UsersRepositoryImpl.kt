@@ -15,7 +15,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyEditRequest
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
 import ru.rtuitlab.itlab.data.repository.util.tryUpdate
-import ru.rtuitlab.itlab.domain.repository.UsersRepositoryInterface
+import ru.rtuitlab.itlab.domain.repository.UsersRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,7 +26,7 @@ class UsersRepositoryImpl @Inject constructor(
     private val handler: ResponseHandler,
     private val coroutineScope: CoroutineScope,
     db: AppDatabase
-): UsersRepositoryInterface {
+): UsersRepository {
 
     private val usersDao = db.usersDao
 

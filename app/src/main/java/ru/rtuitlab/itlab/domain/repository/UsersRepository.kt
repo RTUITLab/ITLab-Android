@@ -8,7 +8,7 @@ import ru.rtuitlab.itlab.data.local.users.models.UserPropertyEntity
 import ru.rtuitlab.itlab.data.local.users.models.UserWithProperties
 import ru.rtuitlab.itlab.data.remote.api.users.models.*
 
-interface UsersRepositoryInterface {
+interface UsersRepository {
     fun getAllUsers(): Flow<List<UserWithProperties>>
 
     fun searchUsers(query: String): Flow<List<UserWithProperties>>
