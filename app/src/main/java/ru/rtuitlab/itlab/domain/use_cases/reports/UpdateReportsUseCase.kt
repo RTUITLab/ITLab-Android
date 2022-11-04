@@ -4,11 +4,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportDto
-import ru.rtuitlab.itlab.domain.repository.ReportsRepositoryInterface
+import ru.rtuitlab.itlab.domain.repository.ReportsRepository
 import javax.inject.Inject
 
 class UpdateReportsUseCase @Inject constructor(
-    private val repo: ReportsRepositoryInterface
+    private val repo: ReportsRepository
 ) {
     suspend operator fun invoke() = withContext(Dispatchers.IO) {
         repo.updateReports()

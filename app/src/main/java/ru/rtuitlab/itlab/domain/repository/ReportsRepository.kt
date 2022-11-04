@@ -7,7 +7,7 @@ import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportDto
 import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportSalary
 import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportSalaryRequest
 
-interface ReportsRepositoryInterface {
+interface ReportsRepository {
 
     val reportsUpdatedAtLeastOnce: Boolean
 

@@ -1,10 +1,10 @@
 package ru.rtuitlab.itlab.domain.use_cases.reports
 
-import ru.rtuitlab.itlab.domain.repository.ReportsRepositoryInterface
+import ru.rtuitlab.itlab.domain.repository.ReportsRepository
 import javax.inject.Inject
 
 class GetReportsUseCase @Inject constructor(
-    private val repo: ReportsRepositoryInterface
+    private val repo: ReportsRepository
 ) {
     operator fun invoke() = repo.getReports()
 

@@ -10,7 +10,7 @@ import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportRequest
 import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportSalary
 import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportSalaryRequest
 import ru.rtuitlab.itlab.data.repository.util.tryUpdate
-import ru.rtuitlab.itlab.domain.repository.ReportsRepositoryInterface
+import ru.rtuitlab.itlab.domain.repository.ReportsRepository
 import javax.inject.Inject
 
 class ReportsRepositoryImpl @Inject constructor(
@@ -18,7 +18,7 @@ class ReportsRepositoryImpl @Inject constructor(
     private val handler: ResponseHandler,
     private val scope: CoroutineScope,
     db: AppDatabase
-): ReportsRepositoryInterface {
+): ReportsRepository {
 
     private val dao = db.reportsDao
 
