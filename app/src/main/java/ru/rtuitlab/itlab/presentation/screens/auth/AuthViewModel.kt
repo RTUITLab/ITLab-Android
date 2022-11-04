@@ -21,6 +21,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserInfoModel
 import ru.rtuitlab.itlab.data.repository.NotificationsRepository
 import ru.rtuitlab.itlab.domain.services.firebase.FirebaseTokenUtils
 import ru.rtuitlab.itlab.domain.use_cases.users.FetchUserInfoUseCase
+import ru.rtuitlab.itlab.domain.use_cases.users.UpdateUsersUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +29,7 @@ class AuthViewModel @Inject constructor(
 	private val authStateStorage: IAuthStateStorage,
 	private val authService: AuthorizationService,
 	private val fetchUserInfo: FetchUserInfoUseCase,
+	private val updateUsers: UpdateUsersUseCase,
 	private val notificationsRepo: NotificationsRepository
 ) : ViewModel() {
 
@@ -132,6 +134,7 @@ class AuthViewModel @Inject constructor(
 					obtainUserId(tokenResponse.accessToken!!)
 					authStateStorage.updateAuthState(tokenResponse, tokenException)
 					authStateStorage.updateUserPayload(tokenResponse.accessToken!!)
+					updateUsers()
 					addFirebaseToken()
 				} else {
 					Log.e(TAG, "Exception in exchange process: ", tokenException)
@@ -141,7 +144,6 @@ class AuthViewModel @Inject constructor(
 	}
 
 	private val _userIdFlow = MutableSharedFlow<Resource<UserInfoModel>>()
-	val userIdFlow = _userIdFlow.asSharedFlow()
 
 	private suspend fun obtainUserId(accessToken: String) {
 		val config = authStateFlow.first().authorizationServiceConfiguration!!
