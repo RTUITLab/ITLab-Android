@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import net.openid.appauth.*
@@ -20,6 +19,7 @@ import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserInfoModel
 import ru.rtuitlab.itlab.data.repository.NotificationsRepository
 import ru.rtuitlab.itlab.domain.services.firebase.FirebaseTokenUtils
+import ru.rtuitlab.itlab.domain.use_cases.events.ClearEventsUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.FetchUserInfoUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.UpdateUsersUseCase
 import javax.inject.Inject
@@ -30,6 +30,7 @@ class AuthViewModel @Inject constructor(
 	private val authService: AuthorizationService,
 	private val fetchUserInfo: FetchUserInfoUseCase,
 	private val updateUsers: UpdateUsersUseCase,
+	private val clearEvents: ClearEventsUseCase,
 	private val notificationsRepo: NotificationsRepository
 ) : ViewModel() {
 
@@ -122,6 +123,7 @@ class AuthViewModel @Inject constructor(
 	}
 
 	fun handleLogoutResult(result: ActivityResult) = viewModelScope.launch {
+		clearEvents()
 		authStateStorage.endSession()
 	}
 

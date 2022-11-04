@@ -102,6 +102,12 @@ interface EventsDao {
     @Query("DELETE FROM EventInvitationEntity WHERE id = :id AND placeId = :placeId")
     suspend fun deleteInvitation(id: String, placeId: String)
 
+    @Query("DELETE FROM EventInvitationEntity")
+    suspend fun deleteInvitations()
+
+    @Query("DELETE FROM UserEventEntity")
+    suspend fun deleteUserEvents()
+
     @Transaction
     @Delete
     suspend fun deleteInvitations(

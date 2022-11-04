@@ -56,4 +56,6 @@ interface EventsRepository {
     suspend fun acceptInvitation(placeId: String): Resource<Response<Unit>>
 
     suspend fun deleteInvitation(id: String, placeId: String)
+
+    suspend fun clearUserEvents()
 }

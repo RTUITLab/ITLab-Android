@@ -210,4 +210,9 @@ class EventsRepositoryImpl @Inject constructor(
     override suspend fun deleteInvitation(id: String, placeId: String) =
         dao.deleteInvitation(id, placeId)
 
+    override suspend fun clearUserEvents() {
+        dao.deleteInvitations()
+        dao.deleteUserEvents()
+    }
+
 }
