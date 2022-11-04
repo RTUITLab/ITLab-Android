@@ -18,6 +18,7 @@ import ru.rtuitlab.itlab.domain.use_cases.user.GetUserClaimsUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase
 import javax.inject.Inject
 
+@Suppress("OPT_IN_IS_NOT_ENABLED")
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class DevicesViewModel @Inject constructor(

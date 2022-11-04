@@ -37,7 +37,7 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 @ExperimentalAnimationApi
 @Composable
 fun Purchase(
-    id: Int,
+    @Suppress("UNUSED_PARAMETER") id: Int, // Will be used once purchase notifications send needed data payload
     purchasesViewModel: PurchasesViewModel = singletonViewModel(),
     appBarViewModel: AppBarViewModel = singletonViewModel()
 ) {

@@ -18,9 +18,11 @@ import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import com.google.accompanist.pager.ExperimentalPagerApi
+import kotlinx.serialization.ExperimentalSerializationApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.MainActivity
 
+@ExperimentalSerializationApi
 @ExperimentalMotionApi
 @ExperimentalMaterialApi
 @ExperimentalStdlibApi

@@ -38,8 +38,8 @@ import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
+@ExperimentalMaterialApi
 @ExperimentalPagerApi
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Event(
 	eventViewModel: EventViewModel,
@@ -88,6 +88,7 @@ fun Event(
 	}
 }
 
+@Suppress("OPT_IN_IS_NOT_ENABLED")
 @OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun EventInfoWithList(

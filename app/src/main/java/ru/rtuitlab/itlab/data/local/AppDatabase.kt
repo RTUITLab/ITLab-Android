@@ -24,7 +24,8 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
         EventInvitationEntity::class, UserEventEntity::class, EventSalaryEntity::class, EventShiftSalary::class, EventPlaceSalary::class, // Events
         ReportEntity::class, ReportSalary::class // Reports
     ],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract val usersDao: UsersDao

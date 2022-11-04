@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.R
@@ -27,6 +28,8 @@ import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb
 import java.io.File
 import javax.inject.Inject
 
+@Suppress("OPT_IN_IS_NOT_ENABLED")
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class FilesViewModel @Inject constructor(
     private val repository: MfsRepository,

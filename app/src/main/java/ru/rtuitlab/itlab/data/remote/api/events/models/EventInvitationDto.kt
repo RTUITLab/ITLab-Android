@@ -66,6 +66,7 @@ data class EventInvitationDto(
         }"
     }
 
+    @Suppress("OPT_IN_IS_NOT_ENABLED")
     @OptIn(ExperimentalTime::class)
     private fun getDurationString(context: Context): String {
         val MINUTES_IN_HOUR = 60

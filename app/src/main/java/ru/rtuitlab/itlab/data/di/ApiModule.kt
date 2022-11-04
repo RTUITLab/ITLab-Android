@@ -28,6 +28,7 @@ import ru.rtuitlab.itlab.data.remote.api.reports.ReportsApi
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
 import javax.inject.Singleton
 
+@ExperimentalSerializationApi
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {

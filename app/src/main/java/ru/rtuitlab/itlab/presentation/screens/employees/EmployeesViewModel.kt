@@ -3,6 +3,7 @@ package ru.rtuitlab.itlab.presentation.screens.employees
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.domain.use_cases.users.GetCurrentUserUseCase
@@ -11,6 +12,8 @@ import ru.rtuitlab.itlab.domain.use_cases.users.UpdateUsersUseCase
 import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import javax.inject.Inject
 
+@Suppress("OPT_IN_IS_NOT_ENABLED")
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class EmployeesViewModel @Inject constructor(
 	private val getUsers: GetUsersUseCase,

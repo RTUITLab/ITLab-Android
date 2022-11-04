@@ -184,9 +184,6 @@ fun ReportsList(
 fun ReportCard(
 	report: Report
 ) {
-
-	val accentColor = AppColors.accent.collectAsState().value
-
 	val navController = LocalNavController.current
 
 	SideColoredCard(

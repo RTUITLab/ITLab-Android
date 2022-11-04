@@ -18,6 +18,7 @@ import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase
 import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import javax.inject.Inject
 
+@Suppress("OPT_IN_IS_NOT_ENABLED")
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExperimentalPagerApi
 @HiltViewModel

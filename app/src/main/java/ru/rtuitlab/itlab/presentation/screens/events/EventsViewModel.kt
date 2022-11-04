@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
+@file:Suppress("OPT_IN_IS_NOT_ENABLED")
 
 package ru.rtuitlab.itlab.presentation.screens.events
 
