@@ -188,5 +188,6 @@
     <string name="gravatar">Граватар</string>
     <string name="local_copy_inaccessible">Локальная копия данного ресурса недоступна</string>
     <string name="reports_empty">Отчётов не найдено</string>
+    <string name="purchase_is_being_restored">Данные о покупке восстанавливаются</string>
 
 </resources>

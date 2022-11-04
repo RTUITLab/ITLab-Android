@@ -41,9 +41,8 @@ fun Purchase(
     purchasesViewModel: PurchasesViewModel = singletonViewModel(),
     appBarViewModel: AppBarViewModel = singletonViewModel()
 ) {
-
     val state by purchasesViewModel.state.collectAsState()
-    val purchase = state.selectedPurchaseState!!.purchase
+    val purchase = state.selectedPurchaseState?.purchase
     val animationState by remember {
         mutableStateOf(MutableTransitionState(false))
     }
@@ -63,6 +62,14 @@ fun Purchase(
         appBarViewModel.onNavigate(
             screen = AppScreen.PurchaseDetails(purchase?.name ?: "")
         )
+    }
+
+
+    if (purchase == null) {
+        LoadingIndicator(
+            message = stringResource(R.string.purchase_is_being_restored)
+        )
+        return
     }
 
     Scaffold(

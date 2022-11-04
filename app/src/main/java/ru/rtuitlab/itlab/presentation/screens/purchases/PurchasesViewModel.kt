@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation.screens.purchases
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,7 +40,15 @@ class PurchasesViewModel @Inject constructor(
     getUserClaims: GetUserClaimsUseCase
 ): ViewModel() {
 
-    val userClaimsFlow = authStateStorage.userClaimsFlow
+    companion object {
+        const val KEY_SELECTED_PURCHASE_ID = "selectedPurchaseId"
+    }
+
+    /**
+     * This flow is used to recreate [NewPurchaseUiState] after a process death
+     */
+    private val selectedPurchaseId: StateFlow<Int?> =
+        savedStateHandle.stateIn(viewModelScope, KEY_SELECTED_PURCHASE_ID)
 
     val isSolvingAccessible = getUserClaims().map {
         it.contains(UserClaimCategories.PURCHASES.ADMIN)
@@ -108,6 +117,9 @@ class PurchasesViewModel @Inject constructor(
                 condition = { it.isNotEmpty() },
                 action = {
                     fetchNextItems()
+                    selectedPurchaseId.value?.let {
+                        restorePurchaseState(it)
+                    }
                 }
             )
         }
@@ -153,6 +165,24 @@ class PurchasesViewModel @Inject constructor(
     fun onPurchaseOpened(purchase: Purchase) {
         _state.value = _state.value.copy(
             selectedPurchaseState = PurchaseUiState(purchase)
+        )
+        savedStateHandle[KEY_SELECTED_PURCHASE_ID] = purchase.id
+    }
+
+    private fun restorePurchaseState(id: Int) = viewModelScope.launch(Dispatchers.IO) {
+        repository.fetchPurchase(id).handle(
+            onSuccess = { purchaseDto ->
+                _state.update {
+                    it.copy(
+                        selectedPurchaseState = PurchaseUiState(
+                            purchase = purchaseDto.toPurchase(
+                                purchaser = users.value.find { it.id == purchaseDto.purchaserId }!!,
+                                solver = users.value.find { it.id == purchaseDto.solution.solverId }
+                            )
+                        )
+                    )
+                }
+            }
         )
     }
 
