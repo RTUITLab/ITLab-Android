@@ -14,7 +14,7 @@ import ru.rtuitlab.itlab.data.local.AppDatabase
 import ru.rtuitlab.itlab.data.repository.EventsRepositoryImpl
 import ru.rtuitlab.itlab.data.repository.ReportsRepositoryImpl
 import ru.rtuitlab.itlab.data.repository.UsersRepositoryImpl
-import ru.rtuitlab.itlab.domain.repository.EventsRepositoryInterface
+import ru.rtuitlab.itlab.domain.repository.EventsRepository
 import ru.rtuitlab.itlab.domain.repository.ReportsRepository
 import ru.rtuitlab.itlab.domain.repository.UsersRepository
 import javax.inject.Singleton
@@ -47,7 +47,7 @@ object RepositoriesModule {
     @Singleton
     fun provideEventsRepository(
         eventsRepo: EventsRepositoryImpl
-    ) = eventsRepo as EventsRepositoryInterface
+    ) = eventsRepo as EventsRepository
 
     @Provides
     @Singleton

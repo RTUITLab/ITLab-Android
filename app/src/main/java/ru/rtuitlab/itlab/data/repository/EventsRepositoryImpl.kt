@@ -12,7 +12,7 @@ import ru.rtuitlab.itlab.data.local.events.models.EventWithType
 import ru.rtuitlab.itlab.data.remote.api.events.EventsApi
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.data.repository.util.tryUpdate
-import ru.rtuitlab.itlab.domain.repository.EventsRepositoryInterface
+import ru.rtuitlab.itlab.domain.repository.EventsRepository
 import ru.rtuitlab.itlab.common.nowAsIso8601
 import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.local.events.models.EventEntity
@@ -26,7 +26,7 @@ class EventsRepositoryImpl @Inject constructor(
     private val authStateStorage: IAuthStateStorage,
     private val coroutineScope: CoroutineScope,
     db: AppDatabase
-): EventsRepositoryInterface {
+): EventsRepository {
 
     init {
         coroutineScope.launch {

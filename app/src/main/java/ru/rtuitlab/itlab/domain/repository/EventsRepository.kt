@@ -7,7 +7,7 @@ import ru.rtuitlab.itlab.data.local.events.models.*
 import ru.rtuitlab.itlab.data.remote.api.events.models.*
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 
-interface EventsRepositoryInterface {
+interface EventsRepository {
     suspend fun updatePendingEvents(): Resource<List<EventModel>>
 
     fun getEvents(): Flow<List<EventWithType>>
