@@ -122,9 +122,10 @@ class AuthViewModel @Inject constructor(
 		}
 	}
 
-	fun handleLogoutResult(result: ActivityResult) = viewModelScope.launch {
+	fun handleLogoutResult(onSessionEnded: () -> Unit) = viewModelScope.launch {
 		clearEvents()
 		authStateStorage.endSession()
+		onSessionEnded()
 	}
 
 	private fun exchangeAuthCode(authResponse: AuthorizationResponse) {

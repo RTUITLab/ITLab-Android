@@ -1,5 +1,6 @@
 package ru.rtuitlab.itlab.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,7 +21,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
-import ru.rtuitlab.itlab.presentation.screens.auth.AuthScreen
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthViewModel
 import ru.rtuitlab.itlab.presentation.screens.micro_file_service.FilesViewModel
 import ru.rtuitlab.itlab.presentation.ui.ITLabApp
@@ -42,15 +42,17 @@ class MainActivity : AppCompatActivity() {
 	private val filesViewModel: FilesViewModel by viewModels()
 	private val authViewModel: AuthViewModel by viewModels()
 
-
-	private val authPageLauncher =
-		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-			authViewModel.handleAuthResult(requireNotNull(it.data))
-		}
-
 	private val logoutPageLauncher =
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-			authViewModel.handleLogoutResult(it)
+			authViewModel.handleLogoutResult {
+				val loginActivityIntent = Intent(
+					this@MainActivity,
+					LoginActivity::class.java
+				)
+				startActivity(loginActivityIntent)
+				overridePendingTransition(0, 0)
+				finish()
+			}
 		}
 	private val requestPermissionLauncher =
 		registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -86,13 +88,10 @@ class MainActivity : AppCompatActivity() {
 								}
 							}
 						}
-						false -> AuthScreen { authViewModel.onLoginEvent(authPageLauncher) }
-						null -> {}
+						else -> {}
 					}
 				}
 			}
 		}
-
-
 	}
 }
