@@ -21,6 +21,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.local.events.models.PlaceWithUsersAndSalary
 import ru.rtuitlab.itlab.data.local.events.models.ShiftWithPlacesAndSalary
+import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
+import ru.rtuitlab.itlab.data.remote.api.events.models.EventSalary
+import ru.rtuitlab.itlab.data.remote.api.events.models.EventShiftSalary
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
@@ -34,6 +37,7 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 @Composable
 fun ShiftBottomSheet(
 	shiftAndSalary: ShiftWithPlacesAndSalary,
+	eventSalary: EventSalaryEntity?,
 	eventViewModel: EventViewModel,
 	profileViewModel: ProfileViewModel = viewModel(),
 	bottomSheetViewModel: BottomSheetViewModel = singletonViewModel()
@@ -61,6 +65,8 @@ fun ShiftBottomSheet(
 		) { index, item ->
 			ShiftPlaceCard(
 				number = index + 1,
+				eventSalary = eventSalary,
+				shiftSalary = shiftAndSalary.salary,
 				placeWithUsersAndSalary = item,
 				eventViewModel = eventViewModel,
 				bottomSheetViewModel = bottomSheetViewModel,
@@ -79,6 +85,8 @@ fun ShiftBottomSheet(
 @Composable
 private fun ShiftPlaceCard(
 	number: Int,
+	eventSalary: EventSalaryEntity?,
+	shiftSalary: EventShiftSalary?,
 	placeWithUsersAndSalary: PlaceWithUsersAndSalary,
 	eventViewModel: EventViewModel,
 	bottomSheetViewModel: BottomSheetViewModel,
@@ -88,12 +96,14 @@ private fun ShiftPlaceCard(
 	val scope = rememberCoroutineScope()
 
 	val place = placeWithUsersAndSalary.place
-	val salary = placeWithUsersAndSalary.salary
+	val salary = placeWithUsersAndSalary.salary?.count ?: shiftSalary?.count ?: eventSalary?.count
 	val users = placeWithUsersAndSalary.usersWithRoles
 
 	if (dialogIsShown)
 		PlaceAlertDialog(
 			number = number,
+			eventSalary = eventSalary,
+			shiftSalary = shiftSalary,
 			placeWithUsersAndSalary = placeWithUsersAndSalary,
 			eventViewModel = eventViewModel,
 			onResult = {
@@ -177,10 +187,12 @@ private fun ShiftPlaceCard(
 						verticalAlignment = Alignment.Top
 					) {
 						Text(
-							text = if (salary != null) stringResource(
-								R.string.salary_int,
-								salary
-							) else stringResource(R.string.salary_not_specified),
+							text = salary?.let {
+								stringResource(
+									R.string.salary_int,
+									it
+								)
+							} ?: stringResource(R.string.salary_not_specified),
 							style = MaterialTheme.typography.subtitle2
 						)
 					}

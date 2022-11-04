@@ -304,12 +304,14 @@ private fun EventShifts(
 						.clickable {
 							bottomSheetViewModel.show(
 								AppBottomSheet.EventShift(
-									shift,
+									shiftAndSalary = shift,
+									eventSalary = event.salary,
 									eventViewModel = eventViewModel
 								),
 								coroutineScope
 							)
 						},
+					eventSalary = event.salary,
 					shiftWithPlacesAndSalary = shift
 				)
 			}

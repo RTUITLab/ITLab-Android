@@ -23,7 +23,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.local.events.models.PlaceWithUsersAndSalary
 import ru.rtuitlab.itlab.data.local.events.models.UserParticipationType
+import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventRole
+import ru.rtuitlab.itlab.data.remote.api.events.models.EventShiftSalary
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.*
@@ -34,6 +36,8 @@ import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 @Composable
 fun PlaceAlertDialog(
 	placeWithUsersAndSalary: PlaceWithUsersAndSalary,
+	eventSalary: EventSalaryEntity?,
+	shiftSalary: EventShiftSalary?,
 	number: Int,
 	eventViewModel: EventViewModel,
 	shiftContainsUser: Boolean,
@@ -46,7 +50,7 @@ fun PlaceAlertDialog(
 	val eventRoles by eventViewModel.roles.collectAsState()
 
 	val place = placeWithUsersAndSalary.place
-	val salary = placeWithUsersAndSalary.salary
+	val salary = placeWithUsersAndSalary.salary?.count ?: shiftSalary?.count ?: eventSalary?.count
 	val users = placeWithUsersAndSalary.usersWithRoles
 
 	Dialog(
@@ -107,10 +111,12 @@ fun PlaceAlertDialog(
 					imageWidth = 14.dp
 				) {
 					Text(
-						text = if (salary != null) stringResource(
-							R.string.salary_int,
-							salary
-						) else stringResource(R.string.salary_not_specified),
+						text = salary?.let {
+							stringResource(
+								R.string.salary_int,
+								it
+							)
+						} ?: stringResource(R.string.salary_not_specified),
 						style = MaterialTheme.typography.subtitle2
 					)
 				}

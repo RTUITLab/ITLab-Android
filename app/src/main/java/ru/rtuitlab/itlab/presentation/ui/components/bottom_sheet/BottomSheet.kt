@@ -68,6 +68,7 @@ fun BottomSheet(
 				val shift = currentSheet as AppBottomSheet.EventShift
 				ShiftBottomSheet(
 					shiftAndSalary = shift.shiftAndSalary,
+					eventSalary = shift.eventSalary,
 					eventViewModel = shift.eventViewModel
 				)
 			}

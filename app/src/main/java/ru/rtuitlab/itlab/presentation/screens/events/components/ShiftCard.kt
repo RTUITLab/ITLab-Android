@@ -20,17 +20,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.local.events.models.ShiftWithPlacesAndSalary
+import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @Composable
 fun ShiftCard(
 	modifier: Modifier = Modifier,
+	eventSalary: EventSalaryEntity?,
 	shiftWithPlacesAndSalary: ShiftWithPlacesAndSalary
 ) {
 
 	val shift = shiftWithPlacesAndSalary.shift
-	val salary = shiftWithPlacesAndSalary.salary
+	val salary = shiftWithPlacesAndSalary.salary?.count ?: eventSalary?.count
 
 	Card(
 		modifier = modifier,
@@ -85,7 +87,12 @@ fun ShiftCard(
 				imageWidth = 14.dp
 			) {
 				Text(
-					text = if (salary != null) stringResource(R.string.salary_int, salary) else stringResource(R.string.salary_not_specified),
+					text = salary?.let {
+						stringResource(
+							R.string.salary_int,
+							it
+						)
+					} ?: stringResource(R.string.salary_not_specified),
 					style = MaterialTheme.typography.subtitle1,
 					color = AppColors.greyText.collectAsState().value
 				)
