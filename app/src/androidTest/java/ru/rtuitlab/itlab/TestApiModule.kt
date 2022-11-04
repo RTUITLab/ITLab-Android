@@ -10,7 +10,7 @@ import ru.rtuitlab.itlab.data.remote.*
 import ru.rtuitlab.itlab.data.remote.api.devices.DevicesApi
 import ru.rtuitlab.itlab.data.remote.api.events.EventsApi
 import ru.rtuitlab.itlab.data.remote.api.feedback.FeedbackApi
-import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MFSApi
+import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MfsApi
 import ru.rtuitlab.itlab.data.remote.api.notifications.NotificationsApi
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchasesApi
 import ru.rtuitlab.itlab.data.remote.api.reports.ReportsApi
@@ -55,7 +55,7 @@ object TestApiModule {
 
     @Singleton
     @Provides
-    fun provideMFSApi(): MFSApi = MockMfsApi()
+    fun provideMFSApi(): MfsApi = MockMfsApi()
 
     @Singleton
     @Provides

@@ -21,7 +21,7 @@ import ru.rtuitlab.itlab.data.remote.api.TokenInterceptor
 import ru.rtuitlab.itlab.data.remote.api.devices.DevicesApi
 import ru.rtuitlab.itlab.data.remote.api.events.EventsApi
 import ru.rtuitlab.itlab.data.remote.api.feedback.FeedbackApi
-import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MFSApi
+import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MfsApi
 import ru.rtuitlab.itlab.data.remote.api.notifications.NotificationsApi
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchasesApi
 import ru.rtuitlab.itlab.data.remote.api.reports.ReportsApi
@@ -111,7 +111,7 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun provideMFSApi(retrofit: Retrofit): MFSApi = retrofit.create()
+    fun provideMFSApi(retrofit: Retrofit): MfsApi = retrofit.create()
 
     @Singleton
     @Provides

@@ -5,7 +5,7 @@ import retrofit2.Response
 import retrofit2.http.*
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 
-interface MFSApi {
+interface MfsApi {
 	@Streaming
 	@GET("/api/mfs/download/{id}")
 	suspend fun downloadFile(

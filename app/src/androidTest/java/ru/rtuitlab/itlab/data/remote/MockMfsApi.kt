@@ -2,10 +2,10 @@ package ru.rtuitlab.itlab.data.remote
 
 import okhttp3.RequestBody
 import retrofit2.Response
-import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MFSApi
+import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MfsApi
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 
-class MockMfsApi: MFSApi {
+class MockMfsApi: MfsApi {
     override suspend fun downloadFile(fileId: String): Response<Unit> {
         TODO("Not yet implemented")
     }
