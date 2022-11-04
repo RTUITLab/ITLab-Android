@@ -40,6 +40,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.Shared
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 import ru.rtuitlab.itlab.common.fromIso8601
 import ru.rtuitlab.itlab.common.toIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.LocalActivity
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
@@ -65,15 +66,7 @@ fun NewPurchase(
 
     val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
 
-    LaunchedEffect(Unit) {
-        purchasesViewModel.events.collect { event ->
-            when (event) {
-                is PurchasesViewModel.PurchaseEvent.Snackbar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(event.message)
-                }
-            }
-        }
-    }
+    purchasesViewModel.uiEvents.collectUiEvents(scaffoldState)
 
     SharedElement(
         key = sharedElementKey,
