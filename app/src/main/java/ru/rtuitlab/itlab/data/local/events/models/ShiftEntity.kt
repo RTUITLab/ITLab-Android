@@ -16,6 +16,9 @@ import java.util.*
             childColumns = ["eventId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index("eventId")
     ]
 )
 data class ShiftEntity(

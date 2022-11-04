@@ -12,6 +12,9 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventTypeModel
             childColumns = ["typeId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index("typeId")
     ]
 )
 data class EventEntity(

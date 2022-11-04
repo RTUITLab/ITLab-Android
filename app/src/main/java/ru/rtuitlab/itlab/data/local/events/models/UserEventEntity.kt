@@ -23,6 +23,11 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
             parentColumns = ["id"],
             childColumns = ["userId"]
         )
+    ],
+    indices = [
+        Index("typeId"),
+        Index("roleId"),
+        Index("userId"),
     ]
 )
 data class UserEventEntity(

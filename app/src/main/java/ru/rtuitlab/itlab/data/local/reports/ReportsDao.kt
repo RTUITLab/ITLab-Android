@@ -2,6 +2,7 @@ package ru.rtuitlab.itlab.data.local.reports
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import ru.rtuitlab.itlab.data.local.reports.models.ReportEntity
@@ -12,12 +13,15 @@ import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportSalaryWithApprover
 @Dao
 interface ReportsDao {
 
+    @Transaction
     @Query("SELECT * FROM ReportEntity")
     fun getReports(): Flow<List<ReportWithUsersAndSalary>>
 
+    @Transaction
     @Query("SELECT * FROM ReportEntity WHERE title LIKE '%' || :searchQuery || '%'")
     fun searchReports(searchQuery: String): Flow<List<ReportWithUsersAndSalary>>
 
+    @Transaction
     @Query("""SELECT * FROM ReportEntity
         WHERE (
             title LIKE '%' || :searchQuery || '%' OR 
@@ -29,6 +33,7 @@ interface ReportsDao {
         userId: String
     ): Flow<List<ReportWithUsersAndSalary>>
 
+    @Transaction
     @Query("""SELECT * FROM ReportEntity
         WHERE (
             title LIKE '%' || :searchQuery || '%' OR 
@@ -50,6 +55,7 @@ interface ReportsDao {
         report: ReportEntity
     )
 
+    @Transaction
     @Query("SELECT * FROM ReportSalary")
     suspend fun getReportsSalary(): List<ReportSalaryWithApprover>
 

@@ -26,6 +26,7 @@ interface UsersDao {
     @Query("SELECT * FROM UserPropertyTypeModel")
     fun observePropertyTypes(): Flow<List<UserPropertyTypeModel>>
 
+    @Transaction
     @Query("SELECT * FROM UserPropertyEntity")
     suspend fun getPropertiesWithTypes(): List<PropertyWithType>
 
@@ -44,6 +45,7 @@ interface UsersDao {
     @Query("SELECT * FROM UserEntity WHERE id = :id")
     suspend fun getUserById(id: String): UserWithProperties?
 
+    @Transaction
     @Query("SELECT * FROM UserEntity WHERE id = :id")
     fun observeUserById(id: String): Flow<UserWithProperties?>
 

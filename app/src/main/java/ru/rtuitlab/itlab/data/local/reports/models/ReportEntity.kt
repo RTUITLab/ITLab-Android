@@ -18,8 +18,11 @@ import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportSalaryWithApprover
             entity = UserEntity::class,
             parentColumns = ["id"],
             childColumns = ["implementerId"]
-        ),
-
+        )
+    ],
+    indices = [
+        Index("reporterId"),
+        Index("implementerId"),
     ]
 )
 data class ReportEntity(

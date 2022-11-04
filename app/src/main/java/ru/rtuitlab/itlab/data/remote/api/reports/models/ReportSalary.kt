@@ -20,6 +20,9 @@ import ru.rtuitlab.itlab.data.local.users.models.UserWithProperties
             parentColumns = ["id"],
             childColumns = ["approverId"]
         )
+    ],
+    indices = [
+        Index("approverId")
     ]
 )
 @Serializable

@@ -19,7 +19,11 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventTypeModel
         )
     ],
     primaryKeys = ["id", "placeId"],
-    indices = [Index(value = ["id", "placeId"])]
+    indices = [
+        Index(value = ["id", "placeId"]),
+        Index("typeId"),
+        Index("roleId")
+    ]
 )
 data class EventInvitationEntity(
     val id: String,

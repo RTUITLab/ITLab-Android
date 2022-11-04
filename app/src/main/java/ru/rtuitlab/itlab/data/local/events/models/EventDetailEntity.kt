@@ -11,6 +11,9 @@ import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
             childColumns = ["eventId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index("eventId")
     ]
 )
 data class EventDetailEntity(

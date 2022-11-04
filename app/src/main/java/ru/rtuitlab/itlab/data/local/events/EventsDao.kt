@@ -18,6 +18,7 @@ interface EventsDao {
     // ISO8601 timestamps are designed to be comparable as strings,
     // and since ITLab uses only one timezone, there is no need to
     // use SQLite DATETIME function, so we reduce overhead
+    @Transaction
     @Query("""SELECT * FROM EventEntity
     WHERE (title LIKE '%' || :query || '%') AND
     endTime >= :begin AND
@@ -29,6 +30,7 @@ interface EventsDao {
         end: String
     ): Flow<List<EventWithType>>
 
+    @Transaction
     @Query("""SELECT * FROM UserEventEntity 
         WHERE title LIKE '%' || :query || '%' 
         ORDER BY DATETIME(beginTime) DESC""")
@@ -38,9 +40,11 @@ interface EventsDao {
     @Query("SELECT * FROM EventDetailEntity WHERE id = :id")
     fun getEventDetail(id: String): Flow<EventWithShiftsAndSalary?>
 
+    @Transaction
     @Query("SELECT * FROM EventInvitationEntity")
     fun getInvitations(): Flow<List<EventInvitationWithTypeAndRole>>
 
+    @Transaction
     @Query("""SELECT * FROM UserEventEntity
         WHERE userId = :userId
         ORDER BY DATETIME(beginTime) DESC""")

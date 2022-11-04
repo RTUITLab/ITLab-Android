@@ -11,6 +11,9 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventPlaceSalary
             childColumns = ["shiftId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index("shiftId")
     ]
 )
 data class PlaceEntity(

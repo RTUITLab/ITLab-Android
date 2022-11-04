@@ -16,6 +16,9 @@ import ru.rtuitlab.itlab.data.local.users.models.UserEntity
             parentColumns = ["id"],
             childColumns = ["authorId"]
         )
+    ],
+    indices = [
+        Index("authorId")
     ]
 )
 data class EventSalaryEntity(

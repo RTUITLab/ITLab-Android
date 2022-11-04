@@ -21,7 +21,10 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
         )
     ],
     primaryKeys = ["userId", "typeId"],
-    indices = [Index(value = ["userId", "typeId"])]
+    indices = [
+        Index(value = ["userId", "typeId"]),
+        Index("typeId")
+    ]
 )
 data class UserPropertyEntity(
     val userId: String, // FK

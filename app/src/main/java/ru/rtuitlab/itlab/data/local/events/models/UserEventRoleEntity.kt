@@ -23,7 +23,11 @@ import ru.rtuitlab.itlab.data.remote.api.events.models.EventRoleModel
         )
     ],
     primaryKeys = ["userId", "roleId", "placeId"],
-    indices = [Index(value = ["userId", "roleId", "placeId"])]
+    indices = [
+        Index(value = ["userId", "roleId", "placeId"]),
+        Index("roleId"),
+        Index("placeId")
+    ]
 )
 data class UserEventRoleEntity(
     val userId: String,
