@@ -16,6 +16,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import ru.rtuitlab.itlab.Constants
 import ru.rtuitlab.itlab.Generator
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.data.local.AppDatabase
@@ -87,7 +88,7 @@ class EventsRepositoryImplTest {
     fun updateUserEvents() = runTest {
         val result = eventsRepo.updateUserEvents(2.toString()) as Resource.Success
         assertThat(
-            dao.getUserEvents().first().map { it.toUserEventModel() }
+            dao.getUserEvents(2.toString()).first().map { it.toUserEventModel() }
         ).containsAtLeastElementsIn(
             result.data
         )
@@ -97,8 +98,11 @@ class EventsRepositoryImplTest {
     fun fetchEvent() = runTest {
         val result = eventsRepo.updateEventDetails("0") as Resource.Success
 
+        val eventInfo = eventsRepo.getEvents().first().find { it.event.id == result.data.id }!!
+
         val expected = EventWithShiftsAndSalary(
             eventDetail = result.data.toEventDetailEntity(),
+            eventInfo = eventInfo,
             shifts = result.data.extractShiftEntities().mapIndexed { i, shift ->
                 ShiftWithPlacesAndSalary(
                     shift = shift,
@@ -111,7 +115,8 @@ class EventsRepositoryImplTest {
                                         type = UserParticipationType.PARTICIPANT,
                                         placeId = place.id
                                     ),
-                                    role = it.eventRole
+                                    role = it.eventRole,
+                                    user = it.user.toUserEntity()
                                 )
                             },
                             salary = EventPlaceSalary(
@@ -162,7 +167,7 @@ class EventsRepositoryImplTest {
         val result = eventsRepo.updateEventRoles() as Resource.Success
 
         assertThat(
-            dao.getEventRoles()
+            dao.getEventRoles().first()
         ).containsExactlyElementsIn(
             result.data
         )
@@ -199,7 +204,11 @@ class EventsRepositoryImplTest {
             dao.getInvitations().first()
         ).containsExactlyElementsIn(
             result.data.map {
-                it.toInvitationEntity()
+                EventInvitationWithTypeAndRole(
+                    eventInvitationEntity = it.toInvitationEntity(),
+                    role = it.eventRole,
+                    eventType = it.eventType
+                )
             }
         )
     }

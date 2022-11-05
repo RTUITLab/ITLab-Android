@@ -176,7 +176,7 @@ class UsersRepositoryImplTest {
         assertThat(
             (usersRepo.editUserInfo(request) as Resource.Success).data
         ).isEqualTo(
-            usersRepo.getCurrentUser().toUserResponse()
+            usersRepo.getCurrentUser()?.toUserResponse()
         )
     }
 
@@ -212,7 +212,7 @@ class UsersRepositoryImplTest {
         val result = (usersRepo.updateUser("4") as Resource.Success).data
 
         assertThat(
-            usersRepo.getUserById("4").toUserResponse()
+            usersRepo.getUserById("4")?.toUserResponse()
         ).isEqualTo(result)
     }
 

@@ -116,7 +116,7 @@ class MockEventsApi : EventsApi {
             eventType = events[it].eventType,
             role = EventRoleModel(
                 id = it.toString(),
-                title = "Participant",
+                title = "Role $it",
                 description = null
             )
         )

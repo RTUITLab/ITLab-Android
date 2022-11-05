@@ -81,7 +81,11 @@ class ReportsRepositoryImplTest {
         repo.updateReports()
         val r = repo.updateReportSalaries("0") as Resource.Success
 
-        assertThat(dao.getReportsSalary()).containsExactlyElementsIn(
+        assertThat(
+            dao.getReportsSalary().map {
+                it.salary
+            }
+        ).containsExactlyElementsIn(
             r.data
         )
     }
@@ -134,7 +138,11 @@ class ReportsRepositoryImplTest {
         repo.updateReports()
         val r = repo.updateSalaryForUser("2") as Resource.Success
 
-        assertThat(dao.getReportsSalary()).containsExactlyElementsIn(r.data)
+        assertThat(
+            dao.getReportsSalary().map {
+                it.salary
+            }
+        ).containsExactlyElementsIn(r.data)
     }
 
     @Test
@@ -142,6 +150,8 @@ class ReportsRepositoryImplTest {
         repo.updateReports()
         val r = repo.editReportSalary("2", ReportSalaryRequest(13, "blah")) as Resource.Success
 
-        assertThat(dao.getReportsSalary()).contains(r.data)
+        assertThat(
+            dao.getReportsSalary().map { it.salary }
+        ).contains(r.data)
     }
 }
