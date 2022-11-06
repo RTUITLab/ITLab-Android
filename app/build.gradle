@@ -112,6 +112,7 @@ android {
         kotlinCompilerExtensionVersion compose_version
     }
     buildToolsVersion '32.0.0'
+    namespace 'ru.rtuitlab.itlab'
 }
 
 dependencies {
