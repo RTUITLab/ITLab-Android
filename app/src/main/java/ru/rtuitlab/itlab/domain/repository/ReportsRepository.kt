@@ -25,11 +25,19 @@ interface ReportsRepository {
         userId: String
     ): Flow<List<ReportWithUsersAndSalary>>
 
-    suspend fun updateReports(): Resource<List<ReportDto>>
+    suspend fun updateReports(userId: String): Resource<List<ReportDto>>
 
     suspend fun updateReportSalaries(userId: String): Resource<List<ReportSalary>>
 
-    suspend fun updateReports(sortedBy: String = "date"): Resource<List<ReportDto>>
+    suspend fun updateReportSalaries(
+        userId: String,
+        reportIds: List<String>
+    ): Resource<List<ReportSalary>>
+
+    suspend fun updateReports(
+        sortedBy: String = "date",
+        userId: String
+    ): Resource<List<ReportDto>>
 
     suspend fun createReport(
         implementerId: String? = null,

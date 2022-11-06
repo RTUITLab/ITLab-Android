@@ -11,7 +11,6 @@ import ru.rtuitlab.itlab.common.extensions.collectUntil
 import ru.rtuitlab.itlab.data.remote.api.reports.models.ReportDto
 import ru.rtuitlab.itlab.domain.use_cases.reports.CreateReportUseCase
 import ru.rtuitlab.itlab.domain.use_cases.reports.GetReportsUseCase
-import ru.rtuitlab.itlab.domain.use_cases.reports.UpdateReportsSalaryUseCase
 import ru.rtuitlab.itlab.domain.use_cases.reports.UpdateReportsUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.GetCurrentUserUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase
@@ -26,7 +25,6 @@ class ReportsViewModel @Inject constructor(
     private val getReports: GetReportsUseCase,
     private val updateReports: UpdateReportsUseCase,
     private val createReport: CreateReportUseCase,
-    private val updateSalary: UpdateReportsSalaryUseCase,
     getCurrentUser: GetCurrentUserUseCase,
     getUsers: GetUsersUseCase
 ): ViewModel() {
@@ -43,27 +41,20 @@ class ReportsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            updateReports.firstTime(
-                refreshState = _isRefreshing,
-                onError = {
-                    launch {
-                        _uiEvents.emit(UiEvent.Snackbar(it))
-                    }
-                },
-                onSuccess = {
-                    currentUserId.value?.let {
-                        launch {
-                            updateSalary(it)
-                        }
-                    }
-                }
-            )
             currentUserId.collectUntil(
                 condition = { it != null },
                 action = {
                     it?.let {
                         launch {
-                            updateSalary(it)
+                            updateReports.firstTime(
+                                userId = it,
+                                refreshState = _isRefreshing,
+                                onError = {
+                                    launch {
+                                        _uiEvents.emit(UiEvent.Snackbar(it))
+                                    }
+                                }
+                            )
                         }
                     }
                 }
@@ -101,16 +92,13 @@ class ReportsViewModel @Inject constructor(
 
     fun update() = viewModelScope.launch {
         _isRefreshing.emit(true)
-        updateReports().handle(
-            onSuccess = {
-                currentUserId.value?.let {
-                    updateSalary(it)
+        currentUserId.value?.let {
+            updateReports(it).handle(
+                onError = {
+                    _uiEvents.emit(UiEvent.Snackbar(it))
                 }
-            },
-            onError = {
-                _uiEvents.emit(UiEvent.Snackbar(it))
-            }
-        )
+            )
+        }
         _isRefreshing.emit(false)
     }
 

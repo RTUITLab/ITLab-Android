@@ -10,18 +10,19 @@ import javax.inject.Inject
 class UpdateReportsUseCase @Inject constructor(
     private val repo: ReportsRepository
 ) {
-    suspend operator fun invoke() = withContext(Dispatchers.IO) {
-        repo.updateReports()
+    suspend operator fun invoke(userId: String) = withContext(Dispatchers.IO) {
+        repo.updateReports(userId)
     }
 
     suspend fun firstTime(
+        userId: String,
         refreshState: MutableStateFlow<Boolean>,
         onSuccess: (List<ReportDto>) -> Unit = {},
         onError: (String) -> Unit
     ) = withContext(Dispatchers.IO) {
         if (repo.reportsUpdatedAtLeastOnce) return@withContext
         refreshState.emit(true)
-        repo.updateReports().handle(
+        repo.updateReports(userId).handle(
             onSuccess = {
                 onSuccess(it)
                 refreshState.emit(false)

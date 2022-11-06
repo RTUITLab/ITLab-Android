@@ -39,7 +39,13 @@ class ReportsRepositoryImpl @Inject constructor(
         userId: String
     ) = dao.searchReportsFromUser(searchQuery, userId)
 
-    override suspend fun updateReports() = tryUpdate(
+    /**
+     * Updates all reports regardless of user`s claims,
+     * then updates report salaries with [userId].
+     * This is needed to preserve order of UPSERT operations
+     * since we may not have control of it outside this class
+     */
+    override suspend fun updateReports(userId: String) = tryUpdate(
         inScope = scope,
         withHandler = handler,
         from = { reportsApi.getReports() },
@@ -50,6 +56,7 @@ class ReportsRepositoryImpl @Inject constructor(
                     it.toReportEntity()
                 }
             )
+            updateReportSalaries(userId, it.map { it.id })
         }
     )
 
@@ -66,12 +73,12 @@ class ReportsRepositoryImpl @Inject constructor(
             employeeId = userId
         ) },
         into = {
-            updateReportSalaries(userId)
             dao.upsertReports(
                 it.map {
                     it.toReportEntity()
                 }
             )
+            updateReportSalaries(userId)
         }
     )
 
@@ -82,7 +89,31 @@ class ReportsRepositoryImpl @Inject constructor(
         into = { dao.upsertReportsSalary(it) }
     )
 
-    override suspend fun updateReports(sortedBy: String) = tryUpdate(
+    /**
+     * There can be a situation where server`s data violates foreign keys constraint
+     * on reportId field of [ReportSalary]. This method filters out salaries that do that
+     * and then upserts. This is highly undesirable since time complexity is O(n^2)
+     */
+    override suspend fun updateReportSalaries(
+        userId: String,
+        reportIds: List<String>
+    ) = tryUpdate(
+        inScope = scope,
+        withHandler = handler,
+        from = { reportsApi.getListReportSalary(userId) },
+        into = { dao.upsertReportsSalary(it.filter { it.reportId in reportIds }) }
+    )
+
+    /**
+     * Updates all reports regardless of user`s claims,
+     * then updates report salaries with [userId].
+     * This is needed to preserve order of UPSERT operations
+     * since we may not have control of it outside this class
+     */
+    override suspend fun updateReports(
+        sortedBy: String,
+        userId: String
+    ) = tryUpdate(
         inScope = scope,
         withHandler = handler,
         from = { reportsApi.getReports(sortedBy) },
@@ -93,6 +124,7 @@ class ReportsRepositoryImpl @Inject constructor(
                     it.toReportEntity()
                 }
             )
+            updateReportSalaries(userId)
         }
     )
 
