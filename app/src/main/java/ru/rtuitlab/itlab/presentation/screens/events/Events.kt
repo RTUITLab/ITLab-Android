@@ -1,14 +1,16 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.screens.events
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -20,7 +22,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventCard
@@ -58,16 +59,17 @@ fun Events(
 		}
 
 	}
-	val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
+	val snackbarHostState = remember { SnackbarHostState() }
 
-	eventsViewModel.uiEvents.collectUiEvents(scaffoldState)
+	eventsViewModel.uiEvents.collectUiEvents(snackbarHostState)
 
 	Scaffold(
-		scaffoldState = scaffoldState
+		snackbarHost = { SnackbarHost(snackbarHostState) }
 	) {
 		HorizontalPager(
 			modifier = Modifier
-				.fillMaxSize(),
+				.fillMaxSize()
+				.padding(it),
 			verticalAlignment = Alignment.Top,
 			count = tabs.size,
 			state = pagerState,

@@ -1,20 +1,15 @@
 package ru.rtuitlab.itlab.presentation.screens.events.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,7 +17,6 @@ import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.local.events.models.ShiftWithPlacesAndSalary
 import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @Composable
 fun ShiftCard(
@@ -35,17 +29,18 @@ fun ShiftCard(
 	val salary = shiftWithPlacesAndSalary.salary?.count ?: eventSalary?.count
 
 	Card(
-		modifier = modifier,
-		elevation = 2.dp,
-		shape = MaterialTheme.shapes.medium
+		modifier = Modifier
+			.clip(MaterialTheme.shapes.medium)
+			.then(modifier)
 	) {
 		Column(
 			modifier = Modifier
 				.padding(15.dp)
+				.fillMaxWidth()
 		) {
 			Text(
 				text = shift.getTime(LocalContext.current),
-				style = MaterialTheme.typography.h6,
+				style = MaterialTheme.typography.titleMedium,
 			)
 			Spacer(Modifier.height(10.dp))
 
@@ -57,9 +52,9 @@ fun ShiftCard(
 			) {
 				Text(
 					text =  if (shift.description.isNullOrBlank()) stringResource(R.string.event_no_description)
-							else shift.description,
-					style = MaterialTheme.typography.subtitle1,
-					color = AppColors.greyText.collectAsState().value
+					else shift.description,
+					style = MaterialTheme.typography.bodyLarge,
+					color = MaterialTheme.colorScheme.onSurface.copy(.8f)
 				)
 			}
 			Spacer(Modifier.height(5.dp))
@@ -75,8 +70,8 @@ fun ShiftCard(
 						shift.duration,
 						shift.duration
 					),
-					style = MaterialTheme.typography.subtitle1,
-					color = AppColors.greyText.collectAsState().value
+					style = MaterialTheme.typography.bodyLarge,
+					color = MaterialTheme.colorScheme.onSurface.copy(.8f)
 				)
 			}
 			Spacer(Modifier.height(5.dp))
@@ -93,13 +88,11 @@ fun ShiftCard(
 							it
 						)
 					} ?: stringResource(R.string.salary_not_specified),
-					style = MaterialTheme.typography.subtitle1,
-					color = AppColors.greyText.collectAsState().value
+					style = MaterialTheme.typography.bodyLarge,
+					color = MaterialTheme.colorScheme.onSurface.copy(.8f)
 				)
 			}
 			Spacer(Modifier.height(5.dp))
-
-
 		}
 	}
 }

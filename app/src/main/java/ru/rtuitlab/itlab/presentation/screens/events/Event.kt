@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.screens.events
 
 import android.annotation.SuppressLint
@@ -5,9 +7,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.rememberSwipeableState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
@@ -50,16 +54,16 @@ fun Event(
 
 	val isRefreshing by eventViewModel.isRefreshing.collectAsState()
 
-	val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
-
-	eventViewModel.uiEvents.collectUiEvents(scaffoldState)
+	val snackbarHostState = remember { SnackbarHostState() }
+	eventViewModel.uiEvents.collectUiEvents(snackbarHostState)
 
 	Scaffold(
-		scaffoldState = scaffoldState
+		snackbarHost = { SnackbarHost(snackbarHostState) }
 	) {
 		SwipeRefresh(
 			modifier = Modifier
-				.fillMaxSize(),
+				.fillMaxSize()
+				.padding(it),
 			state = rememberSwipeRefreshState(isRefreshing),
 			onRefresh = {
 				eventViewModel.updateDetails()
@@ -178,9 +182,7 @@ private fun EventInfo(
 	val coroutineScope = rememberCoroutineScope()
 	Surface(
 		modifier = modifier
-			.fillMaxWidth(),
-		color = MaterialTheme.colors.surface,
-		elevation = 1.dp
+			.fillMaxWidth()
 	) {
 		Column(
 			modifier = Modifier
@@ -292,7 +294,7 @@ private fun EventShifts(
 				Spacer(modifier = Modifier.height(15.dp))
 				Text(
 					text = stringResource(R.string.shifts),
-					style = MaterialTheme.typography.h3
+					style = MaterialTheme.typography.titleLarge
 				)
 			}
 			items(

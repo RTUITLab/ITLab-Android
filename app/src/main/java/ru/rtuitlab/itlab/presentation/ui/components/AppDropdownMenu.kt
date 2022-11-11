@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ru.rtuitlab.itlab.presentation.ui.theme.md3.typography
 
 @Composable
 fun AppDropdownMenu(
@@ -19,7 +21,14 @@ fun AppDropdownMenu(
 ) {
 	var expanded by remember { mutableStateOf(false) }
 
-	MaterialTheme(shapes = MaterialTheme.shapes.copy(medium = RoundedCornerShape(10.dp))) {
+	MaterialTheme(
+		shapes = MaterialTheme.shapes.copy(extraSmall = RoundedCornerShape(10.dp)),
+		typography = typography().copy(
+			labelLarge = LocalTextStyle.current.copy(
+				color = MaterialTheme.colorScheme.onSurface
+			)
+		)
+	) {
 		Box(
 			modifier = modifier
 		) {

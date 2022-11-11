@@ -1,14 +1,19 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.screens.events
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -31,14 +36,14 @@ fun EventsNotifications(
 
 	val isRefreshing by eventsViewModel.areInvitationsRefreshing.collectAsState()
 
-	val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
-
-	eventsViewModel.uiEvents.collectUiEvents(scaffoldState)
+	val snackbarHostState = remember { SnackbarHostState() }
+	eventsViewModel.uiEvents.collectUiEvents(snackbarHostState)
 
 	Scaffold(
-		scaffoldState = scaffoldState
+		snackbarHost = { SnackbarHost(snackbarHostState) }
 	) {
 		SwipeRefresh(
+			modifier = Modifier.padding(it),
 			state = rememberSwipeRefreshState(isRefreshing),
 			onRefresh = eventsViewModel::updateNotifications
 		) {

@@ -40,7 +40,7 @@ private val lightColorScheme = lightColorScheme(
 	onPrimary = Blue100,
 	primaryContainer = Blue93,
 	onPrimaryContainer = Blue16,
-	surface = LightBlue98,
+	surface = Blue93, //LightBlue98,
 	onSurface = LightBlue7,
 	secondary = BlueSecondary43,
 	onSecondary = Blue100,
@@ -55,8 +55,8 @@ private val lightColorScheme = lightColorScheme(
 	errorContainer = Red92,
 	onErrorContainer = Red13,
 	outline = Grey48,
-	surfaceVariant = Neutral90,
-	onSurfaceVariant = Grey29,
+	surfaceVariant = Blue93, //Neutral90,
+	onSurfaceVariant = Blue16, //Color.Black.copy(.6f),
 	background = LightBlue98,
 	onBackground = LightBlue7
 )
@@ -84,13 +84,13 @@ fun ITLabTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable 
 	
 	val systemUiController = rememberSystemUiController()
 	systemUiController.setStatusBarColor(
-		color = Color.Transparent,
+		color = androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer,
 		darkIcons = !darkTheme
 	)
 
 	MaterialTheme(
 		colorScheme = md3Colors,
-		typography = ru.rtuitlab.itlab.presentation.ui.theme.md3.typography,
+		typography = ru.rtuitlab.itlab.presentation.ui.theme.md3.typography(),
 		shapes = ru.rtuitlab.itlab.presentation.ui.theme.md3.shapes
 	) {
 		MaterialTheme(

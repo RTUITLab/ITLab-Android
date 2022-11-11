@@ -1,7 +1,8 @@
 package ru.rtuitlab.itlab.presentation.screens.events.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -19,7 +20,6 @@ import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.ButtonLoadingIndicator
 import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @ExperimentalPagerApi
@@ -43,7 +43,7 @@ fun EventNotificationCard(
 		) {
 			Text(
 				text = stringResource(R.string.event_invitation),
-				style = MaterialTheme.typography.h6
+				style = MaterialTheme.typography.titleLarge
 			)
 			InteractiveField(value = notification.title) {
 				navController.navigate("${AppScreen.EventDetails.navLink}/${notification.eventId}")
@@ -96,9 +96,6 @@ fun EventNotificationCard(
 				Button(
 					modifier = Modifier
 						.fillMaxWidth(),
-					colors = ButtonDefaults.buttonColors(
-						backgroundColor = AppColors.accent.collectAsState().value
-					),
 					onClick = {
 						if (!isLoadingState) {
 							isLoadingState = true
@@ -130,7 +127,7 @@ fun EventNotificationCard(
 					modifier = Modifier
 						.fillMaxWidth(),
 					colors = ButtonDefaults.buttonColors(
-						backgroundColor = AppColors.red
+						containerColor = MaterialTheme.colorScheme.errorContainer
 					),
 					onClick = {
 						if (!isLoadingState) {
@@ -151,10 +148,7 @@ fun EventNotificationCard(
 						)
 					} else {
 						Text(
-							text = stringResource(R.string.event_invitation_reject),
-							color = Color.White,
-							fontSize = 14.sp,
-							fontWeight = FontWeight(500)
+							text = stringResource(R.string.event_invitation_reject)
 						)
 					}
 				}

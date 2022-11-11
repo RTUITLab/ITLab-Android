@@ -2,9 +2,9 @@ package ru.rtuitlab.itlab.presentation.screens.events.components
 
 import androidx.activity.compose.BackHandler
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Notifications
@@ -95,17 +95,18 @@ fun EventsTopAppBar(
 										addOnPositiveButtonClickListener(listener)
 									}
 							collapseAction()
+						},
+						text = {
+							Text(
+								text = stringResource(
+									if (isDateSelectionMade) R.string.events_clear_period
+									else R.string.events_choose_period
+								),
+								maxLines = 1,
+								overflow = TextOverflow.Ellipsis
+							)
 						}
-					) {
-						Text(
-							text = stringResource(
-								if (isDateSelectionMade) R.string.events_clear_period
-								else R.string.events_choose_period
-							),
-							maxLines = 1,
-							overflow = TextOverflow.Ellipsis
-						)
-					}
+					)
 				}
 			),
 			AppBarOption.Clickable(

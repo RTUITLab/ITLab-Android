@@ -1,19 +1,15 @@
 package ru.rtuitlab.itlab.presentation.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
-import java.util.*
+import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
 
 @Composable
 fun PrimaryButton(
@@ -24,37 +20,54 @@ fun PrimaryButton(
 	textWrapper: (@Composable RowScope.(text :@Composable () -> Unit) -> Unit)? = null
 ) {
 	Button(
-		modifier = modifier
-			.clipToBounds(),
+		modifier = modifier,
 		onClick = onClick,
-		colors = ButtonDefaults.buttonColors(
-			backgroundColor = Color.Transparent,
-			disabledBackgroundColor = Color.Transparent,
-			contentColor = AppColors.accent.collectAsState().value,
-			disabledContentColor = AppColors.greyText.collectAsState().value
-		),
-		elevation = ButtonDefaults.elevation(
-			defaultElevation = 0.dp,
-			pressedElevation = 0.dp
-		),
 		enabled = enabled
 	) {
 		if (textWrapper != null)
 			textWrapper {
-				Text(
-					text = text.uppercase(Locale.getDefault()),
-					fontSize = 14.sp,
-					fontWeight = FontWeight(500),
-					lineHeight = 22.sp
-				)
+				Text(text)
 			}
 		else
-			Text(
-				text = text.uppercase(Locale.getDefault()),
-				color = AppColors.accent.collectAsState().value,
-				fontSize = 14.sp,
-				fontWeight = FontWeight(500),
-				lineHeight = 22.sp
-			)
+			Text(text)
+	}
+}
+
+@Composable
+fun PrimaryTextButton(
+	modifier: Modifier = Modifier,
+	onClick: () -> Unit,
+	text: String,
+	enabled: Boolean = true,
+	textWrapper: (@Composable RowScope.(text :@Composable () -> Unit) -> Unit)? = null
+) {
+	TextButton(
+		modifier = modifier,
+		enabled = enabled,
+		onClick = onClick
+	) {
+		if (textWrapper != null)
+			textWrapper {
+				Text(text)
+			}
+		else
+			Text(text)
+	}
+}
+
+
+@Preview
+@Composable
+fun ButtonsPreview() {
+	ITLabTheme {
+		Surface {
+			Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+				Text("BUTTONS", style = MaterialTheme.typography.labelMedium)
+
+				PrimaryButton(onClick = {}, text = "Button")
+
+				PrimaryTextButton(onClick = {}, text = "Text button")
+			}
+		}
 	}
 }

@@ -7,8 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,65 +47,67 @@ fun BottomSheet(
 			viewModel.hide(coroutineScope)
 		}
 
-	Column(
-		modifier = Modifier
-			.padding(
-				top = 15.dp,
-				start = 15.dp,
-				end = 15.dp
-			)
-			.fillMaxWidth(),
-		horizontalAlignment = Alignment.CenterHorizontally
+	Surface(
+		color = MaterialTheme.colorScheme.background
 	) {
-		Icon(
-			painter = painterResource(R.drawable.ic_upholder),
-			contentDescription = null,
-			tint = MaterialTheme.colors.onSurface
-		)
-		Spacer(Modifier.height(15.dp))
+		Column(
+			modifier = Modifier
+				.padding(
+					top = 15.dp,
+					start = 15.dp,
+					end = 15.dp
+				)
+				.fillMaxWidth(),
+			horizontalAlignment = Alignment.CenterHorizontally
+		) {
+			Icon(
+				painter = painterResource(R.drawable.ic_upholder),
+				contentDescription = null,
+				tint = MaterialTheme.colorScheme.onBackground
+			)
+			Spacer(Modifier.height(15.dp))
 
-		when (currentSheet) {
-			is AppBottomSheet.EventShift -> {
-				val shift = currentSheet as AppBottomSheet.EventShift
-				ShiftBottomSheet(
-					shiftAndSalary = shift.shiftAndSalary,
-					eventSalary = shift.eventSalary,
-					eventViewModel = shift.eventViewModel
-				)
+			when (currentSheet) {
+				is AppBottomSheet.EventShift -> {
+					val shift = currentSheet as AppBottomSheet.EventShift
+					ShiftBottomSheet(
+						shiftAndSalary = shift.shiftAndSalary,
+						eventSalary = shift.eventSalary,
+						eventViewModel = shift.eventViewModel
+					)
+				}
+				is AppBottomSheet.EventDescription -> {
+					MarkdownTextArea(
+						modifier = Modifier.verticalScroll(rememberScrollState()),
+						textMd = (currentSheet as AppBottomSheet.EventDescription).markdown
+					)
+				}
+				is AppBottomSheet.ProfileSettings -> ProfileSettingsBottomSheet()
+				is AppBottomSheet.ProfileEvents -> {
+					val data = currentSheet as AppBottomSheet.ProfileEvents
+					ProfileEventsBottomSheet(
+						userViewModel = data.viewModel
+					)
+				}
+				is AppBottomSheet.DeviceInfo -> {
+					val details = currentSheet as AppBottomSheet.DeviceInfo
+					val devicesViewModel = details.devicesViewModel
+					DeviceInfoBottomSheet(devicesViewModel, viewModel)
+				}
+				is AppBottomSheet.DeviceNew -> {
+					val details = currentSheet as AppBottomSheet.DeviceNew
+					val devicesViewModel = details.devicesViewModel
+					val bottomSheetViewModel = details.bottomSheetViewModel
+					DeviceNewBottomSheet(devicesViewModel,  bottomSheetViewModel)
+				}
+				is AppBottomSheet.UserSelection -> {
+					UserSelectionBottomSheet(
+						onSelect = (currentSheet as AppBottomSheet.UserSelection).onSelect,
+						bottomSheetViewModel = viewModel
+					)
+				}
+				else -> {}
 			}
-			is AppBottomSheet.EventDescription -> {
-				MarkdownTextArea(
-					modifier = Modifier.verticalScroll(rememberScrollState()),
-					textMd = (currentSheet as AppBottomSheet.EventDescription).markdown
-				)
-			}
-			is AppBottomSheet.ProfileSettings -> ProfileSettingsBottomSheet()
-			is AppBottomSheet.ProfileEvents -> {
-				val data = currentSheet as AppBottomSheet.ProfileEvents
-				ProfileEventsBottomSheet(
-					userViewModel = data.viewModel
-				)
-			}
-			is AppBottomSheet.DeviceInfo -> {
-				val details = currentSheet as AppBottomSheet.DeviceInfo
-				val devicesViewModel = details.devicesViewModel
-				DeviceInfoBottomSheet(devicesViewModel, viewModel)
-			}
-			is AppBottomSheet.DeviceNew -> {
-				val details = currentSheet as AppBottomSheet.DeviceNew
-				val devicesViewModel = details.devicesViewModel
-				val bottomSheetViewModel = details.bottomSheetViewModel
-				DeviceNewBottomSheet(devicesViewModel,  bottomSheetViewModel)
-
-
-			}
-			is AppBottomSheet.UserSelection -> {
-				UserSelectionBottomSheet(
-					onSelect = (currentSheet as AppBottomSheet.UserSelection).onSelect,
-					bottomSheetViewModel = viewModel
-				)
-			}
-			else -> {}
 		}
 	}
 
