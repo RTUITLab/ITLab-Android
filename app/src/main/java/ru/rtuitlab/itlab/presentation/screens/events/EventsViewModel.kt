@@ -87,7 +87,11 @@ class EventsViewModel @Inject constructor(
 			query = it,
 			begin = Instant.MIN.toString(),
 			end = nowAsIso8601()
-		)
+		).map {
+			it.filter {
+				it !in pendingEvents.value
+			}
+		}
 	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
 	val userEvents = searchQuery.flatMapLatest {
