@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.ui.theme.md3
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -48,7 +47,6 @@ fun typography() = androidx.compose.material3.Typography(
     labelMedium = TextStyle(
         fontSize = 14.sp,
         fontWeight = FontWeight.Normal,
-        lineHeight = 20.sp,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        lineHeight = 20.sp
     )
 )

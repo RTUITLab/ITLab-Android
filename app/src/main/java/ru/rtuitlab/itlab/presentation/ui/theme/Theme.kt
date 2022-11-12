@@ -61,13 +61,30 @@ private val lightColorScheme = lightColorScheme(
 	onBackground = LightBlue7
 )
 
+private val darkColorScheme = darkColorScheme(
+	primary = Blue77,
+	onPrimary = Blue100,
+	primaryContainer = Neutral26,
+	onPrimaryContainer = Blue100,
+	surface = Neutral26,
+	onSurface = Blue100,
+	error = Red77,
+	errorContainer = Red95,
+	onErrorContainer = Neutral26,
+	outline = Neutral88,
+	surfaceVariant = Neutral26,
+	onSurfaceVariant = Blue100,
+	background = Neutral11,
+	onBackground = Blue100
+)
+
 @Composable
 fun ITLabTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
 	LaunchedEffect(darkTheme) {
 		AppColors.isLightTheme = !darkTheme
 	}
 
-	val isDynamicColorsSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+	val areDynamicColorsSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 	val colors = if (darkTheme) {
 		DarkColorPalette
@@ -76,10 +93,10 @@ fun ITLabTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable 
 	}
 
 	val md3Colors = when {
-		isDynamicColorsSupported && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
-		isDynamicColorsSupported && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
-		!isDynamicColorsSupported && !darkTheme -> lightColorScheme
-		else -> lightColorScheme
+		areDynamicColorsSupported && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
+		areDynamicColorsSupported && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
+		!areDynamicColorsSupported && !darkTheme -> lightColorScheme
+		else -> darkColorScheme
 	}
 	
 	val systemUiController = rememberSystemUiController()
