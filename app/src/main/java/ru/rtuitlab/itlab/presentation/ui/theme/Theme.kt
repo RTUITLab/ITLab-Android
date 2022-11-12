@@ -8,6 +8,7 @@ import androidx.compose.material.lightColors
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -98,18 +99,22 @@ fun ITLabTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable 
 		!areDynamicColorsSupported && !darkTheme -> lightColorScheme
 		else -> darkColorScheme
 	}
-	
-	val systemUiController = rememberSystemUiController()
-	systemUiController.setStatusBarColor(
-		color = androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer,
-		darkIcons = !darkTheme
-	)
+
 
 	MaterialTheme(
 		colorScheme = md3Colors,
 		typography = ru.rtuitlab.itlab.presentation.ui.theme.md3.typography(),
 		shapes = ru.rtuitlab.itlab.presentation.ui.theme.md3.shapes
 	) {
+		val systemUiController = rememberSystemUiController()
+		val colorScheme = androidx.compose.material3.MaterialTheme.colorScheme
+		SideEffect {
+			systemUiController.setStatusBarColor(
+				color = colorScheme.primaryContainer,
+				darkIcons = !darkTheme
+			)
+		}
+
 		MaterialTheme(
 			colors = colors,
 			typography = typography,
