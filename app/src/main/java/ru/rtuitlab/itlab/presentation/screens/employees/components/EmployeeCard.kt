@@ -2,7 +2,9 @@ package ru.rtuitlab.itlab.presentation.screens.employees.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,10 +13,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import ru.rtuitlab.itlab.R
@@ -23,15 +22,14 @@ import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 
 @Composable
 fun EmployeeCard(
-	user: User,
-	modifier: Modifier,
-	elevation: Dp = 2.dp
+    user: User,
+    modifier: Modifier
 ) {
     val context = LocalContext.current
     Card(
-        modifier = modifier,
-        elevation = elevation,
-        shape = RoundedCornerShape(5.dp)
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .then(modifier)
     ) {
         user.run {
             Row {
@@ -61,7 +59,6 @@ fun EmployeeCard(
                 }
                 Column(
                     modifier = Modifier
-
 	                    .padding(
 		                    top = 10.dp,
 		                    bottom = 8.dp,
@@ -72,9 +69,7 @@ fun EmployeeCard(
                 ) {
                     Text(
                         text = "$lastName $firstName $middleName",
-                        fontWeight = FontWeight(500),
-                        fontSize = 17.sp,
-                        lineHeight = 22.sp
+                        style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(Modifier.height(10.dp))
                     if (email != null) {

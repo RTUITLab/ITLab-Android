@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,7 +28,6 @@ import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmailField
 import ru.rtuitlab.itlab.presentation.screens.employees.components.PhoneField
 import ru.rtuitlab.itlab.presentation.screens.employees.components.UserEvents
@@ -41,18 +42,22 @@ fun Employee(
     bottomSheetViewModel: BottomSheetViewModel
 ) {
     val user by employeeViewModel.user.collectAsState()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+    Surface(
+        color = MaterialTheme.colorScheme.background
     ) {
-        user?.let {
-            EmployeeCredentials(it)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            user?.let {
+                EmployeeCredentials(it)
+            }
+            UserEvents(
+                employeeViewModel,
+                bottomSheetViewModel
+            )
         }
-        UserEvents(
-            employeeViewModel,
-            bottomSheetViewModel
-        )
     }
 }
 

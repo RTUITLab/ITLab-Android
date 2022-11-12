@@ -42,28 +42,26 @@ fun UserSelectionBottomSheet(
 		currentUser?.let { currentUser ->
 			item {
 				EmployeeCard(
-					user = currentUser,
-					modifier = Modifier
-						.fillMaxWidth()
-						.clickable {
-							onSelect(currentUser)
-							bottomSheetViewModel.hide(scope)
-						},
-					elevation = 6.dp
-				)
+                    user = currentUser,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onSelect(currentUser)
+                            bottomSheetViewModel.hide(scope)
+                        }
+                )
 				Spacer(modifier = Modifier.height(8.dp))
 			}
 			items(users.filter { it.id != currentUser.id }) { user ->
 				EmployeeCard(
-					user = user,
-					modifier = Modifier
-						.fillMaxWidth()
-						.clickable {
-							onSelect(user)
-							bottomSheetViewModel.hide(scope)
-						},
-					elevation = 6.dp
-				)
+                    user = user,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onSelect(user)
+                            bottomSheetViewModel.hide(scope)
+                        }
+                )
 			}
 		}
 	}

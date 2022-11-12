@@ -3,14 +3,13 @@ package ru.rtuitlab.itlab.presentation.screens.employees.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EventNote
 import androidx.compose.material.icons.filled.NavigateNext
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +20,6 @@ import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.UserViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
 @ExperimentalPagerApi
@@ -44,7 +42,7 @@ fun UserEvents(
 			.padding(horizontal = 20.dp)
 			.height(36.dp),
 		imageVector = Icons.Default.EventNote,
-		tint = AppColors.accent.collectAsState().value,
+		tint = MaterialTheme.colorScheme.primary,
 		opacity = 1f
 	) {
 		Row(
@@ -55,12 +53,12 @@ fun UserEvents(
 		) {
 			Text(
 				text = stringResource(R.string.user_events_participation),
-				style = MaterialTheme.typography.caption
+				style = MaterialTheme.typography.bodyLarge
 			)
 			Icon(
 				imageVector = Icons.Default.NavigateNext,
 				contentDescription = null,
-				tint = AppColors.accent.collectAsState().value
+				tint = MaterialTheme.colorScheme.primary
 			)
 		}
 	}

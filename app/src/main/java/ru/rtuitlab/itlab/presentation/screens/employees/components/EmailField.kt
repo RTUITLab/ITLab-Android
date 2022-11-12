@@ -3,19 +3,13 @@ package ru.rtuitlab.itlab.presentation.screens.employees.components
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
-import ru.rtuitlab.itlab.presentation.ui.components.PrimaryButton
+import ru.rtuitlab.itlab.presentation.ui.components.PrimaryTextButton
 
 @Composable
 fun EmailField(
@@ -33,18 +27,14 @@ fun EmailField(
 		AlertDialog(
 			title = {
 				Text(
-					text = stringResource(R.string.dialog_opening_email),
-					style = MaterialTheme.typography.h4
+					text = stringResource(R.string.dialog_opening_email)
 				)
 			},
 			text = {
-				Column {
-					Spacer(modifier = Modifier.height(15.dp))
-					Text(text = stringResource(R.string.email_are_you_sure))
-				}
+				Text(text = stringResource(R.string.email_are_you_sure))
 			},
 			confirmButton = {
-				PrimaryButton(
+				PrimaryTextButton(
 					onClick = {
 						val intent = Intent(Intent.ACTION_SENDTO).apply {
 							data = Uri.parse("mailto:$value")
@@ -56,7 +46,7 @@ fun EmailField(
 				)
 			},
 			dismissButton = {
-				PrimaryButton(
+				PrimaryTextButton(
 					onClick = { dialogShown = false },
 					text = stringResource(R.string.cancel)
 				)

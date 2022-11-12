@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 		setContent {
 			val authState by authViewModel.authStateFlow.collectAsState(null)
 			ITLabTheme {
-				Surface(color = MaterialTheme.colors.background) {
+				Surface(color = MaterialTheme.colorScheme.background) {
 					when (authState?.isAuthorized) {
 						true -> {
 							CompositionLocalProvider(

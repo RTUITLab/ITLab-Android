@@ -5,8 +5,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -24,19 +25,24 @@ fun Profile(
     bottomSheetViewModel: BottomSheetViewModel
 ) {
     val user by profileViewModel.user.collectAsState()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
+
+    Surface(
+        color = MaterialTheme.colorScheme.background
     ) {
-        user?.let {
-            EmployeeCredentials(it)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            user?.let {
+                EmployeeCredentials(it)
+            }
+            /*UserDevices(userDevicesResource)*/
+            UserEvents(
+                userViewModel = profileViewModel,
+                bottomSheetViewModel = bottomSheetViewModel
+            )
         }
-        /*UserDevices(userDevicesResource)*/
-        UserEvents(
-            userViewModel = profileViewModel,
-            bottomSheetViewModel = bottomSheetViewModel
-        )
     }
 }

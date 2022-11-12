@@ -71,18 +71,22 @@ fun ExtendedTopAppBar(
 	onBackAction: () -> Unit = emptyBackAction,
 	hideBackButton: Boolean = false,
 	hideOptions: Boolean = false,
+	shadowElevation: Dp = 4.dp,
 	content: @Composable () -> Unit
 ) {
-	TopAppBar(
-		title = {
-			ExtendedTopAppBarBody(
-				options, onBackAction, hideBackButton, hideOptions, content
-			)
-		}
-	)
+	Box(
+		modifier = Modifier.shadow(shadowElevation)
+	) {
+		TopAppBar(
+			title = {
+				ExtendedTopAppBarBody(
+					options, onBackAction, hideBackButton, hideOptions, content
+				)
+			}
+		)
+	}
 }
 
-@ExperimentalMaterial3Api
 @Composable
 fun ExtendedTopAppBarBody(
 	options: List<AppBarOption> = emptyList(),
