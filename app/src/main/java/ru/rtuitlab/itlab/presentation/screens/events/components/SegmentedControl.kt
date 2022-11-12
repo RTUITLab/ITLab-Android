@@ -121,11 +121,20 @@ fun <T : Any> SegmentedControl(
     state.selectedSegment = segments.indexOf(selectedSegment)
     state.onSegmentSelected = { onSegmentSelected(segments[it]) }
 
+    var isThumbOffsetDefined by remember { mutableStateOf(false) }
+    var isThumbWidthDefined by remember { mutableStateOf(false) }
+
     val thumbOffset by animateIntAsState(
-        targetValue = state.segmentsWidths.sumSlice(0, state.selectedSegment)
+        targetValue = state.segmentsWidths.sumSlice(0, state.selectedSegment),
+        finishedListener = {
+            isThumbOffsetDefined = true
+        }
     )
     val thumbWidth by animateIntAsState(
-        targetValue = state.segmentsWidths.getOrNull(state.selectedSegment) ?: 0
+        targetValue = state.segmentsWidths.getOrNull(state.selectedSegment) ?: 0,
+        finishedListener = {
+            isThumbWidthDefined = true
+        }
     )
 
 
@@ -163,7 +172,7 @@ fun <T : Any> SegmentedControl(
         // Now we can measure the thumb and dividers to be the right size.
         val thumbPlaceable = thumbMeasurable.measure(
             Constraints.fixed(
-                width = thumbWidth,
+                width = if (isThumbWidthDefined) thumbWidth else state.segmentsWidths[state.selectedSegment],
                 height = segmentsPlaceable.height
             )
         )
@@ -177,12 +186,33 @@ fun <T : Any> SegmentedControl(
         layout(segmentsPlaceable.width, segmentsPlaceable.height) {
             segmentsPlaceable.placeRelative(IntOffset.Zero)
             thumbPlaceable.placeRelative(
-                x = thumbOffset,
+                x = if (isThumbOffsetDefined) thumbOffset else state.segmentsWidths.sumSlice(0, state.selectedSegment),
                 y = 0
             )
             dividersPlaceable.placeRelative(IntOffset.Zero)
         }
     }
+}
+
+/**
+ * Dictates how [SegmentedControl] distributes segments.
+ * @see [EQUAL]
+ * @see [SIZE_AWARE]
+ */
+// This may be needed in the future to provide customization for SegmentedControl
+enum class SegmentsDistributionPolicy {
+    /**
+     * Segmented control will distribute children evenly without adjusting for their true size
+     */
+    EQUAL,
+
+    /**
+     * Segmented control will distribute children based on their true size, i.e.:
+     * - Some of the segments may be smaller than others to provide more space for those which need it
+     * - If there is no way to distribute segments such that every one's content is fully visible,
+     * [SegmentedControl] will fallback to [EQUAL]
+     */
+    SIZE_AWARE
 }
 
 /**
@@ -528,7 +558,7 @@ private suspend fun AwaitPointerEventScope.waitForUpOrCancellation(inBounds: Rec
  * from [start], inclusive until [end], exclusive
  */
 private fun List<Int>.sumSlice(start: Int, end: Int): Int {
-    if (this.isEmpty()) return 0
+    if (this.isEmpty()) return -1
     var sum = 0
     for (i in start until end) {
         sum += this[i]
