@@ -1,3 +1,4 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package ru.rtuitlab.itlab.presentation.screens.reports
 
@@ -7,7 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
@@ -34,7 +36,6 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.Shared
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarTabRow
 import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.ReportsTab
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
@@ -53,9 +54,9 @@ fun Reports(
 
 	val isRefreshing by reportsViewModel.isRefreshing.collectAsState()
 
-	val scaffoldState = rememberScaffoldState()
+	val snackbarHostState = remember { SnackbarHostState() }
 
-	reportsViewModel.uiEvents.collectUiEvents(scaffoldState)
+	reportsViewModel.uiEvents.collectUiEvents(snackbarHostState)
 
 	val navController = LocalNavController.current
 
@@ -80,9 +81,9 @@ fun Reports(
 
 	Column {
 		Surface(
-			color = MaterialTheme.colors.primarySurface,
-			contentColor = contentColorFor(MaterialTheme.colors.primarySurface),
-			elevation = AppBarDefaults.TopAppBarElevation
+			color = MaterialTheme.colorScheme.primaryContainer,
+			contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+//			elevation = AppBarDefaults.TopAppBarElevation
 		) {
 			AppBarTabRow(
 				pagerState = pagerState,
@@ -110,13 +111,16 @@ fun Reports(
 							transitionProgressSetter = transitionProgressSetter
 						)
 				},
-				scaffoldState = scaffoldState
+				snackbarHost = { SnackbarHost(snackbarHostState) }
 			) {
 				HorizontalPager(
-					modifier = Modifier.fillMaxSize(),
+					modifier = Modifier
+						.fillMaxSize()
+						.padding(it),
 					verticalAlignment = Alignment.Top,
 					count = tabs.size,
-					state = reportsViewModel.pagerState
+					state = reportsViewModel.pagerState,
+					itemSpacing = 1.dp
 				) { index ->
 					Box {
 						when(tabs[index]) {
@@ -188,13 +192,12 @@ fun ReportCard(
 
 	SideColoredCard(
 		modifier = Modifier
-			.fillMaxWidth()
-			.clickable {
-				navController.navigate("${AppScreen.ReportDetails.navLink}/${report.id}")
-			},
-		elevation = 2.dp,
+		    .fillMaxWidth()
+		    .clickable {
+		        navController.navigate("${AppScreen.ReportDetails.navLink}/${report.id}")
+		    },
 		shape = MaterialTheme.shapes.medium
-	) {
+    ) {
 		Column(
 			modifier = Modifier
 				.padding(
@@ -206,7 +209,7 @@ fun ReportCard(
 		) {
 			Text(
 				text = report.title,
-				style = MaterialTheme.typography.h6
+				style = MaterialTheme.typography.titleMedium
 			)
 
 			Spacer(modifier = Modifier.height(10.dp))
@@ -229,7 +232,7 @@ fun ReportCard(
 					) {
 						Text(
 							text = report.applicationDate.fromIso8601(LocalContext.current),
-							style = MaterialTheme.typography.subtitle1
+							style = MaterialTheme.typography.bodyLarge
 						)
 					}
 				}
@@ -284,7 +287,7 @@ fun ReportCard(
 							) else stringResource(
 								R.string.salary_not_specified
 							),
-							style = MaterialTheme.typography.subtitle1
+							style = MaterialTheme.typography.bodyLarge
 						)
 					}
 				}

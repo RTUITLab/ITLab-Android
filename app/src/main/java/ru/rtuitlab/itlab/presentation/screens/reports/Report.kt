@@ -11,7 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Payment
@@ -21,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
@@ -44,9 +45,13 @@ fun Report(
 
 	val report = reportsViewModel.reportsAboutUser.collectAsState().value.find { it.id == id }
 		?: reportsViewModel.reportsFromUser.collectAsState().value.find { it.id == id }
-
-	report?.let {
-		ReportDetails(report)
+	Surface(
+		modifier = Modifier.fillMaxSize(),
+		color = MaterialTheme.colorScheme.background
+	) {
+		report?.let {
+			ReportDetails(report)
+		}
 	}
 }
 
@@ -62,10 +67,12 @@ private fun ReportDetails(
 	LaunchedEffect(Unit) {
 		animationState.targetState = true
 	}
+
 	Column(
 		modifier = Modifier
 			.verticalScroll(rememberScrollState())
 			.padding(bottom = 15.dp)
+			.fillMaxSize()
 	) {
 
 		SharedElement(
@@ -78,8 +85,7 @@ private fun ReportDetails(
 			Surface(
 				modifier = Modifier
 					.fillMaxWidth(),
-				color = MaterialTheme.colors.surface,
-				elevation = 1.dp
+				color = MaterialTheme.colorScheme.surface
 			) {
 				Column(
 					modifier = Modifier
@@ -87,8 +93,6 @@ private fun ReportDetails(
 						.padding(20.dp),
 					verticalArrangement = Arrangement.spacedBy(10.dp)
 				) {
-
-
 					SharedElement(
 						key = "${report.id}/time",
 						screenKey = AppScreen.ReportDetails.route,
@@ -103,7 +107,7 @@ private fun ReportDetails(
 						) {
 							Text(
 								text = report.applicationDate.fromIso8601(LocalContext.current),
-								style = MaterialTheme.typography.subtitle1
+								style = MaterialTheme.typography.bodyLarge
 							)
 						}
 					}
@@ -174,7 +178,7 @@ private fun ReportDetails(
 				header = {
 					Text(
 						text = stringResource(R.string.report_approval_text),
-						style = MaterialTheme.typography.h6
+						style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
 					)
 				},
 				textMd = report.approvingCommentMd,
@@ -187,7 +191,7 @@ private fun ReportDetails(
 			header = {
 				Text(
 					text = stringResource(R.string.report_application_text),
-					style = MaterialTheme.typography.h6
+					style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
 				)
 			},
 			textMd = report.applicationCommentMd,
@@ -215,13 +219,12 @@ private fun ReportCommentRecord(
 		Card(
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(horizontal = 20.dp),
-			border = ButtonDefaults.outlinedBorder
+				.padding(horizontal = 20.dp)
 		) {
 			Column {
 				Box(
 					Modifier
-						.background(color = MaterialTheme.colors.onSurface.copy(alpha = .1f))
+						.background(color = MaterialTheme.colorScheme.surface)
 						.padding(vertical = 6.dp, horizontal = 12.dp)
 						.fillMaxWidth()
 				) {
@@ -230,7 +233,8 @@ private fun ReportCommentRecord(
 				Divider()
 				MarkdownTextArea(
 					modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
-					textMd = textMd
+					textMd = textMd,
+					paddingValues = PaddingValues(0.dp)
 				)
 			}
 		}
