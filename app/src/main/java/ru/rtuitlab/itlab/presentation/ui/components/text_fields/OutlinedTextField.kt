@@ -5,6 +5,7 @@ package ru.rtuitlab.itlab.presentation.ui.components.text_fields
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -38,7 +39,12 @@ fun OutlinedAppTextField(
 	maxLines: Int = Int.MAX_VALUE,
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	shape: Shape = TextFieldDefaults.outlinedShape,
-	colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
+	colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+		selectionColors = TextSelectionColors(
+			handleColor = MaterialTheme.colorScheme.primary,
+			backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+		)
+	),
 	toolbar: AppTextToolbar? = null
 ) {
 	CompositionLocalProvider(
@@ -69,7 +75,12 @@ fun OutlinedAppTextField(
 	maxLines: Int = Int.MAX_VALUE,
 	interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 	shape: Shape = TextFieldDefaults.outlinedShape,
-	colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
+	colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+		selectionColors = TextSelectionColors(
+			handleColor = MaterialTheme.colorScheme.primary,
+			backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+		)
+	),
 	toolbar: AppTextToolbar? = null
 ) {
 	CompositionLocalProvider(

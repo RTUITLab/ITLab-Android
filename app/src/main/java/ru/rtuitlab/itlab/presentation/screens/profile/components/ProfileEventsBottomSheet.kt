@@ -5,12 +5,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +31,6 @@ import ru.rtuitlab.itlab.presentation.screens.events.components.UserEventCardCon
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingErrorRetry
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @ExperimentalPagerApi
@@ -80,7 +80,7 @@ fun ProfileEventsBottomSheet(
 		imageVector = Icons.Default.DateRange,
 		spacing = 10.dp,
 		opacity = 1f,
-		tint = AppColors.accent.collectAsState().value
+		tint = MaterialTheme.colorScheme.primary
 	) {
 		Text("${beginEventsDate.toClientDate()} — ${endEventsDate.toClientDate()}")
 	}
@@ -124,8 +124,7 @@ fun ProfileEventsBottomSheet(
 
 	if (areEventsRefreshing) {
 		CircularProgressIndicator(
-			modifier = Modifier.padding(16.dp),
-			color = AppColors.accent.collectAsState().value
+			modifier = Modifier.padding(16.dp)
 		)
 	}
 }

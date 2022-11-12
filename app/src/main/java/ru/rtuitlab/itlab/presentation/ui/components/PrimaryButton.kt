@@ -67,6 +67,30 @@ fun ButtonsPreview() {
 				PrimaryButton(onClick = {}, text = "Button")
 
 				PrimaryTextButton(onClick = {}, text = "Text button")
+
+				PrimaryButton(
+					text = "Loading Button",
+					onClick = {}
+				) { text ->
+					LoadableButtonContent(
+						isLoading = true,
+						strokeWidth = 2.dp
+					) {
+						text()
+					}
+				}
+
+				PrimaryTextButton(
+					text = "Loading Button",
+					onClick = {}
+				) { text ->
+					LoadableButtonContent(
+						isLoading = true,
+						strokeWidth = 2.dp
+					) {
+						text()
+					}
+				}
 			}
 		}
 	}

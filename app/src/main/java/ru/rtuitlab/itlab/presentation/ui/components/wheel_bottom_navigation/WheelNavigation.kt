@@ -9,7 +9,11 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
+import androidx.compose.material.rememberSwipeableState
+import androidx.compose.material.swipeable
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -95,10 +99,8 @@ fun WheelNavigation(
                         .align(Alignment.BottomCenter),
                     painter = painterResource(R.drawable.bottom_navigation),
                     contentDescription = "bottom",
-
-                    colorFilter = ColorFilter.lighting(
-                        MaterialTheme.colors.primarySurface,
-                        MaterialTheme.colors.primarySurface
+                    colorFilter = ColorFilter.tint(
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp)
                     )
                 )
                 Column(

@@ -1,10 +1,14 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.screens.purchases
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.*
+import androidx.compose.material.ChipDefaults
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
@@ -43,16 +47,14 @@ fun Purchases(
 
     val navController = LocalNavController.current
 
-    val scaffoldState = rememberScaffoldState(
-        snackbarHostState = SnackbarHostState()
-    )
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    viewModel.uiEvents.collectUiEvents(scaffoldState)
+    viewModel.uiEvents.collectUiEvents(snackbarHostState)
 
     val (transitionProgress, transitionProgressSetter) = remember { mutableStateOf(0f) }
 
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             TransitionFloatingActionButton(
                 key = "Purchases/New",
@@ -65,7 +67,9 @@ fun Purchases(
             )
         }
     ) {
-        Box {
+        Box(
+            modifier = Modifier.padding(it)
+        ) {
             SwipeRefresh(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -86,23 +90,28 @@ fun Purchases(
                         ) {
                             Spacer(modifier = Modifier.width(15.dp))
                             PurchaseStatusUi.values().forEach {
-                                Chip(
+                                SuggestionChip(
                                     onClick = {
                                         if (state.selectedStatus != it)
                                             viewModel.onStatusChange(it)
                                     },
-                                    colors = ChipDefaults.outlinedChipColors(
-                                        backgroundColor = if (state.selectedStatus == it) it.color else Color.Transparent,
-                                        contentColor = (if (state.selectedStatus == it) Color.White else it.color)
+                                    colors = SuggestionChipDefaults.suggestionChipColors(
+                                        containerColor = if (state.selectedStatus == it) it.color else Color.Transparent,
+                                        labelColor = (if (state.selectedStatus == it) Color.White else it.color)
                                             .copy(alpha = ChipDefaults.ContentOpacity)
                                     ),
-                                    border = ChipDefaults.outlinedBorder
-                                ) {
-                                    Text(
-                                        text = stringResource(it.nameResource),
-                                        style = MaterialTheme.typography.body1
-                                    )
-                                }
+                                    border = SuggestionChipDefaults.suggestionChipBorder(
+                                        borderColor = MaterialTheme.colorScheme.onSurface.copy(ChipDefaults.OutlinedBorderOpacity),
+                                        borderWidth = 1.dp
+                                    ),
+                                    shape = MaterialTheme.shapes.extraLarge,
+                                    label = {
+                                        Text(
+                                            text = stringResource(it.nameResource),
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    }
+                                )
                             }
                             Spacer(modifier = Modifier.width(15.dp))
 
@@ -162,8 +171,8 @@ fun Purchases(
                                 )
                             }
                         } ?: items(
-                            count = (state.paginationState?.totalElements
-                                ?: 0 - state.purchases.size).coerceAtLeast(viewModel.pageSize)
+                            count = ((state.paginationState?.totalElements
+                                ?: 0) - state.purchases.size).coerceAtLeast(viewModel.pageSize)
                         ) {
                             ShimmeredPurchaseCard(
                                 modifier = Modifier
@@ -198,7 +207,7 @@ fun PurchaseCard(
             PurchaseStatusApi.AWAIT -> AppColors.orange
             PurchaseStatusApi.ACCEPT -> AppColors.green
             PurchaseStatusApi.DECLINE -> AppColors.red
-            else -> MaterialTheme.colors.surface
+            else -> MaterialTheme.colorScheme.surface
         }
     ) {
         Column(
@@ -217,7 +226,7 @@ fun PurchaseCard(
             ) {
                 Text(
                     text = purchase.name,
-                    style = MaterialTheme.typography.h6
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
 
@@ -243,7 +252,7 @@ fun PurchaseCard(
                                 context = LocalContext.current,
                                 parseWithTime = false
                             ),
-                            style = MaterialTheme.typography.subtitle1
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
                 }
@@ -295,7 +304,7 @@ fun PurchaseCard(
                     ) {
                         Text(
                             text = stringResource(R.string.salary_float, purchase.price),
-                            style = MaterialTheme.typography.subtitle1
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
                 }
@@ -313,7 +322,7 @@ private fun ShimmeredPurchaseCard(
         shimmerBounds = ShimmerBounds.Window,
         theme = ShimmerThemes.defaultShimmerTheme
     )
-    val accentColor by AppColors.accent.collectAsState()
+    val accentColor = MaterialTheme.colorScheme.primary
     SideColoredCard(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,

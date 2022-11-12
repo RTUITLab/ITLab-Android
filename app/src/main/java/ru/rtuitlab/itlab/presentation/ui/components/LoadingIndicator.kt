@@ -4,19 +4,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @Composable
 fun LoadingIndicator(
 	modifier: Modifier = Modifier,
-	color: Color = AppColors.accent.collectAsState().value,
+	color: Color = MaterialTheme.colorScheme.primary,
 	strokeWidth: Dp = ProgressIndicatorDefaults.StrokeWidth,
 	message: String? = null
 ) {

@@ -224,7 +224,7 @@ private fun ReportCommentRecord(
 			Column {
 				Box(
 					Modifier
-						.background(color = MaterialTheme.colorScheme.surface)
+						.background(color = MaterialTheme.colorScheme.primaryContainer)
 						.padding(vertical = 6.dp, horizontal = 12.dp)
 						.fillMaxWidth()
 				) {

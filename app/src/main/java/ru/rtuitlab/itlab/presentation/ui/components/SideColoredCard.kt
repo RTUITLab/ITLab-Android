@@ -48,7 +48,8 @@ fun SideColoredCard(
                         start = if (colorSide == ColorSide.START) stripSize else 0.dp,
                         end = if (colorSide == ColorSide.END) stripSize else 0.dp
                     )
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                color = MaterialTheme.colorScheme.surfaceVariant
             ) {
                 content()
             }

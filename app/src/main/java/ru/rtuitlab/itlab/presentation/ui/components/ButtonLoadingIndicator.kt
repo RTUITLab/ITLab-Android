@@ -1,22 +1,24 @@
 package ru.rtuitlab.itlab.presentation.ui.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ProgressIndicatorDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.unit.*
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 
 
 @Composable
 fun ButtonLoadingIndicator(
 	modifier: Modifier = Modifier,
-	color: Color = AppColors.accent.collectAsState().value,
+	color: Color = LocalContentColor.current,
 	strokeWidth: Dp = ProgressIndicatorDefaults.StrokeWidth
 ) {
 	LoadingIndicator(
@@ -32,7 +34,7 @@ fun ButtonLoadingIndicator(
 fun LoadableButtonContent(
 	modifier: Modifier = Modifier,
 	isLoading: Boolean,
-	color: Color = AppColors.accent.collectAsState().value,
+	color: Color = LocalContentColor.current,
 	strokeWidth: Dp = ProgressIndicatorDefaults.StrokeWidth,
 	size: DpSize = DpSize(width = 22.dp, height = 22.dp),
 	content: @Composable () -> Unit
@@ -54,13 +56,6 @@ fun LoadableButtonContent(
 				)
 			}
 			content()
-			/*Text(
-				text = stringResource(ru.rtuitlab.itlab.R.string.event_apply).uppercase(Locale.getDefault()),
-				color = AppColors.accent.collectAsState().value,
-				fontSize = 14.sp,
-				fontWeight = FontWeight(500),
-				lineHeight = 22.sp
-			)*/
 		}
 	) { measurables, constraints ->
 		val (loadingMeasurable, contentMeasurable) = measurables

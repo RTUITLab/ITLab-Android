@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.screens.reports
 
 import androidx.compose.animation.AnimatedVisibility
@@ -8,10 +10,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -45,7 +48,6 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.Progre
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.LocalActivity
@@ -81,9 +83,9 @@ fun NewReport(
 
     val navController = LocalNavController.current
 
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    reportsViewModel.uiEvents.collectUiEvents(scaffoldState)
+    reportsViewModel.uiEvents.collectUiEvents(snackbarHostState)
 
     if (state.isConfirmationDialogShown)
         UploadConfirmationDialog(
@@ -119,14 +121,15 @@ fun NewReport(
         onFractionChanged = tpSetter
     ) {
         Scaffold(
-            scaffoldState = scaffoldState
+            snackbarHost = { SnackbarHost(snackbarHostState) }
         ) {
             Surface(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .clip(RoundedCornerShape(transitionProgress.dp * 128)),
-                elevation = 2.dp
+                    .clip(RoundedCornerShape(transitionProgress.dp * 128))
+                    .padding(it),
+                color = MaterialTheme.colorScheme.background
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -138,7 +141,7 @@ fun NewReport(
 
                     Text(
                         text = stringResource(R.string.report_new_about_who),
-                        style = MaterialTheme.typography.h4
+                        style = MaterialTheme.typography.headlineMedium
                     )
 
                     UserPicker(
@@ -156,15 +159,16 @@ fun NewReport(
                         onValueChange = newReportViewModel::onTitleChanged,
                         label = {
                             Text(
-                                text = stringResource(R.string.report_title),
-                                color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
+                                text = stringResource(R.string.report_title)
                             )
                         }
                     )
 
                     val choices =
                         remember { listOf(R.string.report_write, R.string.report_preview) }
-                    var selectedSegment by rememberSaveable { mutableStateOf(choices.first()) }
+                    var selectedSegment by rememberSaveable { mutableStateOf(
+                        if (state.isPreviewShown) choices.last() else choices.first()
+                    ) }
                     SegmentedControl(
                         segments = choices,
                         selectedSegment = selectedSegment,
@@ -176,11 +180,7 @@ fun NewReport(
                         SegmentText(
                             modifier = Modifier.padding(horizontal = 4.dp, vertical = 10.dp),
                             text = stringResource(choice),
-                            selected = selectedSegment == choice,
-                            selectedColor = AppColors.accent.collectAsState().value,
-                            unselectedColor = AppColors.greyText.collectAsState().value.copy(
-                                alpha = .8f
-                            )
+                            selected = selectedSegment == choice
                         )
                     }
 
@@ -198,7 +198,7 @@ fun NewReport(
                                 label = {
                                     Text(
                                         text = stringResource(R.string.report_application_text),
-                                        color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
+//                                        color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
                                     )
                                 },
                                 toolbar = AppTextToolbar(
@@ -290,7 +290,7 @@ private fun UserPicker(
             }
             .padding(4.dp),
         imageVector = Icons.Default.Person,
-        tint = AppColors.accent.collectAsState().value,
+        tint = MaterialTheme.colorScheme.primary,
         opacity = 1f
     ) {
         Row(
@@ -304,12 +304,12 @@ private fun UserPicker(
             else
                 Text(
                     text = stringResource(R.string.employee),
-                    style = MaterialTheme.typography.caption
+//                    style = MaterialTheme.typography.caption
                 )
             Icon(
                 imageVector = Icons.Default.NavigateNext,
                 contentDescription = null,
-                tint = AppColors.accent.collectAsState().value
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }
