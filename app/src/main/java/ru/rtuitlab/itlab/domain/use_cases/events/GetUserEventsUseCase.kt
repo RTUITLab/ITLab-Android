@@ -13,7 +13,7 @@ class GetUserEventsUseCase @Inject constructor(
         }
     }
 
-    fun search(query: String) = repo.searchUserEvents(query).map {
+    fun search(query: String, userId: String) = repo.searchUserEvents(query, userId).map {
         it.map {
             it.toUserEventModel()
         }

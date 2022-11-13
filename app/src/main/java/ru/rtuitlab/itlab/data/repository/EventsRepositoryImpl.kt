@@ -59,7 +59,7 @@ class EventsRepositoryImpl @Inject constructor(
         end: String
     ): Flow<List<EventWithType>> = dao.searchEvents(query, begin,  end)
 
-    override fun searchUserEvents(query: String) = dao.searchUserEvents(query)
+    override fun searchUserEvents(query: String, userId: String) = dao.searchUserEvents(query, userId)
 
     override fun getEventDetail(eventId: String): Flow<EventWithShiftsAndSalary?> = dao.getEventDetail(eventId)
 

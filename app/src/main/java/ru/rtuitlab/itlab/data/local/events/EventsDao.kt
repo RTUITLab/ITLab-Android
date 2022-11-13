@@ -32,9 +32,10 @@ interface EventsDao {
 
     @Transaction
     @Query("""SELECT * FROM UserEventEntity 
-        WHERE title LIKE '%' || :query || '%' 
+        WHERE title LIKE '%' || :query || '%'
+        AND userId = :userId
         ORDER BY DATETIME(beginTime) DESC""")
-    fun searchUserEvents(query: String): Flow<List<UserEventWithTypeAndRole>>
+    fun searchUserEvents(query: String, userId: String): Flow<List<UserEventWithTypeAndRole>>
 
     @Transaction
     @Query("SELECT * FROM EventDetailEntity WHERE id = :id")
