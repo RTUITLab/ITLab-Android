@@ -48,5 +48,8 @@ fun typography() = androidx.compose.material3.Typography(
         fontSize = 14.sp,
         fontWeight = FontWeight.Normal,
         lineHeight = 20.sp
+    ),
+    labelSmall = TextStyle(
+        fontSize = 12.sp
     )
 )

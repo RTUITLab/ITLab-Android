@@ -1,14 +1,11 @@
 package ru.rtuitlab.itlab.presentation.utils
 
 import android.content.Context
-import android.os.Bundle
 import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.core.os.bundleOf
 import kotlinx.parcelize.Parcelize
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
@@ -29,9 +26,6 @@ sealed class AppTab(
     object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description)
     object Purchases: AppTab("purchases_tab", AppScreen.Purchases.route, R.string.purchases, Icons.Default.Payments)
 
-
-    fun saveState() = bundleOf(SCREEN_KEY to route)
-
     fun asScreen() = when (this) {
         Events -> AppScreen.Events
         Projects -> AppScreen.Projects
@@ -44,8 +38,6 @@ sealed class AppTab(
     }
 
     companion object {
-        const val SCREEN_KEY = "SCREEN_KEY"
-
         val all
             get() = listOf(
                 Events,
@@ -58,33 +50,20 @@ sealed class AppTab(
                 Profile
             )
 
-
-        fun saver() = Saver<AppTab, Bundle>(
-            save = { it.saveState() },
-            restore = { restoreState(it) }
-        )
-
-        private fun restoreState(bundle: Bundle) = when (bundle.getString(SCREEN_KEY, null)) {
-            Events.route    -> Events
-            Projects.route  -> Projects
-            Devices.route   -> Devices
-            Employees.route -> Employees
-            Profile.route   -> Profile
-            Feedback.route  -> Feedback
-            Reports.route   -> Reports
-            else            -> {throw IllegalArgumentException("Invalid route. Maybe you forgot to add a new screen to AppTabSaver.kt?")}
-        }
-
-        fun applyClaims(claims: List<Any>) {
+        private fun applyClaims(claims: List<Any>) {
             Feedback.accessible = claims.contains(UserClaimCategories.FEEDBACK.ADMIN)
             Purchases.accessible = claims.contains(UserClaimCategories.PURCHASES.USER)
+        }
+
+        fun getAccessibleTabs(claims: List<Any>): List<AppTab> {
+            applyClaims(claims)
+            return all.filter { it.accessible }
         }
     }
 }
 
 // This class represents any screen - tabs and their subscreens.
 // It is needed to appropriately change top app bar behavior
-
 @Parcelize
 open class AppScreen(
     @StringRes val screenNameResource: Int,
