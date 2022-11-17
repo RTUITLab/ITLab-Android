@@ -1,9 +1,8 @@
 package ru.rtuitlab.itlab.presentation.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
-import androidx.compose.material.LocalContentColor
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +48,7 @@ fun IconizedRow(
 @Composable
 fun IconizedRow(
 	imageVector: ImageVector,
+	modifier: Modifier = Modifier,
 	imagePosition: ImagePosition = ImagePosition.LEFT,
 	imageWidth: Dp = 24.dp,
 	imageHeight: Dp = 24.dp,
@@ -57,7 +57,6 @@ fun IconizedRow(
 	contentDescription: String? = null,
 	verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
 	tint: Color? = null,
-	modifier: Modifier = Modifier,
 	content: @Composable () -> Unit
 ) {
 	Row(
