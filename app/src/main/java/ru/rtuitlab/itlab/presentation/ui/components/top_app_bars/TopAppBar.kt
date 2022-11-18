@@ -146,6 +146,21 @@ fun TabbedTopAppBar(
 	}
 }
 
+@Composable
+fun CenterAlignedTopAppBar(
+	title: String,
+	content: @Composable () -> Unit
+) {
+	Column {
+		CenterAlignedTopAppBar(
+			title = {
+				Text(text = title)
+			}
+		)
+		content()
+	}
+}
+
 
 @ExperimentalPagerApi
 @Composable

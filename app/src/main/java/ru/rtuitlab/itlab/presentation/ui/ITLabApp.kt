@@ -4,6 +4,7 @@ package ru.rtuitlab.itlab.presentation.ui
 
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -12,8 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -29,7 +28,8 @@ import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.navigation.NavigationControl
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DevicesTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeesTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopAppBar
+import ru.rtuitlab.itlab.presentation.screens.events.components.EventsBottomBar
+import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchaseTopAppBar
@@ -83,41 +83,45 @@ fun ITLabApp(
     ) {
         Scaffold(
             topBar = {
-                when (currentScreen) {
-                    AppScreen.Events -> EventsTopAppBar()
-                    is AppScreen.EventDetails -> BasicTopAppBar(
-                        text = stringResource(
-                            currentScreen.screenNameResource,
-                            (currentScreen as AppScreen.EventDetails).title
-                        ),
-                        onBackAction = onBackAction
-                    )
-                    AppScreen.EventNew,
-                    AppScreen.EmployeeDetails -> BasicTopAppBar(
-                        text = stringResource(currentScreen.screenNameResource),
-                        onBackAction = onBackAction
-                    )
-                    AppScreen.Profile -> ProfileTopAppBar(
-                        text = stringResource(currentScreen.screenNameResource),
-                        onBackAction = onBackAction
-                    )
-                    AppScreen.Employees -> EmployeesTopAppBar()
-                    AppScreen.Feedback -> FeedbackTopAppBar()
-                    AppScreen.Devices -> DevicesTopAppBar()
-                    AppScreen.Reports -> ReportsTopAppBar()
-                    is AppScreen.ReportDetails -> BasicTopAppBar(
-                        text = stringResource(
-                            currentScreen.screenNameResource,
-                            (currentScreen as AppScreen.ReportDetails).title
-                        ),
-                        onBackAction = onBackAction
-                    )
-                    AppScreen.Purchases -> PurchasesTopAppBar()
-                    is AppScreen.PurchaseDetails -> PurchaseTopAppBar()
-                    else -> BasicTopAppBar(
-                        text = stringResource(currentScreen.screenNameResource),
-                        onBackAction = onBackAction
-                    )
+                Box(
+                    modifier = Modifier.animateContentSize()
+                ) {
+                    when (currentScreen) {
+                        AppScreen.Events -> EventsTopBar()
+                        is AppScreen.EventDetails -> BasicTopAppBar(
+                            text = stringResource(
+                                currentScreen.screenNameResource,
+                                (currentScreen as AppScreen.EventDetails).title
+                            ),
+                            onBackAction = onBackAction
+                        )
+                        AppScreen.EventNew,
+                        AppScreen.EmployeeDetails -> BasicTopAppBar(
+                            text = stringResource(currentScreen.screenNameResource),
+                            onBackAction = onBackAction
+                        )
+                        AppScreen.Profile -> ProfileTopAppBar(
+                            text = stringResource(currentScreen.screenNameResource),
+                            onBackAction = onBackAction
+                        )
+                        AppScreen.Employees -> EmployeesTopAppBar()
+                        AppScreen.Feedback -> FeedbackTopAppBar()
+                        AppScreen.Devices -> DevicesTopAppBar()
+                        AppScreen.Reports -> ReportsTopAppBar()
+                        is AppScreen.ReportDetails -> BasicTopAppBar(
+                            text = stringResource(
+                                currentScreen.screenNameResource,
+                                (currentScreen as AppScreen.ReportDetails).title
+                            ),
+                            onBackAction = onBackAction
+                        )
+                        AppScreen.Purchases -> PurchasesTopAppBar()
+                        is AppScreen.PurchaseDetails -> PurchaseTopAppBar()
+                        else -> BasicTopAppBar(
+                            text = stringResource(currentScreen.screenNameResource),
+                            onBackAction = onBackAction
+                        )
+                    }
                 }
             },
             content = {
@@ -131,29 +135,34 @@ fun ITLabApp(
                 }
             },
             bottomBar = {
-                BottomAppBar(
-                    actions = {
-                        IconButton(onClick = {}) {
-                            Icon(Icons.Default.Search, null)
-                        }
-                    },
-                    tonalElevation = 2.dp,
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = { isNavigationOpen = true },
-                            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(512.dp),
-                            elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(0.dp)
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .size(24.dp),
-                                painter = painterResource(ru.rtuitlab.itlab.R.drawable.ic_itlab),
-                                contentDescription = "Menu",
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
+
+                val mainFloatingActionButton: @Composable () -> Unit = {
+                    FloatingActionButton(
+                        onClick = { isNavigationOpen = true },
+                        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(512.dp),
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(0.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp),
+                            painter = painterResource(ru.rtuitlab.itlab.R.drawable.ic_itlab),
+                            contentDescription = "Menu",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
                     }
-                )
+                }
+                when (currentScreen) {
+                    is AppScreen.Events -> {
+                        EventsBottomBar(
+                            mainFloatingActionButton = mainFloatingActionButton
+                        )
+                    }
+                    else -> {
+                        ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.BottomAppBar(
+                            mainFloatingActionButton = mainFloatingActionButton
+                        )
+                    }
+                }
             }
         )
         NavigationControl(
