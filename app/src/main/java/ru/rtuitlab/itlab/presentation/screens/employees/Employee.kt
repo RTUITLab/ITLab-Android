@@ -28,6 +28,7 @@ import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
+import ru.rtuitlab.itlab.presentation.UserViewModel
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmailField
 import ru.rtuitlab.itlab.presentation.screens.employees.components.PhoneField
 import ru.rtuitlab.itlab.presentation.screens.employees.components.UserEvents
@@ -40,7 +41,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.backdrop.rememberBackdropSca
 @ExperimentalMaterialApi
 @Composable
 fun Employee(
-    employeeViewModel: EmployeeViewModel
+    employeeViewModel: UserViewModel
 ) {
     val user by employeeViewModel.user.collectAsState()
 
@@ -88,14 +89,19 @@ fun Employee(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
-                    EmployeeCredentials(it)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        EmployeeCredentials(it)
 
-                    UserEvents(
-                        userViewModel = employeeViewModel
-                    )
+                        UserEvents(
+                            userViewModel = employeeViewModel
+                        )
+                    }
                 }
             }
         },

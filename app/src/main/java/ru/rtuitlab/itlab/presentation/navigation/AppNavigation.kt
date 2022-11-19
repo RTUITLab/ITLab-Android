@@ -21,13 +21,14 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.devices.Devices
 import ru.rtuitlab.itlab.presentation.screens.employees.Employee
+import ru.rtuitlab.itlab.presentation.screens.employees.EmployeeViewModel
 import ru.rtuitlab.itlab.presentation.screens.employees.Employees
 import ru.rtuitlab.itlab.presentation.screens.events.Event
 import ru.rtuitlab.itlab.presentation.screens.events.Events
 import ru.rtuitlab.itlab.presentation.screens.events.EventsNotifications
 import ru.rtuitlab.itlab.presentation.screens.feedback.Feedback
 
-import ru.rtuitlab.itlab.presentation.screens.profile.Profile
+import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.screens.purchases.NewPurchase
 import ru.rtuitlab.itlab.presentation.screens.purchases.Purchase
 import ru.rtuitlab.itlab.presentation.screens.purchases.Purchases
@@ -87,9 +88,7 @@ fun AppNavigation(
 			resources
 		)
 
-		employeesGraph(
-			bottomSheetViewModel
-		)
+		employeesGraph()
 
 		devicesGraph(
 			bottomSheetViewModel
@@ -143,9 +142,7 @@ private fun NavGraphBuilder.eventsGraph(
 
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
-private fun NavGraphBuilder.employeesGraph(
-	bottomSheetViewModel: BottomSheetViewModel
-) {
+private fun NavGraphBuilder.employeesGraph() {
 	navigation(
 		startDestination = AppTab.Employees.startDestination,
 		route = AppTab.Employees.route
@@ -155,13 +152,12 @@ private fun NavGraphBuilder.employeesGraph(
 		}
 		composable(AppScreen.EmployeeDetails.route) {
 			Employee(
-                employeeViewModel = it.hiltViewModel()
+                employeeViewModel = it.hiltViewModel() as EmployeeViewModel
             )
 		}
 		composable(AppScreen.Profile.route) {
-			Profile(
-				bottomSheetViewModel = bottomSheetViewModel,
-				profileViewModel = it.hiltViewModel()
+			Employee(
+				employeeViewModel = it.hiltViewModel() as ProfileViewModel
 			)
 		}
 	}

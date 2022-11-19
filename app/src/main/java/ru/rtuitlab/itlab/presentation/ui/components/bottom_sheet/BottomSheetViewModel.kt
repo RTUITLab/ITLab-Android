@@ -1,3 +1,4 @@
+
 package ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet
 
 import androidx.compose.material.ExperimentalMaterialApi
@@ -12,7 +13,7 @@ import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import javax.inject.Inject
 
-@ExperimentalMaterialApi
+@OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class BottomSheetViewModel @Inject constructor(
 

@@ -32,10 +32,11 @@ import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeesBott
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventsBottomBar
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileTopAppBar
+import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileBottomBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchaseTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchasesTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.reports.components.ReportsTopAppBar
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.BottomAppBar
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedElementsRootScope
@@ -114,11 +115,8 @@ fun ITLabApp(
                             onBackAction = onBackAction
                         )
                         AppScreen.EventNew,
+                        AppScreen.Profile,
                         AppScreen.EmployeeDetails -> BasicTopAppBar(
-                            text = stringResource(currentScreen.screenNameResource),
-                            onBackAction = onBackAction
-                        )
-                        AppScreen.Profile -> ProfileTopAppBar(
                             text = stringResource(currentScreen.screenNameResource),
                             onBackAction = onBackAction
                         )
@@ -154,19 +152,10 @@ fun ITLabApp(
             },
             bottomBar = {
                 when (currentScreen) {
-                    is AppScreen.Events -> {
-                        EventsBottomBar(
-                            mainFloatingActionButton = mainFloatingActionButton
-                        )
-                    }
-                    is AppScreen.Employees -> {
-                        EmployeesBottomBar(mainFloatingActionButton = mainFloatingActionButton)
-                    }
-                    else -> {
-                        ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.BottomAppBar(
-                            mainFloatingActionButton = mainFloatingActionButton
-                        )
-                    }
+                    is AppScreen.Events -> EventsBottomBar(mainFloatingActionButton)
+                    is AppScreen.Employees -> EmployeesBottomBar(mainFloatingActionButton)
+                    is AppScreen.Profile -> ProfileBottomBar(mainFloatingActionButton)
+                    else -> BottomAppBar(mainFloatingActionButton = mainFloatingActionButton)
                 }
             }
         )

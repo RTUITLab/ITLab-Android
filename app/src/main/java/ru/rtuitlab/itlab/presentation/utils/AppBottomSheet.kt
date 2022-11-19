@@ -1,16 +1,13 @@
 package ru.rtuitlab.itlab.presentation.utils
 
-import androidx.compose.material.ExperimentalMaterialApi
 import ru.rtuitlab.itlab.data.local.events.models.ShiftWithPlacesAndSalary
 import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
-import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.presentation.UserViewModel
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 
-@ExperimentalMaterialApi
 sealed class AppBottomSheet {
 	class EventShift(
 		val shiftAndSalary: ShiftWithPlacesAndSalary,
@@ -28,12 +25,11 @@ sealed class AppBottomSheet {
 		val bottomSheetViewModel: BottomSheetViewModel,
 	): AppBottomSheet()
 
-	object ProfileEquipment: AppBottomSheet()
 	object ProfileSettings: AppBottomSheet()
 	class ProfileEvents(
 		val viewModel: UserViewModel
 	): AppBottomSheet()
-	object Equipment: AppBottomSheet()
+
 	object Unspecified: AppBottomSheet()
 
 	class UserSelection(
