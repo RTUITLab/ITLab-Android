@@ -2,7 +2,7 @@ package ru.rtuitlab.itlab.presentation.screens.employees.components
 
 import android.content.Context
 import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PhoneEnabled
 import androidx.compose.material3.Icon
