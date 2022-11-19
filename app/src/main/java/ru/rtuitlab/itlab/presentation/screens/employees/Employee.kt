@@ -2,28 +2,28 @@ package ru.rtuitlab.itlab.presentation.screens.employees
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.Divider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.PeopleOutline
+import androidx.compose.material.icons.filled.PhoneEnabled
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
@@ -32,33 +32,77 @@ import ru.rtuitlab.itlab.presentation.screens.employees.components.EmailField
 import ru.rtuitlab.itlab.presentation.screens.employees.components.PhoneField
 import ru.rtuitlab.itlab.presentation.screens.employees.components.UserEvents
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
-import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.backdrop.BackdropScaffold
+import ru.rtuitlab.itlab.presentation.ui.components.backdrop.BackdropValue
+import ru.rtuitlab.itlab.presentation.ui.components.backdrop.rememberBackdropScaffoldState
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
 @Composable
 fun Employee(
-    employeeViewModel: EmployeeViewModel,
-    bottomSheetViewModel: BottomSheetViewModel
+    employeeViewModel: EmployeeViewModel
 ) {
     val user by employeeViewModel.user.collectAsState()
-    Surface(
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) {
-            user?.let {
-                EmployeeCredentials(it)
-            }
-            UserEvents(
-                employeeViewModel,
-                bottomSheetViewModel
-            )
-        }
+
+    val screenWidth = LocalView.current.width
+
+    val screenHeightDp = with(LocalDensity.current) {
+        LocalView.current.height.toDp()
     }
+    val backdropScaffoldState = rememberBackdropScaffoldState(
+        initialValue = BackdropValue.Peeking
+    )
+
+    BackdropScaffold(
+        scaffoldState = backdropScaffoldState,
+        backLayerContent = {
+            user?.let { user ->
+                SubcomposeAsyncImage(
+                    modifier = Modifier.offset {
+                        IntOffset(0, (backdropScaffoldState.offset.value.toInt() - screenWidth + 16.dp.toPx().toInt()) / 2)
+                    },
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(user.getGravatarWithSize(screenWidth))
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = stringResource(R.string.gravatar),
+                    loading = {
+                        AsyncImage(
+                            modifier = Modifier.fillMaxWidth(),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(user.getGravatarWithSize(80))
+                                .crossfade(false)
+                                .build(),
+                            placeholder = painterResource(R.drawable.ic_itlab),
+                            contentScale = ContentScale.FillWidth,
+                            contentDescription = stringResource(R.string.gravatar)
+                        )
+                    }
+                )
+            }
+        },
+        peekHeight = 0.01.dp,
+        partialPeekHeight = screenHeightDp / 3,
+        frontLayerContent = {
+            user?.let {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    EmployeeCredentials(it)
+
+                    UserEvents(
+                        userViewModel = employeeViewModel
+                    )
+                }
+            }
+        },
+        frontLayerBackgroundColor = MaterialTheme.colorScheme.background,
+        frontLayerShape = MaterialTheme.shapes.large,
+        frontLayerElevation = 16.dp
+    )
 }
 
 @Composable
@@ -68,45 +112,17 @@ fun EmployeeCredentials(
     val context = LocalContext.current
 
     Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                top = 10.dp,
-            ),
-    ) {
-
-        AsyncImage(
-            modifier = Modifier
-                .clip(RoundedCornerShape(10.dp))
-                .width(150.dp)
-                .height(150.dp),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(user.getGravatarWithSize(800))
-                .crossfade(true)
-                .build(),
-            placeholder = painterResource(R.drawable.ic_itlab),
-            contentScale = ContentScale.FillBounds,
-            contentDescription = stringResource(R.string.description),
-
-            )
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 15.dp, horizontal = 20.dp)
+        modifier = Modifier.padding(16.dp)
     ) {
         Text(
             text = "${user.lastName} ${user.firstName} ${user.middleName}",
-            fontWeight = FontWeight(500),
-            fontSize = 20.sp,
-            lineHeight = 28.sp
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(10.dp))
 
         IconizedRow(
-            painter = painterResource(R.drawable.ic_mail),
+            imageVector = Icons.Default.MailOutline,
             contentDescription = stringResource(R.string.email),
             spacing = 0.dp
         ) {
@@ -115,7 +131,7 @@ fun EmployeeCredentials(
         Spacer(Modifier.height(8.dp))
 
         IconizedRow(
-            painter = painterResource(R.drawable.ic_phone),
+            imageVector = Icons.Default.PhoneEnabled,
             contentDescription = stringResource(R.string.phone_number),
             spacing = 0.dp
         ) {
@@ -123,21 +139,24 @@ fun EmployeeCredentials(
         }
         Spacer(Modifier.height(8.dp))
 
-        if (user.group != null) {
-            IconizedRow(
-                painter = painterResource(R.drawable.ic_hat),
-                contentDescription = stringResource(R.string.study_group)
-            ) {
-                Text(text = user.group)
-            }
-            Spacer(Modifier.height(8.dp))
-        }
         if (user.vkId != null) {
             IconizedRow(
                 painter = painterResource(R.drawable.ic_vk),
-                contentDescription = stringResource(R.string.vk_id)
+                contentDescription = stringResource(R.string.vk_id),
+                opacity = .6f
             ) {
                 Text(text = user.vkId)
+            }
+            Spacer(Modifier.height(8.dp))
+        }
+
+        if (user.group != null) {
+            IconizedRow(
+                imageVector = Icons.Default.PeopleOutline,
+                contentDescription = stringResource(R.string.study_group),
+                opacity = .6f
+            ) {
+                Text(text = user.group)
             }
             Spacer(Modifier.height(8.dp))
         }
@@ -145,7 +164,8 @@ fun EmployeeCredentials(
         if (user.discordId != null) {
             IconizedRow(
                 painter = painterResource(R.drawable.ic_discord),
-                contentDescription = stringResource(R.string.discord_id)
+                contentDescription = stringResource(R.string.discord_id),
+                opacity = .6f
             ) {
                 Text(text = user.discordId)
             }
@@ -155,7 +175,8 @@ fun EmployeeCredentials(
         if (user.skypeId != null) {
             IconizedRow(
                 painter = painterResource(R.drawable.ic_skype),
-                contentDescription = stringResource(R.string.skype_id)
+                contentDescription = stringResource(R.string.skype_id),
+                opacity = .6f
             ) {
                 Text(
                     text = user.skypeId
@@ -163,10 +184,5 @@ fun EmployeeCredentials(
             }
             Spacer(Modifier.height(8.dp))
         }
-
-        Spacer(modifier = Modifier.height(6.dp))
-        Divider(color = Color.Gray, thickness = 1.dp)
-        Spacer(modifier = Modifier.height(8.dp))
-
     }
 }

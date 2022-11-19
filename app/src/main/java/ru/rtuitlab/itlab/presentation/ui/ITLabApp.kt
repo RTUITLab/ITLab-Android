@@ -23,11 +23,12 @@ import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.serialization.ExperimentalSerializationApi
+import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.navigation.AppNavigation
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.navigation.NavigationControl
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DevicesTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeesTopAppBar
+import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeesBottomBar
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventsBottomBar
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
@@ -40,6 +41,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetView
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedElementsRootScope
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
+import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CenterAlignedTopAppBar
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @ExperimentalSerializationApi
@@ -71,6 +73,22 @@ fun ITLabApp(
     }
 
     var isNavigationOpen by remember { mutableStateOf(false) }
+
+    val mainFloatingActionButton: @Composable () -> Unit = {
+        FloatingActionButton(
+            onClick = { isNavigationOpen = true },
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(512.dp),
+            elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(0.dp)
+        ) {
+            Icon(
+                modifier = Modifier
+                    .size(24.dp),
+                painter = painterResource(R.drawable.ic_itlab),
+                contentDescription = "Menu",
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+    }
 
     ModalBottomSheetLayout(
         sheetState = bottomSheetViewModel.bottomSheetState,
@@ -104,7 +122,7 @@ fun ITLabApp(
                             text = stringResource(currentScreen.screenNameResource),
                             onBackAction = onBackAction
                         )
-                        AppScreen.Employees -> EmployeesTopAppBar()
+                        AppScreen.Employees -> CenterAlignedTopAppBar(title = stringResource(R.string.employees))
                         AppScreen.Feedback -> FeedbackTopAppBar()
                         AppScreen.Devices -> DevicesTopAppBar()
                         AppScreen.Reports -> ReportsTopAppBar()
@@ -135,27 +153,14 @@ fun ITLabApp(
                 }
             },
             bottomBar = {
-
-                val mainFloatingActionButton: @Composable () -> Unit = {
-                    FloatingActionButton(
-                        onClick = { isNavigationOpen = true },
-                        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(512.dp),
-                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(0.dp)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(24.dp),
-                            painter = painterResource(ru.rtuitlab.itlab.R.drawable.ic_itlab),
-                            contentDescription = "Menu",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
-                }
                 when (currentScreen) {
                     is AppScreen.Events -> {
                         EventsBottomBar(
                             mainFloatingActionButton = mainFloatingActionButton
                         )
+                    }
+                    is AppScreen.Employees -> {
+                        EmployeesBottomBar(mainFloatingActionButton = mainFloatingActionButton)
                     }
                     else -> {
                         ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.BottomAppBar(

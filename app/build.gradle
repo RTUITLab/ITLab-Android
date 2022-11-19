@@ -198,5 +198,6 @@ dependencies {
     //Coil
     implementation("io.coil-kt:coil-compose:2.1.0")
 
-
+    // Reflection
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }

@@ -76,6 +76,7 @@
     <string name="event_invitation_accept">Accept</string>
     <string name="event_invitation_reject">Reject</string>
     <string name="events_notifications_empty">No new notifications</string>
+    <string name="events_select_date_range">Select date range</string>
 
     <!--    Projects     -->
     <string name="projects">Projects</string>

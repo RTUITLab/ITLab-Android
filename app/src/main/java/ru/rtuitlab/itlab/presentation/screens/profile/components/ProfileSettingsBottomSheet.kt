@@ -212,7 +212,7 @@ private fun ProfileSettingsItem(
 	icon: ImageVector,
 	contentDescription: String,
 	text: String?,
-	tint: Color? = MaterialTheme.colorScheme.primary,
+	tint: Color = MaterialTheme.colorScheme.primary,
 	onClick: () -> Unit
 ) {
 	IconizedRow(

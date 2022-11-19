@@ -149,7 +149,7 @@ fun TabbedTopAppBar(
 @Composable
 fun CenterAlignedTopAppBar(
 	title: String,
-	content: @Composable () -> Unit
+	content: @Composable () -> Unit = {}
 ) {
 	Column {
 		CenterAlignedTopAppBar(
