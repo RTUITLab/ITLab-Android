@@ -9,7 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Payment
-import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.outlined.PeopleOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -102,6 +102,8 @@ private fun ShiftPlaceCard(
 	val salary = placeWithUsersAndSalary.salary?.count ?: shiftSalary?.count ?: eventSalary?.count
 	val users = placeWithUsersAndSalary.usersWithRoles
 
+	val labelsColor = MaterialTheme.colorScheme.onSurface.copy(.8f)
+
 	if (dialogIsShown)
 		PlaceAlertDialog(
 			number = number,
@@ -155,13 +157,14 @@ private fun ShiftPlaceCard(
 							style = MaterialTheme.typography.titleMedium
 						)
 						IconizedRow(
-							imageVector = Icons.Default.People,
+							imageVector = Icons.Outlined.PeopleOutline,
 							imagePosition = ImagePosition.RIGHT,
-							imageWidth = 14.dp,
-							imageHeight = 14.dp
+							imageWidth = 18.dp,
+							imageHeight = 18.dp
 						) {
 							Text(
-								text = "${users.size}/${place.targetParticipantsCount}"
+								text = "${users.size}/${place.targetParticipantsCount}",
+								color = labelsColor
 							)
 						}
 					}
@@ -177,7 +180,8 @@ private fun ShiftPlaceCard(
 						) {
 							Text(
 								text = place.description,
-								style = MaterialTheme.typography.titleSmall
+								style = MaterialTheme.typography.titleSmall,
+								color = labelsColor
 							)
 						}
 
@@ -194,7 +198,8 @@ private fun ShiftPlaceCard(
 									it
 								)
 							} ?: stringResource(R.string.salary_not_specified),
-							style = MaterialTheme.typography.titleSmall
+							style = MaterialTheme.typography.titleSmall,
+							color = labelsColor
 						)
 					}
 				}

@@ -2,6 +2,7 @@ package ru.rtuitlab.itlab.presentation.screens.events.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.Schedule
@@ -35,62 +36,85 @@ fun ShiftCard(
 	) {
 		Column(
 			modifier = Modifier
-				.padding(15.dp)
 				.fillMaxWidth()
 		) {
-			Text(
-				text = shift.getTime(LocalContext.current),
-				style = MaterialTheme.typography.titleMedium,
-			)
-			Spacer(Modifier.height(10.dp))
 
-			IconizedRow(
-				imageVector = Icons.Default.Info,
-				imageHeight = 14.dp,
-				imageWidth = 14.dp,
-				verticalAlignment = Alignment.Top
-			) {
-				Text(
-					text =  if (shift.description.isNullOrBlank()) stringResource(R.string.event_no_description)
-					else shift.description,
-					style = MaterialTheme.typography.bodyLarge,
-					color = MaterialTheme.colorScheme.onSurface.copy(.8f)
+			Box(
+				modifier = Modifier.padding(
+					horizontal = 16.dp,
+					vertical = 10.dp
 				)
+			) {
+				IconizedRow(
+					imageVector = Icons.Default.Event,
+					spacing = 8.dp
+				) {
+					Text(
+						text = shift.getTime(LocalContext.current),
+						style = MaterialTheme.typography.titleMedium,
+					)
+				}
 			}
-			Spacer(Modifier.height(5.dp))
 
-			IconizedRow(
-				imageVector = Icons.Default.Schedule,
-				imageHeight = 14.dp,
-				imageWidth = 14.dp
-			) {
-				Text(
-					text = LocalContext.current.resources.getQuantityString(
-						R.plurals.n_hours,
-						shift.duration,
-						shift.duration
-					),
-					style = MaterialTheme.typography.bodyLarge,
-					color = MaterialTheme.colorScheme.onSurface.copy(.8f)
-				)
-			}
-			Spacer(Modifier.height(5.dp))
+			Divider(color = MaterialTheme.colorScheme.onSurface.copy(.4f))
 
-			IconizedRow(
-				imageVector = Icons.Default.Payment,
-				imageHeight = 14.dp,
-				imageWidth = 14.dp
+			Column(
+				modifier = Modifier
+					.padding(
+						horizontal = 16.dp,
+						vertical = 8.dp
+					)
+					.fillMaxWidth(),
+				verticalArrangement = Arrangement.spacedBy(4.dp)
 			) {
-				Text(
-					text = salary?.let {
-						stringResource(
-							R.string.salary_int,
-							it
-						)
-					} ?: stringResource(R.string.salary_not_specified),
-					style = MaterialTheme.typography.bodyLarge,
-					color = MaterialTheme.colorScheme.onSurface.copy(.8f)
-				)
+				IconizedRow(
+					imageVector = Icons.Default.Info,
+					imageHeight = 20.dp,
+					imageWidth = 20.dp,
+					verticalAlignment = Alignment.Top
+				) {
+					Text(
+						text = if (shift.description.isNullOrBlank()) stringResource(R.string.event_no_description)
+						else shift.description,
+						style = MaterialTheme.typography.bodyLarge,
+						color = MaterialTheme.colorScheme.onSurface.copy(.8f)
+					)
+				}
+				Spacer(Modifier.height(5.dp))
+
+				IconizedRow(
+					imageVector = Icons.Default.Schedule,
+					imageHeight = 20.dp,
+					imageWidth = 20.dp
+				) {
+					Text(
+						text = LocalContext.current.resources.getQuantityString(
+							R.plurals.n_hours,
+							shift.duration,
+							shift.duration
+						),
+						style = MaterialTheme.typography.bodyLarge,
+						color = MaterialTheme.colorScheme.onSurface.copy(.8f)
+					)
+				}
+				Spacer(Modifier.height(5.dp))
+
+				IconizedRow(
+					imageVector = Icons.Default.Payment,
+					imageHeight = 20.dp,
+					imageWidth = 20.dp
+				) {
+					Text(
+						text = salary?.let {
+							stringResource(
+								R.string.salary_int,
+								it
+							)
+						} ?: stringResource(R.string.salary_not_specified),
+						style = MaterialTheme.typography.bodyLarge,
+						color = MaterialTheme.colorScheme.onSurface.copy(.8f)
+					)
+				}
 			}
 			Spacer(Modifier.height(5.dp))
 		}

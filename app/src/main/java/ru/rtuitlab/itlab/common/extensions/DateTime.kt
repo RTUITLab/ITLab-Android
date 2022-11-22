@@ -73,7 +73,8 @@ fun String.fromIso8601(
  * Parses ISO8601 string and returns a pair of Strings representing date and time respectively
  */
 fun String.fromIso8601ToDateTime(
-	context: Context
+	context: Context,
+	includeSeconds: Boolean = true
 ): Pair<String, String> = try {
 	// ITLab uses both normalized and non-normalized
 	// ISO8601 strings. This is a workaround to always
@@ -86,7 +87,7 @@ fun String.fromIso8601ToDateTime(
 			val minute = minute.toString().padStart(2, '0')
 			val second = second.toString().padStart(2, '0')
 
-			"$day.$month.$year" to "$hour:$minute:$second"
+			"$day.$month.$year" to if (includeSeconds) "$hour:$minute:$second" else "$hour:$minute"
 		}
 } catch (e: DateTimeException) {
 	e.printStackTrace()

@@ -16,13 +16,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.common.extensions.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601ToDateTime
 import ru.rtuitlab.itlab.common.extensions.fromIso8601ToInstant
 import ru.rtuitlab.itlab.common.extensions.toUiString
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.ImagePosition
+import ru.rtuitlab.itlab.presentation.ui.components.datetime.DateTimeRangeLabel
 
 @Composable
 fun EventCard(
@@ -70,16 +71,19 @@ fun EventCard(
 					horizontalArrangement = SpaceBetween
 				) {
 					IconizedRow(
+						modifier = Modifier.weight(1f),
 						imageVector = Icons.Default.Schedule,
 						imageWidth = 18.dp,
 						imageHeight = 18.dp,
 						opacity = .6f
 					) {
-						Text(
-							text = beginTime.fromIso8601(context),
-							style = MaterialTheme.typography.bodyLarge,
-							color = MaterialTheme.colorScheme.onSurface.copy(.8f)
-						)
+						endTime?.let {
+							DateTimeRangeLabel(
+								startDateTime = beginTime.fromIso8601ToDateTime(context, false),
+								endDateTime = endTime.fromIso8601ToDateTime(context, false),
+								textStyle = MaterialTheme.typography.bodyMedium
+							)
+						}
 					}
 
 					IconizedRow(
@@ -91,7 +95,7 @@ fun EventCard(
 					) {
 						Text(
 							text = "$currentParticipantsCount/$targetParticipantsCount",
-							style = MaterialTheme.typography.bodyLarge,
+							style = MaterialTheme.typography.bodyMedium,
 							color = MaterialTheme.colorScheme.onSurface.copy(.8f)
 						)
 					}
