@@ -63,22 +63,23 @@ sealed class AppTab(
 }
 
 // This class represents any screen - tabs and their subscreens.
-// It is needed to appropriately change top app bar behavior
+// It is needed to appropriately change top and bottom app bars behavior
 @Parcelize
 open class AppScreen(
     @StringRes val screenNameResource: Int,
     val route: String,
+    val hasBottomBar: Boolean = false,
     val navLink: String = route.substringBefore("/{")
 ) : Parcelable {
     // Employee-related
-    object Employees: AppScreen(R.string.employees, "employees")
+    object Employees: AppScreen(R.string.employees, "employees", true)
     object EmployeeDetails: AppScreen(R.string.profile, "employee/{userId}") // Has back button
 
     // Feedback-related
     object Feedback: AppScreen(R.string.feedback, "feedback")
 
     // Events-related
-    object Events: AppScreen(R.string.events, "events")
+    object Events: AppScreen(R.string.events, "events", true)
     @Parcelize
     class EventDetails(val title: String): AppScreen(R.string.details_name, "event/{eventId}") { // Has back button
         companion object {
@@ -90,17 +91,17 @@ open class AppScreen(
     object EventsNotifications: AppScreen(R.string.notifications, "events/notifications") // Has back button
 
     // Projects-related
-    object Projects: AppScreen(R.string.projects, "projects")
+    object Projects: AppScreen(R.string.projects, "projects", true)
 
     // Devices-related
-    object Devices: AppScreen(R.string.devices, "devices")
+    object Devices: AppScreen(R.string.devices, "devices", true)
 
     // Profile-related
-    object Profile: AppScreen(R.string.profile, "profile")
+    object Profile: AppScreen(R.string.profile, "profile", true)
 
 
     // Reports-related
-    object Reports: AppScreen(R.string.reports, "reports")
+    object Reports: AppScreen(R.string.reports, "reports", true)
     class ReportDetails(val title: String): AppScreen(R.string.details_name, "report/{reportId}") {
         companion object {
             const val route = "report/{reportId}"
@@ -111,7 +112,7 @@ open class AppScreen(
 
 
     // Purchases-related
-    object Purchases: AppScreen(R.string.purchases, "purchases")
+    object Purchases: AppScreen(R.string.purchases, "purchases", true)
     class PurchaseDetails(val title: String): AppScreen(R.string.details_name, "purchases/{purchaseId}") {
         companion object {
             const val route = "purchases/{purchaseId}"
