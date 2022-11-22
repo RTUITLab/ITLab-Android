@@ -3,7 +3,6 @@
 package ru.rtuitlab.itlab.presentation.screens.reports
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,7 +23,6 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.cancel
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.common.extensions.fromIso8601ToDateTime
 import ru.rtuitlab.itlab.data.remote.api.reports.models.Report
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
@@ -32,6 +30,7 @@ import ru.rtuitlab.itlab.presentation.screens.micro_file_service.FilesViewModel
 import ru.rtuitlab.itlab.presentation.screens.micro_file_service.components.BaseElements
 import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.chips.InfoChip
+import ru.rtuitlab.itlab.presentation.ui.components.datetime.DateTimeLabel
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarTabRow
@@ -251,7 +250,7 @@ fun ReportCardAboutUser(
                     durationMillis = duration
                 )
             ) {
-                ReportDateTimeLabel(date, time)
+                DateTimeLabel(date, time)
             }
         }
     }
@@ -314,26 +313,7 @@ fun ReportCardFromUser(
             Spacer(Modifier.height(10.dp))
 
             val (date, time) = report.applicationDate.fromIso8601ToDateTime(LocalContext.current)
-            ReportDateTimeLabel(date, time)
+            DateTimeLabel(date, time)
         }
-    }
-}
-
-@Composable
-fun ReportDateTimeLabel(
-    date: String,
-    time: String
-) {
-    Row {
-        Text(
-            text = "$date ",
-            style = MaterialTheme.typography.bodyMedium,
-            color = LocalContentColor.current.copy(.8f)
-        )
-        Text(
-            text = time,
-            style = MaterialTheme.typography.bodyMedium,
-            color = LocalContentColor.current.copy(.6f)
-        )
     }
 }

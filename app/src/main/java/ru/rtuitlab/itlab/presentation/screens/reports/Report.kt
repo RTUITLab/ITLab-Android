@@ -28,6 +28,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.UserLink
 import ru.rtuitlab.itlab.presentation.ui.components.chips.InfoChip
+import ru.rtuitlab.itlab.presentation.ui.components.datetime.DateTimeLabel
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
@@ -216,7 +217,7 @@ fun ReportInfoCard(
 					durationMillis = duration
 				)
 			) {
-				ReportDateTimeLabel(date, time)
+				DateTimeLabel(date, time)
 			}
 		}
 	}
@@ -249,7 +250,7 @@ fun ReportApprovalCard(
 				verticalAlignment = Alignment.CenterVertically
 			) {
 				val (date, time) = dateTime.fromIso8601ToDateTime(LocalContext.current)
-				ReportDateTimeLabel(date, time)
+				DateTimeLabel(date, time)
 				UserLink(approver)
 			}
 		}
