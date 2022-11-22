@@ -10,10 +10,14 @@ import ru.rtuitlab.itlab.presentation.utils.AppScreen
 @Composable
 fun UserLink(
 	user: UserResponse,
+	hasPadding: Boolean = true,
 	onNavigate: (() -> Unit)? = {}
 ) {
 	val navController = LocalNavController.current
-	InteractiveField(value = user.fullName) {
+	InteractiveField(
+		value = user.fullName,
+		hasPadding = hasPadding
+	) {
 		navController.navigate("${AppScreen.EmployeeDetails.navLink}/${user.id}")
 		onNavigate?.invoke()
 	}

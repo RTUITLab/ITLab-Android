@@ -38,7 +38,8 @@ import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopApp
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileBottomBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchaseTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchasesTopAppBar
-import ru.rtuitlab.itlab.presentation.screens.reports.components.ReportsTopAppBar
+import ru.rtuitlab.itlab.presentation.screens.reports.components.ReportsBottomBar
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.ITLabBottomBarDefaults
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedElementsRootScope
@@ -133,16 +134,21 @@ fun ITLabApp(
                             ),
                             onBackAction = onBackAction
                         )
+
                         AppScreen.EventNew,
                         AppScreen.Profile,
-                        AppScreen.EmployeeDetails -> BasicTopAppBar(
-                            text = stringResource(currentScreen.screenNameResource),
-                            onBackAction = onBackAction
-                        )
-                        AppScreen.Employees -> CenterAlignedTopAppBar(title = stringResource(R.string.employees))
+                        AppScreen.EmployeeDetails ->
+                            BasicTopAppBar(
+                                text = stringResource(currentScreen.screenNameResource),
+                                onBackAction = onBackAction
+                            )
+
+                        AppScreen.Employees,
+                        AppScreen.Reports ->
+                            CenterAlignedTopAppBar(title = stringResource(currentScreen.screenNameResource))
+
                         AppScreen.Feedback -> FeedbackTopAppBar()
                         AppScreen.Devices -> DevicesTopAppBar()
-                        AppScreen.Reports -> ReportsTopAppBar()
                         is AppScreen.ReportDetails -> BasicTopAppBar(
                             text = stringResource(
                                 currentScreen.screenNameResource,
@@ -179,6 +185,7 @@ fun ITLabApp(
                     is AppScreen.Events -> EventsBottomBar(mainFloatingActionButton)
                     is AppScreen.Employees -> EmployeesBottomBar(mainFloatingActionButton)
                     is AppScreen.Profile -> ProfileBottomBar(mainFloatingActionButton)
+                    is AppScreen.Reports -> ReportsBottomBar(mainFloatingActionButton)
                 }
             }
         )

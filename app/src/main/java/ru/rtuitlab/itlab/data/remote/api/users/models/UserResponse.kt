@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.data.remote.api.users.models
 
 import android.os.Parcelable
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import ru.rtuitlab.itlab.BuildConfig
@@ -38,15 +39,6 @@ data class UserResponse (
 		.digest(this.trim().lowercase(Locale.getDefault()).toByteArray(StandardCharsets.UTF_8))
 		.joinToString(""){"%02x".format(it)}
 
-
-
-	fun getEditRequest() =
-		UserEditRequest(
-			firstName = firstName,
-			lastName = lastName,
-			middleName = middleName,
-			phoneNumber = phoneNumber
-		)
 
 	fun toUserEntity() = UserEntity(
 		id = id,
@@ -98,4 +90,7 @@ data class User(
 		middleName = middleName,
 		phoneNumber = phoneNumber
 	)
+
+	@IgnoredOnParcel
+	val abbreviatedName = "$lastName ${firstName?.firstOrNull()}. ${middleName?.firstOrNull()}."
 }

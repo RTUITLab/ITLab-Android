@@ -24,9 +24,7 @@ object AppColors {
 	)
 	val green = Color(0xff28a745)
 	val orange = Color(0xffFF8F00)
-	val greyText = _greyText.asStateFlow()
 	val red = Color(0xFFFF3B30)
-	val tag = Color(0xFFE0E0E0)
 	val appBarsLight = Color.White
 	val appBarsDark = Color.Black
 	val background = Color(0xFFF5F5F5)
@@ -79,6 +77,14 @@ val Green70 = Color(0xFF74EFB9) // Green60
 val Green77 = Color(0xFF95F6CC) // Green50
 val Green87 = Color(0xFFC4F8E2) // Green40
 val Green92 = Color(0xFFDAF9EC) // Green30
+
+val Yellow90 = Color(0xFFFFF0CC)
+val Yellow85 = Color(0xFFFFE9B5) // Yellow 30
+val Yellow52 = Color(0xFFFFB608) // Yellow 100
+val Yellow45 = Color(0xFFE6A100)
+
+val Orange45 = Color(0xFFE67700) // Orange 100
+val Orange92 = Color(0xFFFCEBD9) // Orange 30
 
 val Grey29 = Color(0xFF45464f) // MD3 On Surface-Variant
 val Grey48 = Color(0xFF767680) // MD3 Outline

@@ -96,9 +96,7 @@ fun AppNavigation(
 
 		feedbackGraph()
 
-		reportsGraph(
-			bottomSheetViewModel
-		)
+		reportsGraph()
 
 		purchasesGraph()
 	}
@@ -198,9 +196,7 @@ private fun NavGraphBuilder.feedbackGraph() {
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
 @ExperimentalAnimationApi
-private fun NavGraphBuilder.reportsGraph(
-	bottomSheetViewModel: BottomSheetViewModel
-) {
+private fun NavGraphBuilder.reportsGraph() {
 	navigation(
 		startDestination = AppTab.Reports.startDestination,
 		route = AppTab.Reports.route
@@ -214,9 +210,7 @@ private fun NavGraphBuilder.reportsGraph(
 		}
 
 		composable(AppScreen.NewReport.route) {
-			NewReport(
-				bottomSheetViewModel = bottomSheetViewModel
-			)
+			NewReport()
 		}
 	}
 }

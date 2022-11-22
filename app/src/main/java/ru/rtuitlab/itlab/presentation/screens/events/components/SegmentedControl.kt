@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.*
@@ -114,6 +115,7 @@ fun <T : Any> SegmentedControl(
     selectedSegment: T,
     onSegmentSelected: (T) -> Unit,
     modifier: Modifier = Modifier,
+    shape: Shape = MaterialTheme.shapes.extraLarge,
     content: @Composable (T) -> Unit
 ) {
     val state = remember { SegmentedControlState() }
@@ -153,14 +155,14 @@ fun <T : Any> SegmentedControl(
             .then(state.inputModifier)
             .background(
                 color = Color.Transparent,
-                shape = MaterialTheme.shapes.extraLarge
+                shape = shape
             )
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.primary,
-                shape = MaterialTheme.shapes.extraLarge
+                shape = shape
             )
-            .clip(MaterialTheme.shapes.extraLarge)
+            .clip(shape)
             .padding(TRACK_PADDING)
     ) { measurables, constraints ->
         val (segmentsMeasurable, dividersMeasurable, thumbMeasurable) = measurables

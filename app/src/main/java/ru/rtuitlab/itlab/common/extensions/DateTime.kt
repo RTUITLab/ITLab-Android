@@ -69,6 +69,31 @@ fun String.fromIso8601(
 	context.getString(R.string.time_parsing_error)
 }
 
+/**
+ * Parses ISO8601 string and returns a pair of Strings representing date and time respectively
+ */
+fun String.fromIso8601ToDateTime(
+	context: Context
+): Pair<String, String> = try {
+	// ITLab uses both normalized and non-normalized
+	// ISO8601 strings. This is a workaround to always
+	// parse normalized strings
+	(if (this.contains("Z")) this else this + "Z")
+		.fromIso8601ToInstant().run {
+			val day = dayOfMonth.toString().padStart(2, '0')
+			val month = monthNumber.toString().padStart(2, '0')
+			val hour = hour.toString().padStart(2, '0')
+			val minute = minute.toString().padStart(2, '0')
+			val second = second.toString().padStart(2, '0')
+
+			"$day.$month.$year" to "$hour:$minute:$second"
+		}
+} catch (e: DateTimeException) {
+	e.printStackTrace()
+	Log.e("DateTime", "Unable to parse ${if (this.contains("Z")) this else this + "Z"}")
+	context.getString(R.string.time_parsing_error) to ""
+}
+
 fun String.fromIso8601ToInstant() =
 	java.time.Instant.from(
 		DateTimeFormatter.ISO_DATE_TIME.parse(this)

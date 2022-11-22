@@ -124,7 +124,7 @@
     <string name="report_new">Новый отчёт</string>
     <string name="report_new_disclaimer">Опишите, что вы делали за последнее время, что вы считаете важным при оценке вашей работы.  Вы можете прикрепить изображения или документы. Формат описания поддерживает формат Markdown.</string>
     <string name="reports_about_me">Обо мне</string>
-    <string name="reports_from_me">Мои</string>
+    <string name="reports_from_me">Мои отчёты о сотрудниках</string>
     <string name="reports_files">Файлы</string>
     <string name="report_write">Писать</string>
     <string name="report_preview">Просмотр</string>
@@ -190,5 +190,6 @@
     <string name="reports_empty">Отчётов не найдено</string>
     <string name="purchase_is_being_restored">Данные о покупке восстанавливаются</string>
     <string name="events_select_date_range">Выберите период</string>
+    <string name="report_in_review">Ожидание</string>
 
 </resources>

@@ -18,7 +18,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import kotlinx.coroutines.launch
@@ -177,8 +176,7 @@ fun AppBarTabRow(
 			Tab(
 				text = {
 					Text(
-						text = stringResource(it.title).uppercase(Locale.getDefault()),
-						fontSize = 14.sp
+						text = stringResource(it.title),
 					)
 				},
 				selected = pagerState.currentPage == index,

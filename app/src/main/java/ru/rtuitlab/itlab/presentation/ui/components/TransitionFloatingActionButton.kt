@@ -5,6 +5,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import ru.rtuitlab.itlab.presentation.screens.reports.duration
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.ITLabBottomBarDefaults
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.FadeMode
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedElementsRootScope
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
@@ -33,6 +34,8 @@ fun TransitionFloatingActionButton(
         onFractionChanged = transitionProgressSetter
     ) {
         FloatingActionButton(
+            containerColor = ITLabBottomBarDefaults.secondaryFloatingActionButtonContainerColor,
+            elevation = ITLabBottomBarDefaults.floatingActionButtonsElevation,
             onClick = {
                 if (scope?.isRunningTransition == true) return@FloatingActionButton
                 onClick()
