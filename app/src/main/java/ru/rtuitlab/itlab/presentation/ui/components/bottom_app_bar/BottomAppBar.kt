@@ -5,8 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.contentColorFor
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +50,7 @@ fun BottomAppBar(
         }
 
 
-    androidx.compose.material3.BottomAppBar(
+    BottomAppBar(
         modifier = modifier,
         containerColor = containerColor,
         contentColor = contentColor,
@@ -87,7 +86,7 @@ fun BottomAppBar(
                     .fillMaxHeight()
                     .padding(
                         top = FABVerticalPadding,
-                        end = FABHorizontalPadding
+                        end = SecondaryFabHorizontalPadding
                     ),
                 contentAlignment = Alignment.TopStart
             ) {
@@ -115,3 +114,15 @@ internal val BottomAppBarVerticalPadding = 16.dp - 12.dp
 // Padding minus content padding
 private val FABHorizontalPadding = 16.dp - BottomAppBarHorizontalPadding
 private val FABVerticalPadding = 12.dp - BottomAppBarVerticalPadding
+
+private val SecondaryFabHorizontalPadding = 16.dp
+
+object ITLabBottomBarDefaults {
+    val mainFloatingActionButtonContainerColor: Color
+        @Composable get() = MaterialTheme.colorScheme.surfaceColorAtElevation(512.dp)
+
+    val secondaryFloatingActionButtonContainerColor: Color
+        @Composable get() = MaterialTheme.colorScheme.surfaceColorAtElevation(LocalAbsoluteTonalElevation.current + 28.dp)
+
+    val floatingActionButtonsElevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(0.dp)
+}

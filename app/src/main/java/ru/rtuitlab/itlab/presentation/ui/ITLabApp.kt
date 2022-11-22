@@ -97,8 +97,8 @@ fun ITLabApp(
         FloatingActionButton(
             modifier = Modifier.offset { mainFabOffset },
             onClick = { isNavigationOpen = true },
-            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(512.dp),
-            elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(0.dp)
+            containerColor = ITLabBottomBarDefaults.mainFloatingActionButtonContainerColor,
+            elevation = ITLabBottomBarDefaults.floatingActionButtonsElevation
         ) {
             Icon(
                 modifier = Modifier
