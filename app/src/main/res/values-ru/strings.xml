@@ -161,6 +161,8 @@
     <string name="status_all">Все</string>
     <string name="status_await">В ожидании</string>
     <string name="status_confirmed">Подтверждены</string>
+    <string name="purchase_status_confirmed">Подтверждено</string>
+    <string name="purchase_status_rejected">Отклонено</string>
     <string name="status_rejected">Отклонены</string>
     <string name="retry">Попробовать снова</string>
     <string name="sort_asc">В порядке возрастания</string>
@@ -191,5 +193,7 @@
     <string name="purchase_is_being_restored">Данные о покупке восстанавливаются</string>
     <string name="events_select_date_range">Выберите период</string>
     <string name="report_in_review">Ожидание</string>
+    <string name="reports_filters">Фильтры</string>
+    <string name="reports_sorting">Сортировка</string>
 
 </resources>

@@ -45,7 +45,7 @@ fun PurchaseTopAppBar(
             AppBarOption.Clickable(
                 icon = ImageVector.vectorResource(R.drawable.ic_delete),
                 onClick = {
-                    purchasesViewModel.showDeletingDialog()
+                    purchasesViewModel.showDeletingDialog(purchaseState.purchase)
                 }
             )
         ) else listOf(),
@@ -77,7 +77,7 @@ fun PurchaseTopAppBar(
                             successMessage = context.getString(R.string.purchase_delete_success)
                         ) { isSuccessful ->
 
-                            purchasesViewModel.hideDeletingDialog()
+                            purchasesViewModel.hideDeletingDialog(purchaseState.purchase)
                             if (isSuccessful) {
                                 navController.popBackStack()
                             }
@@ -95,10 +95,10 @@ fun PurchaseTopAppBar(
             },
             dismissButton = {
                 PrimaryButton(
-                    onClick = purchasesViewModel::hideDeletingDialog,
+                    onClick = { purchasesViewModel.hideDeletingDialog(purchaseState.purchase) },
                     text = stringResource(R.string.cancel)
                 )
             },
-            onDismissRequest = purchasesViewModel::hideDeletingDialog
+            onDismissRequest = { purchasesViewModel.hideDeletingDialog(purchaseState.purchase) }
         )
 }

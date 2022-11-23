@@ -1,17 +1,21 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 
 package ru.rtuitlab.itlab.presentation.screens.purchases
 
-import androidx.compose.foundation.*
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -19,22 +23,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.valentinilk.shimmer.ShimmerBounds
-import com.valentinilk.shimmer.rememberShimmer
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusApi
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusUi
-import ru.rtuitlab.itlab.data.remote.api.purchases.models.Purchase
-import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
+import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchaseCard
+import ru.rtuitlab.itlab.presentation.screens.purchases.components.ShimmeredPurchaseCard
+import ru.rtuitlab.itlab.presentation.screens.purchases.state.PurchaseUiState
 import ru.rtuitlab.itlab.presentation.screens.reports.duration
 import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
-import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerBox
-import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerThemes
-import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
@@ -45,27 +43,16 @@ fun Purchases(
 ) {
     val state by viewModel.state.collectAsState()
 
-    val navController = LocalNavController.current
+    val isSolvingAccessible by viewModel.isSolvingAccessible.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val context = LocalContext.current
+
     viewModel.uiEvents.collectUiEvents(snackbarHostState)
 
-    val (transitionProgress, transitionProgressSetter) = remember { mutableStateOf(0f) }
-
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        floatingActionButton = {
-            TransitionFloatingActionButton(
-                key = "Purchases/New",
-                screenKey = AppScreen.Purchases.route,
-                icon = Icons.Default.Add,
-                onClick = {
-                    navController.navigate(AppScreen.NewPurchase.route)
-                },
-                transitionProgressSetter = transitionProgressSetter
-            )
-        }
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {
         Box(
             modifier = Modifier.padding(it)
@@ -90,18 +77,24 @@ fun Purchases(
                         ) {
                             Spacer(modifier = Modifier.width(15.dp))
                             PurchaseStatusUi.values().forEach {
+
+                                val containerColor = it.containerColorFactory()
+                                val labelColor = it.labelColorFactory()
+
                                 SuggestionChip(
                                     onClick = {
                                         if (state.selectedStatus != it)
                                             viewModel.onStatusChange(it)
                                     },
                                     colors = SuggestionChipDefaults.suggestionChipColors(
-                                        containerColor = if (state.selectedStatus == it) it.color else Color.Transparent,
-                                        labelColor = (if (state.selectedStatus == it) Color.White else it.color)
+                                        containerColor = if (state.selectedStatus == it) containerColor else Color.Transparent,
+                                        labelColor = (if (state.selectedStatus == it) labelColor else containerColor)
                                             .copy(alpha = ChipDefaults.ContentOpacity)
                                     ),
                                     border = SuggestionChipDefaults.suggestionChipBorder(
-                                        borderColor = MaterialTheme.colorScheme.onSurface.copy(ChipDefaults.OutlinedBorderOpacity),
+                                        borderColor = MaterialTheme.colorScheme.onSurface.copy(
+                                            ChipDefaults.OutlinedBorderOpacity
+                                        ),
                                         borderWidth = 1.dp
                                     ),
                                     shape = MaterialTheme.shapes.extraLarge,
@@ -118,7 +111,9 @@ fun Purchases(
                         }
                     }
 
-                    if ((state.paginationState?.totalElements ?: 0) == 0 && !state.isLoading && !state.isRefreshing && state.errorMessage == null) {
+                    if ((state.paginationState?.totalElements
+                            ?: 0) == 0 && !state.isLoading && !state.isRefreshing && state.errorMessage == null
+                    ) {
                         item {
                             LoadingError(
                                 modifier = Modifier
@@ -131,8 +126,8 @@ fun Purchases(
                     }
                     itemsIndexed(
                         items = state.purchases,
-                        key = { _, it -> it.id }
-                    ) { index, purchase ->
+                        key = { _, it -> it.purchase.id }
+                    ) { index, purchaseUiState ->
 
                         // Normally this is an unhandled side-effect, but in this case we have precise
                         // control over its execution through concrete conditions, so no random calls
@@ -141,7 +136,7 @@ fun Purchases(
                             viewModel.fetchNextItems()
                         }
                         SharedElement(
-                            key = purchase.id,
+                            key = purchaseUiState.purchase.id,
                             screenKey = AppScreen.Reports.route,
                             transitionSpec = SharedElementsTransitionSpec(
                                 durationMillis = duration
@@ -149,15 +144,31 @@ fun Purchases(
                         ) {
                             PurchaseCard(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 15.dp)
-                                    .clickable {
-                                        viewModel.onPurchaseOpened(purchase)
-                                        navController.navigate("${AppScreen.PurchaseDetails.navLink}/${purchase.id}")
-                                    },
-                                purchase = purchase
+                                    .padding(horizontal = 16.dp)
+                                    .animateItemPlacement()
+                                    .animateContentSize(),
+                                isSolvingAccessible = isSolvingAccessible,
+                                onDelete = { viewModel.showDeletingDialog(purchaseUiState.purchase) },
+                                onReject = {
+                                    viewModel.onReject(
+                                        purchase = purchaseUiState.purchase,
+                                        successMessage = context.getString(R.string.purchase_rejected)
+                                    )
+                                },
+                                onApprove = {
+                                    viewModel.onApprove(
+                                        purchase = purchaseUiState.purchase,
+                                        successMessage = context.getString(R.string.purchase_approved)
+                                    )
+                                },
+                                state = purchaseUiState
                             )
                         }
+                        DeleteConfirmationDialog(
+                            isShown = purchaseUiState.isDeletionDialogShown,
+                            purchaseState = purchaseUiState,
+                            purchasesViewModel = viewModel
+                        )
                     }
                     if (state.paginationState?.totalElements == null || state.paginationState!!.totalElements > state.purchases.size) {
                         state.errorMessage?.let {
@@ -177,209 +188,71 @@ fun Purchases(
                             ShimmeredPurchaseCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = 15.dp),
-                                isResolved = state.selectedStatus == PurchaseStatusUi.ACCEPT || state.selectedStatus == PurchaseStatusUi.DECLINE
+                                    .padding(horizontal = 16.dp)
                             )
                         }
                     }
                 }
             }
-            // Providing scrimming during fab transition
-            Canvas(
-                modifier = Modifier.fillMaxSize(),
-                onDraw = {
-                    drawRect(color = Color.Black.copy(alpha = 0.32f * (transitionProgress)))
-                }
-            )
         }
     }
 }
 
 @Composable
-fun PurchaseCard(
-    modifier: Modifier = Modifier,
-    purchase: Purchase
+fun DeleteConfirmationDialog(
+    isShown: Boolean,
+    purchaseState: PurchaseUiState,
+    purchasesViewModel: PurchasesViewModel
 ) {
-    SideColoredCard(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        color = when (purchase.solution.status) {
-            PurchaseStatusApi.AWAIT -> AppColors.orange
-            PurchaseStatusApi.ACCEPT -> AppColors.green
-            PurchaseStatusApi.DECLINE -> AppColors.red
-            else -> MaterialTheme.colorScheme.surface
-        }
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(
-                    top = 10.dp,
-                    bottom = 8.dp,
-                    start = 15.dp,
-                    end = 15.dp
-                )
-                .fillMaxWidth()
-        ) {
-            SharedElement(
-                key = "${purchase.id}/name",
-                screenKey = AppScreen.Purchases.route
-            ) {
+    val context = LocalContext.current
+    if (isShown)
+        AlertDialog(
+            title = {
                 Text(
-                    text = purchase.name,
-                    style = MaterialTheme.typography.titleMedium
+                    text = stringResource(R.string.purchase_delete)
                 )
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                SharedElement(
-                    key = "${purchase.id}/time",
-                    screenKey = AppScreen.Reports.route,
-                    transitionSpec = SharedElementsTransitionSpec(
-                        durationMillis = duration
-                    )
-                ) {
-                    IconizedRow(
-                        imageVector = Icons.Default.Schedule,
-                        imageWidth = 18.dp,
-                        imageHeight = 18.dp,
-                        spacing = 8.dp
-                    ) {
-                        Text(
-                            text = purchase.purchaseDate.fromIso8601(
-                                context = LocalContext.current,
-                                parseWithTime = false
-                            ),
-                            style = MaterialTheme.typography.bodyLarge
+            },
+            text = {
+                Column {
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        text = stringResource(
+                            R.string.purchase_delete_confirmation,
+                            purchaseState.purchase.name
                         )
-                    }
-                }
-
-                // Purchaser
-                SharedElement(
-                    key = "${purchase.id}/purchaser",
-                    screenKey = AppScreen.Reports.route,
-                    transitionSpec = SharedElementsTransitionSpec(
-                        durationMillis = duration
                     )
-                ) {
-                    IconizedRow(
-                        imageVector = Icons.Default.Person,
-                        spacing = 0.dp
-                    ) {
-                        UserLink(user = purchase.purchaser)
-                    }
                 }
-
-                // Approver
-                purchase.solution.solver?.let {
-                    SharedElement(
-                        key = "${purchase.id}/approver",
-                        screenKey = AppScreen.Reports.route,
-                        transitionSpec = SharedElementsTransitionSpec(
-                            durationMillis = duration
-                        )
-                    ) {
-                        IconizedRow(
-                            imageVector = Icons.Default.ManageAccounts,
-                            spacing = 0.dp
+            },
+            confirmButton = {
+                PrimaryTextButton(
+                    onClick = {
+                        purchasesViewModel.onDeletePurchase(
+                            purchase = purchaseState.purchase,
+                            successMessage = context.getString(R.string.purchase_delete_success)
                         ) {
-                            UserLink(user = it)
+                            purchasesViewModel.hideDeletingDialog(purchaseState.purchase)
                         }
-                    }
-                }
-
-                // Compensation
-                SharedElement(
-                    key = "${purchase.id}/price",
-                    screenKey = AppScreen.Reports.route,
-                    transitionSpec = SharedElementsTransitionSpec(
-                        durationMillis = duration
-                    )
-                ) {
-                    IconizedRow(
-                        imageVector = Icons.Default.Payment
+                    },
+                    text = stringResource(R.string.confirm_yes)
+                ) { text ->
+                    LoadableButtonContent(
+                        isLoading = purchaseState.isDeletionInProgress,
+                        strokeWidth = 2.dp
                     ) {
-                        Text(
-                            text = stringResource(R.string.salary_float, purchase.price),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        text()
                     }
                 }
+            },
+            dismissButton = {
+                PrimaryTextButton(
+                    onClick = {
+                        purchasesViewModel.hideDeletingDialog(purchaseState.purchase)
+                    },
+                    text = stringResource(R.string.cancel)
+                )
+            },
+            onDismissRequest = {
+                purchasesViewModel.hideDeletingDialog(purchaseState.purchase)
             }
-        }
-    }
-}
-
-@Composable
-private fun ShimmeredPurchaseCard(
-    modifier: Modifier = Modifier,
-    isResolved: Boolean
-) {
-    val defaultShimmer = rememberShimmer(
-        shimmerBounds = ShimmerBounds.Window,
-        theme = ShimmerThemes.defaultShimmerTheme
-    )
-    val accentColor = MaterialTheme.colorScheme.primary
-    SideColoredCard(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        color = Color.LightGray
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(
-                    top = 10.dp,
-                    bottom = 8.dp,
-                    start = 15.dp,
-                    end = 15.dp
-                )
-                .fillMaxWidth()
-        ) {
-            ShimmerBox(
-                modifier = Modifier
-                    .fillMaxSize(.5f)
-                    .height(20.dp),
-                shimmer = defaultShimmer
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                ShimmerBox(
-                    modifier = Modifier
-                        .fillMaxSize(.5f)
-                        .height(20.dp),
-                    shimmer = defaultShimmer
-                )
-
-                if (isResolved)
-                    ShimmerBox(
-                        modifier = Modifier
-                            .fillMaxSize(.5f)
-                            .height(20.dp),
-                        shimmer = defaultShimmer,
-                        color = accentColor.copy(alpha = .4f)
-                    )
-
-                ShimmerBox(
-                    modifier = Modifier
-                        .fillMaxSize(.5f)
-                        .height(20.dp),
-                    shimmer = defaultShimmer,
-                    color = accentColor.copy(alpha = .4f)
-                )
-
-                ShimmerBox(
-                    modifier = Modifier
-                        .fillMaxSize(.25f)
-                        .height(20.dp),
-                    shimmer = defaultShimmer
-                )
-            }
-        }
-    }
+        )
 }

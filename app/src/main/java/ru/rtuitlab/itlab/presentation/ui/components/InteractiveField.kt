@@ -25,7 +25,7 @@ fun InteractiveField(
 ) {
 	Row(
 		modifier = Modifier
-			.clip(MaterialTheme.shapes.small)
+			.clip(MaterialTheme.shapes.extraSmall)
 			.clickable { onClick() }
 			.padding(horizontal = if (hasPadding) 8.dp else 0.dp),
 		horizontalArrangement = Arrangement.SpaceBetween,

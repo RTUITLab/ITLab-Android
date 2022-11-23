@@ -189,7 +189,7 @@ private fun ProfileSettingsItem(
 	IconizedRow(
 		modifier = Modifier
 			.fillMaxWidth()
-			.clip(MaterialTheme.shapes.small)
+			.clip(MaterialTheme.shapes.extraSmall)
 			.clickable {
 				onClick()
 			}
@@ -218,7 +218,7 @@ private fun ProfileSettingsItem(
 	IconizedRow(
 		modifier = Modifier
 			.fillMaxWidth()
-			.clip(MaterialTheme.shapes.small)
+			.clip(MaterialTheme.shapes.extraSmall)
 			.clickable {
 				onClick()
 			}

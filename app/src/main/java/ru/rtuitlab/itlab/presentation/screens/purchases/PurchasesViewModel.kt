@@ -98,9 +98,11 @@ class PurchasesViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 page = newPage,
                 purchases = _state.value.purchases + result.content.map { purchaseDto ->
-                    purchaseDto.toPurchase(
-                        purchaser = users.value.find { it.id == purchaseDto.purchaserId }!!,
-                        solver = users.value.find { it.id == purchaseDto.solution.solverId }
+                    PurchaseUiState(
+                        purchaseDto.toPurchase(
+                            purchaser = users.value.find { it.id == purchaseDto.purchaserId }!!,
+                            solver = users.value.find { it.id == purchaseDto.solution.solverId }
+                        )
                     )
                 },
                 paginationState = result,
@@ -186,28 +188,47 @@ class PurchasesViewModel @Inject constructor(
         )
     }
 
-    fun showDeletingDialog() {
-        _state.value = _state.value.copy(
-            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
-                isDeletionDialogShown = true
+    fun showDeletingDialog(
+        purchase: Purchase
+    ) {
+        _state.update {
+            it.copy(
+                purchases = it.purchases.map {
+                    if (it.purchase.id == purchase.id) it.copy(
+                        isDeletionDialogShown = true
+                    ) else it
+                }
             )
-        )
+        }
     }
 
-    fun hideDeletingDialog() {
-        _state.value = _state.value.copy(
-            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
-                isDeletionDialogShown = false
+    fun hideDeletingDialog(
+        purchase: Purchase
+    ) {
+        _state.update {
+            it.copy(
+                purchases = it.purchases.map {
+                    if (it.purchase.id == purchase.id) it.copy(
+                        isDeletionDialogShown = false
+                    ) else it
+                }
             )
-        )
+        }
     }
 
-    private fun setIsDeletionInProgress(isIt: Boolean) {
-        _state.value = _state.value.copy(
-            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
-                isDeletionInProgress = isIt
+    private fun setIsDeletionInProgress(
+        isIt: Boolean,
+        purchase: Purchase
+    ) {
+        _state.update {
+            it.copy(
+                purchases = it.purchases.map {
+                    if (it.purchase.id == purchase.id) it.copy(
+                        isDeletionInProgress = isIt
+                    ) else it
+                }
             )
-        )
+        }
     }
 
     fun onDeletePurchase(
@@ -215,19 +236,20 @@ class PurchasesViewModel @Inject constructor(
         successMessage: String,
         onFinish: (isSuccessful: Boolean) -> Unit
     ) = viewModelScope.launch(Dispatchers.IO) {
-        setIsDeletionInProgress(true)
+        setIsDeletionInProgress(true, purchase)
         repository.deletePurchase(purchase.id).handle(
             onSuccess = {
                 withContext(Dispatchers.Main) {
                     onFinish(true)
                 }
                 _state.value = _state.value.copy(
-                    purchases = _state.value.purchases - purchase,
+                    purchases = _state.value.purchases - _state.value.purchases.find {
+                        it.purchase.id == purchase.id
+                    }!!,
                     paginationState = _state.value.paginationState?.copy(
                         totalElements = _state.value.paginationState?.totalElements?.minus(1) ?: 0
                     )
                 )
-                delay(500)
                 _uiEvents.emit(UiEvent.Snackbar(successMessage))
             },
             onError = {
@@ -237,77 +259,95 @@ class PurchasesViewModel @Inject constructor(
                 _uiEvents.emit(UiEvent.Snackbar(it))
             }
         )
-        setIsDeletionInProgress(false)
+        setIsDeletionInProgress(false, purchase)
     }
 
     fun onApprove(
+        purchase: Purchase,
         successMessage: String
     ) {
-        _state.value = _state.value.copy(
-            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
-                isApprovingInProgress = true
+        _state.update {
+            it.copy(
+                purchases = it.purchases.map {
+                    if (it.purchase.id == purchase.id) it.copy(
+                        isApprovingInProgress = true
+                    ) else it
+                }
             )
-        )
+        }
 
         onResolve(
             status = PurchaseStatusApi.ACCEPT,
-            successMessage = successMessage
+            successMessage = successMessage,
+            purchase = purchase
         )
     }
 
     fun onReject(
+        purchase: Purchase,
         successMessage: String
     ) {
-        _state.value = _state.value.copy(
-            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
-                isRejectingInProgress = true
+        _state.update {
+            it.copy(
+                purchases = it.purchases.map {
+                    if (it.purchase.id == purchase.id) it.copy(
+                        isRejectingInProgress = true
+                    ) else it
+                }
             )
-        )
+        }
 
         onResolve(
             status = PurchaseStatusApi.DECLINE,
-            successMessage = successMessage
+            successMessage = successMessage,
+            purchase = purchase
         )
     }
 
     private fun onResolve(
         status: PurchaseStatusApi,
+        purchase: Purchase,
         successMessage: String
     ) = viewModelScope.launch(Dispatchers.IO) {
         repository.resolvePurchase(
-            id = _state.value.selectedPurchaseState!!.purchase.id,
+            id = purchase.id,
             status = status
         ).handle(
-            onSuccess = { newPurchase ->
-                val purchase = newPurchase.toPurchase(
-                    purchaser = users.value.find { it.id == newPurchase.purchaserId }!!,
-                    solver = users.value.find { it.id == newPurchase.solution.solverId }!!
+            onSuccess = { purchaseDto ->
+                val newPurchase = purchaseDto.toPurchase(
+                    purchaser = users.value.find { it.id == purchaseDto.purchaserId }!!,
+                    solver = users.value.find { it.id == purchaseDto.solution.solverId }!!
                 )
                 _uiEvents.emit(UiEvent.Snackbar(successMessage))
-                _state.value = _state.value.copy(
-                    selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
-                        purchase = purchase
-                    ),
-                    purchases = _state.value.purchases - _state.value.purchases.find { it.id == purchase.id }!!,
-                    paginationState = _state.value.paginationState?.copy(
-                        totalElements = _state.value.paginationState!!.totalElements - 1
+                _state.update {
+                    it.copy(
+                        purchases = it.purchases.map {
+                            if (it.purchase.id == newPurchase.id) PurchaseUiState(newPurchase)
+                            else it
+                        }
                     )
-                )
+                }
             },
             onError = {
                 _uiEvents.emit(UiEvent.Snackbar(it))
             }
         )
-        onLoadingStop()
+        onLoadingStop(purchase)
     }
 
-    private fun onLoadingStop() {
-        _state.value = _state.value.copy(
-            selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
-                isRejectingInProgress = false,
-                isApprovingInProgress = false
+    private fun onLoadingStop(
+        purchase: Purchase
+    ) {
+        _state.update {
+            it.copy(
+                purchases = it.purchases.map {
+                    if (it.purchase.id == purchase.id) it.copy(
+                        isRejectingInProgress = false,
+                        isApprovingInProgress = false
+                    ) else it
+                }
             )
-        )
+        }
     }
 
 
@@ -454,7 +494,7 @@ class PurchasesViewModel @Inject constructor(
                         onFinish(purchase)
                     }
                     _state.value = _state.value.copy(
-                        purchases = listOf(purchase) + _state.value.purchases,
+                        purchases = listOf(PurchaseUiState(purchase)) + _state.value.purchases,
                         paginationState = _state.value.paginationState?.copy(
                             totalElements = _state.value.paginationState!!.totalElements + 1
                         ),

@@ -42,6 +42,8 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.Shared
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.common.extensions.toIso8601
+import ru.rtuitlab.itlab.presentation.ui.components.FabAwareSnackbarHost
+import ru.rtuitlab.itlab.presentation.ui.components.modifier.fabAwarePadding
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.LocalActivity
@@ -84,126 +86,130 @@ fun NewPurchase(
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .clip(RoundedCornerShape(transitionProgress.dp * 128)),
-            snackbarHost = { SnackbarHost(snackbarHostState) }
+            snackbarHost = { FabAwareSnackbarHost(snackbarHostState) }
         ) {
-            Column(
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .padding(it),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .verticalScroll(rememberScrollState())
+                    .padding(it)
             ) {
-                OutlinedAppTextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    value = state.name,
-                    onValueChange = purchasesViewModel::onNameChange,
-                    label = {
-                        Row {
-                            Text(
-                                text = stringResource(R.string.purchase_name),
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Text(
-                                text = "*",
-                                style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    },
-                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                    trailingIcon = {
-                        Text(
-                            text = "${state.name.length}/63",
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                    },
-                    singleLine = true
-                )
-
-                OutlinedAppTextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    value = (state.price?.toString() ?: "").let {
-                        if (it.isBlank()) it
-                        else stringResource(R.string.salary_int, state.price!!)
-                    },
-                    onValueChange = purchasesViewModel::onPriceChange,
-                    label = {
-                        Row {
-                            Text(
-                                text = stringResource(R.string.purchase_price)
-                            )
-                            Text(
-                                text = "*",
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
-                    )
-                )
-
-                OutlinedAppTextField(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .animateContentSize(),
-                    value = state.description,
-                    onValueChange = purchasesViewModel::onDescriptionChange,
-                    label = {
-                        Text(
-                            text = stringResource(R.string.description)
+                        .fabAwarePadding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedAppTextField(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        value = state.name,
+                        onValueChange = purchasesViewModel::onNameChange,
+                        label = {
+                            Row {
+                                Text(
+                                    text = stringResource(R.string.purchase_name),
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Text(
+                                    text = "*",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+                        trailingIcon = {
+                            Text(
+                                text = "${state.name.length}/63",
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        },
+                        singleLine = true
+                    )
+
+                    OutlinedAppTextField(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        value = (state.price?.toString() ?: "").let {
+                            if (it.isBlank()) it
+                            else stringResource(R.string.salary_int, state.price!!)
+                        },
+                        onValueChange = purchasesViewModel::onPriceChange,
+                        label = {
+                            Row {
+                                Text(
+                                    text = stringResource(R.string.purchase_price)
+                                )
+                                Text(
+                                    text = "*",
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
                         )
-                    },
-                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                    trailingIcon = {
-                        Text(
-                            text = "${state.description.length}/255",
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                    }
-                )
+                    )
 
-                DateSelector(state)
+                    OutlinedAppTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateContentSize(),
+                        value = state.description,
+                        onValueChange = purchasesViewModel::onDescriptionChange,
+                        label = {
+                            Text(
+                                text = stringResource(R.string.description)
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+                        trailingIcon = {
+                            Text(
+                                text = "${state.description.length}/255",
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
+                    )
 
-                FileSelector(
-                    state = state,
-                    type = PurchasesViewModel.FileType.Check
-                )
+                    DateSelector(state)
 
-                FileSelector(
-                    state = state,
-                    type = PurchasesViewModel.FileType.Photo
-                )
+                    FileSelector(
+                        state = state,
+                        type = PurchasesViewModel.FileType.Check
+                    )
 
-                val context = LocalContext.current
+                    FileSelector(
+                        state = state,
+                        type = PurchasesViewModel.FileType.Photo
+                    )
 
-                PrimaryButton(
-                    modifier = Modifier
-                        .align(Alignment.End),
-                    onClick = {
-                        if (!state.isPurchaseUploading) {
-                            purchasesViewModel.onSendPurchase(
-                                successMessage = context.getString(R.string.purchase_created)
-                            ) { newPurchase ->
-                                newPurchase?.let {
-                                    sharedElementKey = it.id
-                                    navController.popBackStack()
+                    val context = LocalContext.current
+
+                    PrimaryButton(
+                        modifier = Modifier
+                            .align(Alignment.End),
+                        onClick = {
+                            if (!state.isPurchaseUploading) {
+                                purchasesViewModel.onSendPurchase(
+                                    successMessage = context.getString(R.string.purchase_created)
+                                ) { newPurchase ->
+                                    newPurchase?.let {
+                                        sharedElementKey = it.id
+                                        navController.popBackStack()
+                                    }
                                 }
                             }
+                        },
+                        text = stringResource(R.string.send),
+                        enabled = state.isSendButtonEnabled
+                    ) { text ->
+                        LoadableButtonContent(
+                            isLoading = state.isPurchaseUploading,
+                            strokeWidth = 2.dp
+                        ) {
+                            text()
                         }
-                    },
-                    text = stringResource(R.string.send),
-                    enabled = state.isSendButtonEnabled
-                ) { text ->
-                    LoadableButtonContent(
-                        isLoading = state.isPurchaseUploading,
-                        strokeWidth = 2.dp
-                    ) {
-                        text()
                     }
                 }
             }
@@ -257,10 +263,10 @@ private fun DateSelector(
             }
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            disabledTextColor = LocalContentColor.current.copy(.6f),
-            disabledBorderColor = MaterialTheme.colorScheme.onSurface.copy(.6f),
-            disabledLabelColor = MaterialTheme.colorScheme.onSurface.copy(.6f),
-            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(.6f)
+            disabledTextColor = LocalContentColor.current,
+            disabledBorderColor = MaterialTheme.colorScheme.onSurface,
+            disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(.8f)
         ),
         leadingIcon = {
             Icon(
@@ -317,10 +323,10 @@ private fun FileSelector(
             }
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            disabledTextColor = LocalContentColor.current.copy(.6f),
-            disabledBorderColor = MaterialTheme.colorScheme.onSurface.copy(.6f),
-            disabledLabelColor = MaterialTheme.colorScheme.onSurface.copy(.6f),
-            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(.6f)
+            disabledTextColor = LocalContentColor.current,
+            disabledBorderColor = MaterialTheme.colorScheme.onSurface,
+            disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(.8f)
         ),
         leadingIcon = {
             Icon(

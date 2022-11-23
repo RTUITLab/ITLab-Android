@@ -18,8 +18,7 @@ fun TransitionFloatingActionButton(
     screenKey: Any,
     icon: ImageVector,
     contentDescription: String? = null,
-    onClick: () -> Unit,
-    transitionProgressSetter: (Float) -> Unit
+    onClick: () -> Unit
 ) {
     val scope = LocalSharedElementsRootScope.current
     SharedElement(
@@ -30,8 +29,7 @@ fun TransitionFloatingActionButton(
             fadeMode = FadeMode.Through,
             fadeProgressThresholds = ProgressThresholds(.001f, .8f),
             scaleProgressThresholds = ProgressThresholds(.2f, 1f)
-        ),
-        onFractionChanged = transitionProgressSetter
+        )
     ) {
         FloatingActionButton(
             containerColor = ITLabBottomBarDefaults.secondaryFloatingActionButtonContainerColor,

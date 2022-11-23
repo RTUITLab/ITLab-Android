@@ -2,6 +2,7 @@
 
 package ru.rtuitlab.itlab.presentation.ui.components.text_fields
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.text.TextStyle
@@ -23,6 +25,7 @@ fun OutlinedAppTextField(
 	value: TextFieldValue,
 	onValueChange: (TextFieldValue) -> Unit,
 	modifier: Modifier = Modifier,
+	onClick: (() -> Unit)? = null,
 	enabled: Boolean = true,
 	readOnly: Boolean = false,
 	textStyle: TextStyle = LocalTextStyle.current,
@@ -47,10 +50,13 @@ fun OutlinedAppTextField(
 	),
 	toolbar: AppTextToolbar? = null
 ) {
+	val textFieldModifier = if (onClick != null)
+		Modifier.clip(shape).clickable(onClick = onClick).then(modifier)
+	else modifier
 	CompositionLocalProvider(
 		LocalTextToolbar provides (toolbar ?: LocalTextToolbar.current)
 	) {
-		OutlinedTextField(value, onValueChange, modifier, enabled, readOnly, textStyle, label, placeholder, leadingIcon, trailingIcon, supportingText, isError, visualTransformation, keyboardOptions, keyboardActions, singleLine, maxLines, interactionSource, shape, colors)
+		OutlinedTextField(value, onValueChange, textFieldModifier, enabled, readOnly, textStyle, label, placeholder, leadingIcon, trailingIcon, supportingText, isError, visualTransformation, keyboardOptions, keyboardActions, singleLine, maxLines, interactionSource, shape, colors)
 	}
 }
 
@@ -59,6 +65,7 @@ fun OutlinedAppTextField(
 	value: String,
 	onValueChange: (String) -> Unit,
 	modifier: Modifier = Modifier,
+	onClick: (() -> Unit)? = null,
 	enabled: Boolean = true,
 	readOnly: Boolean = false,
 	textStyle: TextStyle = LocalTextStyle.current,
@@ -83,9 +90,12 @@ fun OutlinedAppTextField(
 	),
 	toolbar: AppTextToolbar? = null
 ) {
+	val textFieldModifier = if (onClick != null)
+		Modifier.clip(shape).clickable(onClick = onClick).then(modifier)
+	else modifier
 	CompositionLocalProvider(
 		LocalTextToolbar provides (toolbar ?: LocalTextToolbar.current)
 	) {
-		OutlinedTextField(value, onValueChange, modifier, enabled, readOnly, textStyle, label, placeholder, leadingIcon, trailingIcon, supportingText, isError, visualTransformation, keyboardOptions, keyboardActions, singleLine, maxLines, interactionSource, shape, colors)
+		OutlinedTextField(value, onValueChange, textFieldModifier, enabled, readOnly, textStyle, label, placeholder, leadingIcon, trailingIcon, supportingText, isError, visualTransformation, keyboardOptions, keyboardActions, singleLine, maxLines, interactionSource, shape, colors)
 	}
 }

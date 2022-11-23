@@ -5,15 +5,11 @@ package ru.rtuitlab.itlab.presentation.screens.reports
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NavigateNext
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -37,7 +33,6 @@ import ru.rtuitlab.itlab.presentation.screens.events.components.SegmentedControl
 import ru.rtuitlab.itlab.presentation.screens.micro_file_service.FilesViewModel
 import ru.rtuitlab.itlab.presentation.screens.reports.state.NewReportUiState
 import ru.rtuitlab.itlab.presentation.ui.components.*
-import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MdAction
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MdAction.Companion.asTextActionsOn
@@ -47,7 +42,6 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.Progre
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
-import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.LocalActivity
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
@@ -171,7 +165,7 @@ fun NewReport(
                             selectedSegment = it
                             newReportViewModel.onSegmentChanged(it == choices.last())
                         },
-                        shape = MaterialTheme.shapes.small
+                        shape = MaterialTheme.shapes.extraSmall
                     ) { choice ->
                         SegmentText(
                             modifier = Modifier.padding(horizontal = 4.dp, vertical = 10.dp),
@@ -292,7 +286,7 @@ fun DropdownUserPicker(
                     )
                 },
                 isError = state.shouldShowSelectedUserError,
-                shape = MaterialTheme.shapes.small
+                shape = MaterialTheme.shapes.extraSmall
             )
         },
         content = { close ->

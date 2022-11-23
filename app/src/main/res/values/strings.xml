@@ -185,6 +185,10 @@
     <string name="report_uploading_file_dialog">Are you sure you want to upload selected file? %1$s</string>
     <string name="reports_empty">No reports found</string>
     <string name="report_in_review">In review</string>
+    <string name="reports_filters">Filters</string>
+    <string name="reports_sorting">Sorting</string>
+    <string name="purchase_status_confirmed">Confirmed</string>
+    <string name="purchase_status_rejected">Rejected</string>
 
 
     <!--    Markdown    -->

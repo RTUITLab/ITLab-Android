@@ -30,12 +30,10 @@ fun ReportsBottomBar(
                 TransitionFloatingActionButton(
                     key = "Reports/New",
                     screenKey = AppScreen.Reports.route,
-                    icon = Icons.Default.Add,
-                    onClick = {
-                        navController.navigate(AppScreen.NewReport.route)
-                    },
-                    transitionProgressSetter = {}
-                )
+                    icon = Icons.Default.Add
+                ) {
+                    navController.navigate(AppScreen.NewReport.route)
+                }
         },
         searchBar = {
             SearchBar(

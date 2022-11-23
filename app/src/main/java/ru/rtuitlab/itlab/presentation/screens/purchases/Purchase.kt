@@ -41,8 +41,9 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
+// Will be used once purchase notifications send needed data payload
 fun Purchase(
-    @Suppress("UNUSED_PARAMETER") id: Int, // Will be used once purchase notifications send needed data payload
+    @Suppress("UNUSED_PARAMETER") id: Int,
     purchasesViewModel: PurchasesViewModel = singletonViewModel(),
     appBarViewModel: AppBarViewModel = singletonViewModel()
 ) {
@@ -76,7 +77,7 @@ fun Purchase(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { FabAwareSnackbarHost(snackbarHostState) },
     ) {
         Column(
             modifier = Modifier
@@ -208,6 +209,7 @@ fun Purchase(
                                 AssistChip(
                                     onClick = {
                                         purchasesViewModel.onReject(
+                                            purchase,
                                             context.getString(R.string.purchase_rejected)
                                         )
                                     },
@@ -246,6 +248,7 @@ fun Purchase(
                                 AssistChip(
                                     onClick = {
                                         purchasesViewModel.onApprove(
+                                            purchase,
                                             context.getString(R.string.purchase_approved)
                                         )
                                     },

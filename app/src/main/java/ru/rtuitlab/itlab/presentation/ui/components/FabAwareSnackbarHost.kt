@@ -2,7 +2,6 @@ package ru.rtuitlab.itlab.presentation.ui.components
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -13,17 +12,17 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.dismiss
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import ru.rtuitlab.itlab.presentation.ui.components.modifier.fabAwarePadding
 
 // Default MD3 FAB spacing. Adding this as padding below SnackbarHost to
 // reflect Navigation FAB.
-private val FabSpacing = 16.dp
+val FabSpacing = 16.dp
 
-private val FAB_SMALL_HEIGHT = 40.dp
-private val FAB_DEFAULT_HEIGHT = 56.dp
-private val FAB_LARGE_HEIGHT = 96.dp
+val FAB_SMALL_HEIGHT = 40.dp
+val FAB_DEFAULT_HEIGHT = 56.dp
+val FAB_LARGE_HEIGHT = 96.dp
 
 /**
  * This composable is designed to show a [Snackbar][androidx.compose.material3.Snackbar]
@@ -79,7 +78,6 @@ internal fun SnackbarDuration.toMillis(
 private fun FadeInFadeOutWithScale(
     current: SnackbarData?,
     modifier: Modifier = Modifier,
-    fabHeight: Dp = FAB_DEFAULT_HEIGHT,
     content: @Composable (SnackbarData) -> Unit
 ) {
     val state = remember { FadeInFadeOutState<SnackbarData?>() }
@@ -138,7 +136,7 @@ private fun FadeInFadeOutWithScale(
     }
     Box(
         Modifier
-            .padding(bottom = FabSpacing + fabHeight)
+            .fabAwarePadding()
             .then(modifier)
     ) {
         state.scope = currentRecomposeScope

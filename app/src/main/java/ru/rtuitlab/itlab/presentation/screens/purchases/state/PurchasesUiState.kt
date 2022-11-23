@@ -4,12 +4,11 @@ import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingDirection
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingOrder
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatus
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusUi
-import ru.rtuitlab.itlab.data.remote.api.purchases.models.Purchase
 import ru.rtuitlab.itlab.data.remote.api.purchases.models.pagination.PaginationResult
 
 data class PurchasesUiState(
     val page: Int = 0,
-    val purchases: List<Purchase> = emptyList(),
+    val purchases: List<PurchaseUiState> = emptyList(),
     val paginationState: PaginationResult? = null,
     val selectedPurchaseState: PurchaseUiState? = null,
     val newPurchaseState: NewPurchaseUiState = NewPurchaseUiState(),
