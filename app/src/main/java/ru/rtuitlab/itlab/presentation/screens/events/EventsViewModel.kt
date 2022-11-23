@@ -94,8 +94,12 @@ class EventsViewModel @Inject constructor(
 		}
 	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-	val userEvents = searchQuery.flatMapLatest {
-		getUserEvents.search(it)
+	val userEvents = searchQuery.combine(userId) { query, userId ->
+		query to userId
+	}.flatMapLatest { (query, userId) ->
+		userId?.let {
+			getUserEvents.search(query, it)
+		} ?: emptyFlow()
 	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
 	val invitations = getInvitations()

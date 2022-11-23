@@ -25,7 +25,7 @@ interface EventsRepository {
         end: String
     ): Flow<List<EventWithType>>
 
-    fun searchUserEvents(query: String): Flow<List<UserEventWithTypeAndRole>>
+    fun searchUserEvents(query: String, userId: String): Flow<List<UserEventWithTypeAndRole>>
 
     fun getEventDetail(eventId: String): Flow<EventWithShiftsAndSalary?>
 

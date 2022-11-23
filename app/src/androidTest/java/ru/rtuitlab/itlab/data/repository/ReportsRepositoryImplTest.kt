@@ -15,6 +15,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import ru.rtuitlab.itlab.Constants
 import ru.rtuitlab.itlab.Generator
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.data.local.AppDatabase
@@ -65,7 +66,7 @@ class ReportsRepositoryImplTest {
 
     @Test
     fun updateUserReports() = runTest {
-        val result = repo.updateReports() as Resource.Success
+        val result = repo.updateReports(Constants.CURRENT_USER_ID.toString()) as Resource.Success
 
         assertThat(dao.getReports().first().map {
             it.report
@@ -78,7 +79,7 @@ class ReportsRepositoryImplTest {
 
     @Test
     fun updateReportSalaries() = runTest {
-        repo.updateReports()
+        repo.updateReports(Constants.CURRENT_USER_ID.toString())
         val r = repo.updateReportSalaries("0") as Resource.Success
 
         assertThat(
@@ -92,7 +93,7 @@ class ReportsRepositoryImplTest {
 
     @Test
     fun updateReports() = runTest {
-        val r = repo.updateReports() as Resource.Success
+        val r = repo.updateReports(Constants.CURRENT_USER_ID.toString()) as Resource.Success
 
         assertThat(dao.getReports().first().map {
             it.report
@@ -135,7 +136,7 @@ class ReportsRepositoryImplTest {
 
     @Test
     fun updateSalaryForUser() = runTest {
-        repo.updateReports()
+        repo.updateReports(Constants.CURRENT_USER_ID.toString())
         val r = repo.updateSalaryForUser("2") as Resource.Success
 
         assertThat(
@@ -147,7 +148,7 @@ class ReportsRepositoryImplTest {
 
     @Test
     fun editReportSalary() = runTest {
-        repo.updateReports()
+        repo.updateReports(Constants.CURRENT_USER_ID.toString())
         val r = repo.editReportSalary("2", ReportSalaryRequest(13, "blah")) as Resource.Success
 
         assertThat(

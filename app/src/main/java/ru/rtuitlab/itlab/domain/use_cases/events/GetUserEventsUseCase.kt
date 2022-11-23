@@ -8,14 +8,18 @@ class GetUserEventsUseCase @Inject constructor(
     private val repo: EventsRepository
 ) {
     operator fun invoke(userId: String) = repo.getUserEvents(userId).map {
-        it.map {
-            it.toUserEventModel()
-        }
+        it
+            .distinctBy { it.userEvent.id }
+            .map {
+                it.toUserEventModel()
+            }
     }
 
-    fun search(query: String) = repo.searchUserEvents(query).map {
-        it.map {
-            it.toUserEventModel()
-        }
+    fun search(query: String, userId: String) = repo.searchUserEvents(query, userId).map {
+        it
+            .distinctBy { it.userEvent.id }
+            .map {
+                it.toUserEventModel()
+            }
     }
 }
