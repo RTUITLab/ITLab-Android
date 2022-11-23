@@ -268,6 +268,7 @@ fun DropdownUserPicker(
     onSearch: (String) -> Unit,
     onSelect: (User) -> Unit
 ) {
+    val shape = MaterialTheme.shapes.extraSmall
     AppDropdownMenu(
         properties = PopupProperties(focusable = false),
         maxHeight = 260.dp,
@@ -286,7 +287,7 @@ fun DropdownUserPicker(
                     )
                 },
                 isError = state.shouldShowSelectedUserError,
-                shape = MaterialTheme.shapes.extraSmall
+                shape = shape
             )
         },
         content = { close ->
