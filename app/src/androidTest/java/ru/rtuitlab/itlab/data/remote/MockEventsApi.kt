@@ -112,6 +112,7 @@ class MockEventsApi : EventsApi {
             id = it.toString(),
             address = events[it].address,
             beginTime = events[it].beginTime,
+            endTime = events[it].endTime!!,
             title = events[it].title,
             eventType = events[it].eventType,
             role = EventRoleModel(

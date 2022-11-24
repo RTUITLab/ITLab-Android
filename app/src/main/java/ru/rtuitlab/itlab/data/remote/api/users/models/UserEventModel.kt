@@ -12,6 +12,7 @@ data class UserEventModel(
 	val title: String,
 	val eventType: EventTypeModel,
 	val beginTime: String,
+	val endTime: String,
 	val role: EventRoleModel
 ) {
 	fun toEntity(userId: String) = UserEventEntity(
@@ -21,6 +22,7 @@ data class UserEventModel(
 		title = title,
 		typeId = eventType.id,
 		beginTime = beginTime,
+		endTime = endTime,
 		roleId = role.id
 	)
 }

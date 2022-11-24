@@ -16,9 +16,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import ru.rtuitlab.itlab.Constants
 import ru.rtuitlab.itlab.Generator
 import ru.rtuitlab.itlab.common.Resource
+import ru.rtuitlab.itlab.common.extensions.endOfTimes
 import ru.rtuitlab.itlab.data.local.AppDatabase
 import ru.rtuitlab.itlab.data.local.events.EventsDao
 import ru.rtuitlab.itlab.data.local.events.models.*
@@ -88,7 +88,7 @@ class EventsRepositoryImplTest {
     fun updateUserEvents() = runTest {
         val result = eventsRepo.updateUserEvents(2.toString()) as Resource.Success
         assertThat(
-            dao.getUserEvents(2.toString()).first().map { it.toUserEventModel() }
+            dao.getUserEvents(2.toString(), "0", endOfTimes).first().map { it.toUserEventModel() }
         ).containsAtLeastElementsIn(
             result.data
         )

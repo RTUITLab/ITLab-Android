@@ -7,7 +7,11 @@ import javax.inject.Inject
 class GetUserEventsUseCase @Inject constructor(
     private val repo: EventsRepository
 ) {
-    operator fun invoke(userId: String) = repo.getUserEvents(userId).map {
+    operator fun invoke(
+        userId: String,
+        begin: String,
+        end: String
+    ) = repo.getUserEvents(userId, begin, end).map {
         it
             .distinctBy { it.userEvent.id }
             .map {

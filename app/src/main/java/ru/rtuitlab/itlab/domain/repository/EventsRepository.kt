@@ -15,7 +15,11 @@ interface EventsRepository {
 
     fun getEvents(): Flow<List<EventWithType>>
 
-    fun getUserEvents(userId: String): Flow<List<UserEventWithTypeAndRole>>
+    fun getUserEvents(
+        userId: String,
+        beginTime: String,
+        endTime: String
+    ): Flow<List<UserEventWithTypeAndRole>>
 
     fun getEventRoles(): Flow<List<EventRoleModel>>
 

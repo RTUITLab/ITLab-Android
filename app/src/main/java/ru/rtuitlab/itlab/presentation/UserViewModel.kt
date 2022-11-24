@@ -41,8 +41,15 @@ abstract class UserViewModel(
 	private val _eventUpdateErrorMessage: MutableStateFlow<String?> = MutableStateFlow(null)
 	val eventUpdateErrorMessage = _eventUpdateErrorMessage.asStateFlow()
 
-	val events = getUserEvents(userId)
-		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+	val events = beginEventsDate.combine(endEventsDate) { beginTime, endTime ->
+		beginTime to endTime
+	}.flatMapLatest {
+		getUserEvents(
+			userId = userId,
+			begin = beginEventsDate.value.toIsoString(false),
+			end = endEventsDate.value.toIsoString(true)
+		)
+	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
 	fun updateEvents() = viewModelScope.launch {
 		_areEventsRefreshing.emit(true)

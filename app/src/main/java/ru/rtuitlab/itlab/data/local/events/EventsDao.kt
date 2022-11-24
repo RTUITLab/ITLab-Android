@@ -47,9 +47,15 @@ interface EventsDao {
 
     @Transaction
     @Query("""SELECT * FROM UserEventEntity
-        WHERE userId = :userId
+        WHERE userId = :userId AND
+        endTime >= :beginTime AND
+        beginTime <= :endTime
         ORDER BY DATETIME(beginTime) DESC""")
-    fun getUserEvents(userId: String): Flow<List<UserEventWithTypeAndRole>>
+    fun getUserEvents(
+        userId: String,
+        beginTime: String,
+        endTime: String
+    ): Flow<List<UserEventWithTypeAndRole>>
 
     @Query("SELECT * FROM EventRoleModel")
     fun getEventRoles(): Flow<List<EventRoleModel>>

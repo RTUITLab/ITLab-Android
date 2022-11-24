@@ -49,7 +49,11 @@ class EventsRepositoryImpl @Inject constructor(
 
     override fun getEvents(): Flow<List<EventWithType>> = dao.getAllEvents()
 
-    override fun getUserEvents(userId: String) = dao.getUserEvents(userId)
+    override fun getUserEvents(
+        userId: String,
+        beginTime: String,
+        endTime: String
+    ) = dao.getUserEvents(userId, beginTime, endTime)
 
     override fun getEventRoles() = dao.getEventRoles()
 

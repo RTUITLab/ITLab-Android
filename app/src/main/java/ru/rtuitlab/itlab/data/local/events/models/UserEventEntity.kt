@@ -37,6 +37,7 @@ data class UserEventEntity(
     val title: String,
     val typeId: String,
     val beginTime: String,
+    val endTime: String,
     val roleId: String
 )
 
@@ -58,6 +59,7 @@ data class UserEventWithTypeAndRole(
         address = userEvent.address,
         title = userEvent.title,
         beginTime = userEvent.beginTime,
+        endTime = userEvent.endTime,
         eventType = eventType,
         role = role
     )
