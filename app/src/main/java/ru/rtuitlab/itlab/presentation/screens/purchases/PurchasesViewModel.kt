@@ -440,10 +440,12 @@ class PurchasesViewModel @Inject constructor(
             newPurchaseState =
             if (type == FileType.Check)
                 _state.value.newPurchaseState.copy(
-                    checkFileId = fileInfo.id
+                    checkFileId = fileInfo.id,
+                    isCheckFileUploading = false
                 )
             else _state.value.newPurchaseState.copy(
-                purchasePhotoId = fileInfo.id
+                purchasePhotoId = fileInfo.id,
+                isPurchasePhotoUploading = false
             )
         )
     }
