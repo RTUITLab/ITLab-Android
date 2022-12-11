@@ -16,6 +16,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.data.repository.DevicesRepository
 import ru.rtuitlab.itlab.domain.use_cases.user.GetUserClaimsUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase
+import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import javax.inject.Inject
 
 @Suppress("OPT_IN_IS_NOT_ENABLED")
@@ -24,13 +25,16 @@ import javax.inject.Inject
 class DevicesViewModel @Inject constructor(
     private val devicesRepo: DevicesRepository,
     getUserClaims: GetUserClaimsUseCase,
-    getUsers: GetUsersUseCase
+    getUsers: GetUsersUseCase,
+    getDevices: GetDevicesUseCase
 ) : ViewModel() {
 
     val isAccessible = getUserClaims().map {
         it.contains(UserClaimCategories.DEVICES.EDIT)
     }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
 
     val users = getUsers()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
@@ -67,6 +71,9 @@ class DevicesViewModel @Inject constructor(
             }
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    private val _uiDevices = MutableSharedFlow<UiEvent>()
+    val uiDevices = _uiDevices.asSharedFlow()
 
 
     private val _selectedDevice: MutableStateFlow<DeviceDetails?> = MutableStateFlow(null)
@@ -197,12 +204,14 @@ class DevicesViewModel @Inject constructor(
         _typeSearchQuery.value = query
     }
 
-    fun onRefresh() {
+    fun onRefresh() = viewModelScope.launch {
+        _isRefreshing.emit(true)
         if (_isFreeFilterChecked.value) {
             fetchFreeDevices()
         } else {
             fetchDevices()
         }
+        _isRefreshing.emit(false)
     }
 
     private fun fetchDevices() = _devicesResponsesFlow.emitInIO(viewModelScope) {
@@ -322,5 +331,9 @@ class DevicesViewModel @Inject constructor(
         }
         _devicesFlow.value = cachedDevices
     }
+    private val searchQuery = MutableStateFlow("")
+
+
+
 
 }
