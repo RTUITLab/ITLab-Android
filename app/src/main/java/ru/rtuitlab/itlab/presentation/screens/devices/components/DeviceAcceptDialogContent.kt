@@ -1,22 +1,23 @@
 package ru.rtuitlab.itlab.presentation.screens.devices.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import java.util.*
 
 @ExperimentalMaterialApi
@@ -47,8 +48,10 @@ fun DeviceAcceptDialogContent(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                         text = "Проверьте информацию",
-                                        style = MaterialTheme.typography.h6
-                                )
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(.8f),
+
+                                        )
                         }
                         Spacer(modifier = Modifier.height(10.dp))
 
@@ -64,9 +67,8 @@ fun DeviceAcceptDialogContent(
                                 Spacer(Modifier.width(8.dp))
                                 Text(
                                         text = "$title",
-                                        fontWeight = FontWeight(500),
-                                        fontSize = 16.sp,
-                                        lineHeight = 22.sp
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                                 )
 
                         }
@@ -84,9 +86,8 @@ fun DeviceAcceptDialogContent(
                                 Spacer(Modifier.width(8.dp))
                                 Text(
                                         text = "$serialNumber",
-                                        fontWeight = FontWeight(500),
-                                        fontSize = 16.sp,
-                                        lineHeight = 22.sp
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                                 )
 
                         }
@@ -104,9 +105,8 @@ fun DeviceAcceptDialogContent(
                                 Spacer(Modifier.width(8.dp))
                                 Text(
                                         text = "$description",
-                                        fontWeight = FontWeight(500),
-                                        fontSize = 16.sp,
-                                        lineHeight = 22.sp
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                                 )
 
                         }
@@ -119,19 +119,17 @@ fun DeviceAcceptDialogContent(
                                         acceptActions()
                                 },
                                 colors = ButtonDefaults.buttonColors(
-                                        backgroundColor = Color.Transparent
+                                        containerColor = Color.Transparent
                                 ),
-                                elevation = ButtonDefaults.elevation(
+                                elevation = ButtonDefaults.buttonElevation(
                                         defaultElevation = 0.dp,
                                         pressedElevation = 0.dp
                                 )
                         ) {
                                 Text(
                                         text = stringResource(R.string.confirm).uppercase(Locale.getDefault()),
-                                        color = AppColors.accent.collectAsState().value,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight(500),
-                                        lineHeight = 22.sp,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        style = MaterialTheme.typography.titleMedium,
                                 )
                         }
 
