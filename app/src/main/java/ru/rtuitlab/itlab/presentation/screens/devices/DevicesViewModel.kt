@@ -26,7 +26,6 @@ class DevicesViewModel @Inject constructor(
     private val devicesRepo: DevicesRepository,
     getUserClaims: GetUserClaimsUseCase,
     getUsers: GetUsersUseCase,
-    getDevices: GetDevicesUseCase
 ) : ViewModel() {
 
     val isAccessible = getUserClaims().map {
