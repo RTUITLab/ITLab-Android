@@ -64,6 +64,10 @@ class FilesViewModel @Inject constructor(
     val searchQuery = _searchQuery.asStateFlow()
 
     private var _files = MutableStateFlow(emptyList<FileInfo>())
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
+
     val files = searchQuery.combine(_files) { query, files ->
         query to files
     }.flatMapLatest { (query, files) ->
@@ -87,10 +91,15 @@ class FilesViewModel @Inject constructor(
 
     private val selectedUserId = MutableStateFlow<String?>(null)
 
-    fun onRefresh() = fetchFiles(
-        userId = selectedUserId.value,
-        sortedBy = selectedSortingMethod.value.apiString
-    )
+    fun onRefresh() = viewModelScope.launch {
+        _isRefreshing.emit(true)
+
+        fetchFiles(
+            userId = selectedUserId.value,
+            sortedBy = selectedSortingMethod.value.apiString
+        )
+        _isRefreshing.emit(false)
+    }
 
     fun onSearch(query: String) {
         _searchQuery.value = query

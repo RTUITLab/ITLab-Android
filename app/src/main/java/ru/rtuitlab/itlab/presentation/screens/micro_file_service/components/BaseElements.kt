@@ -1,12 +1,15 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.screens.micro_file_service.components
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +40,7 @@ fun BaseElements(
 ) {
 
     val filesResource by filesViewModel.filesResponse.collectAsState()
-    var isRefreshing by remember { mutableStateOf(false) }
+    var isRefreshing = filesViewModel.isRefreshing.collectAsState().value
 
     val files by filesViewModel.files.collectAsState()
 
@@ -76,12 +79,16 @@ fun BaseElements(
                         filesViewModel.onSearch(stringSearch.value)
                     },
                     placeholder = {
-                        Text(text = stringResource(R.string.search))
+                        Text(
+                            text = stringResource(R.string.search),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
+                        )
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        backgroundColor = MaterialTheme.colors.background,
-                        focusedBorderColor = MaterialTheme.colors.onSurface
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        focusedBorderColor = MaterialTheme.colorScheme.onSurface
                     )
                 )
 
@@ -106,7 +113,7 @@ fun BaseElements(
                             Icon(
                                 imageVector = Icons.Default.FilterList,
                                 contentDescription = stringResource(R.string.filter),
-                                tint = MaterialTheme.colors.onSurface
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     },
@@ -118,6 +125,7 @@ fun BaseElements(
                                     filesViewModel.onSortingChanged(sortingMethod)
                                     collapseAction()
                                 },
+
                                 label = stringResource(sortingMethod.nameResource)
                             )
                         }
@@ -128,34 +136,34 @@ fun BaseElements(
                 modifier = Modifier
                     .fillMaxSize(),
                 state = rememberSwipeRefreshState(isRefreshing),
-                onRefresh = filesViewModel::onRefresh
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    filesResource.handle(
-                        onLoading = {
-                            isRefreshing = true
-                        },
-                        onError = { msg ->
-                            isRefreshing = false
-                            LoadingError(msg = msg)
-                        },
-                        onSuccess = {
-                            isRefreshing = false
-                            if (it.isEmpty())
-                                LoadingError(msg = stringResource(R.string.no_files))
-                            else {
-                                FileList(files, filesViewModel)
-                            }
-                        }
-                    )
+                onRefresh = {
+                    filesViewModel.onRefresh()
                 }
-            }
+                    ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        filesResource.handle(
+                            onLoading = {
+                            },
+                            onError = { msg ->
+                                LoadingError(msg = msg)
+                            },
+                            onSuccess = {
+                                if (it.isEmpty())
+                                    LoadingError(msg = stringResource(R.string.no_files))
+                                else {
+                                    FileList(files, filesViewModel)
+                                }
+                            }
+                        )
+                    }
+                }
         }
     }
 }
+
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -200,7 +208,8 @@ fun FileCard(filesViewModel: FilesViewModel, file: FileInfo, modifier: Modifier)
             ) {
                 Text(
                     text = file.uploadDate.fromIso8601(LocalContext.current),
-                    style = MaterialTheme.typography.subtitle1
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
                 )
             }
             Row {
@@ -219,7 +228,10 @@ fun FileCard(filesViewModel: FilesViewModel, file: FileInfo, modifier: Modifier)
                         )
                     ) {
                         IconizedRow(
-                            imageVector = Icons.Default.Person,
+                            painter =  painterResource(id = R.drawable.ic_person),
+                            contentDescription = "",
+                            imageHeight = 14.dp,
+                            imageWidth = 14.dp,
                             opacity = .7f,
                             spacing = 0.dp
                         ) {
@@ -230,7 +242,8 @@ fun FileCard(filesViewModel: FilesViewModel, file: FileInfo, modifier: Modifier)
                         onClick = { filesViewModel.downloadFile(activity, file) }) {
                         Text(
                             text = stringResource(R.string.download),
-                            color = MaterialTheme.colors.onPrimary
+                            color = MaterialTheme.colorScheme.onSurface,
+                            style = MaterialTheme.typography.titleMedium,
                         )
                     }
                 }
@@ -247,6 +260,8 @@ fun FileCard(filesViewModel: FilesViewModel, file: FileInfo, modifier: Modifier)
                     )
                     Text(
                         text = file.filename,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.8f),
                         overflow = TextOverflow.Clip
                     )
                 }
