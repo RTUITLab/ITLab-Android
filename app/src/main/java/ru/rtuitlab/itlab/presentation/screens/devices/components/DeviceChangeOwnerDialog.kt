@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,10 +18,9 @@ import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalAnimationApi
-@ExperimentalMaterialApi
 @Composable
 fun DeviceChangeOwnerDialog(
     onDismissRequest: () -> Unit,
@@ -42,6 +41,7 @@ fun DeviceChangeOwnerDialog(
     ) {
 
         Card(
+
             shape = RoundedCornerShape(10.dp)
         ) {
             Column(
@@ -53,6 +53,7 @@ fun DeviceChangeOwnerDialog(
                         bottom = 10.dp,
                         end = 20.dp
                     )
+
             ) {
                 Column(
 
@@ -67,12 +68,16 @@ fun DeviceChangeOwnerDialog(
                         value = query,
                         onValueChange = devicesViewModel::onDialogQueryChanged,
                         placeholder = {
-                            Text(text = stringResource(R.string.to_assign_owner))
+                            Text(
+                                text = stringResource(R.string.to_assign_owner),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
+                            )
                         },
                         singleLine = true,
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            backgroundColor = MaterialTheme.colors.background,
-                            focusedBorderColor = MaterialTheme.colors.onSurface
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            focusedBorderColor = MaterialTheme.colorScheme.onSurface
 
                         ),
                         modifier = Modifier
@@ -98,7 +103,8 @@ fun DeviceChangeOwnerDialog(
 
                             Text(
                                 text = stringResource(id = R.string.pick_up),
-                                color = AppColors.red,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.clickable {
 
                                     devicesViewModel.onPickUpEquipment(
@@ -120,7 +126,8 @@ fun DeviceChangeOwnerDialog(
 
                         Text(
                             text = stringResource(id = R.string.to_choose),
-                            color = AppColors.accent.collectAsState().value,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.clickable {
                                 selectedUser?.let {
                                     devicesViewModel.onChangeEquipmentOwner(
@@ -146,7 +153,6 @@ fun DeviceChangeOwnerDialog(
     }
 }
 
-@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
 private fun UserList(
@@ -177,9 +183,14 @@ private fun UserList(
                 ) {
                     Text(
                         text = user.fullName,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                         modifier = Modifier.padding(5.dp, 0.dp)
                     )
                 }
+                Divider(
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
     }
