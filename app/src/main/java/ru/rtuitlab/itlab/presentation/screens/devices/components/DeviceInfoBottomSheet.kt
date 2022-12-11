@@ -9,10 +9,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -21,7 +21,6 @@ import androidx.compose.ui.window.Dialog
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @ExperimentalAnimationApi
 @ExperimentalTransitionApi
@@ -80,13 +79,15 @@ fun DeviceInfoBottomSheet(
                     .height(20.dp),
                 painter = painterResource(R.drawable.ic_title),
                 contentDescription = stringResource(R.string.equipmentType),
-                tint = colorResource(R.color.accent)
+                tint = MaterialTheme.colorScheme.primary
 
 
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = device?.equipmentType?.title.toString(),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                 textDecoration = TextDecoration.Underline
 
 
@@ -126,12 +127,14 @@ fun DeviceInfoBottomSheet(
                     .height(20.dp),
                 painter = painterResource(R.drawable.ic_serial_number),
                 contentDescription = stringResource(R.string.serial_number),
-                tint = colorResource(R.color.accent)
+                tint = MaterialTheme.colorScheme.primary
 
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = device?.serialNumber.toString(),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                 textDecoration = TextDecoration.Underline
 
             )
@@ -169,13 +172,15 @@ fun DeviceInfoBottomSheet(
                 modifier = Modifier
                     .width(20.dp)
                     .height(20.dp),
-                tint = colorResource(R.color.accent)
+                tint = MaterialTheme.colorScheme.primary
 
 
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = device?.description.toString(),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                 textDecoration = TextDecoration.Underline
 
 
@@ -222,7 +227,7 @@ fun DeviceInfoBottomSheet(
                         isConfirmationDialogShown = true
 
                     },
-                tint = AppColors.red
+                tint = MaterialTheme.colorScheme.error
 
 
             )
