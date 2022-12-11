@@ -1,33 +1,31 @@
 package ru.rtuitlab.itlab.presentation.screens.devices.components
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 
-@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
 fun DeviceCard(
@@ -45,19 +43,18 @@ fun DeviceCard(
         modifier = modifier
             .clickable {
                 expandedDeviceCardbool.value = !expandedDeviceCardbool.value
-                Log.d("DeviceCard", device.toString())
-            },
-        elevation = 2.dp,
-        shape = MaterialTheme.shapes.medium
+            }
+            .clip(MaterialTheme.shapes.small),
+
     ) {
         device.run {
             Column(
                 modifier = Modifier
 	                .padding(
-		                top = 10.dp,
+		                top = 8.dp,
 		                bottom = 8.dp,
-		                start = 15.dp,
-		                end = 15.dp
+		                start = 23.dp,
+		                end = 23.dp
 	                )
 	                .fillMaxWidth()
 
@@ -72,9 +69,8 @@ fun DeviceCard(
                         Text(
 
                             text = if (equipmentType != null) equipmentType?.title.toString() else "Обновите",
-                            fontWeight = FontWeight(500),
-                            fontSize = 17.sp,
-                            lineHeight = 22.sp,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
                             modifier = Modifier
@@ -82,9 +78,7 @@ fun DeviceCard(
                         )
                         Text(
                             text = " #$number",
-                            fontWeight = FontWeight(500),
-                            fontSize = 17.sp,
-                            lineHeight = 22.sp,
+                            style = MaterialTheme.typography.titleMedium,
                             color = Color.Gray,
                             modifier = Modifier
                                 .weight(1f, false)
@@ -109,7 +103,7 @@ fun DeviceCard(
                                     Icon(
                                         imageVector = Icons.Default.Edit,
                                         contentDescription = stringResource(R.string.edit),
-                                        tint = colorResource(R.color.accent),
+                                        tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier
 	                                        .padding(10.dp)
 	                                        .width(16.dp)
@@ -143,7 +137,7 @@ fun DeviceCard(
 
 
                 AnimatedVisibility(expandedDeviceCardbool.value) {
-                    Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(8.dp))
                 }
                 if (serialNumber != null) {
                     AnimatedVisibility(expandedDeviceCardbool.value) {
@@ -159,9 +153,8 @@ fun DeviceCard(
                             Spacer(Modifier.width(8.dp))
                             Text(
                                 text = "$serialNumber",
-                                fontWeight = FontWeight(500),
-                                fontSize = 16.sp,
-                                lineHeight = 22.sp
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                             )
 
                         }
@@ -207,10 +200,8 @@ fun DeviceCard(
                                 text = if (ownerlastName != null) "$ownerfirstName $ownerlastName" else stringResource(
                                     R.string.laboratory
                                 ),
-                                fontWeight = FontWeight(500),
-                                fontSize = 16.sp,
-                                lineHeight = 22.sp,
-                                color = AppColors.accent.collectAsState().value,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.primary,
                                 overflow = TextOverflow.Ellipsis
 
                             )
@@ -235,9 +226,8 @@ fun DeviceCard(
                                 text = if (ownerlastName != null) "$ownerfirstName $ownerlastName" else stringResource(
                                     R.string.laboratory
                                 ),
-                                fontWeight = FontWeight(500),
-                                fontSize = 16.sp,
-                                lineHeight = 22.sp,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                                 overflow = TextOverflow.Ellipsis
 
                             )
