@@ -9,11 +9,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -99,15 +99,16 @@ fun DeviceNewBottomSheet(
                     .height(20.dp),
                 painter = painterResource(R.drawable.ic_title),
                 contentDescription = stringResource(R.string.equipmentType),
-                tint = colorResource(R.color.accent)
+                tint = MaterialTheme.colorScheme.primary
 
 
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = deviceName.value.ifEmpty { stringResource(R.string.equipmentType) },
-                textDecoration = TextDecoration.Underline
-
+                textDecoration = TextDecoration.Underline,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
 
             )
 
@@ -139,13 +140,15 @@ fun DeviceNewBottomSheet(
                     .height(20.dp),
                 painter = painterResource(R.drawable.ic_serial_number),
                 contentDescription = stringResource(R.string.serial_number),
-                tint = colorResource(R.color.accent)
+                tint = MaterialTheme.colorScheme.primary
 
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = if (serialNumber.value.isEmpty()) stringResource(R.string.serial_number) else serialNumber.value,
-                textDecoration = TextDecoration.Underline
+                textDecoration = TextDecoration.Underline,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
 
             )
         }
@@ -175,12 +178,14 @@ fun DeviceNewBottomSheet(
                 modifier = Modifier
                     .width(20.dp)
                     .height(20.dp),
-                tint = colorResource(R.color.accent)
+                tint = MaterialTheme.colorScheme.primary
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = if (description.value.isEmpty()) stringResource(R.string.description) else description.value,
-                textDecoration = TextDecoration.Underline
+                textDecoration = TextDecoration.Underline,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
             )
         }
         Spacer(Modifier.height(8.dp))
