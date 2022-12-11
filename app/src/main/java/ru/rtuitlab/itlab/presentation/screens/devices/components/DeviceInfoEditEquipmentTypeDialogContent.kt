@@ -10,10 +10,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -27,6 +28,7 @@ import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentTypeResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalTransitionApi
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
@@ -75,12 +77,15 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                         setEquipmentTypeNewCardBool(!allTypes.any { it.title == query })
                     },
                     placeholder = {
-                        Text(text = stringResource(R.string.equipmentType))
+                        Text(
+                            text = stringResource(R.string.equipmentType),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(.8f),)
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        backgroundColor = MaterialTheme.colors.background,
-                        focusedBorderColor = MaterialTheme.colors.onSurface
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        focusedBorderColor = MaterialTheme.colorScheme.onSurface
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -117,7 +122,11 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                     }
                             )
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = searchQuery, maxLines = 1)
+                            Text(
+                                text = searchQuery,
+                                maxLines = 1,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f),)
                         }
                     }
                 }
@@ -154,14 +163,17 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                             placeholder = { Text(text = stringResource(R.string.equipmentType)) },
                             singleLine = true,
                             colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = if (errorTitle.value) MaterialTheme.colors.error else MaterialTheme.colors.onSurface,
-                                backgroundColor = MaterialTheme.colors.background,
-                                focusedBorderColor = MaterialTheme.colors.onSurface,
-                                focusedLabelColor = MaterialTheme.colors.onSurface
+                                textColor = if (errorTitle.value) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                                containerColor = MaterialTheme.colorScheme.background,
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = MaterialTheme.colorScheme.onSurface
                             ),
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            label = { Text(text = stringResource(id = R.string.title)) }
+                            label = { Text(
+                                text = stringResource(id = R.string.title),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f)) }
                         )
 
                         OutlinedTextField(
@@ -172,14 +184,17 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                             placeholder = { Text(text = stringResource(R.string.shortTitle)) },
                             singleLine = true,
                             colors = TextFieldDefaults.outlinedTextFieldColors(
-                                backgroundColor = MaterialTheme.colors.background,
-                                focusedBorderColor = MaterialTheme.colors.onSurface,
-                                focusedLabelColor = MaterialTheme.colors.onSurface,
+                                containerColor = MaterialTheme.colorScheme.background,
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = MaterialTheme.colorScheme.onSurface,
                                 textColor = Color.Gray
                             ),
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            label = { Text(text = stringResource(id = R.string.shortTitle)) }
+                            label = {
+                                Text(text = stringResource(id = R.string.shortTitle),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f),) }
                         )
                         OutlinedTextField(
                             value = description.value,
@@ -192,14 +207,18 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                             },
                             placeholder = { Text(text = stringResource(R.string.description)) },
                             colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = if (errorDescription.value) MaterialTheme.colors.error else Color.Gray,
-                                backgroundColor = MaterialTheme.colors.background,
-                                focusedBorderColor = MaterialTheme.colors.onSurface,
-                                focusedLabelColor = MaterialTheme.colors.onSurface,
+                                textColor = if (errorDescription.value) MaterialTheme.colorScheme.error else Color.Gray,
+                                containerColor = MaterialTheme.colorScheme.background,
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = MaterialTheme.colorScheme.onSurface,
                             ),
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            label = { Text(text = stringResource(id = R.string.description) + " " + "${sizeDescription.value}" + "/" + sizeMaxDescription) },
+                            label = { Text(
+                                text = stringResource(id = R.string.description) + " " + "${sizeDescription.value}" + "/" + sizeMaxDescription,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f)
+                            )},
                             singleLine = true
                         )
 
@@ -230,7 +249,9 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                             }
                                         }
                                     }
-                                }
+                                },
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                             )
                         }
                         Spacer(modifier = Modifier.height(5.dp))
@@ -242,23 +263,26 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    typesResource.handle(
-                        onLoading = {},
-                        onError = { msg ->
-                            LoadingError(msg = msg)
-                        },
-                        onSuccess = {
-                            EquipmentList(
-                                devicesViewModel = devicesViewModel,
-                                onTypeSelected = {
-                                    devicesViewModel.onTypesSearch(it.title)
-                                },
-                                setNewCardBool = setEquipmentTypeNewCardBool,
-                                setExtended = setExtendedEquipmentNewCard,
-                            )
-                        }
-                    )
-
+                    Row(
+                        modifier = Modifier
+                        .fillMaxWidth()) {
+                        typesResource.handle(
+                            onLoading = {},
+                            onError = { msg ->
+                                LoadingError(msg = msg)
+                            },
+                            onSuccess = {
+                                EquipmentList(
+                                    devicesViewModel = devicesViewModel,
+                                    onTypeSelected = {
+                                        devicesViewModel.onTypesSearch(it.title)
+                                    },
+                                    setNewCardBool = setEquipmentTypeNewCardBool,
+                                    setExtended = setExtendedEquipmentNewCard,
+                                )
+                            }
+                        )
+                    }
                     Spacer(modifier = Modifier.height(5.dp))
                     Row(
                         modifier = Modifier
@@ -268,6 +292,8 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                     ) {
                         Text(
                             text = stringResource(id = R.string.to_choose),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                             modifier = Modifier.clickable {
                                 val eq = queriedTypes.find { it ->
                                     it.title == searchQuery
@@ -280,6 +306,7 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                 }
+
             }
         }
     }
@@ -302,6 +329,7 @@ private fun EquipmentList(
         modifier = Modifier
             .fillMaxWidth()
             .height(210.dp)
+            .padding(0.dp, 0.dp, 0.dp, 0.dp)
     ) {
         items(types) { type ->
             Card(
@@ -321,9 +349,14 @@ private fun EquipmentList(
                 ) {
                     Text(
                         text = type.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                         modifier = Modifier.padding(5.dp, 0.dp)
                     )
                 }
+                Divider(
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
     }
