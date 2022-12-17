@@ -25,6 +25,8 @@ sealed class AppTab(
     object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, false)
     object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description)
     object Purchases: AppTab("purchases_tab", AppScreen.Purchases.route, R.string.purchases, Icons.Default.Payments)
+    object Files: AppTab("files_tab", AppScreen.Files.route, R.string.files, Icons.Default.AttachFile)
+
 
     fun asScreen() = when (this) {
         Events -> AppScreen.Events
@@ -35,6 +37,7 @@ sealed class AppTab(
         Profile -> AppScreen.Profile
         Reports -> AppScreen.Reports
         Purchases -> AppScreen.Purchases
+        Files -> AppScreen.Files
     }
 
     companion object {
@@ -47,7 +50,8 @@ sealed class AppTab(
                 Purchases,
                 Devices,
                 Feedback,
-                Profile
+                Profile,
+                Files
             )
 
         private fun applyClaims(claims: List<Any>) {
@@ -110,6 +114,8 @@ open class AppScreen(
     }
     object NewReport: AppScreen(R.string.report_new, "reports/new")
 
+    object Files: AppScreen(R.string.files, "files", true)
+
 
     // Purchases-related
     object Purchases: AppScreen(R.string.purchases, "purchases", true)
@@ -138,7 +144,8 @@ open class AppScreen(
             NewReport,
             Purchases,
             PurchaseDetails(context.resources.getString(R.string.purchase)),
-            NewPurchase
+            NewPurchase,
+            Files
         )
     }
 }
