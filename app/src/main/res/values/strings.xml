@@ -203,4 +203,7 @@
     <string name="md_task">Task</string>
     <string name="md_attach">Attach…</string>
 
+    <string name="files">Files</string>
+
+
 </resources>
