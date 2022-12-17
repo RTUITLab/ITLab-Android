@@ -25,7 +25,7 @@ import javax.inject.Inject
 class DevicesViewModel @Inject constructor(
     private val devicesRepo: DevicesRepository,
     getUserClaims: GetUserClaimsUseCase,
-    getUsers: GetUsersUseCase,
+    getUsers: GetUsersUseCase
 ) : ViewModel() {
 
     val isAccessible = getUserClaims().map {
@@ -71,8 +71,8 @@ class DevicesViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    private val _uiDevices = MutableSharedFlow<UiEvent>()
-    val uiDevices = _uiDevices.asSharedFlow()
+    private val _uiEvents = MutableSharedFlow<UiEvent>()
+    val uiEvents = _uiEvents.asSharedFlow()
 
 
     private val _selectedDevice: MutableStateFlow<DeviceDetails?> = MutableStateFlow(null)

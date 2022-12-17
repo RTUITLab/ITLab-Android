@@ -10,7 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandLess
@@ -26,12 +26,13 @@ import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentTypeNewRequest
 import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentTypeResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
+import ru.rtuitlab.itlab.presentation.ui.components.PrimaryTextButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalTransitionApi
 @ExperimentalAnimationApi
-@ExperimentalMaterialApi
 @Composable
 fun DeviceInfoEditEquipmentTypeDialogContent(
     devicesViewModel: DevicesViewModel,
@@ -104,30 +105,19 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                 )
                             }
                     ) {
-                        Row(
+                        IconizedRow(
+                            imageVector = if (extendedEquipmentNewCard) Icons.Default.ExpandLess else Icons.Default.Add,
                             modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            Icon(
-                                if (extendedEquipmentNewCard) Icons.Default.ExpandLess else Icons.Default.Add,
-                                contentDescription = stringResource(
-                                    id = R.string.add_device
-                                ),
-                                modifier = Modifier
-                                    .width(30.dp)
-                                    .clickable {
-                                        setExtendedEquipmentNewCard(
-                                            !extendedEquipmentNewCard
-                                        )
-                                    }
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
+                                .clickable {
+                                    setExtendedEquipmentNewCard(!extendedEquipmentNewCard)
+                                }) {
                             Text(
                                 text = searchQuery,
                                 maxLines = 1,
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface.copy(.8f),)
                         }
+
                     }
                 }
 
@@ -229,9 +219,9 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.End
                         ) {
-                            Text(
-                                text = stringResource(id = R.string.to_create),
-                                modifier = Modifier.clickable {
+                            PrimaryTextButton(
+
+                                onClick = {
                                     if (!errorDescription.value && !errorTitle.value) {
                                         val equipmentTypeNewRequest =
                                             EquipmentTypeNewRequest(
@@ -248,11 +238,12 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                                 setEquipmentTypeNewCardBool(false)
                                             }
                                         }
+
                                     }
                                 },
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
+                                    text = stringResource(id = R.string.to_create)
                             )
+
                         }
                         Spacer(modifier = Modifier.height(5.dp))
 
@@ -290,19 +281,18 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.Bottom
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.to_choose),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(.8f),
-                            modifier = Modifier.clickable {
+                        PrimaryTextButton(
+                            onClick = {
                                 val eq = queriedTypes.find { it ->
                                     it.title == searchQuery
                                 }
                                 if (eq != null) {
                                     onConfirm(eq)
                                 }
-                            }
+                                      },
+                            text = stringResource(id = R.string.to_choose),
                         )
+
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                 }
@@ -312,7 +302,6 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
     }
 }
 
-@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
 private fun EquipmentList(

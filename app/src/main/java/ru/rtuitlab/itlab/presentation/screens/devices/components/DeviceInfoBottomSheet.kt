@@ -4,14 +4,10 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,11 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 
 @ExperimentalAnimationApi
 @ExperimentalTransitionApi
-@ExperimentalMaterialApi
 @Composable
 fun DeviceInfoBottomSheet(
     devicesViewModel: DevicesViewModel,
@@ -65,36 +61,22 @@ fun DeviceInfoBottomSheet(
                     }
                 }
             )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        IconizedRow(
+            painter = painterResource(R.drawable.ic_title),
+            contentDescription = stringResource(R.string.equipmentType),
             modifier = Modifier
                 .clickable {
                     isTypeDialogShown = true
                 }
-                .fillMaxWidth()
         ) {
-            Icon(
-                modifier = Modifier
-                    .width(20.dp)
-                    .height(20.dp),
-                painter = painterResource(R.drawable.ic_title),
-                contentDescription = stringResource(R.string.equipmentType),
-                tint = MaterialTheme.colorScheme.primary
-
-
-            )
-            Spacer(Modifier.width(8.dp))
             Text(
                 text = device?.equipmentType?.title.toString(),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                 textDecoration = TextDecoration.Underline
-
-
             )
-
-
         }
+
         Spacer(Modifier.height(8.dp))
 
         if (isSerialNumberDialogShown)
@@ -116,21 +98,12 @@ fun DeviceInfoBottomSheet(
                     )
                 }
             )
-        Row(verticalAlignment = Alignment.CenterVertically,
+        IconizedRow(painter = painterResource(R.drawable.ic_serial_number),
+            contentDescription = stringResource(R.string.serial_number),
             modifier = Modifier
                 .clickable {
                     isSerialNumberDialogShown = true
                 }) {
-            Icon(
-                modifier = Modifier
-                    .width(20.dp)
-                    .height(20.dp),
-                painter = painterResource(R.drawable.ic_serial_number),
-                contentDescription = stringResource(R.string.serial_number),
-                tint = MaterialTheme.colorScheme.primary
-
-            )
-            Spacer(Modifier.width(8.dp))
             Text(
                 text = device?.serialNumber.toString(),
                 style = MaterialTheme.typography.titleMedium,
@@ -139,6 +112,8 @@ fun DeviceInfoBottomSheet(
 
             )
         }
+
+
         Spacer(Modifier.height(8.dp))
 
         if (isDescriptionDialogShown)
@@ -160,32 +135,22 @@ fun DeviceInfoBottomSheet(
                     )
                 }
             )
-        Row(verticalAlignment = Alignment.CenterVertically,
+        IconizedRow(
+            painter = painterResource(R.drawable.ic_info),
+            contentDescription = stringResource(R.string.description),
             modifier = Modifier
-                .clickable {
+            .clickable {
 
-                    isDescriptionDialogShown = true
-                }) {
-            Icon(
-                painter = painterResource(R.drawable.ic_info),
-                contentDescription = stringResource(R.string.description),
-                modifier = Modifier
-                    .width(20.dp)
-                    .height(20.dp),
-                tint = MaterialTheme.colorScheme.primary
-
-
-            )
-            Spacer(Modifier.width(8.dp))
+                isDescriptionDialogShown = true
+            }) {
             Text(
                 text = device?.description.toString(),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                 textDecoration = TextDecoration.Underline
-
-
             )
         }
+
         Spacer(Modifier.height(8.dp))
 
         Row(
@@ -215,22 +180,23 @@ fun DeviceInfoBottomSheet(
                         }
                     }
                 )
-            Icon(
-                Icons.Outlined.Delete,
-                contentDescription = stringResource(R.string.delete),
-                modifier = Modifier
-                    .padding(10.dp)
-                    .width(40.dp)
-                    .height(30.dp)
-                    .padding(0.dp)
-                    .clickable {
-                        isConfirmationDialogShown = true
+            IconButton(
+                onClick = {
+                isConfirmationDialogShown = true
 
-                    },
-                tint = MaterialTheme.colorScheme.error
+            }) {
+                Icon(
+                    Icons.Outlined.Delete,
+                    contentDescription = stringResource(R.string.delete),
+                    modifier = Modifier
+                        .width(40.dp)
+                        .height(30.dp),
+                    tint = MaterialTheme.colorScheme.error
 
 
-            )
+                )
+            }
+
 
         }
     }

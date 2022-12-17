@@ -11,13 +11,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.PrimaryTextButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalAnimationApi
@@ -101,12 +104,11 @@ fun DeviceChangeOwnerDialog(
                     ) {
                         AnimatedVisibility(owner != null) {
 
-                            Text(
-                                text = stringResource(id = R.string.pick_up),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.clickable {
-
+                            Button(
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.Transparent
+                                ),
+                                onClick = {
                                     devicesViewModel.onPickUpEquipment(
                                         owner?.id.toString(),
                                         device.id
@@ -116,19 +118,20 @@ fun DeviceChangeOwnerDialog(
                                         }
 
                                     }
-
                                     afterChange()
-                                }
+                                }) {
+                                Text(
+                                    text = stringResource(id = R.string.pick_up),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.error,
+                                    fontSize = 14.sp
+                                )
+                            }
 
-                            )
                         }
                         Spacer(modifier = Modifier.width(15.dp))
-
-                        Text(
-                            text = stringResource(id = R.string.to_choose),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.clickable {
+                        PrimaryTextButton(
+                            onClick = {
                                 selectedUser?.let {
                                     devicesViewModel.onChangeEquipmentOwner(
                                         it.id,
@@ -140,9 +143,10 @@ fun DeviceChangeOwnerDialog(
                                     }
                                     afterChange()
                                 }
-                            }
-
+                            },
+                            text = stringResource(id = R.string.to_choose),
                         )
+
                     }
                     Spacer(modifier = Modifier.height(5.dp))
 
