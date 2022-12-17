@@ -204,13 +204,11 @@ class DevicesViewModel @Inject constructor(
     }
 
     fun onRefresh() = viewModelScope.launch {
-        _isRefreshing.emit(true)
         if (_isFreeFilterChecked.value) {
             fetchFreeDevices()
         } else {
             fetchDevices()
         }
-        _isRefreshing.emit(false)
     }
 
     private fun fetchDevices() = _devicesResponsesFlow.emitInIO(viewModelScope) {
