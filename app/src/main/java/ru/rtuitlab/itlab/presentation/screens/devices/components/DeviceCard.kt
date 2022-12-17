@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.Article
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -137,11 +139,13 @@ fun DeviceCard(
                 if (serialNumber != null) {
                     AnimatedVisibility(expandedDeviceCardbool.value) {
 
-                        IconizedRow(painter = painterResource(R.drawable.ic_serial_number), contentDescription = stringResource(R.string.serial_number)) {
+                        IconizedRow(
+                            imageVector = Icons.Outlined.Article,
+                            contentDescription = stringResource(R.string.serial_number)) {
                             Text(
                                 text = "$serialNumber",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
+                                color = MaterialTheme.colorScheme.onSurface.copy(.6f),
                             )
                         }
                     }
@@ -163,11 +167,10 @@ fun DeviceCard(
                 AnimatedVisibility(expandedDeviceCardbool.value) {
                     if (devicesViewModel.isAccessible.collectAsState().value) {
                         IconizedRow(
-                            painter = painterResource(R.drawable.ic_person),
+                            imageVector = Icons.Outlined.Person,
                             contentDescription = stringResource(R.string.ownerId),
                             modifier = Modifier
                                 .clickable {
-
                                     dialogUsersIsShown = true
                                 }
                         ) {
@@ -183,7 +186,7 @@ fun DeviceCard(
                         }
                     } else {
                         IconizedRow(
-                            painter = painterResource(R.drawable.ic_person),
+                            imageVector = Icons.Outlined.Person,
                             contentDescription = stringResource(R.string.ownerId),
 
                         ) {

@@ -2,6 +2,9 @@ package ru.rtuitlab.itlab.presentation.screens.devices.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Article
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -60,7 +63,9 @@ fun DeviceAcceptDialogContent(
 
                         Spacer(modifier = Modifier.height(5.dp))
 
-                        IconizedRow(painter = painterResource(R.drawable.ic_serial_number), contentDescription = stringResource(R.string.serial_number)) {
+                        IconizedRow(
+                                imageVector = Icons.Outlined.Article,
+                                contentDescription = stringResource(R.string.serial_number)) {
                                 Text(
                                         text = "$serialNumber",
                                         style = MaterialTheme.typography.titleMedium,
@@ -70,7 +75,9 @@ fun DeviceAcceptDialogContent(
 
                         Spacer(modifier = Modifier.height(5.dp))
 
-                        IconizedRow(painter = painterResource(R.drawable.ic_edit), contentDescription = stringResource(R.string.description)) {
+                        IconizedRow(
+                                imageVector = Icons.Outlined.Info,
+                                contentDescription = stringResource(R.string.description)) {
                                 Text(
                                         text = "$description",
                                         style = MaterialTheme.typography.titleMedium,

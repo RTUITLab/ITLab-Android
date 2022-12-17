@@ -21,6 +21,7 @@ import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.PrimaryTextButton
+import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalAnimationApi
@@ -67,7 +68,7 @@ fun DeviceChangeOwnerDialog(
                 ) {
 
 
-                    OutlinedTextField(
+                    OutlinedAppTextField(
                         value = query,
                         onValueChange = devicesViewModel::onDialogQueryChanged,
                         placeholder = {

@@ -5,7 +5,9 @@ import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Article
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -98,7 +100,8 @@ fun DeviceInfoBottomSheet(
                     )
                 }
             )
-        IconizedRow(painter = painterResource(R.drawable.ic_serial_number),
+        IconizedRow(
+            imageVector = Icons.Outlined.Article,
             contentDescription = stringResource(R.string.serial_number),
             modifier = Modifier
                 .clickable {
@@ -136,7 +139,7 @@ fun DeviceInfoBottomSheet(
                 }
             )
         IconizedRow(
-            painter = painterResource(R.drawable.ic_info),
+            imageVector = Icons.Outlined.Info,
             contentDescription = stringResource(R.string.description),
             modifier = Modifier
             .clickable {

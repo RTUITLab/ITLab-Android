@@ -29,6 +29,7 @@ import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.PrimaryTextButton
+import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalTransitionApi
@@ -71,7 +72,7 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                     .height(340.dp)
                     .padding(10.dp)
             ) {
-                OutlinedTextField(
+                OutlinedAppTextField(
                     value = searchQuery,
                     onValueChange = { query ->
                         devicesViewModel.onTypesSearch(query)

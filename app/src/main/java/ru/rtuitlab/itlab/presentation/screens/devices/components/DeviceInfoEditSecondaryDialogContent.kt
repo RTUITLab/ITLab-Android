@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentTypeNewRequest
 import ru.rtuitlab.itlab.presentation.ui.components.PrimaryTextButton
+import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +47,7 @@ fun DeviceInfoEditSecondaryDialogContent(
             ) {
 
 
-                OutlinedTextField(
+                OutlinedAppTextField(
                     value = description.value,
                     onValueChange = {
                         description.value = it
