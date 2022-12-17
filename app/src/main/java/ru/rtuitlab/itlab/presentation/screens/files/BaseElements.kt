@@ -1,12 +1,11 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package ru.rtuitlab.itlab.presentation.screens.micro_file_service.components
+package ru.rtuitlab.itlab.presentation.screens.files
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -31,12 +30,12 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.Shared
 import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.LocalActivity
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
-@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
 fun BaseElements(
-    filesViewModel: FilesViewModel
+    filesViewModel: FilesViewModel = singletonViewModel()
 ) {
 
     val filesResource by filesViewModel.filesResponse.collectAsState()
@@ -49,92 +48,11 @@ fun BaseElements(
         modifier = Modifier
             .fillMaxSize()
         ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            val selectedSortingMethod by filesViewModel.selectedSortingMethod.collectAsState()
 
-            val stringSearch = remember { mutableStateOf("") }
-            val focusRequester = remember { FocusRequester() }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                SideEffect {
-                    filesViewModel.onSearch(stringSearch.value)
-                }
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.9f)
-                        .focusRequester(focusRequester),
-                    value = stringSearch.value,
-                    onValueChange = {
-                        stringSearch.value = it
-                        filesViewModel.onSearch(stringSearch.value)
-                    },
-                    placeholder = {
-                        Text(
-                            text = stringResource(R.string.search),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
-                        )
-                    },
-                    singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        focusedBorderColor = MaterialTheme.colorScheme.onSurface
-                    )
-                )
-
-                DisposableEffect(Unit) {
-                    //focusRequester.requestFocus()
-                    onDispose {
-                        filesViewModel.onSearch("")
-                    }
-                }
-
-                AppDropdownMenu(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.1f),
-                    anchor = {
-                        IconButton(
-                            modifier = Modifier
-                                .height(36.dp)
-                                .width(36.dp),
-                            onClick = it
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FilterList,
-                                contentDescription = stringResource(R.string.filter),
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    },
-                    content = { collapseAction ->
-                        FilesViewModel.SortingMethod.values().forEach { sortingMethod ->
-                            LabeledRadioButton(
-                                state = sortingMethod == selectedSortingMethod,
-                                onCheckedChange = {
-                                    filesViewModel.onSortingChanged(sortingMethod)
-                                    collapseAction()
-                                },
-
-                                label = stringResource(sortingMethod.nameResource)
-                            )
-                        }
-                    }
-                )
-            }
             SwipeRefresh(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .padding(it),
                 state = rememberSwipeRefreshState(isRefreshing),
                 onRefresh = {
                     filesViewModel.onRefresh()
@@ -160,12 +78,11 @@ fun BaseElements(
                         )
                     }
                 }
-        }
+
     }
 }
 
 
-@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
 private fun FileList(

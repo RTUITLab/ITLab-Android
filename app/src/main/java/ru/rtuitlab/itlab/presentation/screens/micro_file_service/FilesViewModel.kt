@@ -44,7 +44,7 @@ class FilesViewModel @Inject constructor(
 
     private val _filesResponse =
         MutableStateFlow<Resource<List<FileInfoResponse>>>(Resource.Loading)
-    val filesResponse = _filesResponse.asStateFlow()
+    val filesResponse = _filesResponse.asStateFlow().also { fetchFiles() }
 
     val users = getUsers()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
@@ -92,13 +92,11 @@ class FilesViewModel @Inject constructor(
     private val selectedUserId = MutableStateFlow<String?>(null)
 
     fun onRefresh() = viewModelScope.launch {
-        _isRefreshing.emit(true)
 
         fetchFiles(
             userId = selectedUserId.value,
             sortedBy = selectedSortingMethod.value.apiString
         )
-        _isRefreshing.emit(false)
     }
 
     fun onSearch(query: String) {
