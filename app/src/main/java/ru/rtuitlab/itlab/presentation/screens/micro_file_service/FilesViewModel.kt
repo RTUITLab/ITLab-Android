@@ -54,19 +54,7 @@ class FilesViewModel @Inject constructor(
     val filesResponse = _filesResponse.asStateFlow()
 
     init{
-        viewModelScope.launch {
-            currentUserId.collectUntil(
-                condition = { it != null },
-                action = {
-                    it?.let {
-                        launch {
-                            fetchFiles()
-                        }
-                    }
-                }
-            )
-
-        }
+        fetchFiles()
     }
 
     val users = getUsers()
