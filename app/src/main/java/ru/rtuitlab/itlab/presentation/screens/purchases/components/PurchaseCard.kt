@@ -6,6 +6,7 @@ import android.util.Patterns
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Done
@@ -276,7 +277,7 @@ fun PurchaseCard(
                             enabled = state.areSolutionButtonsEnabled
                         ) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_delete),
+                                Icons.Outlined.Delete,
                                 contentDescription = stringResource(R.string.purchase_check),
                                 tint = MaterialTheme.colorScheme.error
                             )

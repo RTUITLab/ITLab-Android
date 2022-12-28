@@ -22,7 +22,7 @@ fun IconizedRow(
 	contentDescription: String,
 	spacing: Dp = 8.dp,
 	tint: Color = LocalContentColor.current,
-	opacity: Float = .3f,
+	opacity: Float = 0.6f,
 	content: @Composable () -> Unit
 ) {
 	Row(

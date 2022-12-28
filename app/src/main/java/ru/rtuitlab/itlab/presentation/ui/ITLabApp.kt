@@ -30,7 +30,7 @@ import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.navigation.AppNavigation
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.navigation.NavigationControl
-import ru.rtuitlab.itlab.presentation.screens.devices.components.DevicesTopAppBar
+import ru.rtuitlab.itlab.presentation.screens.devices.components.DevicesBottomBar
 import ru.rtuitlab.itlab.presentation.screens.employees.components.EmployeesBottomBar
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventsBottomBar
 import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopBar
@@ -147,12 +147,13 @@ fun ITLabApp(
 
                         AppScreen.Employees,
                         AppScreen.Purchases,
+                        AppScreen.Devices,
                         AppScreen.Files,
                         AppScreen.Reports ->
                             CenterAlignedTopAppBar(title = stringResource(currentScreen.screenNameResource))
 
                         AppScreen.Feedback -> FeedbackTopAppBar()
-                        AppScreen.Devices -> DevicesTopAppBar()
+
                         is AppScreen.ReportDetails -> BasicTopAppBar(
                             text = stringResource(
                                 currentScreen.screenNameResource,
@@ -191,6 +192,7 @@ fun ITLabApp(
                     is AppScreen.Profile -> ProfileBottomBar(mainFloatingActionButton)
                     is AppScreen.Reports -> ReportsBottomBar(mainFloatingActionButton)
                     is AppScreen.Purchases -> PurchasesBottomBar(mainFloatingActionButton)
+                    is AppScreen.Devices -> DevicesBottomBar(mainFloatingActionButton)
                     is AppScreen.Files -> FilesBottomBar(mainFloatingActionButton)
                 }
             }

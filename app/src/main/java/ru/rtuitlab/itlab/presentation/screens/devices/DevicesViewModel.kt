@@ -16,6 +16,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.data.repository.DevicesRepository
 import ru.rtuitlab.itlab.domain.use_cases.user.GetUserClaimsUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase
+import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import javax.inject.Inject
 
 @Suppress("OPT_IN_IS_NOT_ENABLED")
@@ -31,6 +32,8 @@ class DevicesViewModel @Inject constructor(
         it.contains(UserClaimCategories.DEVICES.EDIT)
     }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
 
     val users = getUsers()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
@@ -67,6 +70,9 @@ class DevicesViewModel @Inject constructor(
             }
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    private val _uiEvents = MutableSharedFlow<UiEvent>()
+    val uiEvents = _uiEvents.asSharedFlow()
 
 
     private val _selectedDevice: MutableStateFlow<DeviceDetails?> = MutableStateFlow(null)
@@ -197,7 +203,7 @@ class DevicesViewModel @Inject constructor(
         _typeSearchQuery.value = query
     }
 
-    fun onRefresh() {
+    fun onRefresh() = viewModelScope.launch {
         if (_isFreeFilterChecked.value) {
             fetchFreeDevices()
         } else {
@@ -322,5 +328,9 @@ class DevicesViewModel @Inject constructor(
         }
         _devicesFlow.value = cachedDevices
     }
+    private val searchQuery = MutableStateFlow("")
+
+
+
 
 }
