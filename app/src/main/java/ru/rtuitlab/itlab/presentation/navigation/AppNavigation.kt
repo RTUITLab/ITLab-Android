@@ -27,6 +27,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.Event
 import ru.rtuitlab.itlab.presentation.screens.events.Events
 import ru.rtuitlab.itlab.presentation.screens.events.EventsNotifications
 import ru.rtuitlab.itlab.presentation.screens.feedback.Feedback
+import ru.rtuitlab.itlab.presentation.screens.files.BaseElements
 
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.screens.purchases.NewPurchase
@@ -99,6 +100,8 @@ fun AppNavigation(
 		reportsGraph()
 
 		purchasesGraph()
+
+		filesGraph()
 	}
 }
 
@@ -234,6 +237,19 @@ private fun NavGraphBuilder.purchasesGraph() {
 
 		composable(AppScreen.NewPurchase.route) {
 			NewPurchase()
+		}
+	}
+
+}
+@ExperimentalAnimationApi
+private fun NavGraphBuilder.filesGraph(
+) {
+	navigation(
+		startDestination = AppTab.Files.startDestination,
+		route = AppTab.Files.route
+	) {
+		composable(AppScreen.Files.route) {
+			BaseElements()
 		}
 	}
 }

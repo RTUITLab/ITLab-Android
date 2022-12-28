@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,13 +20,10 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.cancel
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.extensions.fromIso8601ToDateTime
 import ru.rtuitlab.itlab.data.remote.api.reports.models.Report
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
-import ru.rtuitlab.itlab.presentation.screens.micro_file_service.FilesViewModel
-import ru.rtuitlab.itlab.presentation.screens.micro_file_service.components.BaseElements
 import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.chips.InfoChip
 import ru.rtuitlab.itlab.presentation.ui.components.datetime.DateTimeLabel
@@ -47,7 +43,6 @@ val duration = 300
 @ExperimentalPagerApi
 @Composable
 fun Reports(
-    filesViewModel: FilesViewModel = singletonViewModel(),
     reportsViewModel: ReportsViewModel = singletonViewModel()
 ) {
     val reportsAboutUser by reportsViewModel.reportsAboutUser.collectAsState()
@@ -62,21 +57,10 @@ fun Reports(
     val tabs = listOf(
         ReportsTab.AboutUser,
         ReportsTab.FromUser,
-        ReportsTab.Files
     )
 
     val pagerState = reportsViewModel.pagerState
 
-    var filesPageVisited by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
-            if (filesPageVisited) cancel()
-            if (tabs[page] == ReportsTab.Files && !filesPageVisited) {
-                filesPageVisited = true
-                filesViewModel.onRefresh()
-            }
-        }
-    }
 
     Column {
         Surface(
@@ -123,9 +107,7 @@ fun Reports(
                                     ReportCardFromUser(it)
                                 }
                             }
-                            ReportsTab.Files -> {
-                                BaseElements(filesViewModel)
-                            }
+
                         }
                     }
                 }

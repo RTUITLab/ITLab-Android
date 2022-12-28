@@ -185,6 +185,8 @@
     <string name="purchase_rejected">Покупка успешно отклонена</string>
     <string name="purchase_approved">Покупка успешно принята</string>
     <string name="purchases_empty">Нет покупок, соответствующих фильтрам</string>
+    <string name="files">Файлы</string>
+
 
     //Users
     <string name="gravatar">Граватар</string>
