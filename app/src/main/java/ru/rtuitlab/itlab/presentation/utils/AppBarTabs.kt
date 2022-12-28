@@ -15,5 +15,4 @@ sealed class EventTab(@StringRes val name: Int) : AppBarTab(name) {
 sealed class ReportsTab(@StringRes val name: Int) : AppBarTab(name) {
 	object AboutUser: ReportsTab(R.string.reports_about_me)
 	object FromUser: ReportsTab(R.string.reports_from_me)
-	object Files: ReportsTab(R.string.reports_files)
 }
