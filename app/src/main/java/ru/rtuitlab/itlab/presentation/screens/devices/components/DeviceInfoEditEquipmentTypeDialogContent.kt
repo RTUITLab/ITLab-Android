@@ -86,8 +86,10 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        focusedBorderColor = MaterialTheme.colorScheme.onSurface
+                        disabledTextColor = LocalContentColor.current,
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                        disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(.6f)
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
