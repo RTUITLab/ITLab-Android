@@ -37,7 +37,7 @@ fun BaseElements(
 ) {
 
     val filesResource by filesViewModel.filesResponse.collectAsState()
-    var isRefreshing = filesViewModel.isRefreshing.collectAsState().value
+    val isRefreshing = filesViewModel.isRefreshing.collectAsState().value
 
     val files by filesViewModel.files.collectAsState()
 
@@ -46,7 +46,6 @@ fun BaseElements(
         modifier = Modifier
             .fillMaxSize()
         ) {
-
             SwipeRefresh(
                 modifier = Modifier
                     .fillMaxSize()
@@ -143,7 +142,7 @@ fun FileCard(filesViewModel: FilesViewModel, file: FileInfo, modifier: Modifier)
                         )
                     ) {
                         IconizedRow(
-                            painter =  painterResource(id = R.drawable.ic_person),
+                            imageVector = Icons.Default.Person,
                             contentDescription = "",
                             imageHeight = 14.dp,
                             imageWidth = 14.dp,

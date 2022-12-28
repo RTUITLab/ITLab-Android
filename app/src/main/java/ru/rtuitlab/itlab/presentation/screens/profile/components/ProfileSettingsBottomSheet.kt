@@ -1,13 +1,8 @@
 package ru.rtuitlab.itlab.presentation.screens.profile.components
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Logout
@@ -18,7 +13,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -37,6 +31,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadableButtonContent
 import ru.rtuitlab.itlab.presentation.ui.components.PrimaryTextButton
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 
 @ExperimentalMaterialApi
 @Composable
@@ -276,29 +271,11 @@ private fun SettingsDialog(
 		text = {
 			Column {
 				Spacer(modifier = Modifier.height(15.dp))
-				BasicTextField(
-					modifier = Modifier
-						.height(35.dp)
-						.background(shape = RoundedCornerShape(6.dp), color = Color.Transparent)
-						.border(
-							width = 1.dp,
-							color = MaterialTheme.colorScheme.onSurface.copy(alpha = .12f),
-							shape = RoundedCornerShape(6.dp)
-						)
-						.fillMaxWidth(),
+				OutlinedAppTextField(
 					value = textFieldValue,
-					textStyle = MaterialTheme.typography.bodyLarge/*.copy(color = MaterialTheme.colors.onSurface)*/,
+					onValueChange = { textFieldValue = it.filterNot { it == '\n' } },
 					singleLine = true,
-					keyboardActions = KeyboardActions(
-						onDone = {onResult(textFieldValue)}
-					),
-					onValueChange = { textFieldValue = it.filterNot { it == '\n' } }
-				) { innerTextField ->
-					Row(verticalAlignment = Alignment.CenterVertically) {
-						Spacer(modifier = Modifier.width(8.dp))
-						innerTextField()
-					}
-				}
+				)
 			}
 		},
 		confirmButton = {
