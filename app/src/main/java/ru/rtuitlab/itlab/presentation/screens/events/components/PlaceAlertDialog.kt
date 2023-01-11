@@ -3,13 +3,13 @@ package ru.rtuitlab.itlab.presentation.screens.events.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,10 +26,8 @@ import ru.rtuitlab.itlab.data.local.events.models.UserParticipationType
 import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventRole
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventShiftSalary
-import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.*
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
@@ -57,7 +55,7 @@ fun PlaceAlertDialog(
 		onDismissRequest = onDismissRequest,
 	) {
 		Card(
-			shape = RoundedCornerShape(10.dp)
+			shape = MaterialTheme.shapes.large
 		) {
 			Column(
 				modifier = Modifier
@@ -76,7 +74,7 @@ fun PlaceAlertDialog(
 				) {
 					Text(
 						text = stringResource(R.string.place_number_n, number),
-						style = MaterialTheme.typography.h6
+						style = MaterialTheme.typography.titleMedium
 					)
 					IconizedRow(
 						imageVector = Icons.Default.People,
@@ -85,7 +83,8 @@ fun PlaceAlertDialog(
 						imageHeight = 14.dp
 					) {
 						Text(
-							text = "${users.size}/${place.targetParticipantsCount}"
+							text = "${users.size}/${place.targetParticipantsCount}",
+							style = MaterialTheme.typography.labelMedium
 						)
 					}
 				}
@@ -101,7 +100,7 @@ fun PlaceAlertDialog(
 					) {
 						Text(
 							text = place.description,
-							style = MaterialTheme.typography.subtitle2
+							style = MaterialTheme.typography.labelMedium
 						)
 					}
 
@@ -117,7 +116,7 @@ fun PlaceAlertDialog(
 								it
 							)
 						} ?: stringResource(R.string.salary_not_specified),
-						style = MaterialTheme.typography.subtitle2
+						style = MaterialTheme.typography.labelMedium
 					)
 				}
 				Spacer(modifier = Modifier.height(10.dp))
@@ -158,8 +157,8 @@ fun PlaceAlertDialog(
 								Text(
 									text = if (role !is EventRole.Other) stringResource(role.nameResource) else role.name
 										?: "",
-									style = MaterialTheme.typography.subtitle2,
-									color = AppColors.greyText.collectAsState().value,
+									style = MaterialTheme.typography.labelMedium,
+									color = LocalContentColor.current.copy(.8f),
 									maxLines = 1,
 									overflow = TextOverflow.Ellipsis
 								)
@@ -186,15 +185,13 @@ fun PlaceAlertDialog(
 							modifier = Modifier.padding(horizontal = 4.dp, vertical = 10.dp),
 							text = if (choice !is EventRole.Other) stringResource(choice.nameResource) else choice.name
 								?: "",
-							selected = selectedSegment == choice,
-							selectedColor = AppColors.accent.collectAsState().value,
-							unselectedColor = AppColors.greyText.collectAsState().value.copy(alpha = .8f)
+							selected = selectedSegment == choice
 						)
 					}
 
 					Spacer(modifier = Modifier.height(5.dp))
 					val resources = LocalContext.current.resources
-					PrimaryButton(
+					PrimaryTextButton(
 						modifier = Modifier
 							.align(Alignment.End),
 						onClick = {

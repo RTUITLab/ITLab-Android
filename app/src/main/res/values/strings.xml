@@ -76,6 +76,7 @@
     <string name="event_invitation_accept">Accept</string>
     <string name="event_invitation_reject">Reject</string>
     <string name="events_notifications_empty">No new notifications</string>
+    <string name="events_select_date_range">Select date range</string>
 
     <!--    Projects     -->
     <string name="projects">Projects</string>
@@ -174,7 +175,7 @@
     <string name="report_new">New report</string>
     <string name="report_new_disclaimer">Describe your recent work you consider important. You can attach images and files. Reports support Markdown format.</string>
     <string name="reports_about_me">About me</string>
-    <string name="reports_from_me">My reports</string>
+    <string name="reports_from_me">My reports about others</string>
     <string name="reports_files">Files</string>
     <string name="report_write">Write</string>
     <string name="report_preview">Preview</string>
@@ -183,6 +184,11 @@
     <string name="report_uploading_file">Uploading file</string>
     <string name="report_uploading_file_dialog">Are you sure you want to upload selected file? %1$s</string>
     <string name="reports_empty">No reports found</string>
+    <string name="report_in_review">In review</string>
+    <string name="reports_filters">Filters</string>
+    <string name="reports_sorting">Sorting</string>
+    <string name="purchase_status_confirmed">Confirmed</string>
+    <string name="purchase_status_rejected">Rejected</string>
 
 
     <!--    Markdown    -->
@@ -196,5 +202,8 @@
     <string name="md_ol">Ordered list</string>
     <string name="md_task">Task</string>
     <string name="md_attach">Attach…</string>
+
+    <string name="files">Files</string>
+
 
 </resources>

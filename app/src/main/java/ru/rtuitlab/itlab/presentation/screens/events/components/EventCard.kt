@@ -1,30 +1,29 @@
 package ru.rtuitlab.itlab.presentation.screens.events.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.common.extensions.fromIso8601ToDateTime
+import ru.rtuitlab.itlab.common.extensions.fromIso8601ToInstant
+import ru.rtuitlab.itlab.common.extensions.toUiString
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventModel
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.ImagePosition
-import ru.rtuitlab.itlab.common.extensions.fromIso8601
-import ru.rtuitlab.itlab.common.extensions.fromIso8601ToInstant
-import ru.rtuitlab.itlab.common.extensions.toUiString
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
+import ru.rtuitlab.itlab.presentation.ui.components.datetime.DateTimeRangeLabel
 
 @Composable
 fun EventCard(
@@ -33,9 +32,9 @@ fun EventCard(
 ) {
 	val context = LocalContext.current
 	Card(
-		modifier = modifier,
-		elevation = 2.dp,
-		shape = MaterialTheme.shapes.medium
+		modifier = Modifier
+			.clip(MaterialTheme.shapes.medium)
+			.then(modifier)
 	) {
 		event.run {
 			Column(
@@ -48,14 +47,14 @@ fun EventCard(
 			) {
 				Text(
 					text = title,
-					style = MaterialTheme.typography.h6
+					style = MaterialTheme.typography.titleMedium
 				)
 				Spacer(modifier = Modifier.height(8.dp))
 				Text(
 					text = if (eventType.title.isBlank()) stringResource(R.string.event_no_description)
 					       else eventType.title,
-					style = MaterialTheme.typography.subtitle1,
-					color = AppColors.greyText.collectAsState().value
+					style = MaterialTheme.typography.bodyLarge,
+					color = MaterialTheme.colorScheme.onSurface.copy(.8f)
 				)
 				Spacer(modifier = Modifier.height(16.dp))
 				RoundedLinearProgressIndicator(
@@ -63,8 +62,7 @@ fun EventCard(
 						.fillMaxWidth(),
 					progress = if (targetParticipantsCount != 0)
 									currentParticipantsCount.toFloat() / targetParticipantsCount.toFloat()
-					           else 1f,
-					color = AppColors.accent.collectAsState().value
+					           else 1f
 				)
 				Spacer(modifier = Modifier.height(16.dp))
 				Row(
@@ -73,16 +71,19 @@ fun EventCard(
 					horizontalArrangement = SpaceBetween
 				) {
 					IconizedRow(
+						modifier = Modifier.weight(1f),
 						imageVector = Icons.Default.Schedule,
 						imageWidth = 18.dp,
 						imageHeight = 18.dp,
 						opacity = .6f
 					) {
-						Text(
-							text = beginTime.fromIso8601(context),
-							style = MaterialTheme.typography.subtitle1,
-							color = AppColors.greyText.collectAsState().value
-						)
+						endTime?.let {
+							DateTimeRangeLabel(
+								startDateTime = beginTime.fromIso8601ToDateTime(context, false),
+								endDateTime = endTime.fromIso8601ToDateTime(context, false),
+								textStyle = MaterialTheme.typography.bodyMedium
+							)
+						}
 					}
 
 					IconizedRow(
@@ -94,7 +95,8 @@ fun EventCard(
 					) {
 						Text(
 							text = "$currentParticipantsCount/$targetParticipantsCount",
-							style = MaterialTheme.typography.subtitle1
+							style = MaterialTheme.typography.bodyMedium,
+							color = MaterialTheme.colorScheme.onSurface.copy(.8f)
 						)
 					}
 				}
@@ -109,9 +111,9 @@ fun UserEventCard(
 	modifier: Modifier = Modifier
 ) {
 	Card(
-		modifier = modifier,
-		elevation = 2.dp,
-		shape = MaterialTheme.shapes.medium
+		modifier = Modifier
+			.clip(MaterialTheme.shapes.medium)
+			.then(modifier)
 	) {
 		Column(
 			modifier = Modifier
@@ -134,11 +136,9 @@ fun UserEventCardContent(
 	event.run {
 		val role = role.toUiRole()
 
-		Log.v("Roles", "name ${role.name} res ${stringResource(role.nameResource)}")
-
 		Text(
 			text = title,
-			style = MaterialTheme.typography.h6
+			style = MaterialTheme.typography.titleMedium
 		)
 		IconizedRow(
 			imageVector = Icons.Default.Person,
@@ -147,7 +147,8 @@ fun UserEventCardContent(
 		) {
 			Text(
 				text = role.name ?: stringResource(role.nameResource),
-				style = MaterialTheme.typography.subtitle1
+				style = MaterialTheme.typography.bodyLarge,
+				color = MaterialTheme.colorScheme.onSurface.copy(.8f)
 			)
 		}
 		IconizedRow(
@@ -157,7 +158,8 @@ fun UserEventCardContent(
 		) {
 			Text(
 				text = beginTime.fromIso8601ToInstant().date.toUiString(),
-				style = MaterialTheme.typography.subtitle1
+				style = MaterialTheme.typography.bodyLarge,
+				color = MaterialTheme.colorScheme.onSurface.copy(.8f)
 			)
 		}
 	}

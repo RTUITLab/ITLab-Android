@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.screens.reports
 
-import android.util.Log
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +13,7 @@ import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.domain.use_cases.users.GetCurrentUserUseCase
+import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase
 import ru.rtuitlab.itlab.presentation.screens.reports.state.NewReportUiState
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MdAction
 import java.io.File
@@ -21,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewReportViewModel @Inject constructor(
-	getCurrentUser: GetCurrentUserUseCase
+	getCurrentUser: GetCurrentUserUseCase,
+	getUsers: GetUsersUseCase
 ): ViewModel() {
 
 	init {
@@ -36,21 +37,37 @@ class NewReportViewModel @Inject constructor(
 	}
 
 	private val _reportState = MutableStateFlow(NewReportUiState())
-
 	val reportState = _reportState.asStateFlow()
+
+	val users = reportState.flatMapLatest {
+		getUsers.search(it.implementerSearchQuery).map {
+			it.map { it.toUser() }
+		}
+	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
 	fun onUserSelected(user: User) = viewModelScope.launch {
 		_reportState.emit(
 			_reportState.value.copy(
-				selectedImplementer = user
+				selectedImplementer = user,
+				implementerSearchQuery = user.abbreviatedName
 			)
 		)
+	}
+
+	fun onQueryChanged(newQuery: String) = viewModelScope.launch {
+		_reportState.update {
+			it.copy(
+				implementerSearchQuery = newQuery,
+				selectedImplementer = null
+			)
+		}
 	}
 
 	fun onTitleChanged(title: String) = viewModelScope.launch {
 		_reportState.emit(
 			_reportState.value.copy(
-				reportTitle = title
+				reportTitle = title,
+				isReportTitleEdited = true
 			)
 		)
 	}
@@ -65,7 +82,8 @@ class NewReportViewModel @Inject constructor(
 
 	fun onReportTextChanged(reportText: TextFieldValue) {
 		_reportState.value = _reportState.value.copy(
-			reportText = reportText
+			reportText = reportText,
+			isReportTextEdited = true
 		)
 	}
 
@@ -74,7 +92,6 @@ class NewReportViewModel @Inject constructor(
 			isConfirmationDialogShown = true,
 			providedFile = file
 		)
-		Log.v("ViewModels", this.toString())
 	}
 
 	fun onUploadFile() {
@@ -103,10 +120,10 @@ class NewReportViewModel @Inject constructor(
 		)
 	}
 
-	fun onSnackbarShown() {
-		_reportState.value = _reportState.value.copy(
-			errorMessage = null
-		)
+	fun resetState() {
+		_reportState.update {
+			NewReportUiState()
+		}
 	}
 
 	fun onFileUploadingError(message: String) {

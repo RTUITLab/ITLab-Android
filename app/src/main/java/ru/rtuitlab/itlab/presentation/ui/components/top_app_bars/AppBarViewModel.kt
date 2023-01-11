@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.ui.components.top_app_bars
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
@@ -26,15 +25,11 @@ class AppBarViewModel @Inject constructor(
 	private val _currentNavHost: MutableStateFlow<NavHostController?> = MutableStateFlow(null)
 	val currentNavHost: StateFlow<NavHostController?> = _currentNavHost
 
-	fun onChangeTab(appTab: AppTab) {
-		_currentTab.value = appTab
-
-	}
 	fun onNavigate(screen: AppScreen, navHostController: NavHostController? = null) {
 		_currentScreen.value = screen
 		if (navHostController != null)
 			_currentNavHost.value = navHostController
-		savedStateHandle.set("currentScreen", currentScreen.value)
+		savedStateHandle["currentScreen"] = currentScreen.value
 	}
 
 	fun setCurrentTab(tab: AppTab) {

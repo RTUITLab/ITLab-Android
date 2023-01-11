@@ -10,10 +10,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -25,11 +26,14 @@ import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentTypeNewRequest
 import ru.rtuitlab.itlab.data.remote.api.devices.models.EquipmentTypeResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
+import ru.rtuitlab.itlab.presentation.ui.components.PrimaryTextButton
+import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalTransitionApi
 @ExperimentalAnimationApi
-@ExperimentalMaterialApi
 @Composable
 fun DeviceInfoEditEquipmentTypeDialogContent(
     devicesViewModel: DevicesViewModel,
@@ -68,19 +72,24 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                     .height(340.dp)
                     .padding(10.dp)
             ) {
-                OutlinedTextField(
+                OutlinedAppTextField(
                     value = searchQuery,
                     onValueChange = { query ->
                         devicesViewModel.onTypesSearch(query)
                         setEquipmentTypeNewCardBool(!allTypes.any { it.title == query })
                     },
                     placeholder = {
-                        Text(text = stringResource(R.string.equipmentType))
+                        Text(
+                            text = stringResource(R.string.equipmentType),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(.8f),)
                     },
                     singleLine = true,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        backgroundColor = MaterialTheme.colors.background,
-                        focusedBorderColor = MaterialTheme.colors.onSurface
+                        disabledTextColor = LocalContentColor.current,
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                        disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(.6f)
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -99,26 +108,19 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                 )
                             }
                     ) {
-                        Row(
+                        IconizedRow(
+                            imageVector = if (extendedEquipmentNewCard) Icons.Default.ExpandLess else Icons.Default.Add,
                             modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            Icon(
-                                if (extendedEquipmentNewCard) Icons.Default.ExpandLess else Icons.Default.Add,
-                                contentDescription = stringResource(
-                                    id = R.string.add_device
-                                ),
-                                modifier = Modifier
-                                    .width(30.dp)
-                                    .clickable {
-                                        setExtendedEquipmentNewCard(
-                                            !extendedEquipmentNewCard
-                                        )
-                                    }
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = searchQuery, maxLines = 1)
+                                .clickable {
+                                    setExtendedEquipmentNewCard(!extendedEquipmentNewCard)
+                                }) {
+                            Text(
+                                text = searchQuery,
+                                maxLines = 1,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f),)
                         }
+
                     }
                 }
 
@@ -154,14 +156,17 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                             placeholder = { Text(text = stringResource(R.string.equipmentType)) },
                             singleLine = true,
                             colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = if (errorTitle.value) MaterialTheme.colors.error else MaterialTheme.colors.onSurface,
-                                backgroundColor = MaterialTheme.colors.background,
-                                focusedBorderColor = MaterialTheme.colors.onSurface,
-                                focusedLabelColor = MaterialTheme.colors.onSurface
+                                textColor = if (errorTitle.value) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                                containerColor = MaterialTheme.colorScheme.background,
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = MaterialTheme.colorScheme.onSurface
                             ),
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            label = { Text(text = stringResource(id = R.string.title)) }
+                            label = { Text(
+                                text = stringResource(id = R.string.title),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f)) }
                         )
 
                         OutlinedTextField(
@@ -172,14 +177,17 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                             placeholder = { Text(text = stringResource(R.string.shortTitle)) },
                             singleLine = true,
                             colors = TextFieldDefaults.outlinedTextFieldColors(
-                                backgroundColor = MaterialTheme.colors.background,
-                                focusedBorderColor = MaterialTheme.colors.onSurface,
-                                focusedLabelColor = MaterialTheme.colors.onSurface,
+                                containerColor = MaterialTheme.colorScheme.background,
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = MaterialTheme.colorScheme.onSurface,
                                 textColor = Color.Gray
                             ),
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            label = { Text(text = stringResource(id = R.string.shortTitle)) }
+                            label = {
+                                Text(text = stringResource(id = R.string.shortTitle),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f),) }
                         )
                         OutlinedTextField(
                             value = description.value,
@@ -192,14 +200,18 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                             },
                             placeholder = { Text(text = stringResource(R.string.description)) },
                             colors = TextFieldDefaults.outlinedTextFieldColors(
-                                textColor = if (errorDescription.value) MaterialTheme.colors.error else Color.Gray,
-                                backgroundColor = MaterialTheme.colors.background,
-                                focusedBorderColor = MaterialTheme.colors.onSurface,
-                                focusedLabelColor = MaterialTheme.colors.onSurface,
+                                textColor = if (errorDescription.value) MaterialTheme.colorScheme.error else Color.Gray,
+                                containerColor = MaterialTheme.colorScheme.background,
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                                focusedLabelColor = MaterialTheme.colorScheme.onSurface,
                             ),
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            label = { Text(text = stringResource(id = R.string.description) + " " + "${sizeDescription.value}" + "/" + sizeMaxDescription) },
+                            label = { Text(
+                                text = stringResource(id = R.string.description) + " " + "${sizeDescription.value}" + "/" + sizeMaxDescription,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f)
+                            )},
                             singleLine = true
                         )
 
@@ -210,9 +222,9 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.End
                         ) {
-                            Text(
-                                text = stringResource(id = R.string.to_create),
-                                modifier = Modifier.clickable {
+                            PrimaryTextButton(
+
+                                onClick = {
                                     if (!errorDescription.value && !errorTitle.value) {
                                         val equipmentTypeNewRequest =
                                             EquipmentTypeNewRequest(
@@ -229,9 +241,12 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                                                 setEquipmentTypeNewCardBool(false)
                                             }
                                         }
+
                                     }
-                                }
+                                },
+                                    text = stringResource(id = R.string.to_create)
                             )
+
                         }
                         Spacer(modifier = Modifier.height(5.dp))
 
@@ -242,23 +257,26 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    typesResource.handle(
-                        onLoading = {},
-                        onError = { msg ->
-                            LoadingError(msg = msg)
-                        },
-                        onSuccess = {
-                            EquipmentList(
-                                devicesViewModel = devicesViewModel,
-                                onTypeSelected = {
-                                    devicesViewModel.onTypesSearch(it.title)
-                                },
-                                setNewCardBool = setEquipmentTypeNewCardBool,
-                                setExtended = setExtendedEquipmentNewCard,
-                            )
-                        }
-                    )
-
+                    Row(
+                        modifier = Modifier
+                        .fillMaxWidth()) {
+                        typesResource.handle(
+                            onLoading = {},
+                            onError = { msg ->
+                                LoadingError(msg = msg)
+                            },
+                            onSuccess = {
+                                EquipmentList(
+                                    devicesViewModel = devicesViewModel,
+                                    onTypeSelected = {
+                                        devicesViewModel.onTypesSearch(it.title)
+                                    },
+                                    setNewCardBool = setEquipmentTypeNewCardBool,
+                                    setExtended = setExtendedEquipmentNewCard,
+                                )
+                            }
+                        )
+                    }
                     Spacer(modifier = Modifier.height(5.dp))
                     Row(
                         modifier = Modifier
@@ -266,26 +284,27 @@ fun DeviceInfoEditEquipmentTypeDialogContent(
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.Bottom
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.to_choose),
-                            modifier = Modifier.clickable {
+                        PrimaryTextButton(
+                            onClick = {
                                 val eq = queriedTypes.find { it ->
                                     it.title == searchQuery
                                 }
                                 if (eq != null) {
                                     onConfirm(eq)
                                 }
-                            }
+                                      },
+                            text = stringResource(id = R.string.to_choose),
                         )
+
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                 }
+
             }
         }
     }
 }
 
-@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
 private fun EquipmentList(
@@ -302,6 +321,7 @@ private fun EquipmentList(
         modifier = Modifier
             .fillMaxWidth()
             .height(210.dp)
+            .padding(0.dp, 0.dp, 0.dp, 0.dp)
     ) {
         items(types) { type ->
             Card(
@@ -321,9 +341,14 @@ private fun EquipmentList(
                 ) {
                     Text(
                         text = type.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                         modifier = Modifier.padding(5.dp, 0.dp)
                     )
                 }
+                Divider(
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
     }

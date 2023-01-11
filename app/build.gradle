@@ -138,6 +138,10 @@ dependencies {
     // Compose
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
+        // Compose Material 3 still lacks some composables (like ModalBottomSheetLayout),
+        // so the only option is to use it alongside M2 library. Full migration is possible
+        // only when all features used in ITLab-Android are added to M3 library
+        implementation("androidx.compose.material3:material3:1.1.0-alpha01")
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.compose.ui:ui-util:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
@@ -145,10 +149,10 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:2.4.0-alpha10"
     implementation 'com.google.accompanist:accompanist-flowlayout:0.20.0'
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
-    implementation 'com.google.accompanist:accompanist-pager:0.20.0'
-    implementation "com.google.accompanist:accompanist-pager-indicators:0.20.0"
+    implementation 'com.google.accompanist:accompanist-pager:0.27.0'
+    implementation 'com.google.accompanist:accompanist-pager-indicators:0.27.0'
     implementation "com.google.accompanist:accompanist-swiperefresh:0.21.1-beta"
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
+    implementation 'com.google.accompanist:accompanist-systemuicontroller:0.27.0'
     implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.3'
 
     // Room
@@ -194,5 +198,6 @@ dependencies {
     //Coil
     implementation("io.coil-kt:coil-compose:2.1.0")
 
-
+    // Reflection
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }

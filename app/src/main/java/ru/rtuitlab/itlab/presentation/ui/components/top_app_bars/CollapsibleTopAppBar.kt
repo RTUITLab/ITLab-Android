@@ -3,9 +3,13 @@ package ru.rtuitlab.itlab.presentation.ui.components.top_app_bars
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
+import androidx.compose.material.SwipeableState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.swipeable
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -60,14 +64,11 @@ fun CollapsibleTopAppBar(
 				}
 	)
 	Surface(
-		color = MaterialTheme.colors.primarySurface,
-		contentColor = contentColorFor(MaterialTheme.colors.primarySurface),
-		elevation = AppBarDefaults.TopAppBarElevation,
 		shape = RectangleShape
 	) {
 		MotionLayout(
-			start = StartConstraintSet(),
-			end = EndConstraintSet(),
+			start = startConstraintSet(),
+			end = endConstraintSet(),
 			progress = if (swipingState.progress.to == SwipingStates.COLLAPSED) swipingState.progress.fraction else 1f - swipingState.progress.fraction,
 			modifier = Modifier
 				.fillMaxWidth()
@@ -81,7 +82,7 @@ fun CollapsibleTopAppBar(
 					.wrapContentHeight()
 					.scale(motionInt("title", "fontSize") / 32f)
 					.alpha(if (searchActivated) motionFloat("title", "alpha") else 1f),
-				color = MaterialTheme.colors.onSurface,
+				color = MaterialTheme.colorScheme.onPrimaryContainer,
 				fontWeight = FontWeight(motionInt("title", "fontWeight")),
 				fontSize = 32.sp
 			)
@@ -124,7 +125,7 @@ fun CollapsibleTopAppBar(
 }
 
 @Composable
-private fun StartConstraintSet() = ConstraintSet(
+private fun startConstraintSet() = ConstraintSet(
 	""" {
 	title: {
 		top: ['parent', 'top'],
@@ -148,7 +149,7 @@ private fun StartConstraintSet() = ConstraintSet(
 )
 
 @Composable
-private fun EndConstraintSet() = ConstraintSet(
+private fun endConstraintSet() = ConstraintSet(
 	""" {
 	title: {
 		top: ['parent', 'top', 0],

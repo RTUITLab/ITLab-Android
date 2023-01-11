@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.screens.purchases
 
+import android.annotation.SuppressLint
 import android.util.Patterns
 import androidx.compose.animation.*
 import androidx.compose.animation.core.MutableTransitionState
@@ -7,7 +10,8 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
@@ -33,11 +37,13 @@ import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
+// Will be used once purchase notifications send needed data payload
 fun Purchase(
-    @Suppress("UNUSED_PARAMETER") id: Int, // Will be used once purchase notifications send needed data payload
+    @Suppress("UNUSED_PARAMETER") id: Int,
     purchasesViewModel: PurchasesViewModel = singletonViewModel(),
     appBarViewModel: AppBarViewModel = singletonViewModel()
 ) {
@@ -51,11 +57,9 @@ fun Purchase(
 
     val context = LocalContext.current
 
-    val scaffoldState = rememberScaffoldState(
-        snackbarHostState = SnackbarHostState()
-    )
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    purchasesViewModel.uiEvents.collectUiEvents(scaffoldState)
+    purchasesViewModel.uiEvents.collectUiEvents(snackbarHostState)
 
     LaunchedEffect(purchase) {
         animationState.targetState = true
@@ -73,7 +77,7 @@ fun Purchase(
     }
 
     Scaffold(
-        scaffoldState = scaffoldState
+        snackbarHost = { FabAwareSnackbarHost(snackbarHostState) },
     ) {
         Column(
             modifier = Modifier
@@ -93,8 +97,7 @@ fun Purchase(
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    color = MaterialTheme.colors.surface,
-                    elevation = 1.dp
+                    color = MaterialTheme.colorScheme.surface
                 ) {
                     Column(
                         modifier = Modifier
@@ -123,7 +126,7 @@ fun Purchase(
                                         context = LocalContext.current,
                                         parseWithTime = false
                                     ),
-                                    style = MaterialTheme.typography.subtitle1
+                                    style = MaterialTheme.typography.bodyLarge
                                 )
                             }
                         }
@@ -190,7 +193,7 @@ fun Purchase(
                                 Text(text = "${stringResource(R.string.purchase_price)}: ")
                                 Text(
                                     text = stringResource(R.string.salary_float, purchase.price),
-                                    style = MaterialTheme.typography.subtitle1
+                                    style = MaterialTheme.typography.bodyLarge
                                 )
                             }
                         }
@@ -203,26 +206,27 @@ fun Purchase(
                                     .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
-                                Chip(
+                                AssistChip(
                                     onClick = {
                                         purchasesViewModel.onReject(
+                                            purchase,
                                             context.getString(R.string.purchase_rejected)
                                         )
                                     },
-                                    colors = ChipDefaults.outlinedChipColors(
-                                        backgroundColor = Color.Transparent,
-                                        contentColor = MaterialTheme.colors.error
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        containerColor = Color.Transparent,
+                                        labelColor = MaterialTheme.colorScheme.error,
+                                        leadingIconContentColor = MaterialTheme.colorScheme.error
                                     ),
-                                    border = BorderStroke(
-                                        width = ChipDefaults.OutlinedBorderSize,
-                                        color = MaterialTheme.colors.error
+                                    border = AssistChipDefaults.assistChipBorder(
+                                        borderColor = MaterialTheme.colorScheme.error
                                     ),
                                     leadingIcon = {
                                         if (state.selectedPurchaseState!!.isRejectingInProgress)
                                             CircularProgressIndicator(
                                                 modifier = Modifier
                                                     .size(24.dp),
-                                                color = MaterialTheme.colors.error,
+                                                color = MaterialTheme.colorScheme.error,
                                                 strokeWidth = 2.dp
                                             )
                                         else
@@ -231,27 +235,30 @@ fun Purchase(
                                                 contentDescription = null
                                             )
                                     },
-                                    enabled = state.selectedPurchaseState!!.areSolutionButtonsEnabled
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.purchase_reject),
-                                        style = MaterialTheme.typography.body1
-                                    )
-                                }
+                                    enabled = state.selectedPurchaseState!!.areSolutionButtonsEnabled,
+                                    label = {
+                                        Text(
+                                            text = stringResource(R.string.purchase_reject),
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    },
+                                    shape = MaterialTheme.shapes.extraLarge
+                                )
 
-                                Chip(
+                                AssistChip(
                                     onClick = {
                                         purchasesViewModel.onApprove(
+                                            purchase,
                                             context.getString(R.string.purchase_approved)
                                         )
                                     },
-                                    colors = ChipDefaults.outlinedChipColors(
-                                        backgroundColor = Color.Transparent,
-                                        contentColor = AppColors.green
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        containerColor = Color.Transparent,
+                                        labelColor = AppColors.green,
+                                        leadingIconContentColor = AppColors.green
                                     ),
-                                    border = BorderStroke(
-                                        width = ChipDefaults.OutlinedBorderSize,
-                                        color = AppColors.green
+                                    border = AssistChipDefaults.assistChipBorder(
+                                        borderColor = AppColors.green
                                     ),
                                     leadingIcon = {
                                         if (state.selectedPurchaseState!!.isApprovingInProgress)
@@ -267,13 +274,15 @@ fun Purchase(
                                                 contentDescription = null
                                             )
                                     },
-                                    enabled = state.selectedPurchaseState!!.areSolutionButtonsEnabled
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.purchase_approve),
-                                        style = MaterialTheme.typography.body1
-                                    )
-                                }
+                                    enabled = state.selectedPurchaseState!!.areSolutionButtonsEnabled,
+                                    label = {
+                                        Text(
+                                            text = stringResource(R.string.purchase_approve),
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    },
+                                    shape = MaterialTheme.shapes.extraLarge
+                                )
                             }
                         }
 
@@ -288,7 +297,7 @@ fun Purchase(
                     header = {
                         Text(
                             text = stringResource(R.string.description),
-                            style = MaterialTheme.typography.h6
+                            style = MaterialTheme.typography.titleMedium
                         )
                     },
                     description = purchase.description,
@@ -341,13 +350,12 @@ private fun PurchaseDescription(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            border = ButtonDefaults.outlinedBorder
+                .padding(horizontal = 20.dp)
         ) {
             Column {
                 Box(
                     Modifier
-                        .background(color = MaterialTheme.colors.onSurface.copy(alpha = .1f))
+                        .background(color = MaterialTheme.colorScheme.surface)
                         .padding(vertical = 6.dp, horizontal = 12.dp)
                         .fillMaxWidth()
                 ) {
@@ -385,13 +393,12 @@ private fun PurchaseFile(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            border = ButtonDefaults.outlinedBorder
+                .padding(horizontal = 20.dp)
         ) {
             OutlinedAppTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(TextFieldDefaults.OutlinedTextFieldShape)
+                    .clip(MaterialTheme.shapes.extraSmall)
                     .clickable {
                         handler.openUri(url)
                     },
@@ -402,21 +409,23 @@ private fun PurchaseFile(
                     Row {
                         Text(
                             text = description,
-                            color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
+//                            color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
                         )
                     }
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    disabledTextColor = LocalContentColor.current.copy(LocalContentAlpha.current),
-                    disabledBorderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled),
-                    disabledLabelColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.medium)
+                    disabledTextColor = LocalContentColor.current.copy(.6f),
+                    disabledBorderColor = MaterialTheme.colorScheme.onSurface.copy(.6f),
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurface.copy(.6f),
+                    disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(.6f)
                 ),
                 leadingIcon = {
                     Icon(
                         imageVector = icon,
                         contentDescription = null
                     )
-                }
+                },
+                shape = MaterialTheme.shapes.medium
             )
         }
     }

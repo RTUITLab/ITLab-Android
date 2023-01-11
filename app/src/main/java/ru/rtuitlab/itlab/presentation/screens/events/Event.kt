@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.screens.events
 
 import android.annotation.SuppressLint
@@ -5,9 +7,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.rememberSwipeableState
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
@@ -23,17 +27,18 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.common.extensions.fromIso8601ToDateTime
 import ru.rtuitlab.itlab.data.local.events.models.EventWithShiftsAndSalary
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftCard
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.datetime.DateTimeRangeLabel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CollapsibleScrollArea
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.SwipingStates
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
-import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
@@ -50,16 +55,16 @@ fun Event(
 
 	val isRefreshing by eventViewModel.isRefreshing.collectAsState()
 
-	val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
-
-	eventViewModel.uiEvents.collectUiEvents(scaffoldState)
+	val snackbarHostState = remember { SnackbarHostState() }
+	eventViewModel.uiEvents.collectUiEvents(snackbarHostState)
 
 	Scaffold(
-		scaffoldState = scaffoldState
+		snackbarHost = { SnackbarHost(snackbarHostState) }
 	) {
 		SwipeRefresh(
 			modifier = Modifier
-				.fillMaxSize(),
+				.fillMaxSize()
+				.padding(it),
 			state = rememberSwipeRefreshState(isRefreshing),
 			onRefresh = {
 				eventViewModel.updateDetails()
@@ -178,9 +183,7 @@ private fun EventInfo(
 	val coroutineScope = rememberCoroutineScope()
 	Surface(
 		modifier = modifier
-			.fillMaxWidth(),
-		color = MaterialTheme.colors.surface,
-		elevation = 1.dp
+			.fillMaxWidth()
 	) {
 		Column(
 			modifier = Modifier
@@ -193,13 +196,11 @@ private fun EventInfo(
 				opacity = .7f,
 				spacing = 10.dp
 			) {
-				Text(
-					text = "${
-						event.beginTime.fromIso8601(
-							context,
-							","
-						)
-					} — ${event.endTime.fromIso8601(context, ",")}"
+				DateTimeRangeLabel(
+					startDateTime = event.beginTime.fromIso8601ToDateTime(context, false),
+					endDateTime = event.endTime.fromIso8601ToDateTime(context, false),
+					dateAlpha = 1f,
+					timeAlpha = 1f
 				)
 			}
 
@@ -292,7 +293,7 @@ private fun EventShifts(
 				Spacer(modifier = Modifier.height(15.dp))
 				Text(
 					text = stringResource(R.string.shifts),
-					style = MaterialTheme.typography.h3
+					style = MaterialTheme.typography.titleLarge
 				)
 			}
 			items(

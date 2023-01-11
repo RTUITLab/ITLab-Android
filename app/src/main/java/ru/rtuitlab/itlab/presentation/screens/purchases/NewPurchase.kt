@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.screens.purchases
 
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Image
@@ -40,6 +42,8 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.Shared
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.common.extensions.toIso8601
+import ru.rtuitlab.itlab.presentation.ui.components.FabAwareSnackbarHost
+import ru.rtuitlab.itlab.presentation.ui.components.modifier.fabAwarePadding
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.LocalActivity
@@ -64,9 +68,9 @@ fun NewPurchase(
 
     val navController = LocalNavController.current
 
-    val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    purchasesViewModel.uiEvents.collectUiEvents(scaffoldState)
+    purchasesViewModel.uiEvents.collectUiEvents(snackbarHostState)
 
     SharedElement(
         key = sharedElementKey,
@@ -80,19 +84,20 @@ fun NewPurchase(
         onFractionChanged = tpSetter
     ) {
         Scaffold(
-            scaffoldState = scaffoldState
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(transitionProgress.dp * 128)),
+            snackbarHost = { FabAwareSnackbarHost(snackbarHostState) }
         ) {
-            Surface(
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .clip(RoundedCornerShape(transitionProgress.dp * 128)),
-                elevation = 2.dp
+                    .padding(it)
             ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
+                        .fillMaxWidth()
+                        .fabAwarePadding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     OutlinedAppTextField(
@@ -104,13 +109,12 @@ fun NewPurchase(
                             Row {
                                 Text(
                                     text = stringResource(R.string.purchase_name),
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.onSurface.copy(alpha = 1f)
+                                    style = MaterialTheme.typography.titleMedium
                                 )
                                 Text(
                                     text = "*",
-                                    style = MaterialTheme.typography.h6,
-                                    color = MaterialTheme.colors.error
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.error
                                 )
                             }
                         },
@@ -135,12 +139,11 @@ fun NewPurchase(
                         label = {
                             Row {
                                 Text(
-                                    text = stringResource(R.string.purchase_price),
-                                    color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
+                                    text = stringResource(R.string.purchase_price)
                                 )
                                 Text(
                                     text = "*",
-                                    color = MaterialTheme.colors.error
+                                    color = MaterialTheme.colorScheme.error
                                 )
                             }
                         },
@@ -157,8 +160,7 @@ fun NewPurchase(
                         onValueChange = purchasesViewModel::onDescriptionChange,
                         label = {
                             Text(
-                                text = stringResource(R.string.description),
-                                color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
+                                text = stringResource(R.string.description)
                             )
                         },
                         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
@@ -231,7 +233,7 @@ private fun DateSelector(
     OutlinedAppTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(TextFieldDefaults.OutlinedTextFieldShape)
+            .clip(MaterialTheme.shapes.extraSmall)
             .clickable {
                 MaterialDatePicker
                     .Builder
@@ -252,19 +254,19 @@ private fun DateSelector(
         label = {
             Row {
                 Text(
-                    text = stringResource(R.string.purchase_date),
-                    color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
+                    text = stringResource(R.string.purchase_date)
                 )
                 Text(
                     text = "*",
-                    color = MaterialTheme.colors.error
+                    color = MaterialTheme.colorScheme.error
                 )
             }
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            disabledTextColor = LocalContentColor.current.copy(LocalContentAlpha.current),
-            disabledBorderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled),
-            disabledLabelColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.medium)
+            disabledTextColor = LocalContentColor.current,
+            disabledBorderColor = MaterialTheme.colorScheme.onSurface,
+            disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(.8f)
         ),
         leadingIcon = {
             Icon(
@@ -288,7 +290,7 @@ private fun FileSelector(
     OutlinedAppTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(TextFieldDefaults.OutlinedTextFieldShape)
+            .clip(MaterialTheme.shapes.extraSmall)
             .clickable {
                 filesViewModel.provideFile(type.mimeTypes, activity) {
                     purchasesViewModel.onAttachFile(
@@ -311,20 +313,20 @@ private fun FileSelector(
                             PurchasesViewModel.FileType.Check -> R.string.purchase_check
                             PurchasesViewModel.FileType.Photo -> R.string.purchase_photo
                         }
-                    ),
-                    color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
+                    )
                 )
                 if (type == PurchasesViewModel.FileType.Check)
                     Text(
                         text = "*",
-                        color = MaterialTheme.colors.error
+                        color = MaterialTheme.colorScheme.error
                     )
             }
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            disabledTextColor = LocalContentColor.current.copy(LocalContentAlpha.current),
-            disabledBorderColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.disabled),
-            disabledLabelColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.medium)
+            disabledTextColor = LocalContentColor.current,
+            disabledBorderColor = MaterialTheme.colorScheme.onSurface,
+            disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(.8f)
         ),
         leadingIcon = {
             Icon(

@@ -1,14 +1,11 @@
 package ru.rtuitlab.itlab.presentation.utils
 
 import android.content.Context
-import android.os.Bundle
 import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.core.os.bundleOf
 import kotlinx.parcelize.Parcelize
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
@@ -28,9 +25,8 @@ sealed class AppTab(
     object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, false)
     object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description)
     object Purchases: AppTab("purchases_tab", AppScreen.Purchases.route, R.string.purchases, Icons.Default.Payments)
+    object Files: AppTab("files_tab", AppScreen.Files.route, R.string.files, Icons.Default.AttachFile)
 
-
-    fun saveState() = bundleOf(SCREEN_KEY to route)
 
     fun asScreen() = when (this) {
         Events -> AppScreen.Events
@@ -41,11 +37,10 @@ sealed class AppTab(
         Profile -> AppScreen.Profile
         Reports -> AppScreen.Reports
         Purchases -> AppScreen.Purchases
+        Files -> AppScreen.Files
     }
 
     companion object {
-        const val SCREEN_KEY = "SCREEN_KEY"
-
         val all
             get() = listOf(
                 Events,
@@ -55,51 +50,40 @@ sealed class AppTab(
                 Purchases,
                 Devices,
                 Feedback,
-                Profile
+                Profile,
+                Files
             )
 
-
-        fun saver() = Saver<AppTab, Bundle>(
-            save = { it.saveState() },
-            restore = { restoreState(it) }
-        )
-
-        private fun restoreState(bundle: Bundle) = when (bundle.getString(SCREEN_KEY, null)) {
-            Events.route    -> Events
-            Projects.route  -> Projects
-            Devices.route   -> Devices
-            Employees.route -> Employees
-            Profile.route   -> Profile
-            Feedback.route  -> Feedback
-            Reports.route   -> Reports
-            else            -> {throw IllegalArgumentException("Invalid route. Maybe you forgot to add a new screen to AppTabSaver.kt?")}
-        }
-
-        fun applyClaims(claims: List<Any>) {
+        private fun applyClaims(claims: List<Any>) {
             Feedback.accessible = claims.contains(UserClaimCategories.FEEDBACK.ADMIN)
             Purchases.accessible = claims.contains(UserClaimCategories.PURCHASES.USER)
+        }
+
+        fun getAccessibleTabs(claims: List<Any>): List<AppTab> {
+            applyClaims(claims)
+            return all.filter { it.accessible }
         }
     }
 }
 
 // This class represents any screen - tabs and their subscreens.
-// It is needed to appropriately change top app bar behavior
-
+// It is needed to appropriately change top and bottom app bars behavior
 @Parcelize
 open class AppScreen(
     @StringRes val screenNameResource: Int,
     val route: String,
+    val hasBottomBar: Boolean = false,
     val navLink: String = route.substringBefore("/{")
 ) : Parcelable {
     // Employee-related
-    object Employees: AppScreen(R.string.employees, "employees")
+    object Employees: AppScreen(R.string.employees, "employees", true)
     object EmployeeDetails: AppScreen(R.string.profile, "employee/{userId}") // Has back button
 
     // Feedback-related
     object Feedback: AppScreen(R.string.feedback, "feedback")
 
     // Events-related
-    object Events: AppScreen(R.string.events, "events")
+    object Events: AppScreen(R.string.events, "events", true)
     @Parcelize
     class EventDetails(val title: String): AppScreen(R.string.details_name, "event/{eventId}") { // Has back button
         companion object {
@@ -111,17 +95,17 @@ open class AppScreen(
     object EventsNotifications: AppScreen(R.string.notifications, "events/notifications") // Has back button
 
     // Projects-related
-    object Projects: AppScreen(R.string.projects, "projects")
+    object Projects: AppScreen(R.string.projects, "projects", true)
 
     // Devices-related
-    object Devices: AppScreen(R.string.devices, "devices")
+    object Devices: AppScreen(R.string.devices, "devices", true)
 
     // Profile-related
-    object Profile: AppScreen(R.string.profile, "profile")
+    object Profile: AppScreen(R.string.profile, "profile", true)
 
 
     // Reports-related
-    object Reports: AppScreen(R.string.reports, "reports")
+    object Reports: AppScreen(R.string.reports, "reports", true)
     class ReportDetails(val title: String): AppScreen(R.string.details_name, "report/{reportId}") {
         companion object {
             const val route = "report/{reportId}"
@@ -130,9 +114,11 @@ open class AppScreen(
     }
     object NewReport: AppScreen(R.string.report_new, "reports/new")
 
+    object Files: AppScreen(R.string.files, "files", true)
+
 
     // Purchases-related
-    object Purchases: AppScreen(R.string.purchases, "purchases")
+    object Purchases: AppScreen(R.string.purchases, "purchases", true)
     class PurchaseDetails(val title: String): AppScreen(R.string.details_name, "purchases/{purchaseId}") {
         companion object {
             const val route = "purchases/{purchaseId}"
@@ -158,7 +144,8 @@ open class AppScreen(
             NewReport,
             Purchases,
             PurchaseDetails(context.resources.getString(R.string.purchase)),
-            NewPurchase
+            NewPurchase,
+            Files
         )
     }
 }

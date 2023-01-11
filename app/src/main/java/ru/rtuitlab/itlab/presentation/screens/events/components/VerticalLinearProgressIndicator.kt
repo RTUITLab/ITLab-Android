@@ -3,8 +3,7 @@ package ru.rtuitlab.itlab.presentation.screens.events.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.progressSemantics
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProgressIndicatorDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -16,8 +15,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 fun VerticalLinearProgressIndicator(
 	progress: Float,
 	modifier: Modifier = Modifier,
-	color: Color = MaterialTheme.colors.primary,
-	backgroundColor: Color = color.copy(alpha = ProgressIndicatorDefaults.IndicatorBackgroundOpacity)
+	color: Color = MaterialTheme.colorScheme.primary,
+	backgroundColor: Color = color.copy(alpha = .24f)
 ) {
 	Canvas(
 		modifier

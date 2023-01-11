@@ -1,9 +1,8 @@
 package ru.rtuitlab.itlab.presentation.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
-import androidx.compose.material.LocalContentColor
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,8 +21,8 @@ fun IconizedRow(
 	imageHeight: Dp = 24.dp,
 	contentDescription: String,
 	spacing: Dp = 8.dp,
-	tint: Color? = null,
-	opacity: Float = .3f,
+	tint: Color = LocalContentColor.current,
+	opacity: Float = 0.6f,
 	content: @Composable () -> Unit
 ) {
 	Row(
@@ -38,7 +37,7 @@ fun IconizedRow(
 				.height(imageHeight),
 			painter = painter,
 			contentDescription = contentDescription,
-			tint = tint?.copy(opacity) ?: LocalContentColor.current.copy(opacity)
+			tint = tint.copy(opacity)
 		)
 		Spacer(Modifier.width(spacing))
 		if (imagePosition == ImagePosition.LEFT)
@@ -49,6 +48,7 @@ fun IconizedRow(
 @Composable
 fun IconizedRow(
 	imageVector: ImageVector,
+	modifier: Modifier = Modifier,
 	imagePosition: ImagePosition = ImagePosition.LEFT,
 	imageWidth: Dp = 24.dp,
 	imageHeight: Dp = 24.dp,
@@ -56,8 +56,7 @@ fun IconizedRow(
 	opacity: Float = .6f,
 	contentDescription: String? = null,
 	verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
-	tint: Color? = null,
-	modifier: Modifier = Modifier,
+	tint: Color = LocalContentColor.current,
 	content: @Composable () -> Unit
 ) {
 	Row(
@@ -79,7 +78,7 @@ fun IconizedRow(
 					.height(imageHeight),
 				imageVector = imageVector,
 				contentDescription = contentDescription,
-				tint = tint?.copy(opacity) ?: LocalContentColor.current.copy(opacity)
+				tint = tint.copy(opacity)
 			)
 		}
 		if (imagePosition == ImagePosition.LEFT) {

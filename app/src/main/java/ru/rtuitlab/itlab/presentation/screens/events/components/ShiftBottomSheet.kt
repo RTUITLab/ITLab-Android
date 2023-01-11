@@ -4,15 +4,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Payment
-import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.outlined.PeopleOutline
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,14 +27,12 @@ import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.local.events.models.PlaceWithUsersAndSalary
 import ru.rtuitlab.itlab.data.local.events.models.ShiftWithPlacesAndSalary
 import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventSalary
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventShiftSalary
 import ru.rtuitlab.itlab.presentation.screens.events.EventViewModel
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.ImagePosition
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @ExperimentalPagerApi
@@ -99,6 +102,8 @@ private fun ShiftPlaceCard(
 	val salary = placeWithUsersAndSalary.salary?.count ?: shiftSalary?.count ?: eventSalary?.count
 	val users = placeWithUsersAndSalary.usersWithRoles
 
+	val labelsColor = MaterialTheme.colorScheme.onSurface.copy(.8f)
+
 	if (dialogIsShown)
 		PlaceAlertDialog(
 			number = number,
@@ -117,12 +122,11 @@ private fun ShiftPlaceCard(
 
 	Card(
 		modifier = Modifier
+			.clip(MaterialTheme.shapes.medium)
 			.clickable {
 				dialogIsShown = true
 			}
-			.fillMaxWidth(),
-		shape = MaterialTheme.shapes.medium,
-		elevation = 8.dp
+			.fillMaxWidth()
 	) {
 		Box(
 			modifier = Modifier
@@ -132,8 +136,7 @@ private fun ShiftPlaceCard(
 				modifier = Modifier.matchParentSize(),
 				progress = if (place.targetParticipantsCount != 0)
 					users.size.toFloat() / place.targetParticipantsCount.toFloat()
-				else 1f,
-				color = AppColors.accent.collectAsState().value
+				else 1f
 			)
 			Surface(
 				modifier = Modifier
@@ -151,16 +154,17 @@ private fun ShiftPlaceCard(
 					) {
 						Text(
 							text = stringResource(R.string.place_number_n, number),
-							style = MaterialTheme.typography.h6
+							style = MaterialTheme.typography.titleMedium
 						)
 						IconizedRow(
-							imageVector = Icons.Default.People,
+							imageVector = Icons.Outlined.PeopleOutline,
 							imagePosition = ImagePosition.RIGHT,
-							imageWidth = 14.dp,
-							imageHeight = 14.dp
+							imageWidth = 18.dp,
+							imageHeight = 18.dp
 						) {
 							Text(
-								text = "${users.size}/${place.targetParticipantsCount}"
+								text = "${users.size}/${place.targetParticipantsCount}",
+								color = labelsColor
 							)
 						}
 					}
@@ -176,7 +180,8 @@ private fun ShiftPlaceCard(
 						) {
 							Text(
 								text = place.description,
-								style = MaterialTheme.typography.subtitle2
+								style = MaterialTheme.typography.titleSmall,
+								color = labelsColor
 							)
 						}
 
@@ -193,7 +198,8 @@ private fun ShiftPlaceCard(
 									it
 								)
 							} ?: stringResource(R.string.salary_not_specified),
-							style = MaterialTheme.typography.subtitle2
+							style = MaterialTheme.typography.titleSmall,
+							color = labelsColor
 						)
 					}
 				}

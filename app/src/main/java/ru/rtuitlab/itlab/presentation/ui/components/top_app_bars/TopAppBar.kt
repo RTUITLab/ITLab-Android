@@ -1,30 +1,29 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.ui.components.top_app_bars
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.pagerTabIndicatorOffset
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.presentation.ui.components.AppDropdownMenu
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
+import ru.rtuitlab.itlab.presentation.ui.components.tabs.pagerTabIndicatorOffset
 import ru.rtuitlab.itlab.presentation.utils.AppBarTab
 import java.util.*
 
@@ -33,47 +32,35 @@ fun BasicTopAppBar(
 	text: String,
 	onBackAction: () -> Unit = emptyBackAction,
 	titleSharedElementKey: String? = null,
+	shadowElevation: Dp = 4.dp,
 	options: List<AppBarOption> = emptyList()
 ) {
-	TopAppBar {
-		Row(
-			modifier = Modifier
-				.fillMaxWidth()
-				.height(56.dp)
-				.padding(
-					start = if (onBackAction == emptyBackAction) 16.dp else 0.dp,
-					end = 16.dp
-				),
-			verticalAlignment = Alignment.CenterVertically,
-			horizontalArrangement = Arrangement.SpaceBetween
-		) {
-			Row(
-				modifier = Modifier.weight(1f),
-				horizontalArrangement = Arrangement.Start,
-				verticalAlignment = Alignment.CenterVertically
-			) {
-				if (onBackAction != emptyBackAction) {
-					IconButton(onClick = onBackAction) {
-						Icon(Icons.Default.ArrowBack, contentDescription = null)
-					}
-					Spacer(modifier = Modifier.width(16.dp))
-				}
-
+	Box(
+		modifier = Modifier
+			.shadow(shadowElevation)
+	) {
+		TopAppBar(
+			title = {
 				SharedElement(key = titleSharedElementKey.toString(), screenKey = "Whatever") {
 					Text(
 						text = text,
-						fontSize = 20.sp,
-						fontWeight = FontWeight(500),
-						textAlign = TextAlign.Start,
-						color = MaterialTheme.colors.onSurface,
 						maxLines = 1,
 						overflow = TextOverflow.Ellipsis
 					)
 				}
+			},
+			actions = {
+				OptionsRow(options)
+				Spacer(modifier = Modifier.width(12.dp))
+			},
+			navigationIcon = {
+				if (onBackAction != emptyBackAction) {
+					IconButton(onClick = onBackAction) {
+						Icon(Icons.Default.ArrowBack, contentDescription = null)
+					}
+				}
 			}
-
-			OptionsRow(options)
-		}
+		)
 	}
 }
 
@@ -83,11 +70,18 @@ fun ExtendedTopAppBar(
 	onBackAction: () -> Unit = emptyBackAction,
 	hideBackButton: Boolean = false,
 	hideOptions: Boolean = false,
+	shadowElevation: Dp = 4.dp,
 	content: @Composable () -> Unit
 ) {
-	TopAppBar {
-		ExtendedTopAppBarBody(
-			options, onBackAction, hideBackButton, hideOptions, content
+	Box(
+		modifier = Modifier.shadow(shadowElevation)
+	) {
+		TopAppBar(
+			title = {
+				ExtendedTopAppBarBody(
+					options, onBackAction, hideBackButton, hideOptions, content
+				)
+			}
 		)
 	}
 }
@@ -130,9 +124,9 @@ fun TabbedTopAppBar(
 ) {
 
 	Surface(
-		color = MaterialTheme.colors.primarySurface,
-		contentColor = contentColorFor(MaterialTheme.colors.primarySurface),
-		elevation = AppBarDefaults.TopAppBarElevation,
+		color = MaterialTheme.colorScheme.primaryContainer,
+		contentColor = contentColorFor(MaterialTheme.colorScheme.primaryContainer),
+		tonalElevation = 3.dp,
 		shape = RectangleShape
 	) {
 		Column(
@@ -148,6 +142,21 @@ fun TabbedTopAppBar(
 			}
 			AppBarTabRow(pagerState, tabs)
 		}
+	}
+}
+
+@Composable
+fun CenterAlignedTopAppBar(
+	title: String,
+	content: @Composable () -> Unit = {}
+) {
+	Column {
+		CenterAlignedTopAppBar(
+			title = {
+				Text(text = title)
+			}
+		)
+		content()
 	}
 }
 
@@ -167,8 +176,7 @@ fun AppBarTabRow(
 			Tab(
 				text = {
 					Text(
-						text = stringResource(it.title).uppercase(Locale.getDefault()),
-						fontSize = 14.sp
+						text = stringResource(it.title),
 					)
 				},
 				selected = pagerState.currentPage == index,
@@ -177,7 +185,7 @@ fun AppBarTabRow(
 						pagerState.animateScrollToPage(index)
 					}
 				},
-				unselectedContentColor = AppColors.greyText.collectAsState().value
+				unselectedContentColor = MaterialTheme.colorScheme.onSurface
 			)
 		}
 	}
@@ -189,8 +197,7 @@ fun AppBarTabRow(
 				TabRowDefaults.Indicator(
 					Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
 				)
-			},
-			contentColor = AppColors.accent.collectAsState().value
+			}
 		) {
 			tabRowContent()
 		}
@@ -202,8 +209,7 @@ fun AppBarTabRow(
 				TabRowDefaults.Indicator(
 					Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
 				)
-			},
-			contentColor = AppColors.accent.collectAsState().value
+			}
 		) {
 			tabRowContent()
 		}
@@ -232,8 +238,8 @@ fun OptionsRow(
 							badge = {
 								if (option.badgeCount > 0)
 									Badge(
-										backgroundColor = AppColors.accent.collectAsState().value,
-										contentColor = Color.White
+										containerColor = MaterialTheme.colorScheme.primary,
+										contentColor = MaterialTheme.colorScheme.onPrimary
 									) {
 										Text(option.badgeCount.toString())
 									}
@@ -242,7 +248,7 @@ fun OptionsRow(
 							Icon(
 								imageVector = option.icon,
 								contentDescription = option.contentDescription,
-								tint = MaterialTheme.colors.onSurface
+								tint = MaterialTheme.colorScheme.onSurface
 							)
 						}
 
@@ -260,7 +266,7 @@ fun OptionsRow(
 								Icon(
 									imageVector = option.icon,
 									contentDescription = option.contentDescription,
-									tint = MaterialTheme.colors.onSurface
+									tint = MaterialTheme.colorScheme.onSurface
 								)
 							}
 						},

@@ -7,21 +7,24 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceDetails
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
+import ru.rtuitlab.itlab.presentation.ui.components.PrimaryTextButton
+import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalAnimationApi
-@ExperimentalMaterialApi
 @Composable
 fun DeviceChangeOwnerDialog(
     onDismissRequest: () -> Unit,
@@ -42,6 +45,7 @@ fun DeviceChangeOwnerDialog(
     ) {
 
         Card(
+
             shape = RoundedCornerShape(10.dp)
         ) {
             Column(
@@ -53,6 +57,7 @@ fun DeviceChangeOwnerDialog(
                         bottom = 10.dp,
                         end = 20.dp
                     )
+
             ) {
                 Column(
 
@@ -63,16 +68,22 @@ fun DeviceChangeOwnerDialog(
                 ) {
 
 
-                    OutlinedTextField(
+                    OutlinedAppTextField(
                         value = query,
                         onValueChange = devicesViewModel::onDialogQueryChanged,
                         placeholder = {
-                            Text(text = stringResource(R.string.to_assign_owner))
+                            Text(
+                                text = stringResource(R.string.to_assign_owner),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(.8f),
+                            )
                         },
                         singleLine = true,
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            backgroundColor = MaterialTheme.colors.background,
-                            focusedBorderColor = MaterialTheme.colors.onSurface
+                            disabledTextColor = LocalContentColor.current,
+                            disabledBorderColor = MaterialTheme.colorScheme.outline,
+                            disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(.6f)
 
                         ),
                         modifier = Modifier
@@ -96,11 +107,11 @@ fun DeviceChangeOwnerDialog(
                     ) {
                         AnimatedVisibility(owner != null) {
 
-                            Text(
-                                text = stringResource(id = R.string.pick_up),
-                                color = AppColors.red,
-                                modifier = Modifier.clickable {
-
+                            Button(
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.Transparent
+                                ),
+                                onClick = {
                                     devicesViewModel.onPickUpEquipment(
                                         owner?.id.toString(),
                                         device.id
@@ -110,18 +121,20 @@ fun DeviceChangeOwnerDialog(
                                         }
 
                                     }
-
                                     afterChange()
-                                }
+                                }) {
+                                Text(
+                                    text = stringResource(id = R.string.pick_up),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.error,
+                                    fontSize = 14.sp
+                                )
+                            }
 
-                            )
                         }
                         Spacer(modifier = Modifier.width(15.dp))
-
-                        Text(
-                            text = stringResource(id = R.string.to_choose),
-                            color = AppColors.accent.collectAsState().value,
-                            modifier = Modifier.clickable {
+                        PrimaryTextButton(
+                            onClick = {
                                 selectedUser?.let {
                                     devicesViewModel.onChangeEquipmentOwner(
                                         it.id,
@@ -133,9 +146,10 @@ fun DeviceChangeOwnerDialog(
                                     }
                                     afterChange()
                                 }
-                            }
-
+                            },
+                            text = stringResource(id = R.string.to_choose),
                         )
+
                     }
                     Spacer(modifier = Modifier.height(5.dp))
 
@@ -146,7 +160,6 @@ fun DeviceChangeOwnerDialog(
     }
 }
 
-@ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @Composable
 private fun UserList(
@@ -177,9 +190,14 @@ private fun UserList(
                 ) {
                     Text(
                         text = user.fullName,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(.8f),
                         modifier = Modifier.padding(5.dp, 0.dp)
                     )
                 }
+                Divider(
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
     }

@@ -21,13 +21,15 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.devices.Devices
 import ru.rtuitlab.itlab.presentation.screens.employees.Employee
+import ru.rtuitlab.itlab.presentation.screens.employees.EmployeeViewModel
 import ru.rtuitlab.itlab.presentation.screens.employees.Employees
 import ru.rtuitlab.itlab.presentation.screens.events.Event
 import ru.rtuitlab.itlab.presentation.screens.events.Events
 import ru.rtuitlab.itlab.presentation.screens.events.EventsNotifications
 import ru.rtuitlab.itlab.presentation.screens.feedback.Feedback
+import ru.rtuitlab.itlab.presentation.screens.files.BaseElements
 
-import ru.rtuitlab.itlab.presentation.screens.profile.Profile
+import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.screens.purchases.NewPurchase
 import ru.rtuitlab.itlab.presentation.screens.purchases.Purchase
 import ru.rtuitlab.itlab.presentation.screens.purchases.Purchases
@@ -87,9 +89,7 @@ fun AppNavigation(
 			resources
 		)
 
-		employeesGraph(
-			bottomSheetViewModel
-		)
+		employeesGraph()
 
 		devicesGraph(
 			bottomSheetViewModel
@@ -97,11 +97,11 @@ fun AppNavigation(
 
 		feedbackGraph()
 
-		reportsGraph(
-			bottomSheetViewModel
-		)
+		reportsGraph()
 
 		purchasesGraph()
+
+		filesGraph()
 	}
 }
 
@@ -143,9 +143,7 @@ private fun NavGraphBuilder.eventsGraph(
 
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
-private fun NavGraphBuilder.employeesGraph(
-	bottomSheetViewModel: BottomSheetViewModel
-) {
+private fun NavGraphBuilder.employeesGraph() {
 	navigation(
 		startDestination = AppTab.Employees.startDestination,
 		route = AppTab.Employees.route
@@ -155,14 +153,12 @@ private fun NavGraphBuilder.employeesGraph(
 		}
 		composable(AppScreen.EmployeeDetails.route) {
 			Employee(
-				employeeViewModel = it.hiltViewModel(),
-				bottomSheetViewModel = bottomSheetViewModel
-			)
+                employeeViewModel = it.hiltViewModel() as EmployeeViewModel
+            )
 		}
 		composable(AppScreen.Profile.route) {
-			Profile(
-				bottomSheetViewModel = bottomSheetViewModel,
-				profileViewModel = it.hiltViewModel()
+			Employee(
+				employeeViewModel = it.hiltViewModel() as ProfileViewModel
 			)
 		}
 	}
@@ -203,9 +199,7 @@ private fun NavGraphBuilder.feedbackGraph() {
 @ExperimentalMaterialApi
 @ExperimentalPagerApi
 @ExperimentalAnimationApi
-private fun NavGraphBuilder.reportsGraph(
-	bottomSheetViewModel: BottomSheetViewModel
-) {
+private fun NavGraphBuilder.reportsGraph() {
 	navigation(
 		startDestination = AppTab.Reports.startDestination,
 		route = AppTab.Reports.route
@@ -219,9 +213,7 @@ private fun NavGraphBuilder.reportsGraph(
 		}
 
 		composable(AppScreen.NewReport.route) {
-			NewReport(
-				bottomSheetViewModel = bottomSheetViewModel
-			)
+			NewReport()
 		}
 	}
 }
@@ -245,6 +237,19 @@ private fun NavGraphBuilder.purchasesGraph() {
 
 		composable(AppScreen.NewPurchase.route) {
 			NewPurchase()
+		}
+	}
+
+}
+@ExperimentalAnimationApi
+private fun NavGraphBuilder.filesGraph(
+) {
+	navigation(
+		startDestination = AppTab.Files.startDestination,
+		route = AppTab.Files.route
+	) {
+		composable(AppScreen.Files.route) {
+			BaseElements()
 		}
 	}
 }

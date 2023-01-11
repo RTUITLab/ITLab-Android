@@ -1,15 +1,19 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.screens.employees
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -25,17 +29,18 @@ fun Employees(
 	employeesViewModel: EmployeesViewModel = singletonViewModel()
 ) {
 	val isRefreshing by employeesViewModel.isRefreshing.collectAsState()
-	val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
+	val snackbarHostState = remember { SnackbarHostState() }
 
-	employeesViewModel.uiEvents.collectUiEvents(scaffoldState)
+	employeesViewModel.uiEvents.collectUiEvents(snackbarHostState)
 
 	Scaffold(
 		modifier = Modifier.fillMaxSize(),
-		scaffoldState = scaffoldState
+		snackbarHost = { SnackbarHost(snackbarHostState) }
 	) {
 		SwipeRefresh(
 			modifier = Modifier
-				.fillMaxSize(),
+				.fillMaxSize()
+				.padding(it),
 			state = rememberSwipeRefreshState(isRefreshing),
 			onRefresh = {
 				employeesViewModel.update()
@@ -63,24 +68,24 @@ private fun EmployeeList(
 		currentUser?.let {
 			item {
 				EmployeeCard(
-					user = it,
-					modifier = Modifier
-						.fillMaxWidth()
-						.clickable {
-							navController.navigate(AppScreen.Profile.route)
-						}
+                    user = it,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.navigate(AppScreen.Profile.route)
+                        }
 				)
 				Spacer(modifier = Modifier.height(8.dp))
 			}
 		}
 		items(users.filter { it.id != currentUser?.id }) { user ->
 			EmployeeCard(
-				user = user,
-				modifier = Modifier
-					.fillMaxWidth()
-					.clickable {
-						navController.navigate("${AppScreen.EmployeeDetails.navLink}/${user.id}")
-					}
+                user = user,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        navController.navigate("${AppScreen.EmployeeDetails.navLink}/${user.id}")
+                    }
 			)
 		}
 	}

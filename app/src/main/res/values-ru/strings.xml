@@ -124,7 +124,7 @@
     <string name="report_new">Новый отчёт</string>
     <string name="report_new_disclaimer">Опишите, что вы делали за последнее время, что вы считаете важным при оценке вашей работы.  Вы можете прикрепить изображения или документы. Формат описания поддерживает формат Markdown.</string>
     <string name="reports_about_me">Обо мне</string>
-    <string name="reports_from_me">Мои</string>
+    <string name="reports_from_me">Мои отчёты о сотрудниках</string>
     <string name="reports_files">Файлы</string>
     <string name="report_write">Писать</string>
     <string name="report_preview">Просмотр</string>
@@ -161,6 +161,8 @@
     <string name="status_all">Все</string>
     <string name="status_await">В ожидании</string>
     <string name="status_confirmed">Подтверждены</string>
+    <string name="purchase_status_confirmed">Подтверждено</string>
+    <string name="purchase_status_rejected">Отклонено</string>
     <string name="status_rejected">Отклонены</string>
     <string name="retry">Попробовать снова</string>
     <string name="sort_asc">В порядке возрастания</string>
@@ -183,11 +185,17 @@
     <string name="purchase_rejected">Покупка успешно отклонена</string>
     <string name="purchase_approved">Покупка успешно принята</string>
     <string name="purchases_empty">Нет покупок, соответствующих фильтрам</string>
+    <string name="files">Файлы</string>
+
 
     //Users
     <string name="gravatar">Граватар</string>
     <string name="local_copy_inaccessible">Локальная копия данного ресурса недоступна</string>
     <string name="reports_empty">Отчётов не найдено</string>
     <string name="purchase_is_being_restored">Данные о покупке восстанавливаются</string>
+    <string name="events_select_date_range">Выберите период</string>
+    <string name="report_in_review">Ожидание</string>
+    <string name="reports_filters">Фильтры</string>
+    <string name="reports_sorting">Сортировка</string>
 
 </resources>

@@ -1,17 +1,18 @@
 package ru.rtuitlab.itlab.presentation.screens.events.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.events.models.EventInvitation
@@ -19,7 +20,6 @@ import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.ButtonLoadingIndicator
 import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @ExperimentalPagerApi
@@ -43,7 +43,7 @@ fun EventNotificationCard(
 		) {
 			Text(
 				text = stringResource(R.string.event_invitation),
-				style = MaterialTheme.typography.h6
+				style = MaterialTheme.typography.titleLarge
 			)
 			InteractiveField(value = notification.title) {
 				navController.navigate("${AppScreen.EventDetails.navLink}/${notification.eventId}")
@@ -96,9 +96,6 @@ fun EventNotificationCard(
 				Button(
 					modifier = Modifier
 						.fillMaxWidth(),
-					colors = ButtonDefaults.buttonColors(
-						backgroundColor = AppColors.accent.collectAsState().value
-					),
 					onClick = {
 						if (!isLoadingState) {
 							isLoadingState = true
@@ -113,15 +110,11 @@ fun EventNotificationCard(
 				) {
 					if (isLoadingState) {
 						ButtonLoadingIndicator(
-							color = Color.White,
 							strokeWidth = 2.dp
 						)
 					} else {
 						Text(
-							text = stringResource(R.string.event_invitation_accept),
-							color = Color.White,
-							fontSize = 14.sp,
-							fontWeight = FontWeight(500)
+							text = stringResource(R.string.event_invitation_accept)
 						)
 					}
 				}
@@ -130,7 +123,8 @@ fun EventNotificationCard(
 					modifier = Modifier
 						.fillMaxWidth(),
 					colors = ButtonDefaults.buttonColors(
-						backgroundColor = AppColors.red
+						containerColor = MaterialTheme.colorScheme.error,
+						contentColor = contentColorFor(MaterialTheme.colorScheme.error)
 					),
 					onClick = {
 						if (!isLoadingState) {
@@ -146,15 +140,11 @@ fun EventNotificationCard(
 				) {
 					if (isLoadingState) {
 						ButtonLoadingIndicator(
-							color = Color.White,
 							strokeWidth = 2.dp
 						)
 					} else {
 						Text(
-							text = stringResource(R.string.event_invitation_reject),
-							color = Color.White,
-							fontSize = 14.sp,
-							fontWeight = FontWeight(500)
+							text = stringResource(R.string.event_invitation_reject)
 						)
 					}
 				}

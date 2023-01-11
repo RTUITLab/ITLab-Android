@@ -1,17 +1,16 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package ru.rtuitlab.itlab.presentation.screens.reports
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NavigateNext
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -21,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,11 +31,8 @@ import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.components.SegmentText
 import ru.rtuitlab.itlab.presentation.screens.events.components.SegmentedControl
 import ru.rtuitlab.itlab.presentation.screens.micro_file_service.FilesViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
-import ru.rtuitlab.itlab.presentation.ui.components.LoadableButtonContent
-import ru.rtuitlab.itlab.presentation.ui.components.PrimaryButton
-import ru.rtuitlab.itlab.presentation.ui.components.UserLink
-import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
+import ru.rtuitlab.itlab.presentation.screens.reports.state.NewReportUiState
+import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MdAction
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MdAction.Companion.asTextActionsOn
@@ -45,8 +42,6 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.Progre
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
-import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.LocalActivity
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
@@ -60,10 +55,10 @@ import java.io.File
 fun NewReport(
     reportsViewModel: ReportsViewModel = singletonViewModel(),
     newReportViewModel: NewReportViewModel = singletonViewModel(),
-    filesViewModel: FilesViewModel = singletonViewModel(),
-    bottomSheetViewModel: BottomSheetViewModel
+    filesViewModel: FilesViewModel = singletonViewModel()
 ) {
     val state by newReportViewModel.reportState.collectAsState()
+    val users by newReportViewModel.users.collectAsState()
 
     val activity = LocalActivity.current
 
@@ -81,9 +76,9 @@ fun NewReport(
 
     val navController = LocalNavController.current
 
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    reportsViewModel.uiEvents.collectUiEvents(scaffoldState)
+    reportsViewModel.uiEvents.collectUiEvents(snackbarHostState)
 
     if (state.isConfirmationDialogShown)
         UploadConfirmationDialog(
@@ -119,34 +114,30 @@ fun NewReport(
         onFractionChanged = tpSetter
     ) {
         Scaffold(
-            scaffoldState = scaffoldState
+            snackbarHost = { FabAwareSnackbarHost(snackbarHostState) }
         ) {
             Surface(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .clip(RoundedCornerShape(transitionProgress.dp * 128)),
-                elevation = 2.dp
+                    .clip(RoundedCornerShape(transitionProgress.dp * 128))
+                    .padding(it),
+                color = MaterialTheme.colorScheme.background
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Text(stringResource(R.string.report_new_disclaimer))
-
-                    Spacer(Modifier)
-
                     Text(
-                        text = stringResource(R.string.report_new_about_who),
-                        style = MaterialTheme.typography.h4
+                        text = stringResource(R.string.report_new_disclaimer),
+                        style = MaterialTheme.typography.bodySmall
                     )
 
-                    UserPicker(
-                        selectedUser = state.selectedImplementer,
-                        bottomSheetViewModel = bottomSheetViewModel,
-                        onSelect = {
-                            newReportViewModel.onUserSelected(it)
-                        }
+                    DropdownUserPicker(
+                        state = state,
+                        users = users,
+                        onSearch = newReportViewModel::onQueryChanged,
+                        onSelect = newReportViewModel::onUserSelected
                     )
 
                     OutlinedAppTextField(
@@ -156,31 +147,30 @@ fun NewReport(
                         onValueChange = newReportViewModel::onTitleChanged,
                         label = {
                             Text(
-                                text = stringResource(R.string.report_title),
-                                color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
+                                text = stringResource(R.string.report_title)
                             )
-                        }
+                        },
+                        isError = state.shouldShowTitleError
                     )
 
                     val choices =
                         remember { listOf(R.string.report_write, R.string.report_preview) }
-                    var selectedSegment by rememberSaveable { mutableStateOf(choices.first()) }
+                    var selectedSegment by rememberSaveable { mutableStateOf(
+                        if (state.isPreviewShown) choices.last() else choices.first()
+                    ) }
                     SegmentedControl(
                         segments = choices,
                         selectedSegment = selectedSegment,
                         onSegmentSelected = {
                             selectedSegment = it
                             newReportViewModel.onSegmentChanged(it == choices.last())
-                        }
+                        },
+                        shape = MaterialTheme.shapes.extraSmall
                     ) { choice ->
                         SegmentText(
                             modifier = Modifier.padding(horizontal = 4.dp, vertical = 10.dp),
                             text = stringResource(choice),
-                            selected = selectedSegment == choice,
-                            selectedColor = AppColors.accent.collectAsState().value,
-                            unselectedColor = AppColors.greyText.collectAsState().value.copy(
-                                alpha = .8f
-                            )
+                            selected = selectedSegment == choice
                         )
                     }
 
@@ -197,8 +187,7 @@ fun NewReport(
                                 onValueChange = newReportViewModel::onReportTextChanged,
                                 label = {
                                     Text(
-                                        text = stringResource(R.string.report_application_text),
-                                        color = MaterialTheme.colors.onSurface.copy(alpha = .6f)
+                                        text = stringResource(R.string.report_application_text)
                                     )
                                 },
                                 toolbar = AppTextToolbar(
@@ -224,7 +213,8 @@ fun NewReport(
                                             }
                                         }
                                     )
-                                )
+                                ),
+                                isError = state.shouldShowTextError
                             )
                         }
                     }
@@ -249,6 +239,7 @@ fun NewReport(
                                     newReportViewModel.onSendReportResult()
                                     if (isSuccessful) {
                                         sharedElementKey = newReport!!.id
+                                        newReportViewModel.resetState()
                                         navController.popBackStack()
                                     }
                                 }
@@ -270,49 +261,50 @@ fun NewReport(
     }
 }
 
-
-@ExperimentalMaterialApi
 @Composable
-private fun UserPicker(
-    selectedUser: User? = null,
-    bottomSheetViewModel: BottomSheetViewModel,
+fun DropdownUserPicker(
+    state: NewReportUiState,
+    users: List<User>,
+    onSearch: (String) -> Unit,
     onSelect: (User) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    IconizedRow(
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.small)
-            .clickable {
-                bottomSheetViewModel.show(
-                    sheet = AppBottomSheet.UserSelection(onSelect),
-                    scope = scope
+    val shape = MaterialTheme.shapes.extraSmall
+    AppDropdownMenu(
+        properties = PopupProperties(focusable = false),
+        maxHeight = 260.dp,
+        fillMaxWidth = true,
+        anchor = { open ->
+            OutlinedAppTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = state.implementerSearchQuery,
+                onValueChange = onSearch.also {
+                    if (state.implementerSearchQuery.isNotEmpty() && state.selectedImplementer == null)
+                        open()
+                },
+                label = {
+                    Text(
+                        text = stringResource(R.string.report_new_about_who)
+                    )
+                },
+                isError = state.shouldShowSelectedUserError,
+                shape = shape
+            )
+        },
+        content = { close ->
+            users.forEach {
+                DropdownMenuItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = {
+                        Text(text = it.abbreviatedName)
+                    },
+                    onClick = {
+                        onSelect(it)
+                        close()
+                    }
                 )
             }
-            .padding(4.dp),
-        imageVector = Icons.Default.Person,
-        tint = AppColors.accent.collectAsState().value,
-        opacity = 1f
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (selectedUser != null)
-                UserLink(user = selectedUser)
-            else
-                Text(
-                    text = stringResource(R.string.employee),
-                    style = MaterialTheme.typography.caption
-                )
-            Icon(
-                imageVector = Icons.Default.NavigateNext,
-                contentDescription = null,
-                tint = AppColors.accent.collectAsState().value
-            )
         }
-    }
+    )
 }
 
 @Composable
@@ -327,7 +319,7 @@ fun UploadConfirmationDialog(
                 onResult(false)
         },
         confirmButton = {
-            PrimaryButton(
+            PrimaryTextButton(
                 onClick = { onResult(true) },
                 text = stringResource(R.string.confirm_yes),
                 enabled = !isUploading
@@ -341,7 +333,7 @@ fun UploadConfirmationDialog(
             }
         },
         dismissButton = {
-            PrimaryButton(
+            PrimaryTextButton(
                 onClick = { onResult(false) },
                 text = stringResource(R.string.cancel),
                 enabled = !isUploading

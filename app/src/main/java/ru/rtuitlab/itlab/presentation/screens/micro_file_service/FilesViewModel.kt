@@ -19,10 +19,12 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.Resource
+import ru.rtuitlab.itlab.common.extensions.collectUntil
 import ru.rtuitlab.itlab.common.extensions.emitInIO
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfo
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 import ru.rtuitlab.itlab.data.repository.MfsRepository
+import ru.rtuitlab.itlab.domain.use_cases.users.GetCurrentUserUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase
 import ru.rtuitlab.itlab.presentation.utils.DownloadFileFromWeb
 import java.io.File
@@ -33,8 +35,13 @@ import javax.inject.Inject
 @HiltViewModel
 class FilesViewModel @Inject constructor(
     private val repository: MfsRepository,
-    getUsers: GetUsersUseCase
-) : ViewModel() {
+    getUsers: GetUsersUseCase,
+    getCurrentUser: GetCurrentUserUseCase
+    ) : ViewModel() {
+
+    private val currentUserId = getCurrentUser().map {
+        it?.id
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
@@ -45,6 +52,22 @@ class FilesViewModel @Inject constructor(
     private val _filesResponse =
         MutableStateFlow<Resource<List<FileInfoResponse>>>(Resource.Loading)
     val filesResponse = _filesResponse.asStateFlow()
+
+    init{
+        viewModelScope.launch {
+            currentUserId.collectUntil(
+                condition = { it != null },
+                action = {
+                    it?.let {
+                        launch {
+                            onUserSelected(it)
+                        }
+                    }
+                }
+            )
+
+        }
+    }
 
     val users = getUsers()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
@@ -64,6 +87,10 @@ class FilesViewModel @Inject constructor(
     val searchQuery = _searchQuery.asStateFlow()
 
     private var _files = MutableStateFlow(emptyList<FileInfo>())
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
+
     val files = searchQuery.combine(_files) { query, files ->
         query to files
     }.flatMapLatest { (query, files) ->
@@ -87,10 +114,13 @@ class FilesViewModel @Inject constructor(
 
     private val selectedUserId = MutableStateFlow<String?>(null)
 
-    fun onRefresh() = fetchFiles(
-        userId = selectedUserId.value,
-        sortedBy = selectedSortingMethod.value.apiString
-    )
+    fun onRefresh() = viewModelScope.launch {
+
+        fetchFiles(
+            userId = selectedUserId.value,
+            sortedBy = selectedSortingMethod.value.apiString
+        )
+    }
 
     fun onSearch(query: String) {
         _searchQuery.value = query

@@ -1,20 +1,18 @@
 package ru.rtuitlab.itlab.presentation.screens.profile.components
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -31,10 +29,9 @@ import ru.rtuitlab.itlab.presentation.screens.auth.AuthViewModel
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadableButtonContent
-import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
-import ru.rtuitlab.itlab.presentation.ui.components.PrimaryButton
+import ru.rtuitlab.itlab.presentation.ui.components.PrimaryTextButton
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
-import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
+import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 
 @ExperimentalMaterialApi
 @Composable
@@ -127,7 +124,7 @@ fun ProfileSettingsBottomSheet(
 				icon = Icons.Default.Logout,
 				contentDescription = stringResource(R.string.logout),
 				text = stringResource(R.string.logout),
-				tint = AppColors.red,
+				tint = MaterialTheme.colorScheme.error,
 				onClick = {
 					authViewModel.enterLogoutFlow()
 					bottomSheetViewModel.hide(scope)
@@ -187,7 +184,7 @@ private fun ProfileSettingsItem(
 	IconizedRow(
 		modifier = Modifier
 			.fillMaxWidth()
-			.clip(MaterialTheme.shapes.small)
+			.clip(MaterialTheme.shapes.extraSmall)
 			.clickable {
 				onClick()
 			}
@@ -196,7 +193,7 @@ private fun ProfileSettingsItem(
 		contentDescription = contentDescription,
 		spacing = 10.dp,
 		opacity = 1f,
-		tint = AppColors.accent.collectAsState().value,
+		tint = MaterialTheme.colorScheme.primary,
 	) {
 		SettingsText(
 			text = text,
@@ -210,13 +207,13 @@ private fun ProfileSettingsItem(
 	icon: ImageVector,
 	contentDescription: String,
 	text: String?,
-	tint: Color? = AppColors.accent.collectAsState().value,
+	tint: Color = MaterialTheme.colorScheme.primary,
 	onClick: () -> Unit
 ) {
 	IconizedRow(
 		modifier = Modifier
 			.fillMaxWidth()
-			.clip(MaterialTheme.shapes.small)
+			.clip(MaterialTheme.shapes.extraSmall)
 			.clickable {
 				onClick()
 			}
@@ -246,13 +243,12 @@ private fun SettingsText(
 		if (text.isNullOrEmpty())
 			Text(
 				text = hint,
-				style = MaterialTheme.typography.caption,
-				color = AppColors.greyText.collectAsState().value.copy(alpha = .4f)
+				style = MaterialTheme.typography.bodySmall
 			)
 		else
 			Text(
 				text = text,
-				style = MaterialTheme.typography.caption,
+				style = MaterialTheme.typography.bodySmall
 			)
 	}
 }
@@ -269,39 +265,21 @@ private fun SettingsDialog(
 
 	AlertDialog(
 		title = {
-			Text(text = title, style = MaterialTheme.typography.h4)
+			Text(text = title, style = MaterialTheme.typography.headlineMedium)
 			Spacer(modifier = Modifier.height(15.dp))
 		},
 		text = {
 			Column {
 				Spacer(modifier = Modifier.height(15.dp))
-				BasicTextField(
-					modifier = Modifier
-						.height(35.dp)
-						.background(shape = RoundedCornerShape(6.dp), color = Color.Transparent)
-						.border(
-							width = 1.dp,
-							color = MaterialTheme.colors.onSurface.copy(alpha = .12f),
-							shape = RoundedCornerShape(6.dp)
-						)
-						.fillMaxWidth(),
+				OutlinedAppTextField(
 					value = textFieldValue,
-					textStyle = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.onSurface),
+					onValueChange = { textFieldValue = it.filterNot { it == '\n' } },
 					singleLine = true,
-					keyboardActions = KeyboardActions(
-						onDone = {onResult(textFieldValue)}
-					),
-					onValueChange = { textFieldValue = it.filterNot { it == '\n' } }
-				) { innerTextField ->
-					Row(verticalAlignment = Alignment.CenterVertically) {
-						Spacer(modifier = Modifier.width(8.dp))
-						innerTextField()
-					}
-				}
+				)
 			}
 		},
 		confirmButton = {
-			PrimaryButton(
+			PrimaryTextButton(
 				text = stringResource(R.string.save),
 				onClick = {
 					onResult(textFieldValue)
@@ -316,7 +294,7 @@ private fun SettingsDialog(
 			}
 		},
 		dismissButton = {
-			PrimaryButton(
+			PrimaryTextButton(
 				text = stringResource(R.string.cancel),
 				onClick = {
 					onResult(null)
