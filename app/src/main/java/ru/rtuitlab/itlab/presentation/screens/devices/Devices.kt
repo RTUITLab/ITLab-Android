@@ -15,7 +15,6 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceCard
 import ru.rtuitlab.itlab.presentation.screens.devices.components.FloatActionButton
-import ru.rtuitlab.itlab.presentation.ui.components.Custom_Scaffold
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
@@ -30,26 +29,18 @@ fun Devices(
 	val devicesResource by devicesViewModel.deviceResponsesFlow.collectAsState()
 	var isRefreshing by remember { mutableStateOf(false) }
 
-
-
-
 	Scaffold(
 		modifier = Modifier
 			.fillMaxSize(),
 		scaffoldState = rememberScaffoldState(snackbarHostState = devicesViewModel.snackbarHostState),
 		floatingActionButton = {
-			if (devicesViewModel.accesibleFlow.collectAsState().value)
+			if (devicesViewModel.isAccessible.collectAsState().value)
 				FloatActionButton(
 					devicesViewModel,
 					bottomSheetViewModel
-
 				)
-
 		}
-
 	) {
-
-
 		SwipeRefresh(
 			modifier = Modifier
 				.fillMaxSize(),
@@ -70,21 +61,11 @@ fun Devices(
 					},
 					onSuccess = {
 						isRefreshing = false
-						devicesViewModel.onResourceSuccess(it)
-
 						DeviceList(devicesViewModel, bottomSheetViewModel)
-
-
 					}
-
 				)
 			}
-
-
-
 		}
-
-
 	}
 }
 
@@ -96,36 +77,21 @@ private fun DeviceList(
 	bottomSheetViewModel: BottomSheetViewModel
 ) {
 	val devices by devicesViewModel.devicesFlow.collectAsState()
-	val currentDeviceId = devicesViewModel.deviceIdFlow.collectAsState()
-
-
 
 	LazyColumn(
 		verticalArrangement = Arrangement.spacedBy(10.dp),
 		contentPadding = PaddingValues(horizontal = 15.dp, vertical = 15.dp),
 		modifier = Modifier.fillMaxSize()
 	) {
-
-
-		items(devices.filter { it ->
-				it.id != currentDeviceId.value
-		}) { device ->
-
-
+		items(devices) { device ->
 			DeviceCard(
 				devicesViewModel = devicesViewModel,
 				bottomSheetViewModel = bottomSheetViewModel,
-
 				device = device,
 				modifier = Modifier
 					.fillMaxWidth()
 
-				)
-
-
+			)
 		}
-
-
 	}
-
 }

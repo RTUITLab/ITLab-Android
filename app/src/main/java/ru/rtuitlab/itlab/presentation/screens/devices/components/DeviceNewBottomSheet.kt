@@ -30,251 +30,205 @@ import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetView
 @ExperimentalMaterialApi
 @Composable
 fun DeviceNewBottomSheet(
-        devicesViewModel: DevicesViewModel,
-        bottomSheetViewModel: BottomSheetViewModel,
+    devicesViewModel: DevicesViewModel,
+    bottomSheetViewModel: BottomSheetViewModel,
 ) {
 
-        var equipmentIdString:String = ""
-        val equipmentId = remember { mutableStateOf(equipmentIdString) }
+    val equipmentId = remember { mutableStateOf("") }
 
-        val titleDevice = rememberSaveable {  mutableStateOf("") }
-        val serialNumberDevice = rememberSaveable { mutableStateOf("") }
-        val descriptionDevice = rememberSaveable { mutableStateOf("") }
+    val deviceName = rememberSaveable { mutableStateOf("") }
+    val serialNumber = rememberSaveable { mutableStateOf("") }
+    val description = rememberSaveable { mutableStateOf("") }
 
-        val scope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
-        var dialogEquipmentTypeIsShown by remember { mutableStateOf(false) }
-        var dialogSerialNumberIsShown by remember { mutableStateOf(false) }
-        var dialogDescriptionIsShown by remember { mutableStateOf(false) }
+    var isTypeDialogShown by remember { mutableStateOf(false) }
+    var isSerialNumberDialogShown by remember { mutableStateOf(false) }
+    var isDescriptionDialogShown by remember { mutableStateOf(false) }
 
-        var dialogAcceptIsShown by remember { mutableStateOf(false) }
-
+    var isConfirmationDialogShown by remember { mutableStateOf(false) }
 
 
+    val setEquipmentTypeLine: (EquipmentTypeResponse) -> Unit = {
+        deviceName.value = it.title
+        equipmentId.value = it.id
+        isTypeDialogShown = false
+    }
+    val setSerialNumberLine: (String) -> Unit = {
+        serialNumber.value = it
+        isSerialNumberDialogShown = false
+    }
+    val setDescriptionLine: (String) -> Unit = {
+        description.value = it
+        isDescriptionDialogShown = false
 
+    }
+    val onRefreshLines: () -> Unit = {
+        deviceName.value = ""
+        serialNumber.value = ""
+        description.value = ""
+        isConfirmationDialogShown = false
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(25.dp)
 
-        val setEquipmentTypeLine: (EquipmentTypeResponse) -> Unit = {
-                titleDevice.value = it.title
-                equipmentId.value = it.id
-                dialogEquipmentTypeIsShown = false
-        }
-        val setSerialNumberLine: (String) -> Unit = {
-                serialNumberDevice.value = it
-                dialogSerialNumberIsShown = false
-        }
-        val setDescriptionLine: (String) -> Unit = {
-                descriptionDevice.value = it
-                dialogDescriptionIsShown = false
-
-        }
-        val onRefreshLines: () -> Unit = {
-                titleDevice.value = ""
-                serialNumberDevice.value = ""
-                descriptionDevice.value = ""
-                dialogAcceptIsShown = false
-        }
-        Column(
-                modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(25.dp)
-
+    ) {
+        if (isTypeDialogShown)
+            Dialog(
+                onDismissRequest = { isTypeDialogShown = false },
+                content = {
+                    DeviceInfoEditEquipmentTypeDialogContent(
+                        devicesViewModel,
+                        setEquipmentTypeLine
+                    )
+                }
+            )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clickable {
+                    isTypeDialogShown = true
+                }
+                .fillMaxWidth()
         ) {
-                if(dialogEquipmentTypeIsShown)
-                        Dialog(
-                                onDismissRequest = {dialogEquipmentTypeIsShown=false} ,
-                                content = {
-                                        DeviceInfoEditEquipmentTypeDialogContent(
-                                                "",
-                                                devicesViewModel,
-                                                setEquipmentTypeLine
-                                        )
-                                }
-                        )
-                Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                                .clickable {
-                                        dialogEquipmentTypeIsShown = true
-//                                        dialogViewModel.show(
-//                                                AppDialog.DeviceInfoEditEquipmentType(
-//                                                        "",
-//                                                        dialogViewModel,
-//                                                        devicesViewModel,
-//                                                        setEquipmentTypeLine
-//                                                )
-//                                        )
-                                }
-                                .fillMaxWidth()
-                ) {
-                        Icon(
-                                modifier = Modifier
-                                        .width(20.dp)
-                                        .height(20.dp),
-                                painter = painterResource(R.drawable.ic_title),
-                                contentDescription = stringResource(R.string.equipmentType),
-                                tint = colorResource(R.color.accent)
+            Icon(
+                modifier = Modifier
+                    .width(20.dp)
+                    .height(20.dp),
+                painter = painterResource(R.drawable.ic_title),
+                contentDescription = stringResource(R.string.equipmentType),
+                tint = colorResource(R.color.accent)
 
 
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                                text = if(titleDevice.value.isEmpty()) stringResource(R.string.equipmentType) else titleDevice.value,
-                                textDecoration = TextDecoration.Underline
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = deviceName.value.ifEmpty { stringResource(R.string.equipmentType) },
+                textDecoration = TextDecoration.Underline
 
 
-                        )
+            )
 
 
-                }
-                Spacer(Modifier.height(8.dp))
-
-                if(dialogSerialNumberIsShown)
-                        Dialog(
-                                onDismissRequest = {dialogSerialNumberIsShown=false} ,
-                                content = {
-                                        DeviceInfoEditSecondaryDialogContent(
-                                                "",
-                                                stringResource(R.string.serial_number),
-                                                setSerialNumberLine
-                                        )
-                                }
-                        )
-                Row(verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                                .clickable {
-                                        dialogSerialNumberIsShown = true
-
-//                                        dialogViewModel.show(
-//                                                AppDialog.DeviceInfoEditSerialNumber(
-//                                                        "",
-//                                                        dialogViewModel,
-//                                                        devicesViewModel,
-//                                                        setSerialNumberLine
-//                                                )
-//                                        )
-                                }) {
-                        Icon(
-                                modifier = Modifier
-                                        .width(20.dp)
-                                        .height(20.dp),
-                                painter = painterResource(R.drawable.ic_serial_number),
-                                contentDescription = stringResource(R.string.serial_number),
-                                tint = colorResource(R.color.accent)
-
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                                text = if(serialNumberDevice.value.isEmpty()) stringResource(R.string.serial_number) else serialNumberDevice.value,
-                                textDecoration = TextDecoration.Underline
-
-                        )
-                }
-                Spacer(Modifier.height(8.dp))
-
-                if(dialogDescriptionIsShown)
-                        Dialog(
-                                onDismissRequest = {dialogDescriptionIsShown=false} ,
-                                content = {
-                                        DeviceInfoEditSecondaryDialogContent(
-                                                "",
-                                                stringResource(R.string.description),
-                                                setDescriptionLine
-                                        )
-                                }
-                        )
-                Row(verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                                .clickable {
-                                        dialogDescriptionIsShown = true
-
-//                                        dialogViewModel.show(
-//                                                AppDialog.DeviceInfoEditDescription(
-//                                                        "",
-//                                                        dialogViewModel,
-//                                                        devicesViewModel,
-//                                                        setDescriptionLine
-//                                                )
-//                                        )
-                                }) {
-                        Icon(
-                                painter = painterResource(R.drawable.ic_info),
-                                contentDescription = stringResource(R.string.description),
-                                modifier = Modifier
-                                        .width(20.dp)
-                                        .height(20.dp),
-                                tint = colorResource(R.color.accent)
-
-
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                                text = if(descriptionDevice.value.isEmpty()) stringResource(R.string.description) else descriptionDevice.value,
-                                textDecoration = TextDecoration.Underline
-
-
-                        )
-                }
-                Spacer(Modifier.height(8.dp))
-
-                if(dialogAcceptIsShown)
-                        Dialog(
-                                onDismissRequest = {dialogAcceptIsShown=false} ,
-                                content = {
-                                        DeviceAcceptDialogContent(
-                                                titleDevice.value,
-                                                serialNumberDevice.value,
-                                                descriptionDevice.value
-                                        ){
-                                                if(titleDevice.value.isNotEmpty() && serialNumberDevice.value.isNotEmpty() && descriptionDevice.value.isNotEmpty()) {
-                                                        val equipmentNewRequest = EquipmentNewRequest(
-                                                                serialNumberDevice.value,
-                                                                equipmentId.value,
-                                                                descriptionDevice.value
-                                                        )
-                                                        devicesViewModel.onCreateEquipment(equipmentNewRequest){
-                                                                        createdDevice ->
-                                                                if(createdDevice != null) {
-                                                                        dialogAcceptIsShown = false
-                                                                        bottomSheetViewModel.hide(scope)
-                                                                        devicesViewModel.onCreateCachedDevice(createdDevice)
-                                                                        onRefreshLines()
-                                                                }
-                                                        }
-                                                }
-                                        }
-                                }
-                        )
-                Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier
-                                .fillMaxWidth()
-                ) {
-
-                        Icon(
-                                Icons.Outlined.Save,
-                                contentDescription = stringResource(R.string.add_device),
-                                modifier = Modifier
-                                        .padding(10.dp)
-                                        .width(40.dp)
-                                        .height(30.dp)
-                                        .padding(0.dp)
-                                        .clickable {
-                                                dialogAcceptIsShown = true
-//                                                dialogViewModel.show(
-//                                                        AppDialog.DeviceNewAccept(
-//                                                                dialogViewModel,
-//                                                                bottomSheetViewModel,
-//                                                                devicesViewModel,
-//                                                                titleDevice.value,
-//                                                                serialNumberDevice.value,
-//                                                                descriptionDevice.value,
-//                                                                equipmentId.value,
-//                                                                onRefreshLines
-//                                                        )
-//                                                )
-                                        }
-                        )
-
-                }
         }
+        Spacer(Modifier.height(8.dp))
+
+        if (isSerialNumberDialogShown)
+            Dialog(
+                onDismissRequest = { isSerialNumberDialogShown = false },
+                content = {
+                    DeviceInfoEditSecondaryDialogContent(
+                        "",
+                        stringResource(R.string.serial_number),
+                        setSerialNumberLine
+                    )
+                }
+            )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clickable {
+                    isSerialNumberDialogShown = true
+                }
+        ) {
+            Icon(
+                modifier = Modifier
+                    .width(20.dp)
+                    .height(20.dp),
+                painter = painterResource(R.drawable.ic_serial_number),
+                contentDescription = stringResource(R.string.serial_number),
+                tint = colorResource(R.color.accent)
+
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = if (serialNumber.value.isEmpty()) stringResource(R.string.serial_number) else serialNumber.value,
+                textDecoration = TextDecoration.Underline
+
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+
+        if (isDescriptionDialogShown)
+            Dialog(
+                onDismissRequest = { isDescriptionDialogShown = false },
+                content = {
+                    DeviceInfoEditSecondaryDialogContent(
+                        "",
+                        stringResource(R.string.description),
+                        setDescriptionLine
+                    )
+                }
+            )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clickable {
+                    isDescriptionDialogShown = true
+                }
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_info),
+                contentDescription = stringResource(R.string.description),
+                modifier = Modifier
+                    .width(20.dp)
+                    .height(20.dp),
+                tint = colorResource(R.color.accent)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = if (description.value.isEmpty()) stringResource(R.string.description) else description.value,
+                textDecoration = TextDecoration.Underline
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+
+        if (isConfirmationDialogShown)
+            Dialog(
+                onDismissRequest = { isConfirmationDialogShown = false },
+                content = {
+                    DeviceAcceptDialogContent(
+                        deviceName.value,
+                        serialNumber.value,
+                        description.value
+                    ) {
+                        if (deviceName.value.isNotEmpty() && serialNumber.value.isNotEmpty() && description.value.isNotEmpty()) {
+                            val equipmentNewRequest = EquipmentNewRequest(
+                                serialNumber.value,
+                                equipmentId.value,
+                                description.value
+                            )
+                            devicesViewModel.createEquipment(equipmentNewRequest) { createdDevice ->
+                                if (createdDevice != null) {
+                                    isConfirmationDialogShown = false
+                                    bottomSheetViewModel.hide(scope)
+                                    devicesViewModel.onCreateCachedDevice(createdDevice)
+                                    onRefreshLines()
+                                }
+                            }
+                        }
+                    }
+                }
+            )
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Icon(
+                Icons.Outlined.Save,
+                contentDescription = stringResource(R.string.add_device),
+                modifier = Modifier
+                    .padding(10.dp)
+                    .width(40.dp)
+                    .height(30.dp)
+                    .padding(0.dp)
+                    .clickable {
+                        isConfirmationDialogShown = true
+                    }
+            )
+        }
+    }
 }

@@ -67,8 +67,8 @@ fun BottomSheet(
 			is AppBottomSheet.EventShift -> {
 				val shift = currentSheet as AppBottomSheet.EventShift
 				ShiftBottomSheet(
-					shift = shift.shift,
-					salaries = shift.salaries,
+					shiftAndSalary = shift.shiftAndSalary,
+					eventSalary = shift.eventSalary,
 					eventViewModel = shift.eventViewModel
 				)
 			}
@@ -87,10 +87,8 @@ fun BottomSheet(
 			}
 			is AppBottomSheet.DeviceInfo -> {
 				val details = currentSheet as AppBottomSheet.DeviceInfo
-				val deviceDetails = details.deviceDetails
 				val devicesViewModel = details.devicesViewModel
-				val bottomSheetViewModel = details.bottomSheetViewModel
-				DeviceInfoBottomSheet(devicesViewModel, bottomSheetViewModel,deviceDetails)
+				DeviceInfoBottomSheet(devicesViewModel, viewModel)
 			}
 			is AppBottomSheet.DeviceNew -> {
 				val details = currentSheet as AppBottomSheet.DeviceNew

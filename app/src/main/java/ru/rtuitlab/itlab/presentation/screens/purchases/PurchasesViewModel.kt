@@ -1,6 +1,6 @@
 package ru.rtuitlab.itlab.presentation.screens.purchases
 
-import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
 import ru.rtuitlab.itlab.BuildConfig
-import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.extensions.collectUntil
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.models.FileInfoResponse
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingDirection
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingOrder
@@ -19,45 +19,55 @@ import ru.rtuitlab.itlab.data.remote.api.purchases.models.Purchase
 import ru.rtuitlab.itlab.data.remote.api.purchases.models.PurchaseCreateRequest
 import ru.rtuitlab.itlab.data.remote.pagination.Paginator
 import ru.rtuitlab.itlab.data.repository.PurchasesRepository
-import ru.rtuitlab.itlab.data.repository.UsersRepository
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.NewPurchaseUiState
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.PurchaseUiState
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.PurchasesUiState
-import ru.rtuitlab.itlab.presentation.ui.extensions.toIso8601
-import ru.rtuitlab.itlab.presentation.ui.extensions.toMoscowDateTime
+import ru.rtuitlab.itlab.common.extensions.toIso8601
+import ru.rtuitlab.itlab.common.extensions.toMoscowDateTime
+import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
+import ru.rtuitlab.itlab.domain.use_cases.user.GetUserClaimsUseCase
+import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase
+import ru.rtuitlab.itlab.presentation.ui.extensions.stateIn
+import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class PurchasesViewModel @Inject constructor(
     private val repository: PurchasesRepository,
-    private val usersRepository: UsersRepository,
-    authStateStorage: AuthStateStorage
+    private val savedStateHandle: SavedStateHandle,
+    getUsers: GetUsersUseCase,
+    getUserClaims: GetUserClaimsUseCase
 ): ViewModel() {
 
-    val userClaimsFlow = authStateStorage.userClaimsFlow
+    companion object {
+        const val KEY_SELECTED_PURCHASE_ID = "selectedPurchaseId"
+    }
 
-    private val searchQuery = MutableStateFlow("")
+    /**
+     * This flow is used to recreate [NewPurchaseUiState] after a process death
+     */
+    private val selectedPurchaseId: StateFlow<Int?> =
+        savedStateHandle.stateIn(viewModelScope, KEY_SELECTED_PURCHASE_ID)
+
+    val isSolvingAccessible = getUserClaims().map {
+        it.contains(UserClaimCategories.PURCHASES.ADMIN)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    private val users = getUsers().map {
+        it.map { it.toUser() }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    // This is unused now, but will be used eventually
+//    private val searchQuery = MutableStateFlow("")
 
     val pageSize = 10
 
     private val _state = MutableStateFlow(PurchasesUiState())
-    val state = searchQuery.flatMapLatest { query ->
-        _state.asStateFlow().map {
-            it.copy(
-                purchases = it.purchases.filter {
-                    it.name.contains(query, ignoreCase = true)
-                }
-            )
-        }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, _state.value)
+    val state = _state.asStateFlow()
 
-    private val _events = MutableSharedFlow<PurchaseEvent>()
-    val events = _events.asSharedFlow()
-
-    sealed class PurchaseEvent {
-        data class Snackbar(val message: String): PurchaseEvent()
-    }
+    private val _uiEvents = MutableSharedFlow<UiEvent>()
+    val uiEvents = _uiEvents.asSharedFlow()
 
     private val paginator = Paginator(
         initialKey = state.value.page,
@@ -89,8 +99,8 @@ class PurchasesViewModel @Inject constructor(
                 page = newPage,
                 purchases = _state.value.purchases + result.content.map { purchaseDto ->
                     purchaseDto.toPurchase(
-                        purchaser = usersRepository.cachedUsersFlow.value.find { it.id == purchaseDto.purchaserId }!!,
-                        solver = usersRepository.cachedUsersFlow.value.find { it.id == purchaseDto.solution.solverId }
+                        purchaser = users.value.find { it.id == purchaseDto.purchaserId }!!,
+                        solver = users.value.find { it.id == purchaseDto.solution.solverId }
                     )
                 },
                 paginationState = result,
@@ -103,30 +113,19 @@ class PurchasesViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            coroutineScope {
-                launch {
-                    _state.value = _state.value.copy(isRefreshing = true)
-                    usersRepository.usersResponsesFlow.collect {
-                        it.handle(
-                            onSuccess = {
-                                fetchNextItems()
-                                _state.value = _state.value.copy(isRefreshing = false)
-                                cancel()
-                            },
-                            onError = {
-                                _state.value = _state.value.copy(
-                                    isRefreshing = false,
-                                    errorMessage = it
-                                )
-                            }
-                        )
+            users.collectUntil(
+                condition = { it.isNotEmpty() },
+                action = {
+                    fetchNextItems()
+                    selectedPurchaseId.value?.let {
+                        restorePurchaseState(it)
                     }
                 }
-            }
+            )
         }
     }
 
-    fun fetchNextItems() = viewModelScope.launch {
+    fun fetchNextItems() = viewModelScope.launch(Dispatchers.IO) {
         paginator.fetchNext()
     }
 
@@ -166,6 +165,24 @@ class PurchasesViewModel @Inject constructor(
     fun onPurchaseOpened(purchase: Purchase) {
         _state.value = _state.value.copy(
             selectedPurchaseState = PurchaseUiState(purchase)
+        )
+        savedStateHandle[KEY_SELECTED_PURCHASE_ID] = purchase.id
+    }
+
+    private fun restorePurchaseState(id: Int) = viewModelScope.launch(Dispatchers.IO) {
+        repository.fetchPurchase(id).handle(
+            onSuccess = { purchaseDto ->
+                _state.update {
+                    it.copy(
+                        selectedPurchaseState = PurchaseUiState(
+                            purchase = purchaseDto.toPurchase(
+                                purchaser = users.value.find { it.id == purchaseDto.purchaserId }!!,
+                                solver = users.value.find { it.id == purchaseDto.solution.solverId }
+                            )
+                        )
+                    )
+                }
+            }
         )
     }
 
@@ -207,17 +224,17 @@ class PurchasesViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     purchases = _state.value.purchases - purchase,
                     paginationState = _state.value.paginationState?.copy(
-                        totalElements = _state.value.paginationState!!.totalElements - 1
+                        totalElements = _state.value.paginationState?.totalElements?.minus(1) ?: 0
                     )
                 )
                 delay(500)
-                _events.emit(PurchaseEvent.Snackbar(successMessage))
+                _uiEvents.emit(UiEvent.Snackbar(successMessage))
             },
             onError = {
                 withContext(Dispatchers.Main) {
                     onFinish(false)
                 }
-                _events.emit(PurchaseEvent.Snackbar(it))
+                _uiEvents.emit(UiEvent.Snackbar(it))
             }
         )
         setIsDeletionInProgress(false)
@@ -263,10 +280,10 @@ class PurchasesViewModel @Inject constructor(
         ).handle(
             onSuccess = { newPurchase ->
                 val purchase = newPurchase.toPurchase(
-                    purchaser = usersRepository.cachedUsersFlow.value.find { it.id == newPurchase.purchaserId }!!,
-                    solver = usersRepository.cachedUsersFlow.value.find { it.id == newPurchase.solution.solverId!! }!!
+                    purchaser = users.value.find { it.id == newPurchase.purchaserId }!!,
+                    solver = users.value.find { it.id == newPurchase.solution.solverId }!!
                 )
-                _events.emit(PurchaseEvent.Snackbar(successMessage))
+                _uiEvents.emit(UiEvent.Snackbar(successMessage))
                 _state.value = _state.value.copy(
                     selectedPurchaseState = _state.value.selectedPurchaseState?.copy(
                         purchase = purchase
@@ -278,7 +295,7 @@ class PurchasesViewModel @Inject constructor(
                 )
             },
             onError = {
-                _events.emit(PurchaseEvent.Snackbar(it))
+                _uiEvents.emit(UiEvent.Snackbar(it))
             }
         )
         onLoadingStop()
@@ -364,7 +381,7 @@ class PurchasesViewModel @Inject constructor(
     }
 
     fun onFileUploadingError(message: String) = viewModelScope.launch {
-        _events.emit(PurchaseEvent.Snackbar(message))
+        _uiEvents.emit(UiEvent.Snackbar(message))
     }
 
     fun onConfirmationDialogDismissed(ofType: FileType) {
@@ -431,7 +448,7 @@ class PurchasesViewModel @Inject constructor(
             repository.createPurchase(request).handle(
                 onSuccess = { newPurchase ->
                     val purchase = newPurchase.toPurchase(
-                        purchaser = usersRepository.cachedUsersFlow.value.find { it.id == newPurchase.purchaserId }!!
+                        purchaser = users.value.find { it.id == newPurchase.purchaserId }!!
                     )
                     withContext(Dispatchers.Main) {
                         onFinish(purchase)
@@ -444,13 +461,13 @@ class PurchasesViewModel @Inject constructor(
                         newPurchaseState = NewPurchaseUiState()
                     )
                     delay(500)
-                    _events.emit(PurchaseEvent.Snackbar(successMessage))
+                    _uiEvents.emit(UiEvent.Snackbar(successMessage))
                 },
                 onError = {
                     withContext(Dispatchers.Main) {
                         onFinish(null)
                     }
-                    _events.emit(PurchaseEvent.Snackbar(it))
+                    _uiEvents.emit(UiEvent.Snackbar(it))
                 }
             )
             onPurchaseUploadingFinished()

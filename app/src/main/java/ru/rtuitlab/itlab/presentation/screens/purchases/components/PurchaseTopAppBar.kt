@@ -31,7 +31,7 @@ fun PurchaseTopAppBar(
     appBarViewModel: AppBarViewModel = singletonViewModel()
 ) {
     val state by purchasesViewModel.state.collectAsState()
-    val purchaseState = state.selectedPurchaseState!!
+    val purchaseState = state.selectedPurchaseState
     val currentScreen by appBarViewModel.currentScreen.collectAsState()
     val context = LocalContext.current
     val navController = LocalNavController.current
@@ -41,7 +41,7 @@ fun PurchaseTopAppBar(
             currentScreen.screenNameResource,
             (currentScreen as AppScreen.PurchaseDetails).title
         ),
-        options = if (purchaseState.purchase.solution.status == PurchaseStatusApi.AWAIT) listOf(
+        options = if (purchaseState?.purchase?.solution?.status == PurchaseStatusApi.AWAIT) listOf(
             AppBarOption.Clickable(
                 icon = ImageVector.vectorResource(R.drawable.ic_delete),
                 onClick = {
@@ -55,7 +55,7 @@ fun PurchaseTopAppBar(
         }
     )
 
-    if (purchaseState.isDeletionDialogShown)
+    if (purchaseState?.isDeletionDialogShown == true)
         AlertDialog(
             title = {
                 Text(

@@ -11,6 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,16 +22,18 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.cancel
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.reports.models.Report
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
-import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
+import ru.rtuitlab.itlab.presentation.screens.micro_file_service.FilesViewModel
 import ru.rtuitlab.itlab.presentation.screens.micro_file_service.components.BaseElements
 import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarTabRow
-import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.ReportsTab
@@ -42,14 +45,17 @@ val duration = 300
 @ExperimentalPagerApi
 @Composable
 fun Reports(
-	mfsViewModel: MFSViewModel = singletonViewModel(),
-	reportsViewModel: ReportsViewModel = singletonViewModel()
+    filesViewModel: FilesViewModel = singletonViewModel(),
+    reportsViewModel: ReportsViewModel = singletonViewModel()
 ) {
-	val reportsResource by reportsViewModel.reportsResponseFlow.collectAsState()
-	val searchQuery by reportsViewModel.searchQuery.collectAsState()
+	val reportsAboutUser by reportsViewModel.reportsAboutUser.collectAsState()
+	val reportsFromUser by reportsViewModel.reportsFromUser.collectAsState()
 
-	var isRefreshing by remember { mutableStateOf(false) }
-	val userId by reportsViewModel.userIdFlow.collectAsState()
+	val isRefreshing by reportsViewModel.isRefreshing.collectAsState()
+
+	val scaffoldState = rememberScaffoldState()
+
+	reportsViewModel.uiEvents.collectUiEvents(scaffoldState)
 
 	val navController = LocalNavController.current
 
@@ -58,6 +64,20 @@ fun Reports(
 		ReportsTab.FromUser,
 		ReportsTab.Files
 	)
+
+	val pagerState = reportsViewModel.pagerState
+
+	var secondPageVisited by rememberSaveable { mutableStateOf(false) }
+	LaunchedEffect(pagerState) {
+		snapshotFlow { pagerState.currentPage }.collect { page ->
+			if (secondPageVisited) cancel()
+			if (tabs[page] == ReportsTab.Files && !secondPageVisited) {
+				secondPageVisited = true
+				filesViewModel.onRefresh()
+			}
+		}
+	}
+
 	Column {
 		Surface(
 			color = MaterialTheme.colors.primarySurface,
@@ -65,7 +85,7 @@ fun Reports(
 			elevation = AppBarDefaults.TopAppBarElevation
 		) {
 			AppBarTabRow(
-				pagerState = reportsViewModel.pagerState,
+				pagerState = pagerState,
 				tabs = tabs,
 				isScrollable = true
 			)
@@ -74,7 +94,7 @@ fun Reports(
 		SwipeRefresh(
 			modifier = Modifier.fillMaxSize(),
 			state = rememberSwipeRefreshState(isRefreshing),
-			onRefresh = reportsViewModel::fetchReports
+			onRefresh = reportsViewModel::update
 		) {
 			val (transitionProgress, transitionProgressSetter) = remember { mutableStateOf(0f) }
 			Scaffold(
@@ -90,7 +110,7 @@ fun Reports(
 							transitionProgressSetter = transitionProgressSetter
 						)
 				},
-				scaffoldState = rememberScaffoldState(snackbarHostState = reportsViewModel.snackbarHostState)
+				scaffoldState = scaffoldState
 			) {
 				HorizontalPager(
 					modifier = Modifier.fillMaxSize(),
@@ -98,47 +118,31 @@ fun Reports(
 					count = tabs.size,
 					state = reportsViewModel.pagerState
 				) { index ->
-					reportsResource.handle(
-						onLoading = {
-							isRefreshing = true
-						},
-						onError = {
-							isRefreshing = false
-							LoadingError(msg = it)
-						},
-						onSuccess = { reports ->
-							isRefreshing = false
-							Box {
-								when(tabs[index]) {
-									ReportsTab.AboutUser -> ReportsList(
-										reports
-											.filter { it.implementer.id == userId }
-											.sortedByDescending { it.id }
-											.performQuery(searchQuery)
-									)
-									ReportsTab.FromUser -> ReportsList(
-										reports
-											.filter { it.applicant.id == userId }
-											.sortedByDescending { it.id }
-											.performQuery(searchQuery)
-									)
-									ReportsTab.Files -> {
-										mfsViewModel.onRefresh()
-
-										BaseElements(mfsViewModel)
-									}
-								}
-
-								// Providing scrimming during fab transition
-								Canvas(
-									modifier = Modifier.fillMaxSize(),
-									onDraw = {
-										drawRect(color = Color.Black.copy(alpha = 0.32f * (transitionProgress)))
-									}
-								)
+					Box {
+						when(tabs[index]) {
+							ReportsTab.AboutUser -> {
+								if (reportsAboutUser.isEmpty())
+									LoadingError(msg = stringResource(R.string.reports_empty))
+								else ReportsList(reportsAboutUser)
+							}
+							ReportsTab.FromUser -> {
+								if (reportsFromUser.isEmpty())
+									LoadingError(msg = stringResource(R.string.reports_empty))
+								else ReportsList(reportsFromUser)
+							}
+							ReportsTab.Files -> {
+								BaseElements(filesViewModel)
 							}
 						}
-					)
+
+						// Providing scrimming during fab transition
+						Canvas(
+							modifier = Modifier.fillMaxSize(),
+							onDraw = {
+								drawRect(color = Color.Black.copy(alpha = 0.32f * (transitionProgress)))
+							}
+						)
+					}
 				}
 			}
 		}
@@ -180,9 +184,6 @@ fun ReportsList(
 fun ReportCard(
 	report: Report
 ) {
-
-	val accentColor = AppColors.accent.collectAsState().value
-
 	val navController = LocalNavController.current
 
 	SideColoredCard(

@@ -28,7 +28,8 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElemen
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerBox
 import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerThemes
-import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
@@ -46,15 +47,8 @@ fun Purchases(
         snackbarHostState = SnackbarHostState()
     )
 
-    LaunchedEffect(Unit) {
-        viewModel.events.collect { event ->
-            when (event) {
-                is PurchasesViewModel.PurchaseEvent.Snackbar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(event.message)
-                }
-            }
-        }
-    }
+    viewModel.uiEvents.collectUiEvents(scaffoldState)
+
     val (transitionProgress, transitionProgressSetter) = remember { mutableStateOf(0f) }
 
     Scaffold(

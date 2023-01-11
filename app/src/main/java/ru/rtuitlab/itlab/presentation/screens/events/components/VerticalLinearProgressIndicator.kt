@@ -44,8 +44,6 @@ private fun DrawScope.drawLinearIndicator(
 	if (endFraction == 0f) return
 	val width = size.width
 	val height = size.height
-	// Start drawing from the vertical center of the stroke
-	val yOffset = height / 2
 	// Start drawing from the horizontal center of the stroke
 	val xOffset = width / 2
 

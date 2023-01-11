@@ -1,12 +1,15 @@
 package ru.rtuitlab.itlab.data.remote.api.events.models
 
 import androidx.annotation.StringRes
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 import ru.rtuitlab.itlab.R
 
 @Serializable
+@Entity
 data class EventRoleModel(
-    val id: String,
+    @PrimaryKey val id: String,
     val title: String? = null,
     val description: String? = null
 ) {

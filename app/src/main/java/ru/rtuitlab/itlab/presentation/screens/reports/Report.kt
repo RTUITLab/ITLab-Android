@@ -24,15 +24,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.data.remote.api.reports.models.Report
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
-import ru.rtuitlab.itlab.presentation.ui.components.LoadingIndicator
 import ru.rtuitlab.itlab.presentation.ui.components.UserLink
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
-import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
-import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
@@ -41,26 +39,15 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 @Composable
 fun Report(
 	id: String,
-	reportsViewModel: ReportsViewModel = singletonViewModel(),
-	appBarViewModel: AppBarViewModel
+	reportsViewModel: ReportsViewModel = singletonViewModel()
 ) {
-	val reports by reportsViewModel.reportsResponseFlow.collectAsState()
 
-	reports.handle(
-		onLoading = {
-			LoadingIndicator()
-		},
-		onSuccess = { reportList ->
-			val thisReport = reportList.find { it.id == id }!!
-			LaunchedEffect(null) {
-				if (appBarViewModel.currentScreen.value is AppScreen.ReportDetails)
-					appBarViewModel.onNavigate(
-						AppScreen.ReportDetails(thisReport.title)
-					)
-			}
-			ReportDetails(report = thisReport)
-		}
-	)
+	val report = reportsViewModel.reportsAboutUser.collectAsState().value.find { it.id == id }
+		?: reportsViewModel.reportsFromUser.collectAsState().value.find { it.id == id }
+
+	report?.let {
+		ReportDetails(report)
+	}
 }
 
 @ExperimentalAnimationApi

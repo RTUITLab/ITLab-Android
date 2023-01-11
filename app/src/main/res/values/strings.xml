@@ -32,6 +32,7 @@
     <string name="retry">Retry</string>
     <string name="sort_asc">In ascending order</string>
     <string name="send">Send</string>
+    <string name="local_copy_inaccessible">Local copy of this resource is not present</string>
 
 
     <!--    Events    -->
@@ -107,20 +108,18 @@
     <string name="equipmentType">Equipment Type</string>
     <string name="number">Number</string>
     <string name="add_device">Add Device</string>
-    <string name="confirm">Подтвердить</string>
-    <string name="dismiss">Отменить</string>
+    <string name="confirm">Confirm</string>
     <string name="shortTitle">Short Title</string>
     <string name="to_create">Create</string>
-    <string name="to_choose">Chose</string>
+    <string name="to_choose">Choose</string>
     <string name="laboratory">Laboratory</string>
-    <string name="Null">null</string>
     <string name="Select_a_file">Select a file</string>
     <string name="Upload_a_file">Upload a file</string>
     <string name="download">Download</string>
-    <string name="byDate">by date</string>
-    <string name="byUser">by user</string>
+    <string name="by_date">By date</string>
+    <string name="by_user">By user</string>
     <string name="filter">filter</string>
-    <string name="no_files">Файлы отсутствуют</string>
+    <string name="no_files">No files found</string>
 
     <!--    Feedback    -->
     <string name="feedback">Feedback</string>
@@ -149,6 +148,7 @@
     <string name="purchase_rejected">Purchase rejected successfully</string>
     <string name="purchase_approve">Approve</string>
     <string name="purchase_approved">Purchase approved successfully</string>
+    <string name="purchase_is_being_restored">Purchase is being restored</string>
     <string name="by_name">By name</string>
     <string name="by_price">By price</string>
     <string name="by_addition_date">By date of addition</string>
@@ -182,6 +182,7 @@
     <string name="report_new_about_who">Who this report is about</string>
     <string name="report_uploading_file">Uploading file</string>
     <string name="report_uploading_file_dialog">Are you sure you want to upload selected file? %1$s</string>
+    <string name="reports_empty">No reports found</string>
 
 
     <!--    Markdown    -->

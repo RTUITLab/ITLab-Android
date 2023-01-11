@@ -19,17 +19,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseStatusApi
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserClaimCategories
 import ru.rtuitlab.itlab.presentation.screens.reports.duration
 import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
-import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
@@ -38,18 +37,17 @@ import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 @ExperimentalAnimationApi
 @Composable
 fun Purchase(
-    id: Int,
+    @Suppress("UNUSED_PARAMETER") id: Int, // Will be used once purchase notifications send needed data payload
     purchasesViewModel: PurchasesViewModel = singletonViewModel(),
     appBarViewModel: AppBarViewModel = singletonViewModel()
 ) {
-
     val state by purchasesViewModel.state.collectAsState()
-    val purchase = state.selectedPurchaseState!!.purchase
+    val purchase = state.selectedPurchaseState?.purchase
     val animationState by remember {
         mutableStateOf(MutableTransitionState(false))
     }
 
-    val claims by purchasesViewModel.userClaimsFlow.collectAsState(listOf())
+    val isSolvingAccessible by purchasesViewModel.isSolvingAccessible.collectAsState()
 
     val context = LocalContext.current
 
@@ -57,18 +55,21 @@ fun Purchase(
         snackbarHostState = SnackbarHostState()
     )
 
-    LaunchedEffect(Unit) {
+    purchasesViewModel.uiEvents.collectUiEvents(scaffoldState)
+
+    LaunchedEffect(purchase) {
         animationState.targetState = true
         appBarViewModel.onNavigate(
-            screen = AppScreen.PurchaseDetails(purchase.name)
+            screen = AppScreen.PurchaseDetails(purchase?.name ?: "")
         )
-        purchasesViewModel.events.collect { event ->
-            when (event) {
-                is PurchasesViewModel.PurchaseEvent.Snackbar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(event.message)
-                }
-            }
-        }
+    }
+
+
+    if (purchase == null) {
+        LoadingIndicator(
+            message = stringResource(R.string.purchase_is_being_restored)
+        )
+        return
     }
 
     Scaffold(
@@ -195,7 +196,7 @@ fun Purchase(
                         }
 
                         AnimatedVisibility(
-                            visible = purchase.solution.status == PurchaseStatusApi.AWAIT && claims.contains(UserClaimCategories.PURCHASES.ADMIN)
+                            visible = purchase.solution.status == PurchaseStatusApi.AWAIT && isSolvingAccessible
                         ) {
                             Row(
                                 modifier = Modifier

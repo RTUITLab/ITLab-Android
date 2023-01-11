@@ -28,7 +28,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
-import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
+import ru.rtuitlab.itlab.presentation.screens.micro_file_service.FilesViewModel
 import ru.rtuitlab.itlab.presentation.screens.purchases.state.NewPurchaseUiState
 import ru.rtuitlab.itlab.presentation.screens.reports.UploadConfirmationDialog
 import ru.rtuitlab.itlab.presentation.ui.components.LoadableButtonContent
@@ -38,9 +38,11 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElemen
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.ProgressThresholds
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
-import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
-import ru.rtuitlab.itlab.presentation.ui.extensions.toIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.toIso8601
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
+import ru.rtuitlab.itlab.presentation.utils.LocalActivity
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 import java.io.File
 
@@ -64,15 +66,7 @@ fun NewPurchase(
 
     val scaffoldState = rememberScaffoldState(snackbarHostState = SnackbarHostState())
 
-    LaunchedEffect(Unit) {
-        purchasesViewModel.events.collect { event ->
-            when (event) {
-                is PurchasesViewModel.PurchaseEvent.Snackbar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(event.message)
-                }
-            }
-        }
-    }
+    purchasesViewModel.uiEvents.collectUiEvents(scaffoldState)
 
     SharedElement(
         key = sharedElementKey,
@@ -286,14 +280,17 @@ private fun FileSelector(
     state: NewPurchaseUiState,
     type: PurchasesViewModel.FileType,
     purchasesViewModel: PurchasesViewModel = singletonViewModel(),
-    mfsViewModel: MFSViewModel = singletonViewModel()
+    filesViewModel: FilesViewModel = singletonViewModel()
 ) {
+
+    val activity = LocalActivity.current
+
     OutlinedAppTextField(
         modifier = Modifier
             .fillMaxWidth()
             .clip(TextFieldDefaults.OutlinedTextFieldShape)
             .clickable {
-                mfsViewModel.provideFile(type.mimeTypes) {
+                filesViewModel.provideFile(type.mimeTypes, activity) {
                     purchasesViewModel.onAttachFile(
                         type = type,
                         file = it
@@ -392,7 +389,7 @@ private fun PurchaseFileUploadingDialog(
     isUploading: Boolean,
     providedFile: File,
     purchasesViewModel: PurchasesViewModel = singletonViewModel(),
-    mfsViewModel: MFSViewModel = singletonViewModel()
+    filesViewModel: FilesViewModel = singletonViewModel()
 ) {
     UploadConfirmationDialog(
         isUploading = isUploading,
@@ -400,7 +397,7 @@ private fun PurchaseFileUploadingDialog(
     ) { isConfirmed ->
         if (isConfirmed) {
             purchasesViewModel.onUploadFile(type)
-            mfsViewModel.uploadFile(
+            filesViewModel.uploadFile(
                 onError = {
                     purchasesViewModel.onFileUploadingError(it)
                     purchasesViewModel.onConfirmationDialogDismissed(type)

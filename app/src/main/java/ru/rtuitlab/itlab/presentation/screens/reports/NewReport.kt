@@ -30,7 +30,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.events.components.SegmentText
 import ru.rtuitlab.itlab.presentation.screens.events.components.SegmentedControl
-import ru.rtuitlab.itlab.presentation.screens.micro_file_service.MFSViewModel
+import ru.rtuitlab.itlab.presentation.screens.micro_file_service.FilesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.LoadableButtonContent
 import ru.rtuitlab.itlab.presentation.ui.components.PrimaryButton
@@ -44,9 +44,11 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElemen
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.ProgressThresholds
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.SharedElementsTransitionSpec
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
+import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
+import ru.rtuitlab.itlab.presentation.utils.LocalActivity
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 import ru.rtuitlab.itlab.presentation.utils.text_toolbar.AppTextToolbar
 import java.io.File
@@ -58,10 +60,12 @@ import java.io.File
 fun NewReport(
     reportsViewModel: ReportsViewModel = singletonViewModel(),
     newReportViewModel: NewReportViewModel = singletonViewModel(),
-    mfsViewModel: MFSViewModel = singletonViewModel(),
+    filesViewModel: FilesViewModel = singletonViewModel(),
     bottomSheetViewModel: BottomSheetViewModel
 ) {
     val state by newReportViewModel.reportState.collectAsState()
+
+    val activity = LocalActivity.current
 
     val (transitionProgress, tpSetter) = rememberSaveable {
         mutableStateOf(1f)
@@ -77,13 +81,9 @@ fun NewReport(
 
     val navController = LocalNavController.current
 
-    val scaffoldState = rememberScaffoldState(snackbarHostState = reportsViewModel.newReportSnackbarHostState)
+    val scaffoldState = rememberScaffoldState()
 
-    LaunchedEffect(state.errorMessage) {
-        if (state.errorMessage != null) {
-            scaffoldState.snackbarHostState.showSnackbar(state.errorMessage!!)
-        }
-    }
+    reportsViewModel.uiEvents.collectUiEvents(scaffoldState)
 
     if (state.isConfirmationDialogShown)
         UploadConfirmationDialog(
@@ -92,7 +92,7 @@ fun NewReport(
         ) { isConfirmed ->
             if (isConfirmed) {
                 newReportViewModel.onUploadFile()
-                mfsViewModel.uploadFile(
+                filesViewModel.uploadFile(
                     onError = {
                         newReportViewModel.onFileUploadingError(it)
                         newReportViewModel.onConfirmationDialogDismissed()
@@ -219,7 +219,7 @@ fun NewReport(
                                             }
                                         },
                                         onAttachFile = {
-                                            mfsViewModel.provideFile {
+                                            filesViewModel.provideFile(activity = activity) {
                                                 newReportViewModel.onAttachFile(it)
                                             }
                                         }

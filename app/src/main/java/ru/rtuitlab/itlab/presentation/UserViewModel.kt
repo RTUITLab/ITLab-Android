@@ -2,68 +2,83 @@ package ru.rtuitlab.itlab.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
-import ru.rtuitlab.itlab.common.Resource
-import ru.rtuitlab.itlab.common.emitInIO
-import ru.rtuitlab.itlab.data.remote.api.devices.models.DeviceModel
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserEventModel
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
-import ru.rtuitlab.itlab.data.remote.api.users.models.UserResponse
-import ru.rtuitlab.itlab.data.repository.EventsRepository
-import ru.rtuitlab.itlab.data.repository.UsersRepository
-import ru.rtuitlab.itlab.presentation.ui.extensions.minus
-import ru.rtuitlab.itlab.presentation.ui.extensions.toMoscowDateTime
+import ru.rtuitlab.itlab.common.extensions.minus
+import ru.rtuitlab.itlab.common.extensions.toIsoString
+import ru.rtuitlab.itlab.domain.use_cases.users.GetUserPropertyTypesUseCase
+import ru.rtuitlab.itlab.domain.use_cases.users.GetUserUseCase
+import ru.rtuitlab.itlab.domain.use_cases.events.GetUserEventsUseCase
+import ru.rtuitlab.itlab.domain.use_cases.events.UpdateUserEventsUseCase
 
-abstract class UserViewModel (
-	private val usersRepo: UsersRepository,
-	private val eventsRepo: EventsRepository,
+abstract class UserViewModel(
+	private val updateUserEvents: UpdateUserEventsUseCase,
+	getPropertyTypes: GetUserPropertyTypesUseCase,
+	getUser: GetUserUseCase,
+	getUserEvents: GetUserEventsUseCase,
 	val userId: String
 ) : ViewModel() {
 
+	private var eventsUpdated = false
 
 	private var _beginEventsDate = MutableStateFlow(Clock.System.now().minus(7, DateTimeUnit.DAY).toEpochMilliseconds())
 	val beginEventsDate = _beginEventsDate.asStateFlow()
 	private var _endEventsDate = MutableStateFlow(Clock.System.now().toEpochMilliseconds())
 	val endEventsDate = _endEventsDate.asStateFlow()
 
-	protected val _userCredentialsFlow = MutableStateFlow<Resource<UserResponse>>(Resource.Loading)
-	val userCredentialsFlow = _userCredentialsFlow.asStateFlow().also { fetchUserCredentials() }
+	open val user = getUser(userId).map {
+		it?.toUser()
+	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-	private val _userDevicesFlow = MutableStateFlow<Resource<List<DeviceModel>>>(Resource.Empty)
-	val userDevicesFlow = _userDevicesFlow.asStateFlow()//.also { fetchUserDevices() }
+	val properties = getPropertyTypes()
+		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-	private val _userEventsFlow = MutableStateFlow<Resource<List<UserEventModel>>>(Resource.Empty)
-	val userEventsFlow = _userEventsFlow.asStateFlow()//.also { fetchUserEvents() }
+	private val _areEventsRefreshing = MutableStateFlow(false)
+	val areEventsRefreshing = _areEventsRefreshing.asStateFlow()
 
-	private val _properties = MutableStateFlow<Resource<List<UserPropertyTypeModel>>>(Resource.Empty)
-	val properties = _properties.asStateFlow().also { fetchPropertyTypes() }
+	private val _eventUpdateErrorMessage: MutableStateFlow<String?> = MutableStateFlow(null)
+	val eventUpdateErrorMessage = _eventUpdateErrorMessage.asStateFlow()
 
-	fun fetchUserCredentials() = _userCredentialsFlow.emitInIO(viewModelScope) {
-		usersRepo.fetchUserCredentials(userId)
-	}
-
-	/*private fun fetchUserDevices() = _userDevicesFlow.emitInIO(viewModelScope) {
-		usersRepo.fetchUserDevices(userId)
-	}*/
-
-	private fun fetchUserEvents() = _userEventsFlow.emitInIO(viewModelScope) {
-		eventsRepo.fetchUserEvents(
-			userId,
-			beginEventsDate.value.toMoscowDateTime().date.toString(),
-			endEventsDate.value.toMoscowDateTime().toString()
+	val events = beginEventsDate.combine(endEventsDate) { beginTime, endTime ->
+		beginTime to endTime
+	}.flatMapLatest {
+		getUserEvents(
+			userId = userId,
+			begin = beginEventsDate.value.toIsoString(false),
+			end = endEventsDate.value.toIsoString(true)
 		)
+	}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+	fun updateEvents() = viewModelScope.launch {
+		_areEventsRefreshing.emit(true)
+		_eventUpdateErrorMessage.emit(null)
+		updateUserEvents(
+			userId,
+			beginEventsDate.value.toIsoString(false),
+			endEventsDate.value.toIsoString(true)
+		).handle(
+			onError = {
+				_eventUpdateErrorMessage.emit(it)
+			},
+			onSuccess = {
+				_eventUpdateErrorMessage.emit(null)
+			}
+		)
+		_areEventsRefreshing.emit(false)
 	}
 
-	private fun fetchPropertyTypes() = _properties.emitInIO(viewModelScope) {
-		usersRepo.fetchPropertyTypes()
+	fun ensureEventsUpdated() {
+		if (eventsUpdated) return
+		updateEvents()
+		eventsUpdated = true
 	}
+
 
 	fun setEventsDates(begin: Long, end: Long) {
 		_beginEventsDate.value = begin
 		_endEventsDate.value = end
-		fetchUserEvents()
+		updateEvents()
 	}
 }

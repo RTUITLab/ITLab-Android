@@ -1,61 +1,60 @@
 package ru.rtuitlab.itlab.presentation.screens.events
 
-import androidx.compose.material.SnackbarHostState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.rtuitlab.itlab.common.Resource
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventDetailDto
-import ru.rtuitlab.itlab.data.repository.EventsRepository
-import ru.rtuitlab.itlab.common.emitInIO
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventRole
-import ru.rtuitlab.itlab.data.remote.api.events.models.EventSalary
+import ru.rtuitlab.itlab.domain.use_cases.events.ApplyForPlaceUseCase
+import ru.rtuitlab.itlab.domain.use_cases.events.GetEventRolesUseCase
+import ru.rtuitlab.itlab.domain.use_cases.events.GetEventUseCase
+import ru.rtuitlab.itlab.domain.use_cases.events.UpdateEventDetailsUseCase
+import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
-	private val eventsRepository: EventsRepository,
-	private val savedState: SavedStateHandle
+	private val updateEvent: UpdateEventDetailsUseCase,
+	private val applyForPlace: ApplyForPlaceUseCase,
+	getEventRoles: GetEventRolesUseCase,
+	getEvent: GetEventUseCase,
+	savedState: SavedStateHandle
 ) : ViewModel() {
 	private val eventId: String = savedState["eventId"]!!
 
-	private var _eventResourceFlow = MutableStateFlow<Resource<Pair<EventDetailDto, EventSalary?>>>(Resource.Loading)
-	val eventResourceFlow = _eventResourceFlow.asStateFlow().also {
-		fetchEventData()
+
+	val event = getEvent(eventId)
+		.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
+	val roles = getEventRoles().map {
+		it.map {
+			it.toUiRole()
+		}
+	}.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+	private val _uiEvents = MutableSharedFlow<UiEvent>()
+	val uiEvents = _uiEvents.asSharedFlow()
+
+	private val _isRefreshing = MutableStateFlow(false)
+	val isRefreshing = _isRefreshing.asStateFlow()
+
+	init {
+		viewModelScope.launch {
+			if (event.first() == null) {
+				updateDetails()
+			}
+		}
 	}
 
-	private var _eventRoles = MutableStateFlow<List<EventRole>>(emptyList())
-	val eventRoles = _eventRoles.asStateFlow().also {
-		fetchEventRoles()
-	}
-
-	val snackbarHostState = SnackbarHostState()
-
-
-	private fun fetchEventData() = _eventResourceFlow.emitInIO(viewModelScope) {
-		var resource: Resource<Pair<EventDetailDto, EventSalary?>> = Resource.Loading
-		eventsRepository.fetchEvent(eventId).handle(
-			onSuccess = { details ->
-				resource = Resource.Success(details to null)
-				eventsRepository.fetchEventSalary(eventId).handle(
-					onSuccess = { resource = Resource.Success(details to it) }
-				)
-			},
-			onError = { resource = Resource.Error(it) }
-		)
-		resource
-	}
-
-	private fun fetchEventRoles() = viewModelScope.launch {
-		eventsRepository.fetchEventRoles().handle(
-			onSuccess = {
-				_eventRoles.value = it.map { it.toUiRole() }
+	fun updateDetails() = viewModelScope.launch {
+		_isRefreshing.emit(true)
+		updateEvent(eventId).handle(
+			onError = {
+				_uiEvents.emit(UiEvent.Snackbar(it))
 			}
 		)
+		_isRefreshing.emit(false)
 	}
 
 	fun onPlaceApply(
@@ -64,20 +63,22 @@ class EventViewModel @Inject constructor(
 		successMessage: String,
 		onFinish: () -> Unit
 	) = viewModelScope.launch {
-		eventsRepository.applyForPlace(placeId, roleId).handle(
+		applyForPlace(placeId, roleId).handle(
 			onSuccess = {
 				onFinish()
-				fetchEventData()
-				showSnackbar(it.errorBody()?.string() ?: successMessage)
+				updateDetails()
+				queueSnackbar(it.errorBody()?.string() ?: successMessage)
 			},
 			onError = {
 				onFinish()
-				showSnackbar(it)
+				queueSnackbar(it)
 			}
 		)
 	}
 
-	private suspend fun showSnackbar(text: String) {
-		snackbarHostState.showSnackbar(text)
+	private suspend fun queueSnackbar(text: String) {
+		_uiEvents.emit(
+			UiEvent.Snackbar(text)
+		)
 	}
 }

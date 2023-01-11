@@ -3,8 +3,9 @@ package ru.rtuitlab.itlab.data.remote.api.events.models
 import android.content.Context
 import kotlinx.serialization.Serializable
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601
-import ru.rtuitlab.itlab.presentation.ui.extensions.fromIso8601ToInstant
+import ru.rtuitlab.itlab.data.local.events.models.EventInvitationEntity
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
+import ru.rtuitlab.itlab.common.extensions.fromIso8601ToInstant
 import java.time.format.TextStyle
 import java.util.*
 import kotlin.math.roundToInt
@@ -36,6 +37,20 @@ data class EventInvitationDto(
             eventRole = eventRole.toUiRole()
         )
 
+    fun toInvitationEntity() = EventInvitationEntity(
+        id = id,
+        title = title,
+        typeId = eventType.id,
+        beginTime = beginTime,
+        placeId = placeId,
+        placeDescription = placeDescription,
+        placeNumber = placeNumber,
+        shiftDescription = shiftDescription,
+        shiftDurationInMinutes = shiftDurationInMinutes,
+        roleId = eventRole.id,
+        creationTime = creationTime
+    )
+
     private fun getTime(context: Context) = run {
         val shiftStartInstant = beginTime.fromIso8601ToInstant()
         "${
@@ -51,6 +66,7 @@ data class EventInvitationDto(
         }"
     }
 
+    @Suppress("OPT_IN_IS_NOT_ENABLED")
     @OptIn(ExperimentalTime::class)
     private fun getDurationString(context: Context): String {
         val MINUTES_IN_HOUR = 60

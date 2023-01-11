@@ -10,27 +10,29 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import net.openid.appauth.*
 import ru.rtuitlab.itlab.BuildConfig
 import ru.rtuitlab.itlab.common.Resource
-import ru.rtuitlab.itlab.common.ResponseHandler
-import ru.rtuitlab.itlab.common.persistence.AuthStateStorage
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.remote.api.users.models.UserInfoModel
 import ru.rtuitlab.itlab.data.repository.NotificationsRepository
-import ru.rtuitlab.itlab.data.repository.UsersRepository
 import ru.rtuitlab.itlab.domain.services.firebase.FirebaseTokenUtils
-import ru.rtuitlab.itlab.presentation.utils.LogoutUrlBuilder
+import ru.rtuitlab.itlab.domain.use_cases.events.ClearEventsUseCase
+import ru.rtuitlab.itlab.domain.use_cases.reports.ClearReportsUseCase
+import ru.rtuitlab.itlab.domain.use_cases.users.FetchUserInfoUseCase
+import ru.rtuitlab.itlab.domain.use_cases.users.UpdateUsersUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-	private val authStateStorage: AuthStateStorage,
+	private val authStateStorage: IAuthStateStorage,
 	private val authService: AuthorizationService,
-	private val usersRepo: UsersRepository,
-	private val handler: ResponseHandler,
+	private val fetchUserInfo: FetchUserInfoUseCase,
+	private val updateUsers: UpdateUsersUseCase,
+	private val clearEvents: ClearEventsUseCase,
+	private val clearReports: ClearReportsUseCase,
 	private val notificationsRepo: NotificationsRepository
 ) : ViewModel() {
 
@@ -122,8 +124,11 @@ class AuthViewModel @Inject constructor(
 		}
 	}
 
-	fun handleLogoutResult(result: ActivityResult) = viewModelScope.launch {
+	fun handleLogoutResult(onSessionEnded: () -> Unit) = viewModelScope.launch {
+		clearEvents()
+		clearReports()
 		authStateStorage.endSession()
+		onSessionEnded()
 	}
 
 	private fun exchangeAuthCode(authResponse: AuthorizationResponse) {
@@ -135,6 +140,7 @@ class AuthViewModel @Inject constructor(
 					obtainUserId(tokenResponse.accessToken!!)
 					authStateStorage.updateAuthState(tokenResponse, tokenException)
 					authStateStorage.updateUserPayload(tokenResponse.accessToken!!)
+					updateUsers()
 					addFirebaseToken()
 				} else {
 					Log.e(TAG, "Exception in exchange process: ", tokenException)
@@ -144,12 +150,11 @@ class AuthViewModel @Inject constructor(
 	}
 
 	private val _userIdFlow = MutableSharedFlow<Resource<UserInfoModel>>()
-	val userIdFlow = _userIdFlow.asSharedFlow()
 
 	private suspend fun obtainUserId(accessToken: String) {
 		val config = authStateFlow.first().authorizationServiceConfiguration!!
 		val userInfoEndpoint = config.discoveryDoc!!.userinfoEndpoint!!.toString()
-		when (val userInfoResource = usersRepo.fetchUserInfo(userInfoEndpoint, accessToken)) {
+		when (val userInfoResource = fetchUserInfo(userInfoEndpoint, accessToken)) {
 			is Resource.Success -> authStateStorage.updateUserId(userInfoResource.data.sub)
 			is Resource.Error -> _userIdFlow.emit(userInfoResource)
 			Resource.Loading -> {}

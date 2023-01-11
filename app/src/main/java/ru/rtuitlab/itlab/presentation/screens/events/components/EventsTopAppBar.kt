@@ -80,7 +80,7 @@ fun EventsTopAppBar(
 					DropdownMenuItem(
 						onClick = {
 							if (isDateSelectionMade)
-								eventsViewModel.fetchPendingEvents()
+								eventsViewModel.clearDateSelection()
 							else
 								MaterialDatePicker
 									.Builder
@@ -114,7 +114,7 @@ fun EventsTopAppBar(
 					appBarViewModel.onNavigate(AppScreen.EventsNotifications)
 					navController?.navigate(AppScreen.EventsNotifications.route)
 				},
-				badgeCount = eventsViewModel.invitationsCountFlow.collectAsState().value
+				badgeCount = eventsViewModel.invitationsCount.collectAsState().value
 			),
 			AppBarOption.Clickable(
 				icon = Icons.Default.Search,

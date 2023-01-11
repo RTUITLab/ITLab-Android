@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -20,16 +19,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
-import ru.rtuitlab.itlab.data.remote.api.events.models.detail.Shift
+import ru.rtuitlab.itlab.data.local.events.models.ShiftWithPlacesAndSalary
+import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
 import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 
 @Composable
 fun ShiftCard(
 	modifier: Modifier = Modifier,
-	shift: Shift,
-	salary: Int?
+	eventSalary: EventSalaryEntity?,
+	shiftWithPlacesAndSalary: ShiftWithPlacesAndSalary
 ) {
+
+	val shift = shiftWithPlacesAndSalary.shift
+	val salary = shiftWithPlacesAndSalary.salary?.count ?: eventSalary?.count
+
 	Card(
 		modifier = modifier,
 		elevation = 2.dp,
@@ -83,7 +87,12 @@ fun ShiftCard(
 				imageWidth = 14.dp
 			) {
 				Text(
-					text = if (salary != null) stringResource(R.string.salary_int, salary) else stringResource(R.string.salary_not_specified),
+					text = salary?.let {
+						stringResource(
+							R.string.salary_int,
+							it
+						)
+					} ?: stringResource(R.string.salary_not_specified),
 					style = MaterialTheme.typography.subtitle1,
 					color = AppColors.greyText.collectAsState().value
 				)

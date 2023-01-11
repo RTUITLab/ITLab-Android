@@ -103,7 +103,6 @@
     <string name="number">Номер</string>
     <string name="add_device">Добавить Устройство</string>
     <string name="confirm">Подтвердить</string>
-    <string name="dismiss">Отменить</string>
 
 
     <string name="equipmentType">Тип оборудования</string>
@@ -115,7 +114,6 @@
     <string name="to_assign_owner">Назначить владельца</string>
     <string name="pick_up">Убрать</string>
     <string name="show_only_free">Показать только доступное</string>
-    <string name="Null">null</string>
     <string name="event">Событие</string>
     <string name="reports">Отчёты</string>
     <string name="report">Отчёт</string>
@@ -151,8 +149,8 @@
     <string name="report_uploading_file_dialog">Вы уверены, что хотите загрузить выбранный файл? %1$s</string>
     <string name="no_files">Файлы отсутствуют</string>
     <string name="download">Скачать</string>
-    <string name="byDate">По дате</string>
-    <string name="byUser">По пользователю</string>
+    <string name="by_date">По дате</string>
+    <string name="by_user">По пользователю</string>
     <string name="filter">Фильтр</string>
     <string name="time_parsing_error">Ошибка обработки времени</string>
     <string name="by_name">По названию</string>
@@ -188,5 +186,8 @@
 
     //Users
     <string name="gravatar">Граватар</string>
+    <string name="local_copy_inaccessible">Локальная копия данного ресурса недоступна</string>
+    <string name="reports_empty">Отчётов не найдено</string>
+    <string name="purchase_is_being_restored">Данные о покупке восстанавливаются</string>
 
 </resources>

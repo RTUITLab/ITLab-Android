@@ -35,6 +35,7 @@ fun UserEvents(
 	IconizedRow(
 		modifier = Modifier
 			.clickable {
+				userViewModel.ensureEventsUpdated()
 				bottomSheetViewModel.show(
 					sheet = AppBottomSheet.ProfileEvents(userViewModel),
 					scope = scope

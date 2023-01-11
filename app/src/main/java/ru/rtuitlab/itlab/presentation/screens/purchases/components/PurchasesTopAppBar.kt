@@ -29,7 +29,7 @@ fun PurchasesTopAppBar(
         options = listOf(
             AppBarOption.Dropdown(
                 icon = Icons.Default.FilterList,
-                dropdownMenuContent = { collapse ->
+                dropdownMenuContent = {
                     PurchaseSortingOrder.values().forEach { order ->
                         LabeledRadioButton(
                             state = order == state.selectedSortingOrder,
