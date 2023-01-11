@@ -1,7 +1,7 @@
 ## What's new
 
-### Purchases
-This version features full purchases functionality.
+### Persistence
+Events, Employees and Reports are now available offline
 
-### Users
-User avatars are showing next to the username and in profiles
+### Design
+New Material Design 3 look
