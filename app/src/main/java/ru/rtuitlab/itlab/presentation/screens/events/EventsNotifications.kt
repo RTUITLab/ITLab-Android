@@ -61,7 +61,7 @@ fun EventsNotifications(
 				) {
 					items(
 						items = invitations,
-						key = { it.eventId + it.eventRole.id }
+						key = { it.eventId + it.placeId }
 					) {
 						EventNotificationCard(
 							notification = it,
