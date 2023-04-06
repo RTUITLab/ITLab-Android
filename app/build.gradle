@@ -68,6 +68,12 @@ android {
         buildConfigField("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
         buildConfigField("String", GRAVATAR_URI, CONFIG("gravatar.uri"))
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/room_schemas".toString()]
+            }
+        }
+
     }
 
     flavorDimensions "api"

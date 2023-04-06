@@ -25,7 +25,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
         ReportEntity::class, ReportSalary::class // Reports
     ],
     version = 1,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract val usersDao: UsersDao
