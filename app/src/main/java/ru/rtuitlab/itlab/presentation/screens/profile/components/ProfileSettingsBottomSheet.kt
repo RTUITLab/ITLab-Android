@@ -243,12 +243,12 @@ private fun SettingsText(
 		if (text.isNullOrEmpty())
 			Text(
 				text = hint,
-				style = MaterialTheme.typography.bodySmall
+				style = MaterialTheme.typography.bodyMedium
 			)
 		else
 			Text(
 				text = text,
-				style = MaterialTheme.typography.bodySmall
+				style = MaterialTheme.typography.bodyMedium
 			)
 	}
 }

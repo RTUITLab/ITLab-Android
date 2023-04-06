@@ -33,6 +33,8 @@
     <string name="sort_asc">In ascending order</string>
     <string name="send">Send</string>
     <string name="local_copy_inaccessible">Local copy of this resource is not present</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="percentage" translatable="false">%d\%%</string>
 
 
     <!--    Events    -->
@@ -80,6 +82,7 @@
 
     <!--    Projects     -->
     <string name="projects">Projects</string>
+    <string name="project_version">Version</string>
 
 
     <!--    Employees     -->
@@ -204,6 +207,9 @@
     <string name="md_attach">Attach…</string>
 
     <string name="files">Files</string>
+    <string name="project_soft_deadline">Soft deadline</string>
+    <string name="project_progress">Progress</string>
+    <string name="project">Project</string>
 
 
 </resources>

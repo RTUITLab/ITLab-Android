@@ -30,6 +30,7 @@ import ru.rtuitlab.itlab.R
 fun MarkdownTextArea(
 	modifier: Modifier = Modifier,
 	textMd: String,
+	noDescriptionTextAlignment: Alignment = Alignment.Center,
 	paddingValues: PaddingValues = PaddingValues(bottom = 32.dp)
 ) {
 
@@ -77,7 +78,7 @@ fun MarkdownTextArea(
 			}
 		} else {
 			Text(
-				modifier = Modifier.align(Alignment.Center),
+				modifier = Modifier.align(noDescriptionTextAlignment),
 				text = stringResource(R.string.event_no_description),
 				color = LocalContentColor.current.copy(.6f)
 			)

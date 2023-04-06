@@ -36,8 +36,8 @@ fun typography() = androidx.compose.material3.Typography(
         lineHeight = 20.sp
     ),
     bodySmall = TextStyle(
-        fontSize = 16.sp,
-        lineHeight = 24.sp
+        fontSize = 12.sp,
+        lineHeight = 16.sp
     ),
     labelLarge = TextStyle( // Buttons
         fontSize = 14.sp,

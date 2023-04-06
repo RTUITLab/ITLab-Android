@@ -149,6 +149,7 @@ fun ITLabApp(
                         AppScreen.Purchases,
                         AppScreen.Devices,
                         AppScreen.Files,
+                        AppScreen.Projects,
                         AppScreen.Reports ->
                             CenterAlignedTopAppBar(title = stringResource(currentScreen.screenNameResource))
 

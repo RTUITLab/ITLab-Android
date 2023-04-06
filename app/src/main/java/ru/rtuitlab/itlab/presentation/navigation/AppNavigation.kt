@@ -30,6 +30,8 @@ import ru.rtuitlab.itlab.presentation.screens.feedback.Feedback
 import ru.rtuitlab.itlab.presentation.screens.files.BaseElements
 
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
+import ru.rtuitlab.itlab.presentation.screens.projects.Projects
+import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectDetails
 import ru.rtuitlab.itlab.presentation.screens.purchases.NewPurchase
 import ru.rtuitlab.itlab.presentation.screens.purchases.Purchase
 import ru.rtuitlab.itlab.presentation.screens.purchases.Purchases
@@ -102,6 +104,8 @@ fun AppNavigation(
 		purchasesGraph()
 
 		filesGraph()
+
+		projectsGraph()
 	}
 }
 
@@ -250,6 +254,21 @@ private fun NavGraphBuilder.filesGraph(
 	) {
 		composable(AppScreen.Files.route) {
 			BaseElements()
+		}
+	}
+}
+
+private fun NavGraphBuilder.projectsGraph() {
+	navigation(
+		startDestination = AppTab.Projects.startDestination,
+		route = AppTab.Projects.route
+	) {
+		composable(AppScreen.Projects.route) {
+			Projects()
+		}
+
+		composable(AppScreen.ProjectDetails.route) {
+			ProjectDetails(projectViewModel = it.hiltViewModel())
 		}
 	}
 }

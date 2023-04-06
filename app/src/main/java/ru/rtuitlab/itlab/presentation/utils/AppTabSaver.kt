@@ -18,7 +18,7 @@ sealed class AppTab(
     var accessible: Boolean = true
 ) {
     object Events: AppTab("events_tab", AppScreen.Events.route, R.string.events, Icons.Default.EventNote)
-    object Projects: AppTab("projects_tab", AppScreen.Projects.route, R.string.projects, Icons.Default.Widgets, false)
+    object Projects: AppTab("projects_tab", AppScreen.Projects.route, R.string.projects, Icons.Default.Widgets)
     object Devices: AppTab("devices_tab", AppScreen.Devices.route, R.string.devices, Icons.Default.DevicesOther)
     object Employees: AppTab("employees_tab", AppScreen.Employees.route, R.string.employees, Icons.Default.People)
     object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback)
@@ -96,6 +96,12 @@ open class AppScreen(
 
     // Projects-related
     object Projects: AppScreen(R.string.projects, "projects", true)
+    class ProjectDetails(val title: String): AppScreen(R.string.project, "projects/{projectId}") {
+        companion object {
+            const val route = "projects/{projectId}"
+            val navLink: String = route.substringBefore("/{")
+        }
+    }
 
     // Devices-related
     object Devices: AppScreen(R.string.devices, "devices", true)
@@ -126,7 +132,6 @@ open class AppScreen(
         }
     }
     object NewPurchase: AppScreen(R.string.purchase_new, "purchases/new")
-
 
     companion object {
         fun getAll(context: Context) = listOf(
