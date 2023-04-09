@@ -1,6 +1,8 @@
 package ru.rtuitlab.itlab.data.remote.api.projects.models
 
 import kotlinx.serialization.*
+import ru.rtuitlab.itlab.common.extensions.toLocalDateTime
+import ru.rtuitlab.itlab.data.local.projects.models.Project
 
 @Serializable
 data class ProjectDetailsDto(
@@ -22,4 +24,15 @@ data class ProjectDetailsDto(
     val shortDescription: String,
     @SerialName("updated_at")
     val updatedAt: String?
-)
+) {
+    fun toProjectEntity() = Project(
+        id = id,
+        isArchived = archived,
+        archivationIssuerId = archivedBy,
+        archivationDate = archivedDate?.toLocalDateTime(),
+        creationDateTime = createdAt.toLocalDateTime(),
+        logoUrl = logoUrl,
+        name = name,
+        shortDescription = shortDescription
+    )
+}

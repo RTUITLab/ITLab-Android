@@ -8,6 +8,7 @@ import ru.rtuitlab.itlab.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.DateTimeException
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -94,6 +95,12 @@ fun String.fromIso8601ToDateTime(
 	Log.e("DateTime", "Unable to parse ${if (this.contains("Z")) this else this + "Z"}")
 	context.getString(R.string.time_parsing_error) to ""
 }
+
+fun String.toLocalDateTime(): LocalDateTime =
+	LocalDateTime.parse(this, DateTimeFormatter.ISO_DATE_TIME)
+
+fun LocalDateTime.toIsoString(): String =
+	format(DateTimeFormatter.ISO_DATE_TIME)
 
 fun String.fromIso8601ToInstant() =
 	java.time.Instant.from(

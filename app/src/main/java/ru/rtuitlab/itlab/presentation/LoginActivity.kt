@@ -1,18 +1,16 @@
 package ru.rtuitlab.itlab.presentation
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -72,11 +70,9 @@ class LoginActivity : AppCompatActivity() {
 
         installSplashScreen()
         setContent {
-            val authState by authViewModel.authStateFlow.collectAsState(null)
             ITLabTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    if (authState?.isAuthorized == false)
-                        AuthScreen { authViewModel.onLoginEvent(authPageLauncher) }
+                    AuthScreen { authViewModel.onLoginEvent(authPageLauncher) }
                 }
             }
         }

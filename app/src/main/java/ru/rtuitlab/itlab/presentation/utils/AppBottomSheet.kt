@@ -36,6 +36,8 @@ sealed class AppBottomSheet {
 		val onSelect: (User) -> Unit
 	): AppBottomSheet()
 
+	object ProjectsFilters: AppBottomSheet()
+
 	override fun equals(other: Any?): Boolean {
 		return false
 	}
