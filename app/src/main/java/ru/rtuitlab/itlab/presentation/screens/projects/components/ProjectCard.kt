@@ -18,19 +18,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.valentinilk.shimmer.ShimmerBounds
+import com.valentinilk.shimmer.rememberShimmer
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.extensions.fromIso8601ToInstant
 import ru.rtuitlab.itlab.common.extensions.toUiString
-import ru.rtuitlab.itlab.data.remote.api.projects.models.Project
+import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectCompactDto
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
+import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerBox
+import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerThemes
+import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @Composable
 fun ProjectCard(
-    project: Project,
+    project: ProjectCompactDto,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -196,6 +202,135 @@ fun ProjectCard(
                             color = LocalContentColor.current.copy(.8f)
                         )
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ShimmeredProjectCard(
+    modifier: Modifier = Modifier
+) {
+    val defaultShimmer = rememberShimmer(
+        shimmerBounds = ShimmerBounds.Window,
+        theme = ShimmerThemes.defaultShimmerTheme
+    )
+
+    Card(modifier) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    top = 12.dp,
+                    bottom = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp
+                )
+        ) {
+            Row {
+                ShimmerBox(
+                    modifier = Modifier
+                        .size(40.dp),
+                    shape = CircleShape
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column {
+                    ShimmerBox(
+                        modifier = Modifier
+                            .fillMaxWidth(.5f)
+                            .height(20.dp),
+                        shimmer = defaultShimmer
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    ShimmerBox(
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
+                            .height(20.dp),
+                        shimmer = defaultShimmer
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f, false)
+                ) {
+                    ShimmerBox(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(18.dp),
+                        shimmer = defaultShimmer
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    ShimmerBox(
+                        modifier = Modifier
+                            .width(60.dp)
+                            .height(20.dp),
+                        shimmer = defaultShimmer
+                    )
+
+                }
+                Column(
+                    modifier = Modifier.weight(1f, false)
+                ) {
+                    ShimmerBox(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(18.dp),
+                        shimmer = defaultShimmer
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    ShimmerBox(
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(20.dp),
+                        shimmer = defaultShimmer
+                    )
+
+
+                }
+                Column(
+                    modifier = Modifier.weight(1f, false)
+                ) {
+                    ShimmerBox(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(18.dp),
+                        shimmer = defaultShimmer
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    ShimmerBox(
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(20.dp),
+                        shimmer = defaultShimmer
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun ShimmeredProjectCardPreview() {
+    ITLabTheme {
+        Surface {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                repeat(10) {
+                    ShimmeredProjectCard()
                 }
             }
         }

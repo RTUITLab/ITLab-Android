@@ -37,6 +37,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.files.componets.FilesBottomBar
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileBottomBar
+import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectsBottomBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchaseTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchasesBottomBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchasesTopAppBar
@@ -195,6 +196,7 @@ fun ITLabApp(
                     is AppScreen.Purchases -> PurchasesBottomBar(mainFloatingActionButton)
                     is AppScreen.Devices -> DevicesBottomBar(mainFloatingActionButton)
                     is AppScreen.Files -> FilesBottomBar(mainFloatingActionButton)
+                    AppScreen.Projects -> ProjectsBottomBar(mainFloatingActionButton)
                 }
             }
         )

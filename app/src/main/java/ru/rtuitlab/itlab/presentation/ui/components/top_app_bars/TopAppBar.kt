@@ -22,9 +22,12 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.presentation.ui.components.AppDropdownMenu
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.tabs.pagerTabIndicatorOffset
 import ru.rtuitlab.itlab.presentation.utils.AppBarTab
+import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 import java.util.*
 
 @Composable
@@ -275,6 +278,24 @@ fun OptionsRow(
 						}
 					)
 				}
+				is AppBarOption.BottomSheet -> {
+                    val coroutineScope = rememberCoroutineScope()
+                    val bottomSheetViewModel: BottomSheetViewModel = singletonViewModel()
+                    IconButton(
+                        modifier = Modifier
+                            .height(36.dp)
+                            .width(36.dp),
+                        onClick = {
+                            bottomSheetViewModel.show(option.sheet, coroutineScope)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = option.icon,
+                            contentDescription = option.contentDescription,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
 			}
 
 		}
@@ -297,6 +318,12 @@ sealed class AppBarOption(
 		override val contentDescription: String? = null,
 		val dropdownMenuContent: @Composable (collapseAction: () -> Unit) -> Unit
 	) : AppBarOption(icon, contentDescription)
+
+	class BottomSheet(
+		icon: ImageVector,
+		contentDescription: String? = null,
+		val sheet: AppBottomSheet
+	): AppBarOption(icon, contentDescription)
 }
 
 val emptyBackAction: () -> Unit = {}

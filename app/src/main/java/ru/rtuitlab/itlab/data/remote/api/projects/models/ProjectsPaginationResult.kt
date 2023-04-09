@@ -9,7 +9,7 @@ data class ProjectsPaginationResult(
     val count: Int,
     @SerialName("has_more")
     val hasMore: Boolean,
-    val items: List<Project>,
+    val items: List<ProjectCompactDto>,
     val limit: Int,
     val links: List<ProjectLink>,
     val offset: Int,

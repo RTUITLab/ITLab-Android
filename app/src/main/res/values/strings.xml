@@ -210,6 +210,7 @@
     <string name="project_soft_deadline">Soft deadline</string>
     <string name="project_progress">Progress</string>
     <string name="project">Project</string>
+    <string name="projects_empty">No projects found with selected filters</string>
 
 
 </resources>

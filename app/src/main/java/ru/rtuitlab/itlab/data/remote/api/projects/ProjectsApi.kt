@@ -6,6 +6,7 @@ import retrofit2.http.Query
 import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectDetailsDto
 import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectsPaginationResult
 import ru.rtuitlab.itlab.data.remote.api.projects.models.version.ProjectVersions
+import ru.rtuitlab.itlab.data.remote.api.projects.models.version.worker.VersionWorker
 
 private const val base = "projects/v1"
 
@@ -30,4 +31,10 @@ interface ProjectsApi {
     suspend fun getProjectVersions(
         @Path("id") projectId: String
     ): ProjectVersions
+
+    @GET("$base/projects/{projectId}/version/{versionId}/worker")
+    suspend fun getVersionWorkers(
+        @Path("projectId") projectId: String,
+        @Path("versionId") versionId: String
+    ): List<VersionWorker>
 }
