@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 
 /**
  * Returns an existing [ViewModel] or creates a new one in the activity,
@@ -25,3 +26,11 @@ internal inline fun <reified VM: ViewModel> singletonViewModel(): VM =
 val LocalActivity = compositionLocalOf<ComponentActivity> {
 	error("Why in the world would you access an Activity now?")
 }
+
+/**
+ * Returns an existing [ViewModel] for the current navigation destination
+ * regardless of where in the composition you want it :)
+ */
+@Composable
+internal inline fun <reified VM: ViewModel> screenViewModel() =
+	LocalNavController.current.currentBackStackEntry!!.hiltViewModel<VM>()
