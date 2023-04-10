@@ -2,15 +2,21 @@ package ru.rtuitlab.itlab.data.repository
 
 import androidx.room.withTransaction
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.data.local.AppDatabase
+import ru.rtuitlab.itlab.data.local.projects.models.MilestoneEntity
+import ru.rtuitlab.itlab.data.local.projects.models.VersionFileEntity
+import ru.rtuitlab.itlab.data.local.projects.models.ProjectWithVersionsOwnersAndRepos
 import ru.rtuitlab.itlab.data.remote.api.projects.ProjectsApi
 import ru.rtuitlab.itlab.data.remote.api.projects.models.Owner
 import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectCompactDto
 import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectDetailsDto
 import ru.rtuitlab.itlab.data.remote.api.projects.models.version.ProjectVersion
 import ru.rtuitlab.itlab.data.remote.api.projects.models.version.ProjectVersions
+import ru.rtuitlab.itlab.data.remote.api.projects.models.version.VersionTasks
+import ru.rtuitlab.itlab.data.remote.api.projects.models.version.worker.VersionWorker
 import ru.rtuitlab.itlab.data.repository.util.tryUpdate
 import ru.rtuitlab.itlab.domain.repository.ProjectsRepository
 import javax.inject.Inject
@@ -70,10 +76,12 @@ class ProjectsRepositoryImpl @Inject constructor(
                 project.lastVersion?.toVersionEntity(project.id)
             }
 
-            dao.apply {
-                upsertProjects(projects)
-                updateProjectsOwners(it.items)
-                upsertVersions(lastVersions)
+            db.withTransaction {
+                dao.apply {
+                    upsertProjects(projects)
+                    updateProjectsOwners(it.items)
+                    upsertVersions(lastVersions)
+                }
             }
         }
     )
@@ -85,7 +93,7 @@ class ProjectsRepositoryImpl @Inject constructor(
             dao.insertProjectRepos(project.githubRepos.map { it.toProjectRepoEntity(project.id) })
         }
     }
-    override suspend fun getProject(projectId: String): Resource<ProjectDetailsDto> = tryUpdate(
+    override suspend fun updateProject(projectId: String): Resource<ProjectDetailsDto> = tryUpdate(
         inScope = coroutineScope,
         withHandler = handler,
         from = { projectsApi.getProject(projectId) },
@@ -93,23 +101,98 @@ class ProjectsRepositoryImpl @Inject constructor(
             dao.upsertProject(it.toProjectEntity())
             updateProjectRepositories(it)
             updateProjectOwners(it.owners, it.id)
-            getProjectVersions(it.id)
+            updateProjectVersions(it.id)
         }
     )
+
+    override fun getProject(projectId: String): Flow<ProjectWithVersionsOwnersAndRepos> =
+        dao.getProject(projectId)
 
     private suspend fun updateProjectVersions(projectId: String, versions: List<ProjectVersion>) {
         val oldVersions = dao.getVersionIdsByProjectId(projectId)
         db.withTransaction {
-            dao.deleteVersionsByIds(oldVersions - versions.map { it.id }.toSet())
-            dao.upsertVersions(versions.map { it.toVersionEntity() })
+        }
+        dao.deleteVersionsByIds(oldVersions - versions.map { it.id }.toSet())
+        dao.upsertVersions(versions.map { it.toVersionEntity() })
+    }
+
+
+    private suspend fun updateProjectFiles(idsToFiles: List<Pair<String, List<VersionFileEntity>>>) {
+        idsToFiles.forEach { (id, files) ->
+            val oldFileIds = dao.getVersionFileIdsByVersionId(id)
+            db.withTransaction {
+                dao.deleteVersionFilesByIds(oldFileIds - files.map { it.id }.toSet())
+                dao.upsertVersionFiles(files)
+            }
         }
     }
-    override suspend fun getProjectVersions(projectId: String): Resource<ProjectVersions> = tryUpdate(
+
+    private suspend fun updateProjectMilestones(idsToMilestones: List<Pair<String, List<MilestoneEntity>>>) {
+        idsToMilestones.forEach { (id, milestones) ->
+            db.withTransaction {
+                dao.deleteMilestonesByVersionId(id)
+                dao.upsertMilestones(milestones)
+            }
+        }
+    }
+
+    override suspend fun updateProjectVersions(projectId: String): Resource<ProjectVersions> = tryUpdate(
         inScope = coroutineScope,
         withHandler = handler,
         from = { projectsApi.getProjectVersions(projectId) },
         into = {
+            val budgets = it.versions.mapNotNull {
+                it.budgetCertification?.toEntity(it.id)
+            }
+
+            val versionsToFileEntities = it.versions.map { version ->
+                version.id to (
+                        (version.files.attach?.map { it.toEntity(version.id) } ?: emptyList()) +
+                        (version.files.functask?.map { it.toEntity(version.id) } ?: emptyList())
+                )
+            }
+
+            val idsToMilestones = it.versions.map { version ->
+                version.id to (version.milestones?.map { it.toEntity(version.id) } ?: emptyList())
+            }
+
             updateProjectVersions(projectId, it.versions)
+
+            dao.upsertCertifications(budgets)
+            updateProjectFiles(versionsToFileEntities)
+            updateProjectMilestones(idsToMilestones)
+        }
+    )
+
+    suspend fun updateVersionWorkers(projectId: String, versionId: String): Resource<List<VersionWorker>> = tryUpdate(
+        inScope = coroutineScope,
+        withHandler = handler,
+        from = { projectsApi.getVersionWorkers(projectId, versionId) },
+        into = {
+            val workers = dao.getWorkerIdsByProjectVersion(versionId)
+            val newWorkers = it.map { it.toWorkerEntity() }
+
+            db.withTransaction {
+                dao.deleteWorkersByIds(workers - newWorkers.map { it.id }.toSet())
+                dao.upsertWorkers(newWorkers)
+            }
+        }
+    )
+
+//    suspend fun updateProjectVersion()
+
+    suspend fun updateVersionTasks(projectId: String, versionId: String): Resource<VersionTasks> = tryUpdate(
+        inScope = coroutineScope,
+        withHandler = handler,
+        from = { projectsApi.getVersionTasks(projectId, versionId) },
+        into = {
+            val tasks = dao.getTasksIdsByVersionId(versionId)
+            val newTasks = it.tasks.map { it.toEntity() }
+
+            db.withTransaction {
+                dao.deleteTasksByIds(tasks - newTasks.map { it.id }.toSet())
+                dao.upsertVersionTasks(newTasks)
+            }
         }
     )
 

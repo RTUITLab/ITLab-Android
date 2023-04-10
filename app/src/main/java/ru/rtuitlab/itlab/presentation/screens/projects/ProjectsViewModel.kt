@@ -69,7 +69,7 @@ class ProjectsViewModel @Inject constructor(
             _state.update { state ->
                 state.copy(
                     offset = newOffset,
-                    projects = state.projects + result.items,
+                    projects = state.projects + result.items.map { it.toProjectCompact(users.value) },
                     endReached = !result.hasMore,
                     paginationState = result,
                     isLoading = false,

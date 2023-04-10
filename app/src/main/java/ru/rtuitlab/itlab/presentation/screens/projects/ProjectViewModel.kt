@@ -1,38 +1,70 @@
 package ru.rtuitlab.itlab.presentation.screens.projects
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import ru.rtuitlab.itlab.common.Resource
-import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectDetailsDto
-import ru.rtuitlab.itlab.data.remote.api.projects.models.version.ProjectVersions
-import ru.rtuitlab.itlab.domain.repository.ProjectsRepository
+import ru.rtuitlab.itlab.data.local.projects.models.VersionWithEverything
+import ru.rtuitlab.itlab.domain.use_cases.projects.GetProjectUseCase
+import ru.rtuitlab.itlab.domain.use_cases.projects.UpdateProjectUseCase
+import ru.rtuitlab.itlab.presentation.screens.projects.state.ProjectScreenState
+import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import javax.inject.Inject
 
 @HiltViewModel
 class ProjectViewModel @Inject constructor(
-    private val repo: ProjectsRepository,
+    getProject: GetProjectUseCase,
+    private val updateProject: UpdateProjectUseCase,
     state: SavedStateHandle
 ): ViewModel() {
-    private val projectId: String = state["projectId"]!!
+    val projectId: String = state["projectId"]!!
+    val projectName: String = state["projectName"]!!
 
-    val project = MutableStateFlow<Resource<ProjectDetailsDto>>(Resource.Loading)
+    private val project = getProject(projectId)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-    val versions = MutableStateFlow<Resource<ProjectVersions>>(Resource.Loading)
+    private val _uiState = MutableStateFlow(ProjectScreenState())
+    val uiState = _uiState.asStateFlow()
+
+    private val _uiEvents = MutableSharedFlow<UiEvent>()
+    val uiEvents = _uiEvents.asSharedFlow()
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            project.update {
-                repo.getProject(projectId)
+        Log.v("PROJECT_VIEW_MODEL", toString())
+        viewModelScope.launch {
+            getProject(projectId).collect { project ->
+                _uiState.update {
+                    it.copy(
+                        projectInfo = project,
+                        selectedVersion = it.selectedVersion ?: project.versions.maxByOrNull { it.creationDateTime }?.let {
+                            VersionWithEverything(
+                                version = it
+                            )
+                        }
+                    )
+                }
             }
-            versions.update {
-                repo.getProjectVersions(projectId)
-            }
+        }
+        viewModelScope.launch {
+            onUpdateStateChanged(true)
+            updateProject(projectId).handle(
+                onSuccess = {
+                    onUpdateStateChanged(false)
+                },
+                onError = {
+                    onUpdateStateChanged(false)
+                    _uiEvents.emit(UiEvent.Snackbar(it))
+                }
+            )
+        }
+    }
+
+    private fun onUpdateStateChanged(isUpdating: Boolean) {
+        _uiState.update {
+            it.copy(isProjectUpdating = isUpdating)
         }
     }
 }

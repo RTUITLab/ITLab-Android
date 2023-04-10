@@ -5,41 +5,54 @@ package ru.rtuitlab.itlab.presentation.screens.projects.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.extensions.fromIso8601ToInstant
+import ru.rtuitlab.itlab.common.extensions.toIsoString
 import ru.rtuitlab.itlab.common.extensions.toUiString
-import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectCompactDto
+import ru.rtuitlab.itlab.data.remote.api.projects.models.*
+import ru.rtuitlab.itlab.data.remote.api.users.models.User
+import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
+import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElementsRoot
 import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerBox
 import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerThemes
 import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @Composable
 fun ProjectCard(
-    project: ProjectCompactDto,
+    project: ProjectCompact,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val navController = LocalNavController.current
     Card(
         modifier = Modifier,
         onClick = onClick
@@ -91,10 +104,15 @@ fun ProjectCard(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Column {
-                    Text(
-                        text = project.name,
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                    SharedElement(
+                        key = "${project.id}/name",
+                        screenKey = AppScreen.Projects
+                    ) {
+                        Text(
+                            text = project.name,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
                     Spacer(modifier = Modifier.height(4.dp))
                     SharedElement(
                         key = "${project.id}/description",
@@ -154,7 +172,7 @@ fun ProjectCard(
                     modifier = Modifier.weight(1f, false)
                 ) {
                     Text(
-                        text = stringResource(R.string.project_soft_deadline),
+                        text = stringResource(R.string.project_soft_deadline_abr),
                         style = MaterialTheme.typography.bodyMedium,
                         color = LocalContentColor.current.copy(.8f)
                     )
@@ -172,9 +190,8 @@ fun ProjectCard(
                             color = LocalContentColor.current.copy(.8f)
                         )
                     }
-
-
                 }
+
                 Column(
                     modifier = Modifier.weight(1f, false)
                 ) {
@@ -204,6 +221,84 @@ fun ProjectCard(
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            SharedElement(
+                key = "${project.id}/owners",
+                screenKey = AppScreen.Projects
+            ) {
+                if (project.owners.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.project_no_owners),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = LocalContentColor.current.copy(.8f)
+                    )
+                } else {
+                    LazyRow(
+                        modifier = Modifier
+                            .layout { measurable, constraints ->
+                                val placeable = measurable.measure(
+                                    constraints.copy(
+                                        maxWidth = constraints.maxWidth + 32.dp.roundToPx(), // Adding horizontal padding
+                                        minWidth = constraints.maxWidth + 32.dp.roundToPx()
+                                    )
+                                )
+                                layout(placeable.width, placeable.height) {
+                                    placeable.place(0, 0)
+                                }
+                            },
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        item {
+                            SuggestionChip(
+                                onClick = {
+                                    navController.navigate("${AppScreen.EmployeeDetails.navLink}/${project.owners[0].id}")
+                                },
+                                label = {
+                                    Text(
+                                        text = project.owners[0].abbreviatedName,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            )
+                        }
+                        if (project.owners.size > 1) {
+                            item {
+                                Divider(
+                                    modifier = Modifier
+                                        .height(32.dp)
+                                        .width(1.dp),
+                                    color = MaterialTheme.colorScheme.onSurface.copy(.5f)
+                                )
+
+                            }
+
+                            items(
+                                items = project.owners.takeLast(project.owners.size - 1),
+                                key = { it.id }
+                            ) {
+                                SuggestionChip(
+                                    onClick = {
+                                        navController.navigate("${AppScreen.EmployeeDetails.navLink}/${it.id}")
+                                    },
+                                    label = {
+                                        Text(
+                                            text = it.abbreviatedName,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                )
+                            }
+                        }
+
+                    }
+                }
+            }
         }
     }
 }
@@ -217,7 +312,9 @@ fun ShimmeredProjectCard(
         theme = ShimmerThemes.defaultShimmerTheme
     )
 
-    Card(modifier) {
+    Card(
+        modifier
+    ) {
         Column(
             modifier = Modifier
                 .padding(
@@ -316,6 +413,16 @@ fun ShimmeredProjectCard(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(25.dp))
+
+            ShimmerBox(
+                modifier = Modifier
+                    .height(32.dp)
+                    .fillMaxWidth(),
+                shimmer = defaultShimmer
+            )
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -324,13 +431,63 @@ fun ShimmeredProjectCard(
 @Composable
 fun ShimmeredProjectCardPreview() {
     ITLabTheme {
-        Surface {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                repeat(10) {
-                    ShimmeredProjectCard()
+        CompositionLocalProvider(
+            LocalNavController provides rememberNavController()
+        ) {
+            SharedElementsRoot {
+                Surface {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ProjectCard(
+                            project = ProjectCompact(
+                                id = "asd",
+                                archived = false,
+                                archivedBy = null,
+                                archivedDate = null,
+                                createdAt = ZonedDateTime.now(ZoneId.systemDefault()),
+                                lastVersion = LastVersion(
+                                    archived = ArchivationInfo(
+                                        archived = false,
+                                        archivedBy = null,
+                                        archivedDate = null
+                                    ),
+                                    completeTaskCount = 7,
+                                    createdAt = ZonedDateTime.now(ZoneId.systemDefault()).toIsoString(),
+                                    deadlines = Deadlines(
+                                        hard = ZonedDateTime.now(ZoneId.systemDefault()).toIsoString(),
+                                        soft = ZonedDateTime.now(ZoneId.systemDefault()).minusDays(10).toIsoString()
+                                    ),
+                                    id = "asdsad",
+                                    name = "v0.3",
+                                    owner = null,
+                                    taskCount = 10,
+                                    updatedAt = null,
+                                    workers = emptyList()
+                                ),
+                                logoUrl = "",
+                                name = "Умное общежитие",
+                                owners = listOf(
+                                    User(
+                                        id = "fuck",
+                                        firstName = "Александр",
+                                        lastName = "Левандровский",
+                                        middleName = "Максимович"
+                                    )
+                                ),
+                                shortDescription = "Проект для IoT академии Samsung",
+                                updatedAt = null
+                            ),
+                            onClick = { /*TODO*/ }
+                        )
+                        ShimmeredProjectCard(
+                            modifier = Modifier
+                                .offset {
+                                    IntOffset(0, -590)
+                                }
+                        )
+                    }
                 }
             }
         }

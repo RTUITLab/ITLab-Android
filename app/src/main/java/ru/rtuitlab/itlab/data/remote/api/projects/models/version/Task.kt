@@ -3,7 +3,7 @@ package ru.rtuitlab.itlab.data.remote.api.projects.models.version
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.rtuitlab.itlab.common.extensions.toLocalDateTime
+import ru.rtuitlab.itlab.common.extensions.toZonedDateTime
 import ru.rtuitlab.itlab.data.local.projects.models.VersionTask
 
 @Serializable
@@ -26,10 +26,10 @@ data class Task(
         id = id,
         baseCost = baseTotal,
         isCompleted = complete,
-        creationTime = createdAt.toLocalDateTime(),
+        creationTime = createdAt.toZonedDateTime(),
         name = name,
         cost = total,
-        updateTime = updatedAt.toLocalDateTime(),
+        updateTime = updatedAt.toZonedDateTime(),
         versionId = versionId
     )
 }

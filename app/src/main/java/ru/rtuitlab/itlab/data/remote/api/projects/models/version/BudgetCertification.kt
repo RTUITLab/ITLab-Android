@@ -3,7 +3,7 @@ package ru.rtuitlab.itlab.data.remote.api.projects.models.version
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.rtuitlab.itlab.common.extensions.toLocalDateTime
+import ru.rtuitlab.itlab.common.extensions.toZonedDateTime
 import ru.rtuitlab.itlab.data.local.projects.models.BudgetCertificationEntity
 
 @Serializable
@@ -20,7 +20,7 @@ data class BudgetCertification(
     fun toEntity(versionId: String) = BudgetCertificationEntity(
         versionId = versionId,
         certificationIssuerId = certifyBy,
-        certificationDateTime = certifyDate.toLocalDateTime(),
+        certificationDateTime = certifyDate.toZonedDateTime(),
         totalCost = totalSum
     )
 }

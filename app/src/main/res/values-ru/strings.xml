@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="unavailable">Недоступно</string>
     <string name="events">События</string>
     <string name="projects">Проекты</string>
     <string name="devices">Техника</string>
+    <string name="project_version">Версия</string>
     <string name="employees">Сотрудники</string>
     <string name="feedback">Обратная связь</string>
     <string name="profile">Профиль</string>
@@ -197,5 +199,13 @@
     <string name="report_in_review">Ожидание</string>
     <string name="reports_filters">Фильтры</string>
     <string name="reports_sorting">Сортировка</string>
+    <string name="project_soft_deadline_abr">Мягк. дедлайн</string>
+    <string name="project_soft_deadline">Мягкий дедлайн</string>
+    <string name="project_progress">Прогресс</string>
+    <string name="project">Проект</string>
+    <string name="projects_empty">Нет проектов, соответствующих фильтрам</string>
+    <string name="project_no_owners">Нет отвествтенных</string>
+    <string name="project_in_dev_since">Проект в разработке с %1$s</string>
+    <string name="project_hard_deadline">Жёсткий дедлайн</string>
 
 </resources>

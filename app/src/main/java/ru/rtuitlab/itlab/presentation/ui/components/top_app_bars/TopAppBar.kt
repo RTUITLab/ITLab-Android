@@ -44,7 +44,10 @@ fun BasicTopAppBar(
 	) {
 		TopAppBar(
 			title = {
-				SharedElement(key = titleSharedElementKey.toString(), screenKey = "Whatever") {
+				SharedElement(
+					key = titleSharedElementKey.toString(),
+					screenKey = "Whatever"
+				) {
 					Text(
 						text = text,
 						maxLines = 1,

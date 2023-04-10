@@ -1,7 +1,7 @@
 package ru.rtuitlab.itlab.data.local.projects.models
 
 import androidx.room.Entity
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @Entity(
     primaryKeys = ["taskId", "roleId"]
@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 data class TaskWorkerEntity(
     val taskId: String,
     val baseRate: Double,
-    val creationTime: LocalDateTime,
+    val creationTime: ZonedDateTime,
     val hours: Int,
     val roleName: String,
     val roleId: String,

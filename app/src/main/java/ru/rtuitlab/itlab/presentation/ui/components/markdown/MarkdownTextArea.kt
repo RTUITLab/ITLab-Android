@@ -3,7 +3,6 @@ package ru.rtuitlab.itlab.presentation.ui.components.markdown
 import android.widget.TextView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -59,14 +58,14 @@ fun MarkdownTextArea(
 
 	Box(
 		modifier = Modifier
-			.fillMaxWidth()
+//			.fillMaxWidth()
 			.padding(paddingValues)
 			.then(modifier)
 	) {
 		if (textMd.isNotEmpty()) {
 			AndroidView(
 				modifier = Modifier
-					.fillMaxWidth()
+//					.fillMaxWidth()
 					.align(Alignment.TopStart),
 				factory = {
 					TextView(it).apply {

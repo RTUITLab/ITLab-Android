@@ -24,21 +24,21 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
 @Database(
     entities = [
         // Users
-        UserEntity::class,          UserPropertyEntity::class,      UserPropertyTypeModel::class,
+        UserEntity::class,          UserPropertyEntity::class,          UserPropertyTypeModel::class,
 
         // Events
-        EventEntity::class,         EventDetailEntity::class,       UserEventRoleEntity::class,
-        PlaceEntity::class,         ShiftEntity::class,             EventRoleModel::class,
-        EventTypeModel::class,      EventInvitationEntity::class,   UserEventEntity::class,
-        EventSalaryEntity::class,   EventShiftSalary::class,        EventPlaceSalary::class,
+        EventEntity::class,         EventDetailEntity::class,           UserEventRoleEntity::class,
+        PlaceEntity::class,         ShiftEntity::class,                 EventRoleModel::class,
+        EventTypeModel::class,      EventInvitationEntity::class,       UserEventEntity::class,
+        EventSalaryEntity::class,   EventShiftSalary::class,            EventPlaceSalary::class,
 
         // Reports
         ReportEntity::class,        ReportSalary::class,
 
         // Projects
-        Project::class,             Version::class,                 TaskWorkerEntity::class,
-        ProjectOwner::class,        VersionTask::class,
-        ProjectRepoEntity::class,   Worker::class,
+        Project::class,             Version::class,                     TaskWorkerEntity::class,
+        ProjectOwner::class,        VersionTask::class,                 MilestoneEntity::class,
+        ProjectRepoEntity::class,   Worker::class,                      VersionFileEntity::class,
                                     BudgetCertificationEntity::class,
     ],
     version = 2,

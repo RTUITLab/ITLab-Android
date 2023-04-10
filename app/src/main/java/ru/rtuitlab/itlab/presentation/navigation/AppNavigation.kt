@@ -31,7 +31,7 @@ import ru.rtuitlab.itlab.presentation.screens.files.BaseElements
 
 import ru.rtuitlab.itlab.presentation.screens.profile.ProfileViewModel
 import ru.rtuitlab.itlab.presentation.screens.projects.Projects
-import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectDetails
+import ru.rtuitlab.itlab.presentation.screens.projects.ProjectDetails
 import ru.rtuitlab.itlab.presentation.screens.purchases.NewPurchase
 import ru.rtuitlab.itlab.presentation.screens.purchases.Purchase
 import ru.rtuitlab.itlab.presentation.screens.purchases.Purchases

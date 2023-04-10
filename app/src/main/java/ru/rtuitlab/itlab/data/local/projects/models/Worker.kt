@@ -5,7 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.PrimaryKey
 import ru.rtuitlab.itlab.data.local.users.models.UserEntity
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @Entity(
     foreignKeys = [
@@ -28,13 +28,13 @@ data class Worker(
     val appointerId: String,
     val baseHourlyRate: Double,
     val isConfirmed: Boolean,
-    val creationTime: LocalDateTime,
+    val creationTime: ZonedDateTime,
     val rateModifier: Int,
     val role: String,
     val roleId: String,
     val hourlyRate: Int,
     val monthlySalary: Int,
-    val updateTime: LocalDateTime?,
+    val updateTime: ZonedDateTime?,
     val userId: String,
     val versionId: String,
     val workHours: Int

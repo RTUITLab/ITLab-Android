@@ -96,9 +96,9 @@ open class AppScreen(
 
     // Projects-related
     object Projects: AppScreen(R.string.projects, "projects", true)
-    class ProjectDetails(val title: String): AppScreen(R.string.project, "projects/{projectId}") {
+    class ProjectDetails(val title: String): AppScreen(R.string.project, "projects/{projectId}/{projectName}") {
         companion object {
-            const val route = "projects/{projectId}"
+            const val route = "projects/{projectId}/{projectName}"
             val navLink: String = route.substringBefore("/{")
         }
     }
@@ -142,6 +142,7 @@ open class AppScreen(
             EventDetails(context.resources.getString(R.string.event)),
             EventsNotifications,
             Projects,
+            ProjectDetails(context.resources.getString(R.string.project)),
             Devices,
             Profile,
             Reports,

@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Files(
-    val attach: List<ProjectFile>?,
-    val functask: List<ProjectFile>?
+    val attach: List<VersionFile>?,
+    val functask: List<VersionFile>?
 )

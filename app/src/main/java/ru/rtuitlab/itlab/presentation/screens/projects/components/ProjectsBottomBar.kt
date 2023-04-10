@@ -3,6 +3,8 @@ package ru.rtuitlab.itlab.presentation.screens.projects.components
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FilterAlt
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import ru.rtuitlab.itlab.presentation.screens.projects.ProjectsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.SearchBar
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.BottomAppBar
@@ -15,6 +17,8 @@ fun ProjectsBottomBar(
     mainFloatingActionButton: @Composable (() -> Unit),
     projectsViewModel: ProjectsViewModel = singletonViewModel()
 ) {
+    val state by projectsViewModel.onlineState.collectAsState()
+
     BottomAppBar(
         mainFloatingActionButton = mainFloatingActionButton,
         options = listOf(
@@ -26,6 +30,7 @@ fun ProjectsBottomBar(
         searchBar = {
             SearchBar(
                 onSearch = projectsViewModel::onSearch,
+                query = state.searchQuery,
                 onDismissRequest = it
             )
         }

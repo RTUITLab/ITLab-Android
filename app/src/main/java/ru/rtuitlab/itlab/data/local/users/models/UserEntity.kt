@@ -42,4 +42,6 @@ data class UserWithProperties(
         email = userEntity.email,
         properties = properties.map { it.toUserPropertyModel() }
     )
+
+    fun toUser() = toUserResponse().toUser()
 }

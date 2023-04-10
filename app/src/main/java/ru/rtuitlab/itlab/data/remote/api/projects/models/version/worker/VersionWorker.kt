@@ -3,7 +3,7 @@ package ru.rtuitlab.itlab.data.remote.api.projects.models.version.worker
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.rtuitlab.itlab.common.extensions.toLocalDateTime
+import ru.rtuitlab.itlab.common.extensions.toZonedDateTime
 import ru.rtuitlab.itlab.data.local.projects.models.Worker
 
 @Serializable
@@ -38,13 +38,13 @@ data class VersionWorker(
         appointerId = assignedBy,
         baseHourlyRate = baseSalaryPerHour,
         isConfirmed = confirmed.confirmed,
-        creationTime = createdAt.toLocalDateTime(),
+        creationTime = createdAt.toZonedDateTime(),
         rateModifier = modifier,
         role = role,
         roleId = roleId,
         hourlyRate = salaryPerHour,
         monthlySalary = salaryPerMonth,
-        updateTime = updatedAt?.toLocalDateTime(),
+        updateTime = updatedAt?.toZonedDateTime(),
         userId = userId,
         versionId = versionId,
         workHours = workHours

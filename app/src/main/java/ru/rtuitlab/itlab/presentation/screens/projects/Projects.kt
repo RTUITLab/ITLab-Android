@@ -80,7 +80,7 @@ fun Projects(
                         ProjectCard(
                             project = it,
                             onClick = {
-                                navController.navigate("${AppScreen.ProjectDetails.navLink}/${it.id}")
+                                navController.navigate("${AppScreen.ProjectDetails.navLink}/${it.id}/${it.name}")
                             }
                         )
                     }

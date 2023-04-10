@@ -3,9 +3,10 @@ package ru.rtuitlab.itlab.data.remote.api.projects.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.rtuitlab.itlab.data.local.projects.models.Project as ProjectEntity
-import ru.rtuitlab.itlab.common.extensions.toLocalDateTime
+import ru.rtuitlab.itlab.common.extensions.toZonedDateTime
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
+import java.time.ZonedDateTime
+import ru.rtuitlab.itlab.data.local.projects.models.Project as ProjectEntity
 
 @Serializable
 data class ProjectCompactDto(
@@ -32,11 +33,25 @@ data class ProjectCompactDto(
         id = id,
         isArchived = archived,
         archivationIssuerId = archivedBy,
-        archivationDate = archivedDate?.toLocalDateTime(),
-        creationDateTime = createdAt.toLocalDateTime(),
+        archivationDate = archivedDate?.toZonedDateTime(),
+        creationDateTime = createdAt.toZonedDateTime(),
         logoUrl = logoUrl,
         name = name,
         shortDescription = shortDescription
+    )
+
+    fun toProjectCompact(users: List<User>) = ProjectCompact(
+        id = id,
+        archived = archived,
+        archivedBy = archivedBy,
+        archivedDate = archivedDate?.toZonedDateTime(),
+        createdAt = createdAt.toZonedDateTime(),
+        lastVersion = lastVersion,
+        logoUrl = logoUrl,
+        name = name,
+        owners = owners.map { owner -> users.toSet().find { it.id == owner.userId }!! },
+        shortDescription = shortDescription,
+        updatedAt = updatedAt?.toZonedDateTime()
     )
 }
 
@@ -44,12 +59,12 @@ data class ProjectCompact(
     val id: String,
     val archived: Boolean,
     val archivedBy: String?,
-    val archivedDate: String?,
-    val createdAt: String,
+    val archivedDate: ZonedDateTime?,
+    val createdAt: ZonedDateTime,
     val lastVersion: LastVersion?,
     val logoUrl: String,
     val name: String,
     val owners: List<User>,
     val shortDescription: String,
-    val updatedAt: String?
+    val updatedAt: ZonedDateTime?
 )

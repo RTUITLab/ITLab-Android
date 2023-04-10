@@ -1,7 +1,7 @@
 package ru.rtuitlab.itlab.data.remote.api.projects.models
 
 import kotlinx.serialization.*
-import ru.rtuitlab.itlab.common.extensions.toLocalDateTime
+import ru.rtuitlab.itlab.common.extensions.toZonedDateTime
 import ru.rtuitlab.itlab.data.local.projects.models.Project
 
 @Serializable
@@ -29,8 +29,8 @@ data class ProjectDetailsDto(
         id = id,
         isArchived = archived,
         archivationIssuerId = archivedBy,
-        archivationDate = archivedDate?.toLocalDateTime(),
-        creationDateTime = createdAt.toLocalDateTime(),
+        archivationDate = archivedDate?.toZonedDateTime(),
+        creationDateTime = createdAt.toZonedDateTime(),
         logoUrl = logoUrl,
         name = name,
         shortDescription = shortDescription

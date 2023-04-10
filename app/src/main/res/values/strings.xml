@@ -83,6 +83,14 @@
     <!--    Projects     -->
     <string name="projects">Projects</string>
     <string name="project_version">Version</string>
+    <string name="project_soft_deadline_abr">Soft deadline</string>
+    <string name="project_progress">Progress</string>
+    <string name="project">Project</string>
+    <string name="projects_empty">No projects found with selected filters</string>
+    <string name="project_no_owners">No managers</string>
+    <string name="project_in_dev_since">Project in development since %1$s</string>
+    <string name="project_soft_deadline">Soft deadline</string>
+    <string name="project_hard_deadline">Hard deadline</string>
 
 
     <!--    Employees     -->
@@ -207,10 +215,6 @@
     <string name="md_attach">Attach…</string>
 
     <string name="files">Files</string>
-    <string name="project_soft_deadline">Soft deadline</string>
-    <string name="project_progress">Progress</string>
-    <string name="project">Project</string>
-    <string name="projects_empty">No projects found with selected filters</string>
 
 
 </resources>

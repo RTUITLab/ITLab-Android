@@ -8,7 +8,8 @@ import ru.rtuitlab.itlab.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.DateTimeException
-import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -96,15 +97,16 @@ fun String.fromIso8601ToDateTime(
 	context.getString(R.string.time_parsing_error) to ""
 }
 
-fun String.toLocalDateTime(): LocalDateTime =
-	LocalDateTime.parse(this, DateTimeFormatter.ISO_DATE_TIME)
+fun String.toZonedDateTime(): ZonedDateTime =
+	ZonedDateTime
+		.parse(this, DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Z")))
 
-fun LocalDateTime.toIsoString(): String =
-	format(DateTimeFormatter.ISO_DATE_TIME)
+fun ZonedDateTime.toIsoString(): String =
+	format(DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.of("Z")))
 
 fun String.fromIso8601ToInstant() =
 	java.time.Instant.from(
-		DateTimeFormatter.ISO_DATE_TIME.parse(this)
+		DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.systemDefault()).parse(this)
 	).toKotlinInstant().toMoscowDateTime()
 
 fun Date.toIsoString(): String {

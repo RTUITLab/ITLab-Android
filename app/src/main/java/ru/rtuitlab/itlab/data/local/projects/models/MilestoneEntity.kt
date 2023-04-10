@@ -2,9 +2,7 @@ package ru.rtuitlab.itlab.data.local.projects.models
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.time.ZonedDateTime
 
 @Entity(
     foreignKeys = [
@@ -13,16 +11,11 @@ import java.time.ZonedDateTime
             parentColumns = ["id"],
             childColumns = ["versionId"]
         )
-    ],
-    indices = [Index("versionId")]
+    ]
 )
-data class VersionTask(
-    @PrimaryKey val id: String,
-    val baseCost: Double,
-    val isCompleted: Boolean,
-    val creationTime: ZonedDateTime,
+data class MilestoneEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
-    val cost: Int,
-    val updateTime: ZonedDateTime,
+    val url: String,
     val versionId: String
 )

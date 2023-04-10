@@ -1,9 +1,8 @@
 package ru.rtuitlab.itlab.data.local.projects.models
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
-import java.time.LocalDateTime
+import androidx.room.*
+import ru.rtuitlab.itlab.data.local.users.models.UserEntity
+import java.time.ZonedDateTime
 
 @Entity(
     foreignKeys = [
@@ -11,12 +10,30 @@ import java.time.LocalDateTime
             entity = Version::class,
             parentColumns = ["id"],
             childColumns = ["versionId"]
+        ),
+        ForeignKey(
+            entity = UserEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["certificationIssuerId"]
         )
+    ],
+    indices = [
+        Index("certificationIssuerId")
     ]
 )
 data class BudgetCertificationEntity(
     @PrimaryKey val versionId: String,
     val certificationIssuerId: String,
-    val certificationDateTime: LocalDateTime,
+    val certificationDateTime: ZonedDateTime,
     val totalCost: Int
+)
+
+data class BudgetCertificationWithIssuer(
+    @Embedded val budget: BudgetCertificationEntity,
+    @Relation(
+        entity = UserEntity::class,
+        parentColumn = "certificationIssuerId",
+        entityColumn = "id"
+    )
+    val issuer: UserEntity
 )

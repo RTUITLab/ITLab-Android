@@ -3,7 +3,7 @@ package ru.rtuitlab.itlab.data.remote.api.projects.models.version
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.rtuitlab.itlab.common.extensions.toLocalDateTime
+import ru.rtuitlab.itlab.common.extensions.toZonedDateTime
 import ru.rtuitlab.itlab.data.local.projects.models.TaskWorkerEntity
 
 @Serializable
@@ -21,7 +21,7 @@ data class TaskWorker(
     fun toEntity(taskId: String) = TaskWorkerEntity(
         taskId = taskId,
         baseRate = baseSum,
-        creationTime = createdAt.toLocalDateTime(),
+        creationTime = createdAt.toZonedDateTime(),
         hours = hours,
         roleName = role,
         roleId = roleId,

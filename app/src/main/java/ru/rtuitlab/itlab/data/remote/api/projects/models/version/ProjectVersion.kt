@@ -3,7 +3,7 @@ package ru.rtuitlab.itlab.data.remote.api.projects.models.version
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import ru.rtuitlab.itlab.common.extensions.toLocalDateTime
+import ru.rtuitlab.itlab.common.extensions.toZonedDateTime
 import ru.rtuitlab.itlab.data.local.projects.models.Version
 import ru.rtuitlab.itlab.data.remote.api.projects.models.Deadlines
 import ru.rtuitlab.itlab.data.remote.api.projects.models.Owner
@@ -30,13 +30,13 @@ data class ProjectVersion(
     fun toVersionEntity() = Version(
         id = id,
         isArchived = archived,
-        creationDateTime = createdAt.toLocalDateTime(),
-        softDeadline = deadlines.soft.toLocalDateTime(),
-        hardDeadline = deadlines.hard.toLocalDateTime(),
+        creationDateTime = createdAt.toZonedDateTime(),
+        softDeadline = deadlines.soft.toZonedDateTime(),
+        hardDeadline = deadlines.hard.toZonedDateTime(),
         description = description,
         name = name,
         ownerId = owner?.userId,
         projectId = projectId,
-        updateTime = updatedAt?.toLocalDateTime()
+        updateTime = updatedAt?.toZonedDateTime()
     )
 }
