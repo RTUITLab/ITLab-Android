@@ -25,10 +25,6 @@ import androidx.compose.ui.unit.*
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.*
-import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.CompositionLocalValues
-import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.calculateAlpha
-import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.calculateOffset
-import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.calculateScale
 import kotlin.math.roundToInt
 
 @Composable
@@ -215,7 +211,7 @@ private fun Placeholder(state: SharedElementsTransitionState) {
                             containerModifier,
                             true,
                             contentModifier,
-                            state.endCompositionLocalValues!!,
+                            state.endCompositionLocalContext!!,
                             state.endPlaceholder!!
                         )
                     )
@@ -272,7 +268,7 @@ private fun Placeholder(state: SharedElementsTransitionState) {
                     containerModifier,
                     start != null,
                     startContentModifier,
-                    state.startCompositionLocalValues,
+                    state.startCompositionLocalContext,
                     state.startPlaceholder
                 )
             )
@@ -294,7 +290,10 @@ private fun Placeholder(state: SharedElementsTransitionState) {
                             relaxMaxSize = call.relaxMaxSize
                         ) {
                             ElementContainer(modifier = call.contentModifier) {
-                                call.compositionLocalValues.Provider(call.content)
+                                CompositionLocalProvider(
+                                    call.compositionLocalContext,
+                                    content = call.content
+                                )
                             }
                         }
                     }
@@ -309,7 +308,7 @@ private class ElementCall(
     val containerModifier: Modifier,
     val relaxMaxSize: Boolean,
     val contentModifier: Modifier,
-    val compositionLocalValues: CompositionLocalValues,
+    val compositionLocalContext: CompositionLocalContext,
     val content: @Composable () -> Unit
 )
 
@@ -373,15 +372,15 @@ private fun lerp(start: CornerSize?, end: CornerSize?, fraction: Float): CornerS
 }
 
 private class MaterialContainerInfo(
-	key: Any,
-	screenKey: Any,
-	val shape: Shape,
-	val color: Color,
-	val contentColor: Color,
-	val border: BorderStroke?,
-	val elevation: Dp,
-	spec: SharedElementsTransitionSpec,
-	onFractionChanged: ((Float) -> Unit)?,
+    key: Any,
+    screenKey: Any,
+    val shape: Shape,
+    val color: Color,
+    val contentColor: Color,
+    val border: BorderStroke?,
+    val elevation: Dp,
+    spec: SharedElementsTransitionSpec,
+    onFractionChanged: ((Float) -> Unit)?,
 ) : SharedElementInfo(key, screenKey, spec, onFractionChanged)
 
 enum class FitMode {
@@ -390,10 +389,10 @@ enum class FitMode {
 
 @Immutable
 private class ProgressThresholdsGroup(
-	val fade: ProgressThresholds,
-	val scale: ProgressThresholds,
-	val scaleMask: ProgressThresholds,
-	val shapeMask: ProgressThresholds
+    val fade: ProgressThresholds,
+    val scale: ProgressThresholds,
+    val scaleMask: ProgressThresholds,
+    val shapeMask: ProgressThresholds
 )
 
 // Default animation thresholds. Will be used by default when the default linear PathMotion is
