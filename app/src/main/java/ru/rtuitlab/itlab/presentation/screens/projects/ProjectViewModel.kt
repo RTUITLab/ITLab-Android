@@ -94,6 +94,20 @@ class ProjectViewModel @Inject constructor(
        }
     }
 
+    fun onRefresh() = viewModelScope.launch {
+        projectId ?: return@launch
+        onProjectUpdate(true)
+        updateProject(projectId).handle(
+            onSuccess = {
+                onProjectUpdate(false)
+            },
+            onError = {
+                onProjectUpdate(false)
+                _uiEvents.emit(UiEvent.Snackbar(it))
+            }
+        )
+    }
+
     private fun onProjectUpdate(isUpdating: Boolean) {
         _uiState.update {
             it.copy(isProjectUpdating = isUpdating)

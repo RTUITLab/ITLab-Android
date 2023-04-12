@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.local.projects.models.Version
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
@@ -67,42 +69,48 @@ fun ProjectDetails(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {
-        state.projectInfo?.let { projectInfo ->
-            Column(
-                modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                SharedElement(
-                    key = projectInfo.project.id,
-                    screenKey = AppScreen.ProjectDetails
+        SwipeRefresh(
+            modifier = Modifier.fillMaxSize(),
+            state = rememberSwipeRefreshState(state.isProjectUpdating),
+            onRefresh = projectViewModel::onRefresh
+        ) {
+            state.projectInfo?.let { projectInfo ->
+                Column(
+                    modifier = Modifier
+                        .padding(it)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    ProjectHeader(state = state)
-                }
+                    SharedElement(
+                        key = projectInfo.project.id,
+                        screenKey = AppScreen.ProjectDetails
+                    ) {
+                        ProjectHeader(state = state)
+                    }
 
 
-                AnimatedVisibility(
-                    visibleState = animationState,
-                    enter = fadeIn() + slideInVertically(
-                        initialOffsetY = { it }
-                    )
-                ) {
-                    Column {
-                        Box(
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        ) {
-                            VersionSelector(
-                                versions = state.projectInfo?.versions,
-                                selectedVersion = state.selectedVersion?.version,
-                                onVersionSelected = projectViewModel::onVersionSelected
-                            )
+                    AnimatedVisibility(
+                        visibleState = animationState,
+                        enter = fadeIn() + slideInVertically(
+                            initialOffsetY = { it }
+                        )
+                    ) {
+                        Column {
+                            Box(
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            ) {
+                                VersionSelector(
+                                    versions = state.projectInfo?.versions,
+                                    selectedVersion = state.selectedVersion?.version,
+                                    onVersionSelected = projectViewModel::onVersionSelected
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Versions(state = state)
                         }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Versions(state = state)
                     }
                 }
             }
