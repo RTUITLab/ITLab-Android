@@ -82,12 +82,12 @@ class ProjectViewModel @Inject constructor(
 
            viewModelScope.launch {
                _uiState.map {
-                   it.selectedVersion?.version
+                   it.selectedVersion?.version?.id
                }
                    .distinctUntilChanged()
                    .collect {
                        it?.let {
-                           onVersionSelected(it)
+                           onVersionChanged(it)
                        }
                    }
            }
@@ -106,10 +106,18 @@ class ProjectViewModel @Inject constructor(
         }
     }
 
-    fun onVersionSelected(version: Version) = viewModelScope.launch {
+    fun onVersionSelected(version: Version) {
+        _uiState.update {
+            it.copy(
+                selectedVersion = VersionWithEverything(version)
+            )
+        }
+    }
+
+    private fun onVersionChanged(versionId: String) = viewModelScope.launch {
         if (projectId == null) return@launch
         onVersionUpdate(true)
-        (updateVersion.workers(projectId, version.id) + updateVersion.tasks(projectId, version.id))
+        (updateVersion.workers(projectId, versionId) + updateVersion.tasks(projectId, versionId))
             .handle(
                 onError = {
                     onVersionUpdate(false)

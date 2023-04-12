@@ -95,6 +95,7 @@
     <string name="cost">Cost</string>
     <string name="project_version_task">Task</string>
     <string name="project_version_total">Total</string>
+    <string name="project_version_select">Project version</string>
 
 
     <!--    Employees     -->

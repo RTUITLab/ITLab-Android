@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package ru.rtuitlab.itlab.presentation.screens.projects
 
@@ -37,6 +37,8 @@ import ru.rtuitlab.itlab.presentation.screens.projects.components.TasksTable
 import ru.rtuitlab.itlab.presentation.screens.projects.state.ProjectScreenState
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
+import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerBox
+import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import java.time.ZoneId
@@ -75,13 +77,6 @@ fun ProjectDetails(
                     ProjectHeader(state = state)
                 }
 
-                VersionSelector(
-                    versions = state.projectInfo?.versions,
-                    selectedVersion = state.selectedVersion?.version,
-                    onVersionSelected = {
-
-                    }
-                )
 
                 AnimatedVisibility(
                     visibleState = animationState,
@@ -89,7 +84,21 @@ fun ProjectDetails(
                         initialOffsetY = { it }
                     )
                 ) {
-                    Versions(state = state)
+                    Column {
+                        Box(
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        ) {
+                            VersionSelector(
+                                versions = state.projectInfo?.versions,
+                                selectedVersion = state.selectedVersion?.version,
+                                onVersionSelected = projectViewModel::onVersionSelected
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Versions(state = state)
+                    }
                 }
             }
         }
@@ -284,7 +293,54 @@ fun VersionSelector(
     selectedVersion: Version?,
     onVersionSelected: (Version) -> Unit
 ) {
+    val (isExpanded, setExpanded) = remember { mutableStateOf(false) }
 
+    ExposedDropdownMenuBox(
+        modifier = Modifier.fillMaxWidth(),
+        expanded = isExpanded,
+        onExpandedChange = {
+            setExpanded(!isExpanded)
+        }
+    ) {
+        OutlinedAppTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(),
+            value = selectedVersion?.name ?: " ",
+            onValueChange = {},
+            leadingIcon = if (versions == null) {{
+                ShimmerBox(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(.25f)
+                )
+            }} else null,
+            singleLine = true,
+            readOnly = true,
+            label = {
+                Text(text = stringResource(R.string.project_version_select))
+            },
+            onClick = { setExpanded(true) }
+        )
+
+        ExposedDropdownMenu(
+            modifier = Modifier,
+            expanded = isExpanded,
+            onDismissRequest = { setExpanded(false) }
+        ) {
+            versions.forEach {
+                DropdownMenuItem(
+                    text = {
+                        Text(text = it.name)
+                    },
+                    onClick = {
+                        onVersionSelected(it)
+                        setExpanded(false)
+                    }
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -401,7 +457,6 @@ fun Versions(
                 workers = state.selectedVersion.workers,
                 roleTotals = state.selectedVersion.roleTotals
             )
-
 
 
         }

@@ -211,5 +211,6 @@
     <string name="cost">Сумма</string>
     <string name="project_version_task">Задача</string>
     <string name="project_version_total">Итого</string>
+    <string name="project_version_select">Версия проекта</string>
 
 </resources>
