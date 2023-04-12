@@ -12,7 +12,7 @@ internal inline fun <reified T : ViewModel> NavBackStackEntry.hiltViewModel() =
     ViewModelProvider(
         this.viewModelStore,
         HiltViewModelFactory(LocalContext.current, this)
-    ).get(T::class.java)
+    )[T::class.java]
 
 //@Composable
 //internal inline fun <reified T : ViewModel> NavBackStackEntry.hiltViewModel(key: String? = null) =

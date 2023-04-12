@@ -1,10 +1,9 @@
 package ru.rtuitlab.itlab.data.local.projects.models
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
+import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
-import androidx.room.PrimaryKey
 import ru.rtuitlab.itlab.data.local.users.models.UserEntity
+import ru.rtuitlab.itlab.data.local.users.models.UserWithProperties
 import java.time.ZonedDateTime
 
 @Entity(
@@ -38,4 +37,14 @@ data class Worker(
     val userId: String,
     val versionId: String,
     val workHours: Int
+)
+
+data class UserWorker(
+    @Embedded val worker: Worker,
+    @Relation(
+        entity = UserEntity::class,
+        parentColumn = "userId",
+        entityColumn = "id"
+    )
+    val user: UserWithProperties
 )

@@ -6,9 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
 import ru.rtuitlab.itlab.data.local.AppDatabase
-import ru.rtuitlab.itlab.data.local.projects.models.MilestoneEntity
-import ru.rtuitlab.itlab.data.local.projects.models.VersionFileEntity
-import ru.rtuitlab.itlab.data.local.projects.models.ProjectWithVersionsOwnersAndRepos
+import ru.rtuitlab.itlab.data.local.projects.models.*
 import ru.rtuitlab.itlab.data.remote.api.projects.ProjectsApi
 import ru.rtuitlab.itlab.data.remote.api.projects.models.Owner
 import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectCompactDto
@@ -108,6 +106,9 @@ class ProjectsRepositoryImpl @Inject constructor(
     override fun getProject(projectId: String): Flow<ProjectWithVersionsOwnersAndRepos> =
         dao.getProject(projectId)
 
+    override fun observeVersionById(versionId: String): Flow<VersionWithEverything> =
+        dao.observeVersionById(versionId)
+
     private suspend fun updateProjectVersions(projectId: String, versions: List<ProjectVersion>) {
         val oldVersions = dao.getVersionIdsByProjectId(projectId)
         db.withTransaction {
@@ -136,6 +137,15 @@ class ProjectsRepositoryImpl @Inject constructor(
         }
     }
 
+    private suspend fun updateVersionRoleTotals(idsToTotals: List<Pair<String, List<VersionRoleTotalEntity>>>) {
+        idsToTotals.forEach { (id, totals) ->
+            db.withTransaction {
+                dao.deleteVersionTotalsByVersionId(id)
+                dao.upsertVersionTotals(totals)
+            }
+        }
+    }
+
     override suspend fun updateProjectVersions(projectId: String): Resource<ProjectVersions> = tryUpdate(
         inScope = coroutineScope,
         withHandler = handler,
@@ -143,6 +153,12 @@ class ProjectsRepositoryImpl @Inject constructor(
         into = {
             val budgets = it.versions.mapNotNull {
                 it.budgetCertification?.toEntity(it.id)
+            }
+
+            val versionsToRoleTotals = it.versions.filterNot {
+                it.budgetCertification == null
+            }.map { version ->
+                version.id to version.budgetCertification!!.toTaskTotals(version.id)
             }
 
             val versionsToFileEntities = it.versions.map { version ->
@@ -161,10 +177,12 @@ class ProjectsRepositoryImpl @Inject constructor(
             dao.upsertCertifications(budgets)
             updateProjectFiles(versionsToFileEntities)
             updateProjectMilestones(idsToMilestones)
+
+            updateVersionRoleTotals(versionsToRoleTotals)
         }
     )
 
-    suspend fun updateVersionWorkers(projectId: String, versionId: String): Resource<List<VersionWorker>> = tryUpdate(
+    override suspend fun updateVersionWorkers(projectId: String, versionId: String): Resource<List<VersionWorker>> = tryUpdate(
         inScope = coroutineScope,
         withHandler = handler,
         from = { projectsApi.getVersionWorkers(projectId, versionId) },
@@ -179,19 +197,27 @@ class ProjectsRepositoryImpl @Inject constructor(
         }
     )
 
-//    suspend fun updateProjectVersion()
-
-    suspend fun updateVersionTasks(projectId: String, versionId: String): Resource<VersionTasks> = tryUpdate(
+    override suspend fun updateVersionTasks(projectId: String, versionId: String): Resource<VersionTasks> = tryUpdate(
         inScope = coroutineScope,
         withHandler = handler,
         from = { projectsApi.getVersionTasks(projectId, versionId) },
         into = {
-            val tasks = dao.getTasksIdsByVersionId(versionId)
+            val tasks = it.tasks
+            val oldTasks = dao.getTasksIdsByVersionId(versionId)
             val newTasks = it.tasks.map { it.toEntity() }
 
             db.withTransaction {
-                dao.deleteTasksByIds(tasks - newTasks.map { it.id }.toSet())
+                dao.deleteTasksByIds(oldTasks - newTasks.map { it.id }.toSet())
                 dao.upsertVersionTasks(newTasks)
+            }
+
+            tasks.forEach { task ->
+                db.withTransaction {
+                    dao.deleteTaskWorkersByTaskId(task.id)
+                    dao.upsertTaskWorkers(
+                        task.workers.map { it.toEntity(task.id) }
+                    )
+                }
             }
         }
     )

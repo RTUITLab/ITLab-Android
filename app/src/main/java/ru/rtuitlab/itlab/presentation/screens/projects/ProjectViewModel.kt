@@ -6,9 +6,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.rtuitlab.itlab.data.local.projects.models.ProjectWithVersionsOwnersAndRepos
+import ru.rtuitlab.itlab.data.local.projects.models.Version
 import ru.rtuitlab.itlab.data.local.projects.models.VersionWithEverything
 import ru.rtuitlab.itlab.domain.use_cases.projects.GetProjectUseCase
+import ru.rtuitlab.itlab.domain.use_cases.projects.GetVersionUseCase
 import ru.rtuitlab.itlab.domain.use_cases.projects.UpdateProjectUseCase
+import ru.rtuitlab.itlab.domain.use_cases.projects.UpdateVersionUseCase
 import ru.rtuitlab.itlab.presentation.screens.projects.state.ProjectScreenState
 import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import javax.inject.Inject
@@ -17,6 +21,8 @@ import javax.inject.Inject
 class ProjectViewModel @Inject constructor(
     getProject: GetProjectUseCase,
     private val updateProject: UpdateProjectUseCase,
+    private val updateVersion: UpdateVersionUseCase,
+    private val getVersion: GetVersionUseCase,
     state: SavedStateHandle
 ): ViewModel() {
     val projectId: String? = state["projectId"]
@@ -27,6 +33,20 @@ class ProjectViewModel @Inject constructor(
 
     private val _uiEvents = MutableSharedFlow<UiEvent>()
     val uiEvents = _uiEvents.asSharedFlow()
+
+    private val selectedVersionInfo = _uiState.flatMapLatest {
+        it.selectedVersion?.version?.id?.let {
+            getVersion(it)
+        } ?: emptyFlow()
+    }
+        .onEach { version ->
+            _uiState.update {
+                it.copy(
+                    selectedVersion = version
+                )
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     init {
 
@@ -78,5 +98,24 @@ class ProjectViewModel @Inject constructor(
         _uiState.update {
             it.copy(isProjectUpdating = isUpdating)
         }
+    }
+
+    private fun onVersionUpdate(isUpdating: Boolean) {
+        _uiState.update {
+            it.copy(isVersionUpdating = isUpdating)
+        }
+    }
+
+    fun onVersionSelected(version: Version) = viewModelScope.launch {
+        if (projectId == null) return@launch
+        onVersionUpdate(true)
+        (updateVersion.workers(projectId, version.id) + updateVersion.tasks(projectId, version.id))
+            .handle(
+                onError = {
+                    onVersionUpdate(false)
+                    viewModelScope.launch { _uiEvents.emit(UiEvent.Snackbar(it)) }
+                },
+                onSuccess = { onVersionUpdate(false) }
+            )
     }
 }

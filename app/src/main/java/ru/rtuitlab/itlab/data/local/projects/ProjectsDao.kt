@@ -46,7 +46,11 @@ interface ProjectsDao {
     suspend fun getVersionIdsByProjectId(projectId: String): List<String>
 
     @Query("SELECT * FROM Version WHERE id = :id LIMIT 1")
-    fun getVersionById(id: String): Flow<VersionWithEverything>
+    fun observeVersionById(id: String): Flow<VersionWithEverything>
+
+    @Query("SELECT * FROM Version WHERE id = :id LIMIT 1")
+    fun getVersionById(id: String): VersionWithEverything
+
 
 
     @Transaction
@@ -87,12 +91,27 @@ interface ProjectsDao {
     suspend fun deleteVersionFilesByIds(ids: List<String>)
 
     @Upsert
-    fun upsertVersionFiles(files: List<VersionFileEntity>)
+    suspend fun upsertVersionFiles(files: List<VersionFileEntity>)
 
 
     @Upsert
-    fun upsertMilestones(milestones: List<MilestoneEntity>)
+    suspend fun upsertMilestones(milestones: List<MilestoneEntity>)
 
     @Query("DELETE FROM MilestoneEntity WHERE versionId = :versionId")
-    fun deleteMilestonesByVersionId(versionId: String)
+    suspend fun deleteMilestonesByVersionId(versionId: String)
+
+
+
+    @Query("DELETE FROM TaskWorkerEntity WHERE taskId = :taskId")
+    suspend fun deleteTaskWorkersByTaskId(taskId: String)
+
+    @Upsert
+    suspend fun upsertTaskWorkers(workers: List<TaskWorkerEntity>)
+
+
+    @Query("DELETE FROM VersionRoleTotalEntity WHERE versionId = :versionId")
+    suspend fun deleteVersionTotalsByVersionId(versionId: String)
+
+    @Upsert
+    suspend fun upsertVersionTotals(totals: List<VersionRoleTotalEntity>)
 }

@@ -207,5 +207,9 @@
     <string name="project_no_owners">Нет отвествтенных</string>
     <string name="project_in_dev_since">Проект в разработке с %1$s</string>
     <string name="project_hard_deadline">Жёсткий дедлайн</string>
+    <string name="hours">Часы</string>
+    <string name="cost">Сумма</string>
+    <string name="project_version_task">Задача</string>
+    <string name="project_version_total">Итого</string>
 
 </resources>

@@ -25,6 +25,6 @@ data class TaskWorker(
         hours = hours,
         roleName = role,
         roleId = roleId,
-        rate = sum
+        cost = sum
     )
 }

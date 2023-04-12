@@ -39,7 +39,7 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
         Project::class,             Version::class,                     TaskWorkerEntity::class,
         ProjectOwner::class,        VersionTask::class,                 MilestoneEntity::class,
         ProjectRepoEntity::class,   Worker::class,                      VersionFileEntity::class,
-                                    BudgetCertificationEntity::class,
+                                    BudgetCertificationEntity::class,   VersionRoleTotalEntity::class
     ],
     version = 2,
     autoMigrations = [

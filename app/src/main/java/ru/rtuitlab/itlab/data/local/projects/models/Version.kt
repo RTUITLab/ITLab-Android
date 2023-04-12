@@ -67,5 +67,26 @@ data class VersionWithEverything(
         parentColumn = "id",
         entityColumn = "versionId"
     )
-    val files: List<VersionFileEntity>? = null
+    val files: List<VersionFileEntity>? = null,
+
+    @Relation(
+        entity = Worker::class,
+        parentColumn = "id",
+        entityColumn = "versionId"
+    )
+    val workers: List<UserWorker>? = null,
+
+    @Relation(
+        entity = VersionTask::class,
+        parentColumn = "id",
+        entityColumn = "versionId"
+    )
+    val tasks: List<VersionTaskWithWorkers>? = null,
+
+    @Relation(
+        entity = VersionRoleTotalEntity::class,
+        parentColumn = "id",
+        entityColumn = "versionId"
+    )
+    val roleTotals: List<VersionRoleTotalEntity>? = null
 )

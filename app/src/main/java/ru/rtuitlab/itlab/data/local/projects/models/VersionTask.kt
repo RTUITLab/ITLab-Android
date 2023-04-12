@@ -1,9 +1,6 @@
 package ru.rtuitlab.itlab.data.local.projects.models
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import java.time.ZonedDateTime
 
 @Entity(
@@ -25,4 +22,14 @@ data class VersionTask(
     val cost: Int,
     val updateTime: ZonedDateTime,
     val versionId: String
+)
+
+data class VersionTaskWithWorkers(
+    @Embedded val task: VersionTask,
+    @Relation(
+        entity = TaskWorkerEntity::class,
+        parentColumn = "id",
+        entityColumn = "taskId"
+    )
+    val workers: List<TaskWorkerEntity>
 )

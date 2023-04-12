@@ -34,19 +34,19 @@ interface ProjectsApi {
         @Path("id") projectId: String
     ): ProjectVersions
 
-    @GET("$base/projects/{projectId}/version/{versionId}")
+    @GET("$base/project/{projectId}/version/{versionId}")
     suspend fun getVersionInfo(
         @Path("projectId") projectId: String,
         @Path("versionId") versionId: String
     ): ProjectVersion
 
-    @GET("$base/projects/{projectId}/version/{versionId}/worker")
+    @GET("$base/project/{projectId}/version/{versionId}/worker")
     suspend fun getVersionWorkers(
         @Path("projectId") projectId: String,
         @Path("versionId") versionId: String
     ): List<VersionWorker>
 
-    @GET("$base/projects/{projectId}/version/{versionId}/task")
+    @GET("$base/project/{projectId}/version/{versionId}/task")
     suspend fun getVersionTasks(
         @Path("projectId") projectId: String,
         @Path("versionId") versionId: String

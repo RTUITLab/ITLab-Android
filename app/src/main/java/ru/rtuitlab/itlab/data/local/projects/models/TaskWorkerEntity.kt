@@ -13,5 +13,5 @@ data class TaskWorkerEntity(
     val hours: Int,
     val roleName: String,
     val roleId: String,
-    val rate: Int
+    val cost: Int
 )

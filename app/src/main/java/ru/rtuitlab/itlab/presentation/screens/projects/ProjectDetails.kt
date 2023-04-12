@@ -7,14 +7,11 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material3.*
@@ -33,25 +30,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.valentinilk.shimmer.shimmer
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.data.local.projects.models.Version
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
+import ru.rtuitlab.itlab.presentation.screens.projects.components.TasksTable
 import ru.rtuitlab.itlab.presentation.screens.projects.state.ProjectScreenState
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
-import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
-import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun ProjectDetails(
     projectViewModel: ProjectViewModel,
-    appBarViewModel: AppBarViewModel = singletonViewModel()
 ) {
-//    val projectInfo by projectViewModel.project.collectAsState()
     val state by projectViewModel.uiState.collectAsState()
 
     val animationState by remember {
@@ -59,9 +53,6 @@ fun ProjectDetails(
     }
     LaunchedEffect(state) {
         animationState.targetState = state.selectedVersion != null
-        /*appBarViewModel.onNavigate(
-            AppScreen.ProjectDetails(state.projectInfo?.project?.name ?: "Project")
-        )*/
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -74,7 +65,8 @@ fun ProjectDetails(
                 modifier = Modifier
                     .padding(it)
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 SharedElement(
                     key = projectInfo.project.id,
@@ -82,7 +74,14 @@ fun ProjectDetails(
                 ) {
                     ProjectHeader(state = state)
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+
+                VersionSelector(
+                    versions = state.projectInfo?.versions,
+                    selectedVersion = state.selectedVersion?.version,
+                    onVersionSelected = {
+
+                    }
+                )
 
                 AnimatedVisibility(
                     visibleState = animationState,
@@ -246,7 +245,6 @@ private fun ProjectHeader(
                 if (state.projectInfo.project.shortDescription.isNotBlank()) {
                     MarkdownTextArea(
                         modifier = Modifier
-                            .shimmer()
                             .wrapContentWidth(),
                         textMd = if (!state.projectInfo.project.description.isNullOrBlank()) state.projectInfo.project.description else state.projectInfo.project.shortDescription,
                         noDescriptionTextAlignment = Alignment.CenterStart,
@@ -279,6 +277,16 @@ private fun ProjectHeader(
     }
 }
 
+
+@Composable
+fun VersionSelector(
+    versions: List<Version>?,
+    selectedVersion: Version?,
+    onVersionSelected: (Version) -> Unit
+) {
+
+}
+
 @Composable
 fun Versions(
     state: ProjectScreenState
@@ -286,7 +294,12 @@ fun Versions(
     val navController = LocalNavController.current
     state.selectedVersion ?: return
     Card(
-        modifier = Modifier.padding(horizontal = 16.dp)
+        modifier = Modifier.padding(
+            top = 0.dp,
+            bottom = 16.dp,
+            start = 16.dp,
+            end = 16.dp
+        )
     ) {
         Column(
             modifier = Modifier
@@ -366,6 +379,30 @@ fun Versions(
             Spacer(modifier = Modifier.height(16.dp))
 
             MarkdownTextArea(textMd = state.selectedVersion.version.description ?: "")
+
+            TasksTable(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .layout { measurable, constraints ->
+                        val placeable = measurable.measure(
+                            constraints.copy(
+                                maxWidth = constraints.maxWidth + 32.dp.roundToPx(), // Adding horizontal padding
+                                minWidth = constraints.maxWidth + 32.dp.roundToPx()
+                            )
+                        )
+                        layout(placeable.width, placeable.height) {
+                            placeable.place(0, 0)
+                        }
+                    }
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp),
+                tasks = state.selectedVersion.tasks,
+                certification = state.selectedVersion.budgetWithIssuer?.budget,
+                workers = state.selectedVersion.workers,
+                roleTotals = state.selectedVersion.roleTotals
+            )
+
+
 
         }
     }
