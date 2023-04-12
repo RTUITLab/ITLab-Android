@@ -21,6 +21,8 @@ interface ProjectsRepository {
         sortBy: String, // field:(asc|desc); Example: created_at:desc
     ): Resource<ProjectsPaginationResult>
 
+    suspend fun getProjectsByName(query: String): List<ProjectWithVersionsOwnersAndRepos>
+
     suspend fun updateProject(projectId: String): Resource<ProjectDetailsDto>
 
     fun getProject(projectId: String): Flow<ProjectWithVersionsOwnersAndRepos>

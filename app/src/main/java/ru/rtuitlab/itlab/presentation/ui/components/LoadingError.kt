@@ -45,7 +45,7 @@ fun LoadingErrorRetry(
 		horizontalAlignment = Alignment.CenterHorizontally
 	) {
 		Text(errorMessage)
-		PrimaryButton(
+		PrimaryTextButton(
 			onClick = onRetry,
 			text = stringResource(id = R.string.retry)
 		)

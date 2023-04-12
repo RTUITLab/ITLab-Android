@@ -84,6 +84,9 @@ class ProjectsRepositoryImpl @Inject constructor(
         }
     )
 
+    override suspend fun getProjectsByName(query: String) =
+        dao.getProjectsByName(query)
+
     private suspend fun updateProjectRepositories(project: ProjectDetailsDto) {
         db.withTransaction {
             // There surely will not be too many repos in a given project, so we can get away with this

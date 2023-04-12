@@ -212,5 +212,9 @@
     <string name="project_version_task">Задача</string>
     <string name="project_version_total">Итого</string>
     <string name="project_version_select">Версия проекта</string>
+    <string name="project_version_tasks_no_data">Нет данных о задачах</string>
+    <string name="switch_to_cache">Загрузить сохранённые</string>
+    <string name="projects_back_online_prompt">Вы снова онлайн! Подключиться?</string>
+    <string name="projects_switch">Да</string>
 
 </resources>

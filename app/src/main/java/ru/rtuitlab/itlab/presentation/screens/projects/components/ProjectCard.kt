@@ -54,7 +54,7 @@ fun ProjectCard(
 ) {
     val navController = LocalNavController.current
     Card(
-        modifier = Modifier,
+        modifier = modifier,
         onClick = onClick
     ) {
         Column(

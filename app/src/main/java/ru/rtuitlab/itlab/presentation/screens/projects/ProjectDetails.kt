@@ -436,27 +436,34 @@ fun Versions(
 
             MarkdownTextArea(textMd = state.selectedVersion.version.description ?: "")
 
-            TasksTable(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .layout { measurable, constraints ->
-                        val placeable = measurable.measure(
-                            constraints.copy(
-                                maxWidth = constraints.maxWidth + 32.dp.roundToPx(), // Adding horizontal padding
-                                minWidth = constraints.maxWidth + 32.dp.roundToPx()
+            if (state.selectedVersion.tasks?.isEmpty() != true) {
+                TasksTable(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .layout { measurable, constraints ->
+                            val placeable = measurable.measure(
+                                constraints.copy(
+                                    maxWidth = constraints.maxWidth + 32.dp.roundToPx(), // Adding horizontal padding
+                                    minWidth = constraints.maxWidth + 32.dp.roundToPx()
+                                )
                             )
-                        )
-                        layout(placeable.width, placeable.height) {
-                            placeable.place(0, 0)
+                            layout(placeable.width, placeable.height) {
+                                placeable.place(0, 0)
+                            }
                         }
-                    }
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
-                tasks = state.selectedVersion.tasks,
-                certification = state.selectedVersion.budgetWithIssuer?.budget,
-                workers = state.selectedVersion.workers,
-                roleTotals = state.selectedVersion.roleTotals
-            )
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp),
+                    tasks = state.selectedVersion.tasks,
+                    certification = state.selectedVersion.budgetWithIssuer?.budget,
+                    workers = state.selectedVersion.workers,
+                    roleTotals = state.selectedVersion.roleTotals
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.project_version_tasks_no_data),
+                    color = LocalContentColor.current.copy(.6f)
+                )
+            }
 
 
         }

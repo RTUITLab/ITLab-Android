@@ -30,6 +30,7 @@
     <string name="details_name">%1$s</string>
     <string name="time_parsing_error">Time parsing error</string>
     <string name="retry">Retry</string>
+    <string name="switch_to_cache">Switch to cache</string>
     <string name="sort_asc">In ascending order</string>
     <string name="send">Send</string>
     <string name="local_copy_inaccessible">Local copy of this resource is not present</string>
@@ -96,6 +97,9 @@
     <string name="project_version_task">Task</string>
     <string name="project_version_total">Total</string>
     <string name="project_version_select">Project version</string>
+    <string name="project_version_tasks_no_data">No data about tasks</string>
+    <string name="projects_back_online_prompt">You are back online! Switch to newest projects?</string>
+    <string name="projects_switch">Switch</string>
 
 
     <!--    Employees     -->

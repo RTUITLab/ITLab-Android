@@ -33,6 +33,10 @@ data class LastVersion(
         name = name,
         ownerId = owner?.userId?.ifEmpty { null },
         projectId = projectId,
-        updateTime = updatedAt?.toZonedDateTime()
+        updateTime = updatedAt?.toZonedDateTime(),
+        completedTaskCount = completeTaskCount,
+        taskCount = taskCount,
+        archivationDate = archived.archivedDate?.toZonedDateTime(),
+        archivationIssuerId = archived.archivedBy
     )
 }

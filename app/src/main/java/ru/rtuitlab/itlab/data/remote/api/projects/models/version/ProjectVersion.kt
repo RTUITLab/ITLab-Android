@@ -11,6 +11,10 @@ import ru.rtuitlab.itlab.data.remote.api.projects.models.Owner
 @Serializable
 data class ProjectVersion(
     val archived: Boolean,
+    @SerialName("archived_by")
+    val archivedBy: String?,
+    @SerialName("archived_date")
+    val archivedDate: String?,
     @SerialName("certify_budget")
     val budgetCertification: BudgetCertification?,
     @SerialName("created_at")
@@ -37,6 +41,12 @@ data class ProjectVersion(
         name = name,
         ownerId = owner?.userId,
         projectId = projectId,
-        updateTime = updatedAt?.toZonedDateTime()
+        updateTime = updatedAt?.toZonedDateTime(),
+        archivationIssuerId = archivedBy,
+        archivationDate = archivedDate?.toZonedDateTime(),
+        completedTaskCount = budgetCertification?.let {
+            it.tasks.count { it.complete }
+        } ?: 0,
+        taskCount = budgetCertification?.tasks?.size ?: 0
     )
 }

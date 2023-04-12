@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.presentation.screens.projects.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.outlined.FilterAlt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,7 +18,7 @@ fun ProjectsBottomBar(
     mainFloatingActionButton: @Composable (() -> Unit),
     projectsViewModel: ProjectsViewModel = singletonViewModel()
 ) {
-    val state by projectsViewModel.onlineState.collectAsState()
+    val searchQuery by projectsViewModel.searchQuery.collectAsState()
 
     BottomAppBar(
         mainFloatingActionButton = mainFloatingActionButton,
@@ -26,11 +27,20 @@ fun ProjectsBottomBar(
                 icon = Icons.Outlined.FilterAlt,
                 sheet = AppBottomSheet.ProjectsFilters
             )
-        ),
+        ) + if (projectsViewModel.shouldShowNetworkAction) {
+            listOf(
+                AppBarOption.Clickable(
+                    icon = Icons.Default.CloudSync,
+                    onClick = {
+                        projectsViewModel.switchNetworkState(true)
+                    }
+                )
+            )
+        } else emptyList(),
         searchBar = {
             SearchBar(
                 onSearch = projectsViewModel::onSearch,
-                query = state.searchQuery,
+                query = searchQuery,
                 onDismissRequest = it
             )
         }

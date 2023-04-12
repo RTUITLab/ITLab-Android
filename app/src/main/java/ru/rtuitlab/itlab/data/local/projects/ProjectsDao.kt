@@ -13,6 +13,10 @@ interface ProjectsDao {
         projects: List<Project>
     )
 
+    @Transaction
+    @Query("SELECT * FROM Project WHERE name LIKE '%' || :query || '%'")
+    suspend fun getProjectsByName(query: String): List<ProjectWithVersionsOwnersAndRepos>
+
     @Query("SELECT userId FROM ProjectOwner WHERE projectId = :projectId")
     suspend fun getProjectOwnersIds(projectId: String): List<String>
 

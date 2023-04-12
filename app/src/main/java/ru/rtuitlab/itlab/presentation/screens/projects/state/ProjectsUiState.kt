@@ -8,8 +8,11 @@ data class ProjectsOnlineUiState(
     val projects: List<ProjectCompact> = emptyList(),
     val paginationState: ProjectsPaginationResult? = null,
     val endReached: Boolean = false,
-    val searchQuery: String = "",
     val errorMessage: String? = null,
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false
+)
+
+data class ProjectsOfflineUiState(
+    val projects: List<ProjectCompact> = emptyList()
 )

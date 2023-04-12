@@ -29,6 +29,8 @@ import java.time.ZonedDateTime
 data class Version(
     @PrimaryKey val id: String,
     val isArchived: Boolean,
+    val archivationIssuerId: String?,
+    val archivationDate: ZonedDateTime?,
     val creationDateTime: ZonedDateTime,
     val description: String?,
     val hardDeadline: ZonedDateTime,
@@ -36,7 +38,9 @@ data class Version(
     val name: String,
     val ownerId: String? = null,
     val projectId: String,
-    val updateTime: ZonedDateTime?
+    val updateTime: ZonedDateTime?,
+    val completedTaskCount: Int,
+    val taskCount: Int
 )
 data class VersionWithEverything(
     @Embedded val version: Version,
