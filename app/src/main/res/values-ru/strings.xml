@@ -216,5 +216,6 @@
     <string name="switch_to_cache">Загрузить сохранённые</string>
     <string name="projects_back_online_prompt">Вы снова онлайн! Подключиться?</string>
     <string name="projects_switch">Да</string>
+    <string name="version_archived">архивирована</string>
 
 </resources>

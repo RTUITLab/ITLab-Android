@@ -5,6 +5,7 @@ package ru.rtuitlab.itlab.presentation.screens.projects
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.*
@@ -14,11 +15,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachFile
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -26,6 +29,8 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.SubcomposeAsyncImage
@@ -295,6 +300,9 @@ fun VersionSelector(
 ) {
     val (isExpanded, setExpanded) = remember { mutableStateOf(false) }
 
+    val rotation by animateFloatAsState(targetValue = if (isExpanded) 180f else 0f)
+
+
     ExposedDropdownMenuBox(
         modifier = Modifier.fillMaxWidth(),
         expanded = isExpanded,
@@ -315,6 +323,14 @@ fun VersionSelector(
                         .fillMaxWidth(.25f)
                 )
             }} else null,
+            trailingIcon = {
+                Icon(
+                    modifier = Modifier
+                        .rotate(rotation),
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = null
+                )
+            },
             singleLine = true,
             readOnly = true,
             label = {
@@ -328,10 +344,25 @@ fun VersionSelector(
             expanded = isExpanded,
             onDismissRequest = { setExpanded(false) }
         ) {
+            val spanStyle = LocalTextStyle.current.toSpanStyle()
+            val color = LocalContentColor.current
             versions.forEach {
                 DropdownMenuItem(
                     text = {
-                        Text(text = it.name)
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(spanStyle) {
+                                    append(it.name)
+                                }
+                                if (it.isArchived) {
+                                    withStyle(spanStyle.copy(color.copy(.6f))) {
+                                        append(" (")
+                                        append(stringResource(R.string.version_archived))
+                                        append(')')
+                                    }
+                                }
+                            }
+                        )
                     },
                     onClick = {
                         onVersionSelected(it)

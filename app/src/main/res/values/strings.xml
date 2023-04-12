@@ -100,6 +100,7 @@
     <string name="project_version_tasks_no_data">No data about tasks</string>
     <string name="projects_back_online_prompt">You are back online! Switch to newest projects?</string>
     <string name="projects_switch">Switch</string>
+    <string name="version_archived">archived</string>
 
 
     <!--    Employees     -->
