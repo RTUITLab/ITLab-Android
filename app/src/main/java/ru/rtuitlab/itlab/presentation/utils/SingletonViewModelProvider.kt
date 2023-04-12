@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 
 /**
@@ -33,4 +34,4 @@ val LocalActivity = compositionLocalOf<ComponentActivity> {
  */
 @Composable
 internal inline fun <reified VM: ViewModel> screenViewModel() =
-	LocalNavController.current.currentBackStackEntry!!.hiltViewModel<VM>()
+	LocalNavController.current.currentBackStackEntryAsState().value?.hiltViewModel<VM>()

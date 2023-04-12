@@ -1,6 +1,5 @@
 package ru.rtuitlab.itlab.presentation.screens.projects
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,11 +19,8 @@ class ProjectViewModel @Inject constructor(
     private val updateProject: UpdateProjectUseCase,
     state: SavedStateHandle
 ): ViewModel() {
-    val projectId: String = state["projectId"]!!
-    val projectName: String = state["projectName"]!!
-
-    private val project = getProject(projectId)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    val projectId: String? = state["projectId"]
+    val projectName: String = state["projectName"] ?: ""
 
     private val _uiState = MutableStateFlow(ProjectScreenState())
     val uiState = _uiState.asStateFlow()
@@ -33,36 +29,52 @@ class ProjectViewModel @Inject constructor(
     val uiEvents = _uiEvents.asSharedFlow()
 
     init {
-        Log.v("PROJECT_VIEW_MODEL", toString())
-        viewModelScope.launch {
-            getProject(projectId).collect { project ->
-                _uiState.update {
-                    it.copy(
-                        projectInfo = project,
-                        selectedVersion = it.selectedVersion ?: project.versions.maxByOrNull { it.creationDateTime }?.let {
-                            VersionWithEverything(
-                                version = it
-                            )
-                        }
-                    )
-                }
-            }
-        }
-        viewModelScope.launch {
-            onUpdateStateChanged(true)
-            updateProject(projectId).handle(
-                onSuccess = {
-                    onUpdateStateChanged(false)
-                },
-                onError = {
-                    onUpdateStateChanged(false)
-                    _uiEvents.emit(UiEvent.Snackbar(it))
-                }
-            )
-        }
+
+       projectId?.let {
+           viewModelScope.launch {
+               getProject(projectId).collect { project: ProjectWithVersionsOwnersAndRepos? ->
+                   _uiState.update {
+                       it.copy(
+                           projectInfo = project,
+                           selectedVersion = it.selectedVersion
+                               ?: project?.versions?.maxByOrNull { it.creationDateTime }?.let {
+                                   VersionWithEverything(
+                                       version = it
+                                   )
+                               }
+                       )
+                   }
+               }
+           }
+
+           viewModelScope.launch {
+               onProjectUpdate(true)
+               updateProject(projectId).handle(
+                   onSuccess = {
+                       onProjectUpdate(false)
+                   },
+                   onError = {
+                       onProjectUpdate(false)
+                       _uiEvents.emit(UiEvent.Snackbar(it))
+                   }
+               )
+           }
+
+           viewModelScope.launch {
+               _uiState.map {
+                   it.selectedVersion?.version
+               }
+                   .distinctUntilChanged()
+                   .collect {
+                       it?.let {
+                           onVersionSelected(it)
+                       }
+                   }
+           }
+       }
     }
 
-    private fun onUpdateStateChanged(isUpdating: Boolean) {
+    private fun onProjectUpdate(isUpdating: Boolean) {
         _uiState.update {
             it.copy(isProjectUpdating = isUpdating)
         }

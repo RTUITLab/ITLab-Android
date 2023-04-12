@@ -8,8 +8,10 @@ import ru.rtuitlab.itlab.presentation.utils.screenViewModel
 
 @Composable
 fun ProjectTopAppBar(
-    viewModel: ProjectViewModel = screenViewModel()
+    viewModel: ProjectViewModel? = screenViewModel()
 ) {
+    viewModel ?: return
+
     val navController = LocalNavController.current
 
     BasicTopAppBar(
