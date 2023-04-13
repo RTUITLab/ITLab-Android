@@ -24,6 +24,7 @@ import ru.rtuitlab.itlab.data.local.projects.models.UserWorker
 import ru.rtuitlab.itlab.data.local.projects.models.VersionRoleTotalEntity
 import ru.rtuitlab.itlab.data.local.projects.models.VersionTaskWithWorkers
 import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerBox
+import ru.rtuitlab.itlab.presentation.ui.theme.AppColors
 import ru.rtuitlab.itlab.presentation.ui.theme.ITLabTheme
 
 private const val HEADER_HEIGHT_DP = 80
@@ -68,7 +69,7 @@ fun TasksTable(
         // First column - Header, Tasks and Total
         Column(
             modifier = Modifier
-                .width(IntrinsicSize.Max)
+                .width(IntrinsicSize.Min)
                 .border(.5.dp, BORDER_COLOR)
         ) {
             Cell(
@@ -195,7 +196,7 @@ private fun TasksColumn(
                 Text(
                     text = it.task.name,
                     fontSize = 14.sp,
-                    color = CELL_TEXT_COLOR
+                    color = if (it.task.isCompleted) AppColors.green else CELL_TEXT_COLOR
                 )
             }
         }
