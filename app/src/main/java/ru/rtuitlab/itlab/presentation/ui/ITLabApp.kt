@@ -6,10 +6,7 @@ package ru.rtuitlab.itlab.presentation.ui
 import androidx.compose.animation.*
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.animateIntOffsetAsState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -37,6 +34,7 @@ import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.files.componets.FilesBottomBar
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileBottomBar
+import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectBottomBar
 import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectsBottomBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchaseTopAppBar
@@ -199,6 +197,7 @@ fun ITLabApp(
                     AppScreen.Devices -> DevicesBottomBar(mainFloatingActionButton)
                     AppScreen.Files -> FilesBottomBar(mainFloatingActionButton)
                     AppScreen.Projects -> ProjectsBottomBar(mainFloatingActionButton)
+                    is AppScreen.ProjectDetails -> ProjectBottomBar(mainFloatingActionButton)
                 }
             }
         )

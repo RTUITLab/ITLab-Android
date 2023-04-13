@@ -2,6 +2,9 @@ package ru.rtuitlab.itlab.presentation.utils
 
 import ru.rtuitlab.itlab.data.local.events.models.ShiftWithPlacesAndSalary
 import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
+import ru.rtuitlab.itlab.data.local.projects.models.MilestoneEntity
+import ru.rtuitlab.itlab.data.local.projects.models.ProjectRepoEntity
+import ru.rtuitlab.itlab.data.local.projects.models.VersionFileEntity
 import ru.rtuitlab.itlab.data.remote.api.users.models.User
 import ru.rtuitlab.itlab.presentation.UserViewModel
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
@@ -37,6 +40,16 @@ sealed class AppBottomSheet {
 	): AppBottomSheet()
 
 	object ProjectsFilters: AppBottomSheet()
+
+	class ProjectRepos(
+		val repos: List<ProjectRepoEntity>?
+	): AppBottomSheet()
+
+	class VersionResources(
+		val functionalTasks: List<VersionFileEntity>,
+		val files: List<VersionFileEntity>,
+		val links: List<MilestoneEntity>
+	): AppBottomSheet()
 
 	override fun equals(other: Any?): Boolean {
 		return false

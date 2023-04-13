@@ -64,14 +64,14 @@ data class VersionWithEverything(
         parentColumn = "id",
         entityColumn = "versionId"
     )
-    val milestones: List<MilestoneEntity>? = null,
+    val milestones: List<MilestoneEntity> = emptyList(),
 
     @Relation(
         entity = VersionFileEntity::class,
         parentColumn = "id",
         entityColumn = "versionId"
     )
-    val files: List<VersionFileEntity>? = null,
+    val files: List<VersionFileEntity> = emptyList(),
 
     @Relation(
         entity = Worker::class,

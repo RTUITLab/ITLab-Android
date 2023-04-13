@@ -101,6 +101,14 @@
     <string name="projects_back_online_prompt">You are back online! Switch to newest projects?</string>
     <string name="projects_switch">Switch</string>
     <string name="version_archived">archived</string>
+    <string name="project_repos">Project repositories</string>
+    <string name="project_no_repos">This project has no repositories</string>
+    <string name="version_functional_task">Functional task</string>
+    <string name="version_no_functional_tasks">This version has no functional task files attached</string>
+    <string name="version_links">Links</string>
+    <string name="version_no_links">This version has no links</string>
+    <string name="version_files">Files</string>
+    <string name="version_no_files">This version has no files attached</string>
 
 
     <!--    Employees     -->

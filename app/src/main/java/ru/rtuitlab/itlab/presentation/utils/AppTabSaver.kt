@@ -96,7 +96,7 @@ open class AppScreen(
 
     // Projects-related
     object Projects: AppScreen(R.string.projects, "projects", true)
-    class ProjectDetails(val title: String): AppScreen(R.string.project, "projects/{projectId}/{projectName}") {
+    class ProjectDetails(val title: String): AppScreen(R.string.project, "projects/{projectId}/{projectName}", true) {
         companion object {
             const val route = "projects/{projectId}/{projectName}"
             val navLink: String = route.substringBefore("/{")

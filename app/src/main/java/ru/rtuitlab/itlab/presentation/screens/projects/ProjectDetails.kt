@@ -38,22 +38,27 @@ import coil.request.ImageRequest
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.data.local.projects.models.ProjectFileType
 import ru.rtuitlab.itlab.data.local.projects.models.Version
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.projects.components.TasksTable
 import ru.rtuitlab.itlab.presentation.screens.projects.state.ProjectScreenState
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shimmer.ShimmerBox
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
+import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun ProjectDetails(
     projectViewModel: ProjectViewModel,
+    bottomSheetViewModel: BottomSheetViewModel = singletonViewModel()
 ) {
     val state by projectViewModel.uiState.collectAsState()
 
@@ -63,6 +68,8 @@ fun ProjectDetails(
     LaunchedEffect(state) {
         animationState.targetState = state.selectedVersion != null
     }
+
+    val coroutineScope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }
     projectViewModel.uiEvents.collectUiEvents(snackbarHostState)
@@ -109,7 +116,21 @@ fun ProjectDetails(
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            Versions(state = state)
+                            Versions(
+                                state = state,
+                                onResourcesClick = {
+                                    state.selectedVersion?.let {
+                                        bottomSheetViewModel.show(
+                                            sheet = AppBottomSheet.VersionResources(
+                                                functionalTasks = it.files.filter { it.fileType == ProjectFileType.FUNCTIONAL_TASK },
+                                                files = it.files.filter { it.fileType != ProjectFileType.FUNCTIONAL_TASK },
+                                                links = it.milestones
+                                            ),
+                                            scope = coroutineScope
+                                        )
+                                    }
+                                }
+                            )
                         }
                     }
                 }
@@ -384,7 +405,8 @@ fun VersionSelector(
 
 @Composable
 fun Versions(
-    state: ProjectScreenState
+    state: ProjectScreenState,
+    onResourcesClick: () -> Unit
 ) {
     val navController = LocalNavController.current
     state.selectedVersion ?: return
@@ -398,24 +420,17 @@ fun Versions(
     ) {
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(start = 16.dp, end = 8.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.titleMedium,
                     text = state.selectedVersion.version.name
                 )
-
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Default.AttachFile,
-                        contentDescription = null
-                    )
-                }
 
                 state.selectedVersion.owner?.let {
                     SuggestionChip(
@@ -429,6 +444,15 @@ fun Versions(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
+                    )
+                }
+
+                IconButton(
+                    onClick = onResourcesClick
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AttachFile,
+                        contentDescription = null
                     )
                 }
             }

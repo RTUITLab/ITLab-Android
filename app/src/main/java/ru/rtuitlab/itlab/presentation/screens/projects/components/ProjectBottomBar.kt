@@ -1,0 +1,34 @@
+package ru.rtuitlab.itlab.presentation.screens.projects.components
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import ru.rtuitlab.itlab.presentation.screens.projects.ProjectViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.BottomAppBar
+import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarOption
+import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
+import ru.rtuitlab.itlab.presentation.utils.screenViewModel
+
+@Composable
+fun ProjectBottomBar(
+    mainFloatingActionButton: @Composable (() -> Unit),
+    projectViewModel: ProjectViewModel? = screenViewModel()
+) {
+    projectViewModel ?: return
+
+    val state by projectViewModel.uiState.collectAsState()
+
+    BottomAppBar(
+        mainFloatingActionButton = mainFloatingActionButton,
+        options = listOf(
+            AppBarOption.BottomSheet(
+                icon = Icons.Default.Link,
+                sheet = AppBottomSheet.ProjectRepos(
+                    repos = state.projectInfo?.repos
+                )
+            )
+        )
+    )
+}

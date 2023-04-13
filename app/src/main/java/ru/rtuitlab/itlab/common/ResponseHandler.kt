@@ -2,6 +2,7 @@ package ru.rtuitlab.itlab.common
 
 import android.util.Log
 import retrofit2.HttpException
+import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
@@ -13,7 +14,8 @@ class ResponseHandler {
         val errorCode = when (e) {
             is HttpException -> e.code()
             is SocketTimeoutException -> ErrorCodes.SocketTimeOut.code
-            is UnknownHostException -> ErrorCodes.UnknownHost.code
+            is UnknownHostException,
+            is ConnectException -> ErrorCodes.UnknownHost.code
             else -> Int.MAX_VALUE
         }
 	    Resource.Error(getErrorMessage(errorCode))
@@ -24,8 +26,8 @@ class ResponseHandler {
         ErrorCodes.SocketTimeOut.code -> "Timeout"
         401                           -> "Unauthorized"
         404                           -> "Not found"
-        in 400..499                   -> "Check entered data"
-        in 500..599                   -> "Error with connecting to server. Code: $code"
+        in 400..499             -> "Check entered data"
+        in 500..599             -> "Error with connecting to server. Code: $code"
         else                          -> "Something went wrong"
     }
 

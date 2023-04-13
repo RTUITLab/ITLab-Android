@@ -217,5 +217,13 @@
     <string name="projects_back_online_prompt">Вы снова онлайн! Подключиться?</string>
     <string name="projects_switch">Да</string>
     <string name="version_archived">архивирована</string>
+    <string name="project_repos">Репозитории проекта</string>
+    <string name="project_no_repos">У этого проекта нет репозиториев</string>
+    <string name="version_functional_task">Функциональное задание</string>
+    <string name="version_no_functional_tasks">К этой версии не прикреплены файлы функционального задания</string>
+    <string name="version_links">Ссылки</string>
+    <string name="version_no_links">У этой версии нет ссылок</string>
+    <string name="version_files">Файлы</string>
+    <string name="version_no_files">К этой версии не прикреплены файлы</string>
 
 </resources>

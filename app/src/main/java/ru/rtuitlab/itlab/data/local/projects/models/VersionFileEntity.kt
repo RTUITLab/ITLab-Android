@@ -1,10 +1,8 @@
 package ru.rtuitlab.itlab.data.local.projects.models
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
+import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import ru.rtuitlab.itlab.BuildConfig
 import java.time.ZonedDateTime
 
 @Entity(
@@ -29,7 +27,10 @@ data class VersionFileEntity(
     val fileId: String,
     val fileType: ProjectFileType,
     val name: String
-)
+) {
+    @Ignore
+    val fileUrl: String = "${BuildConfig.API_URI}/mfs/download/$fileId"
+}
 
 enum class ProjectFileType {
     FUNCTIONAL_TASK,

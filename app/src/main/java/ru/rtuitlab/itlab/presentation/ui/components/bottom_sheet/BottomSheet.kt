@@ -26,6 +26,8 @@ import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceNewBottom
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileEventsBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileSettingsBottomSheet
+import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectReposBottomSheet
+import ru.rtuitlab.itlab.presentation.screens.projects.components.VersionResourcesBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.reports.components.UserSelectionBottomSheet
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
@@ -47,6 +49,7 @@ fun BottomSheet(
 			viewModel.hide(coroutineScope)
 		}
 
+
 	Surface(
 		color = MaterialTheme.colorScheme.background
 	) {
@@ -67,6 +70,7 @@ fun BottomSheet(
 			)
 			Spacer(Modifier.height(15.dp))
 
+//			if (!sheetIsVisible) return@Column
 			when (currentSheet) {
 				is AppBottomSheet.EventShift -> {
 					val shift = currentSheet as AppBottomSheet.EventShift
@@ -104,6 +108,17 @@ fun BottomSheet(
 					UserSelectionBottomSheet(
 						onSelect = (currentSheet as AppBottomSheet.UserSelection).onSelect,
 						bottomSheetViewModel = viewModel
+					)
+				}
+				is AppBottomSheet.ProjectRepos -> {
+					ProjectReposBottomSheet((currentSheet as AppBottomSheet.ProjectRepos).repos)
+				}
+				is AppBottomSheet.VersionResources -> {
+					val data = currentSheet as AppBottomSheet.VersionResources
+					VersionResourcesBottomSheet(
+						functionalTasks = data.functionalTasks,
+						files = data.files,
+						links = data.links
 					)
 				}
 				else -> {}
