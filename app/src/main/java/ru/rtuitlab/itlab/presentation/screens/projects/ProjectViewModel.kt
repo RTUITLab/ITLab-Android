@@ -9,10 +9,7 @@ import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.data.local.projects.models.ProjectWithVersionsOwnersAndRepos
 import ru.rtuitlab.itlab.data.local.projects.models.Version
 import ru.rtuitlab.itlab.data.local.projects.models.VersionWithEverything
-import ru.rtuitlab.itlab.domain.use_cases.projects.GetProjectUseCase
-import ru.rtuitlab.itlab.domain.use_cases.projects.GetVersionUseCase
-import ru.rtuitlab.itlab.domain.use_cases.projects.UpdateProjectUseCase
-import ru.rtuitlab.itlab.domain.use_cases.projects.UpdateVersionUseCase
+import ru.rtuitlab.itlab.domain.use_cases.projects.*
 import ru.rtuitlab.itlab.presentation.screens.projects.state.ProjectScreenState
 import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import javax.inject.Inject
@@ -23,6 +20,7 @@ class ProjectViewModel @Inject constructor(
     private val updateProject: UpdateProjectUseCase,
     private val updateVersion: UpdateVersionUseCase,
     private val getVersion: GetVersionUseCase,
+    private val getThread: GetVersionThreadUseCase,
     state: SavedStateHandle
 ): ViewModel() {
     val projectId: String? = state["projectId"]
@@ -116,7 +114,10 @@ class ProjectViewModel @Inject constructor(
 
     private fun onVersionUpdate(isUpdating: Boolean) {
         _uiState.update {
-            it.copy(isVersionUpdating = isUpdating)
+            it.copy(
+                isVersionUpdating = isUpdating,
+                selectedVersionNewsCount = 0
+            )
         }
     }
 
@@ -139,5 +140,22 @@ class ProjectViewModel @Inject constructor(
                 },
                 onSuccess = { onVersionUpdate(false) }
             )
+
+        // Get news to decide whether to show News icon in bottom bar
+        getThread(
+            limit = 1,
+            versionId = versionId,
+            offset = 0,
+            matcher = "",
+            projectId = projectId
+        ).handle(
+            onSuccess = {
+                _uiState.update { state ->
+                    state.copy(
+                        selectedVersionNewsCount = it.totalResult
+                    )
+                }
+            }
+        )
     }
 }

@@ -4,10 +4,12 @@ import kotlinx.coroutines.flow.Flow
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.data.local.projects.models.ProjectWithVersionsOwnersAndRepos
 import ru.rtuitlab.itlab.data.local.projects.models.VersionWithEverything
+import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectCompactDto
 import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectDetailsDto
 import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectsPaginationResult
 import ru.rtuitlab.itlab.data.remote.api.projects.models.version.ProjectVersions
 import ru.rtuitlab.itlab.data.remote.api.projects.models.version.VersionTasks
+import ru.rtuitlab.itlab.data.remote.api.projects.models.version.VersionThreadItemDto
 import ru.rtuitlab.itlab.data.remote.api.projects.models.version.worker.VersionWorker
 
 interface ProjectsRepository {
@@ -19,7 +21,16 @@ interface ProjectsRepository {
         onlyParticipatedProjects: Boolean,
         matcher: String, // field:query; Example: name:ITLab-Android
         sortBy: String, // field:(asc|desc); Example: created_at:desc
-    ): Resource<ProjectsPaginationResult>
+    ): Resource<ProjectsPaginationResult<ProjectCompactDto>>
+
+    suspend fun getVersionNewsPaginated(
+        limit: Int,
+        offset: Int,
+        matcher: String, // field:query; Example: name:ITLab-Android
+        sortBy: String, // field:(asc|desc); Example: created_at:desc
+        projectId: String,
+        versionId: String
+    ): Resource<ProjectsPaginationResult<VersionThreadItemDto>>
 
     suspend fun getProjectsByName(query: String): List<ProjectWithVersionsOwnersAndRepos>
 

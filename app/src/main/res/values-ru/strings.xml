@@ -229,5 +229,6 @@
     <string name="version_role">Роль</string>
     <string name="version_salary">Зарплата</string>
     <string name="version_hourly_rate">Ставка</string>
+    <string name="version_news">Новости версии</string>
 
 </resources>

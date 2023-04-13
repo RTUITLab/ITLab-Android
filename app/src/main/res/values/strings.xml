@@ -113,6 +113,7 @@
     <string name="version_role">Role</string>
     <string name="version_salary">Salary</string>
     <string name="version_hourly_rate">Hourly wage</string>
+    <string name="version_news">Version news</string>
 
 
     <!--    Employees     -->

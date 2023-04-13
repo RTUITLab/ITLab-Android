@@ -11,9 +11,11 @@ import ru.rtuitlab.itlab.data.remote.api.projects.ProjectsApi
 import ru.rtuitlab.itlab.data.remote.api.projects.models.Owner
 import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectCompactDto
 import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectDetailsDto
+import ru.rtuitlab.itlab.data.remote.api.projects.models.ProjectsPaginationResult
 import ru.rtuitlab.itlab.data.remote.api.projects.models.version.ProjectVersion
 import ru.rtuitlab.itlab.data.remote.api.projects.models.version.ProjectVersions
 import ru.rtuitlab.itlab.data.remote.api.projects.models.version.VersionTasks
+import ru.rtuitlab.itlab.data.remote.api.projects.models.version.VersionThreadItemDto
 import ru.rtuitlab.itlab.data.remote.api.projects.models.version.worker.VersionWorker
 import ru.rtuitlab.itlab.data.repository.util.tryUpdate
 import ru.rtuitlab.itlab.domain.repository.ProjectsRepository
@@ -83,6 +85,19 @@ class ProjectsRepositoryImpl @Inject constructor(
             }
         }
     )
+
+    override suspend fun getVersionNewsPaginated(
+        limit: Int,
+        offset: Int,
+        matcher: String,
+        sortBy: String,
+        projectId: String,
+        versionId: String
+    ): Resource<ProjectsPaginationResult<VersionThreadItemDto>> = handler {
+        projectsApi.getVersionNewsPaginated(
+            projectId, versionId, limit, offset, matcher, sortBy
+        )
+    }
 
     override suspend fun getProjectsByName(query: String) =
         dao.getProjectsByName(query)

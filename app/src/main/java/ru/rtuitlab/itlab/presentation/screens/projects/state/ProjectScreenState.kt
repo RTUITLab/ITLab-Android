@@ -7,5 +7,6 @@ data class ProjectScreenState(
     val projectInfo: ProjectWithVersionsOwnersAndRepos? = null,
     val isProjectUpdating: Boolean = false,
     val selectedVersion: VersionWithEverything? = null,
-    val isVersionUpdating: Boolean = false
+    val isVersionUpdating: Boolean = false,
+    val selectedVersionNewsCount: Int = 0
 )

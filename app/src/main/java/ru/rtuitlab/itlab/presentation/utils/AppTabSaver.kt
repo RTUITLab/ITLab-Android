@@ -102,6 +102,7 @@ open class AppScreen(
             val navLink: String = route.substringBefore("/{")
         }
     }
+    object VersionNews: AppScreen(R.string.version_news, "projects/{projectId}/{versionId}/news")
 
     // Devices-related
     object Devices: AppScreen(R.string.devices, "devices", true)
@@ -143,6 +144,7 @@ open class AppScreen(
             EventsNotifications,
             Projects,
             ProjectDetails(context.resources.getString(R.string.project)),
+            VersionNews,
             Devices,
             Profile,
             Reports,
