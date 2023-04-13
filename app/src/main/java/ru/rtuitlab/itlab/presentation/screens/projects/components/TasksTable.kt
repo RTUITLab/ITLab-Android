@@ -56,7 +56,7 @@ fun TasksTable(
             mutableStateListOf(
                 *tasks.map { 27.dp }.toTypedArray()
             )
-        } ?: mutableStateListOf(*Array(DUMMIES_COUNT) {27.dp})
+        } ?: mutableStateListOf(*Array(DUMMIES_COUNT) { 27.dp })
     }
 
     var lastRowHeight by remember { mutableStateOf(30.dp) }
@@ -77,7 +77,7 @@ fun TasksTable(
                 border = BorderStroke(0.dp, Color.Transparent)
             ) {
                 Text(
-                    modifier = with (this) {
+                    modifier = with(this) {
                         Modifier.align(Alignment.CenterStart)
                     },
                     text = stringResource(R.string.project_version_task),
@@ -146,18 +146,17 @@ fun TasksTable(
                 }
             }
 
-            certification?.let {
-                Cell(
-                    modifier = Modifier
-                        .height(lastRowHeight)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        modifier = Modifier.align(Alignment.CenterStart),
-                        text = it.totalCost.toString(),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
+            // Full version total cost
+            Cell(
+                modifier = Modifier
+                    .height(lastRowHeight)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    text = certification?.totalCost?.toString() ?: tasks?.sumOf { it.task.cost }?.toString() ?: "0",
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }
@@ -314,7 +313,8 @@ private fun WorkersColumns(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 if (worker.worker.roleId in task.workers.map { it.roleId }) {
-                                    val thisWorker = task.workers.find { it.roleId == worker.worker.roleId }!!
+                                    val thisWorker =
+                                        task.workers.find { it.roleId == worker.worker.roleId }!!
                                     Text(
                                         modifier = Modifier
                                             .weight(1f)
@@ -364,7 +364,17 @@ private fun WorkersColumns(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             val thisTotal = roleTotals?.find { it.roleId == worker.worker.roleId }
-                            if (thisTotal != null) {
+                                ?: run {
+                                    val thisWorkerTasks = tasks.flatMap { it.workers.filter { it.roleId == worker.worker.roleId } }
+                                    VersionRoleTotalEntity(
+                                        versionId = worker.worker.versionId,
+                                        roleId = worker.worker.roleId,
+                                        totalCost = thisWorkerTasks
+                                            .sumOf { it.cost },
+                                        totalHours = thisWorkerTasks.sumOf { it.hours }
+                                    )
+                                }
+                            if (thisTotal.totalCost != 0 && thisTotal.totalHours != 0) {
                                 Text(
                                     modifier = Modifier
                                         .weight(1f)
