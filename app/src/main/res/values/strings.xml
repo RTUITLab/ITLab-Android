@@ -109,6 +109,10 @@
     <string name="version_no_links">This version has no links</string>
     <string name="version_files">Files</string>
     <string name="version_no_files">This version has no files attached</string>
+    <string name="version_employee">Employee</string>
+    <string name="version_role">Role</string>
+    <string name="version_salary">Salary</string>
+    <string name="version_hourly_rate">Hourly wage</string>
 
 
     <!--    Employees     -->

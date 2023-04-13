@@ -42,6 +42,7 @@ import ru.rtuitlab.itlab.data.local.projects.models.ProjectFileType
 import ru.rtuitlab.itlab.data.local.projects.models.Version
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.projects.components.TasksTable
+import ru.rtuitlab.itlab.presentation.screens.projects.components.WorkersTable
 import ru.rtuitlab.itlab.presentation.screens.projects.state.ProjectScreenState
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
@@ -420,7 +421,7 @@ fun Versions(
     ) {
         Column(
             modifier = Modifier
-                .padding(start = 16.dp, end = 8.dp)
+                .padding(start = 16.dp, end = 8.dp, bottom = 16.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -528,7 +529,28 @@ fun Versions(
                 )
             }
 
-
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            state.selectedVersion.workers?.let {
+                WorkersTable(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .layout { measurable, constraints ->
+                            val placeable = measurable.measure(
+                                constraints.copy(
+                                    maxWidth = constraints.maxWidth + 32.dp.roundToPx(), // Adding horizontal padding
+                                    minWidth = constraints.maxWidth + 32.dp.roundToPx()
+                                )
+                            )
+                            layout(placeable.width, placeable.height) {
+                                placeable.place(0, 0)
+                            }
+                        }
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp),
+                    workers = it
+                )
+            }
         }
     }
 }

@@ -225,5 +225,9 @@
     <string name="version_no_links">У этой версии нет ссылок</string>
     <string name="version_files">Файлы</string>
     <string name="version_no_files">К этой версии не прикреплены файлы</string>
+    <string name="version_employee">Исполнитель</string>
+    <string name="version_role">Роль</string>
+    <string name="version_salary">Зарплата</string>
+    <string name="version_hourly_rate">Ставка</string>
 
 </resources>
