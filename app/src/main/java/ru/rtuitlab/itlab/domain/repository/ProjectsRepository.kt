@@ -34,6 +34,14 @@ interface ProjectsRepository {
 
     suspend fun getProjectsByName(query: String): List<ProjectWithVersionsOwnersAndRepos>
 
+    suspend fun getProjectsByNameWithFilters(
+        query: String,
+        sortingFieldLiteral: String,
+        sortingDirectionLiteral: String,
+        managedProjects: Boolean,
+        participatedProjects: Boolean
+    ): List<ProjectWithVersionsOwnersAndRepos>
+
     suspend fun updateProject(projectId: String): Resource<ProjectDetailsDto>
 
     fun getProject(projectId: String): Flow<ProjectWithVersionsOwnersAndRepos>

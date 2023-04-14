@@ -230,5 +230,9 @@
     <string name="version_salary">Зарплата</string>
     <string name="version_hourly_rate">Ставка</string>
     <string name="version_news">Новости версии</string>
+    <string name="projects_sorting">Отсортировать</string>
+    <string name="projects_filter">Отфильтровать</string>
+    <string name="projects_participated">С моим участием</string>
+    <string name="projects_managed">Управляемые мной</string>
 
 </resources>

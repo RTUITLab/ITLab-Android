@@ -10,8 +10,20 @@ import javax.inject.Inject
 class SearchProjectsUseCase @Inject constructor(
     private val repo: ProjectsRepository
 ) {
-    suspend operator fun invoke(query: String) = withContext(Dispatchers.IO) {
-        repo.getProjectsByName(query).map {
+    suspend operator fun invoke(
+        query: String,
+        sortingFieldLiteral: String,
+        sortingDirectionLiteral: String,
+        managedProjects: Boolean,
+        participatedProjects: Boolean
+    ) = withContext(Dispatchers.IO) {
+        repo.getProjectsByNameWithFilters(
+            query,
+            sortingFieldLiteral,
+            sortingDirectionLiteral,
+            managedProjects,
+            participatedProjects
+        ).map {
             val lastVersion = it.versions.maxByOrNull { it.creationDateTime }
             ProjectCompact(
                 id = it.project.id,

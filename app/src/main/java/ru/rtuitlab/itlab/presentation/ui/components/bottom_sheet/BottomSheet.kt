@@ -26,6 +26,7 @@ import ru.rtuitlab.itlab.presentation.screens.devices.components.DeviceNewBottom
 import ru.rtuitlab.itlab.presentation.screens.events.components.ShiftBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileEventsBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileSettingsBottomSheet
+import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectsFiltersBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectReposBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.projects.components.VersionResourcesBottomSheet
 import ru.rtuitlab.itlab.presentation.screens.reports.components.UserSelectionBottomSheet
@@ -70,7 +71,6 @@ fun BottomSheet(
 			)
 			Spacer(Modifier.height(15.dp))
 
-//			if (!sheetIsVisible) return@Column
 			when (currentSheet) {
 				is AppBottomSheet.EventShift -> {
 					val shift = currentSheet as AppBottomSheet.EventShift
@@ -120,6 +120,9 @@ fun BottomSheet(
 						files = data.files,
 						links = data.links
 					)
+				}
+				is AppBottomSheet.ProjectsFilters -> {
+					ProjectsFiltersBottomSheet()
 				}
 				else -> {}
 			}

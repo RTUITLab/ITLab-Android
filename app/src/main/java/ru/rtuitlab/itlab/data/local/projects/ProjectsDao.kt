@@ -1,6 +1,7 @@
 package ru.rtuitlab.itlab.data.local.projects
 
 import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteQuery
 import kotlinx.coroutines.flow.Flow
 import ru.rtuitlab.itlab.data.local.projects.models.*
 
@@ -15,7 +16,31 @@ interface ProjectsDao {
 
     @Transaction
     @Query("SELECT * FROM Project WHERE name LIKE '%' || :query || '%'")
-    suspend fun getProjectsByName(query: String): List<ProjectWithVersionsOwnersAndRepos>
+    suspend fun getProjectsByName(query: String, ): List<ProjectWithVersionsOwnersAndRepos>
+
+    @Transaction
+    @RawQuery
+    suspend fun getProjectByNameWithOrderRaw(
+        query: SupportSQLiteQuery
+    ): List<ProjectWithVersionsOwnersAndRepos>
+
+    @Transaction
+    @RawQuery
+    suspend fun getManagedProjectsByNameRaw(
+        query: SupportSQLiteQuery
+    ): List<ProjectWithVersionsOwnersAndRepos>
+
+    @Transaction
+    @RawQuery
+    suspend fun getParticipatedProjectsByNameRaw(
+        query: SupportSQLiteQuery
+    ): List<ProjectWithVersionsOwnersAndRepos>
+
+    @Transaction
+    @RawQuery
+    suspend fun getTouchedProjectsByNameRaw(
+        query: SupportSQLiteQuery
+    ): List<ProjectWithVersionsOwnersAndRepos>
 
     @Query("SELECT userId FROM ProjectOwner WHERE projectId = :projectId")
     suspend fun getProjectOwnersIds(projectId: String): List<String>

@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.devices.DevicesViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.LabelledCheckBox
+import ru.rtuitlab.itlab.presentation.ui.components.LabeledCheckBox
 import ru.rtuitlab.itlab.presentation.ui.components.SearchBar
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.BottomAppBar
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.ITLabBottomBarDefaults
@@ -59,7 +59,7 @@ fun DevicesBottomBar(
             AppBarOption.Dropdown(
                 icon = Icons.Default.FilterList,
                 dropdownMenuContent = { collapseAction ->
-                    LabelledCheckBox(
+                    LabeledCheckBox(
                         checked = showFreeDevicesChecked,
                         onCheckedChange = {
                             devicesViewModel.onFilteringChanged(it)

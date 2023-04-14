@@ -114,6 +114,10 @@
     <string name="version_salary">Salary</string>
     <string name="version_hourly_rate">Hourly wage</string>
     <string name="version_news">Version news</string>
+    <string name="projects_sorting">Sorting</string>
+    <string name="projects_filter">Filter</string>
+    <string name="projects_participated">With my participation</string>
+    <string name="projects_managed">Managed by me</string>
 
 
     <!--    Employees     -->

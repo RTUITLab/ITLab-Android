@@ -1,10 +1,13 @@
 package ru.rtuitlab.itlab.data.repository
 
 import androidx.room.withTransaction
+import androidx.sqlite.db.SimpleSQLiteQuery
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import ru.rtuitlab.itlab.common.Resource
 import ru.rtuitlab.itlab.common.ResponseHandler
+import ru.rtuitlab.itlab.common.persistence.IAuthStateStorage
 import ru.rtuitlab.itlab.data.local.AppDatabase
 import ru.rtuitlab.itlab.data.local.projects.models.*
 import ru.rtuitlab.itlab.data.remote.api.projects.ProjectsApi
@@ -27,8 +30,9 @@ class ProjectsRepositoryImpl @Inject constructor(
     private val projectsApi: ProjectsApi,
     private val handler: ResponseHandler,
     private val coroutineScope: CoroutineScope,
+    private val authStateStorage: IAuthStateStorage,
     private val db: AppDatabase
-): ProjectsRepository {
+) : ProjectsRepository {
 
     private val dao = db.projectsDao
 
@@ -102,6 +106,83 @@ class ProjectsRepositoryImpl @Inject constructor(
     override suspend fun getProjectsByName(query: String) =
         dao.getProjectsByName(query)
 
+    override suspend fun getProjectsByNameWithFilters(
+        query: String,
+        sortingFieldLiteral: String,
+        sortingDirectionLiteral: String,
+        managedProjects: Boolean,
+        participatedProjects: Boolean
+    ): List<ProjectWithVersionsOwnersAndRepos> {
+        val currentUserId = authStateStorage.userIdFlow.first()
+
+        // Using raw queries here because Room does not allow dynamic ORDER BY clauses
+        // and I'm not about to write so many different DAO methods
+
+        return if (managedProjects && participatedProjects) {
+            val rawQuery = SimpleSQLiteQuery(
+                """
+                SELECT * FROM Project AS project WHERE name LIKE '%$query%' 
+                AND (
+                    "$currentUserId" IN (
+                        SELECT ownerId FROM Version AS version WHERE version.projectId = project.id
+                    ) OR
+                    "$currentUserId" IN (
+                        SELECT userId FROM Worker as worker WHERE (
+                            worker.versionId IN (SELECT id FROM Version WHERE projectId = project.id)
+                        )
+                    ) OR 
+                    "$currentUserId" IN (
+                        SELECT id FROM ProjectOwner WHERE projectId = project.id
+                    )
+                )
+                ORDER BY $sortingFieldLiteral $sortingDirectionLiteral;
+            """.trimIndent()
+            )
+            dao.getTouchedProjectsByNameRaw(rawQuery)
+        }
+        else if (managedProjects) {
+            val rawQuery = SimpleSQLiteQuery(
+                """
+                SELECT * FROM Project AS project WHERE name LIKE '%$query%' 
+                AND "$currentUserId" IN (
+                    SELECT id FROM ProjectOwner WHERE projectId = project.id
+                )
+                ORDER BY $sortingFieldLiteral $sortingDirectionLiteral;
+            """.trimIndent()
+            )
+            dao.getManagedProjectsByNameRaw(rawQuery)
+        }
+        else if (participatedProjects) {
+            val rawQuery = SimpleSQLiteQuery(
+                """
+                SELECT * FROM Project AS project WHERE name LIKE '%$query%' 
+                AND (
+                    "$currentUserId" IN ( 
+                        SELECT ownerId FROM Version AS version WHERE version.projectId = project.id
+                    ) OR
+                    "$currentUserId" IN (
+                        SELECT userId FROM Worker as worker WHERE (
+                            worker.versionId IN (SELECT id FROM Version WHERE projectId = project.id)
+                        )
+                    )
+                )
+                ORDER BY $sortingFieldLiteral $sortingDirectionLiteral;
+            """.trimIndent()
+            )
+            dao.getParticipatedProjectsByNameRaw(rawQuery)
+        }
+        else {
+            val rawQuery = SimpleSQLiteQuery(
+                """
+                SELECT * FROM Project WHERE name LIKE '%$query%' ORDER BY $sortingFieldLiteral $sortingDirectionLiteral;
+            """.trimIndent()
+            )
+            dao.getProjectByNameWithOrderRaw(rawQuery).also {
+                println(it.joinToString { it.project.name })
+            }
+        }
+    }
+
     private suspend fun updateProjectRepositories(project: ProjectDetailsDto) {
         db.withTransaction {
             // There surely will not be too many repos in a given project, so we can get away with this
@@ -109,6 +190,7 @@ class ProjectsRepositoryImpl @Inject constructor(
             dao.insertProjectRepos(project.githubRepos.map { it.toProjectRepoEntity(project.id) })
         }
     }
+
     override suspend fun updateProject(projectId: String): Resource<ProjectDetailsDto> = tryUpdate(
         inScope = coroutineScope,
         withHandler = handler,
@@ -130,9 +212,9 @@ class ProjectsRepositoryImpl @Inject constructor(
     private suspend fun updateProjectVersions(projectId: String, versions: List<ProjectVersion>) {
         val oldVersions = dao.getVersionIdsByProjectId(projectId)
         db.withTransaction {
+            dao.deleteVersionsByIds(oldVersions - versions.map { it.id }.toSet())
+            dao.upsertVersions(versions.map { it.toVersionEntity() })
         }
-        dao.deleteVersionsByIds(oldVersions - versions.map { it.id }.toSet())
-        dao.upsertVersions(versions.map { it.toVersionEntity() })
     }
 
 
@@ -164,43 +246,49 @@ class ProjectsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateProjectVersions(projectId: String): Resource<ProjectVersions> = tryUpdate(
-        inScope = coroutineScope,
-        withHandler = handler,
-        from = { projectsApi.getProjectVersions(projectId) },
-        into = {
-            val budgets = it.versions.mapNotNull {
-                it.budgetCertification?.toEntity(it.id)
+    override suspend fun updateProjectVersions(projectId: String): Resource<ProjectVersions> =
+        tryUpdate(
+            inScope = coroutineScope,
+            withHandler = handler,
+            from = { projectsApi.getProjectVersions(projectId) },
+            into = {
+                val budgets = it.versions.mapNotNull {
+                    it.budgetCertification?.toEntity(it.id)
+                }
+
+                val versionsToRoleTotals = it.versions.filterNot {
+                    it.budgetCertification == null
+                }.map { version ->
+                    version.id to version.budgetCertification!!.toTaskTotals(version.id)
+                }
+
+                val versionsToFileEntities = it.versions.map { version ->
+                    version.id to (
+                            (version.files.attach?.map { it.toEntity(version.id) } ?: emptyList()) +
+                                    (version.files.functask?.map { it.toEntity(version.id) }
+                                        ?: emptyList())
+                            )
+                }
+
+                val idsToMilestones = it.versions.map { version ->
+                    version.id to (version.milestones?.map { it.toEntity(version.id) }
+                        ?: emptyList())
+                }
+
+                updateProjectVersions(projectId, it.versions)
+
+                dao.upsertCertifications(budgets)
+                updateProjectFiles(versionsToFileEntities)
+                updateProjectMilestones(idsToMilestones)
+
+                updateVersionRoleTotals(versionsToRoleTotals)
             }
+        )
 
-            val versionsToRoleTotals = it.versions.filterNot {
-                it.budgetCertification == null
-            }.map { version ->
-                version.id to version.budgetCertification!!.toTaskTotals(version.id)
-            }
-
-            val versionsToFileEntities = it.versions.map { version ->
-                version.id to (
-                        (version.files.attach?.map { it.toEntity(version.id) } ?: emptyList()) +
-                        (version.files.functask?.map { it.toEntity(version.id) } ?: emptyList())
-                )
-            }
-
-            val idsToMilestones = it.versions.map { version ->
-                version.id to (version.milestones?.map { it.toEntity(version.id) } ?: emptyList())
-            }
-
-            updateProjectVersions(projectId, it.versions)
-
-            dao.upsertCertifications(budgets)
-            updateProjectFiles(versionsToFileEntities)
-            updateProjectMilestones(idsToMilestones)
-
-            updateVersionRoleTotals(versionsToRoleTotals)
-        }
-    )
-
-    override suspend fun updateVersionWorkers(projectId: String, versionId: String): Resource<List<VersionWorker>> = tryUpdate(
+    override suspend fun updateVersionWorkers(
+        projectId: String,
+        versionId: String
+    ): Resource<List<VersionWorker>> = tryUpdate(
         inScope = coroutineScope,
         withHandler = handler,
         from = { projectsApi.getVersionWorkers(projectId, versionId) },
@@ -215,7 +303,10 @@ class ProjectsRepositoryImpl @Inject constructor(
         }
     )
 
-    override suspend fun updateVersionTasks(projectId: String, versionId: String): Resource<VersionTasks> = tryUpdate(
+    override suspend fun updateVersionTasks(
+        projectId: String,
+        versionId: String
+    ): Resource<VersionTasks> = tryUpdate(
         inScope = coroutineScope,
         withHandler = handler,
         from = { projectsApi.getVersionTasks(projectId, versionId) },

@@ -21,7 +21,7 @@ import ru.rtuitlab.itlab.data.remote.api.purchases.PurchaseSortingOrder
 import ru.rtuitlab.itlab.presentation.screens.purchases.PurchasesViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.AppDropdownMenu
 import ru.rtuitlab.itlab.presentation.ui.components.LabeledRadioButton
-import ru.rtuitlab.itlab.presentation.ui.components.LabelledCheckBox
+import ru.rtuitlab.itlab.presentation.ui.components.LabeledCheckBox
 import ru.rtuitlab.itlab.presentation.ui.components.text_fields.OutlinedAppTextField
 
 // Will be developed further and used once implementation details are clarified
@@ -87,7 +87,7 @@ fun PurchasesBottomSheet(
                 )
             }
             Divider()
-            LabelledCheckBox(
+            LabeledCheckBox(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),

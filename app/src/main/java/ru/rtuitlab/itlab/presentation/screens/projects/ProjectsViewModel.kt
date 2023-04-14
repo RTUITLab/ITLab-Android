@@ -14,10 +14,12 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.extensions.collectUntil
+import ru.rtuitlab.itlab.data.remote.api.projects.SortingField
 import ru.rtuitlab.itlab.data.remote.pagination.Paginator
 import ru.rtuitlab.itlab.domain.use_cases.projects.GetProjectsPageUseCase
 import ru.rtuitlab.itlab.domain.use_cases.projects.SearchProjectsUseCase
 import ru.rtuitlab.itlab.domain.use_cases.users.GetUsersUseCase
+import ru.rtuitlab.itlab.presentation.screens.projects.state.ProjectsBottomSheetState
 import ru.rtuitlab.itlab.presentation.screens.projects.state.ProjectsOfflineUiState
 import ru.rtuitlab.itlab.presentation.screens.projects.state.ProjectsOnlineUiState
 import ru.rtuitlab.itlab.presentation.utils.NetworkMonitor
@@ -40,6 +42,9 @@ class ProjectsViewModel @Inject constructor(
 
     private val _offlineState = MutableStateFlow(ProjectsOfflineUiState())
     val offlineState = _offlineState.asStateFlow()
+
+    private val _bottomSheetState = MutableStateFlow(ProjectsBottomSheetState())
+    val bottomSheetState = _bottomSheetState.asStateFlow()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
@@ -69,12 +74,12 @@ class ProjectsViewModel @Inject constructor(
         onRequest = { nextPage ->
             getProjectsOnline(
                 limit = pageSize,
-                onlyManagedProjects = false,
+                onlyManagedProjects = bottomSheetState.value.isManagedProjectsChecked,
                 offset = nextPage,
-                onlyParticipatedProjects = false,
+                onlyParticipatedProjects = bottomSheetState.value.isParticipatedProjectsChecked,
                 matcher = if (searchQuery.value.isBlank()) ""
                     else "name:${searchQuery.value}",
-                sortBy = "name:desc"
+                sortBy = bottomSheetState.value.sortingQuery
             )
         },
         getNextKey = { _onlineState.value.offset + pageSize },
@@ -105,12 +110,13 @@ class ProjectsViewModel @Inject constructor(
         viewModelScope.launch {
             users.collectUntil({it.isNotEmpty()}) {
 
-                // Collecting search query and relaunching fetching with a new search query
+                // Collecting search query, network status and filters/sorters state
+                // and relaunching fetching with a combination of the three
                 viewModelScope.launch {
-                    searchQuery.combine(isOnline) { query, isOnline ->
-                        query to isOnline
+                    combine(searchQuery, isOnline, bottomSheetState) { query, isOnline, bottomSheetState ->
+                        Triple(query, isOnline, bottomSheetState)
                     }
-                        .collect { (query, isOnline) ->
+                        .collect { (query, isOnline, bottomSheetState) ->
                             if (isOnline) {
                                 fetchingJob?.cancel()
                                 paginator.reset()
@@ -125,7 +131,13 @@ class ProjectsViewModel @Inject constructor(
                             } else {
                                 _offlineState.update {
                                     it.copy(
-                                        projects = searchProjects(query)
+                                        projects = searchProjects(
+                                            query = query,
+                                            sortingFieldLiteral = bottomSheetState.selectedSortingField.literal,
+                                            sortingDirectionLiteral = bottomSheetState.selectedSortingDirection.literal,
+                                            managedProjects = bottomSheetState.isManagedProjectsChecked,
+                                            participatedProjects = bottomSheetState.isParticipatedProjectsChecked
+                                        )
                                     )
                                 }
                             }
@@ -142,7 +154,7 @@ class ProjectsViewModel @Inject constructor(
                         UiEvent.Snackbar(
                             resId = R.string.projects_back_online_prompt,
                             actionLabel = R.string.projects_switch,
-                            duration = SnackbarDuration.Long,
+                            duration = SnackbarDuration.Short,
                             onActionPerformed = {
                                 when (it) {
                                     SnackbarResult.ActionPerformed -> switchNetworkState(true)
@@ -187,6 +199,30 @@ class ProjectsViewModel @Inject constructor(
     fun switchNetworkState(isOnline: Boolean) {
         _isOnline.update { isOnline }
         shouldShowNetworkAction = false
+    }
+
+    fun onSortingFieldChange(sortingField: SortingField) {
+        _bottomSheetState.update {
+            it.copy(
+                selectedSortingField = sortingField
+            )
+        }
+    }
+
+    fun onManagedProjectsChange(isChecked: Boolean) {
+        _bottomSheetState.update {
+            it.copy(
+                isManagedProjectsChecked = isChecked
+            )
+        }
+    }
+
+    fun onParticipatedProjectsChange(isChecked: Boolean) {
+        _bottomSheetState.update {
+            it.copy(
+                isParticipatedProjectsChecked = isChecked
+            )
+        }
     }
 
 }
