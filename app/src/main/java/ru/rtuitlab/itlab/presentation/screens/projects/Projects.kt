@@ -15,6 +15,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -29,8 +30,8 @@ import ru.rtuitlab.itlab.presentation.ui.components.LoadingError
 import ru.rtuitlab.itlab.presentation.ui.components.LoadingErrorRetry
 import ru.rtuitlab.itlab.presentation.ui.components.PrimaryTextButton
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
-import ru.rtuitlab.itlab.presentation.ui.extensions.collectUiEvents
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
+import ru.rtuitlab.itlab.presentation.utils.UiEvent
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
 @Composable
@@ -41,7 +42,25 @@ fun Projects(
     val offlineState by viewModel.offlineState.collectAsState()
     val isOnline by viewModel.isOnline.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    viewModel.uiEvents.collectUiEvents(snackbarHostState)
+
+    val context = LocalContext.current
+    // Not using StateFlow<UiEvent>.collectUiEvents because additional logic is required
+    LaunchedEffect(Unit) {
+        viewModel.uiEvents.collect { event ->
+            if (event is UiEvent.Snackbar) {
+                if (viewModel.shouldShowNetworkAction || isOnline) return@collect
+                val snackbarResult = snackbarHostState.showSnackbar(
+                    message = event.message.asString(context),
+                    actionLabel = event.actionLabelRes?.let { context.getString(it) },
+                    duration = event.duration
+                )
+                event.onActionPerformed?.invoke(
+                    snackbarResult
+                )
+            }
+        }
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {

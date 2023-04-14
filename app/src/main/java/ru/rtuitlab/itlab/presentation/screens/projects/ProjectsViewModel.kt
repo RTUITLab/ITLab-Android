@@ -60,7 +60,7 @@ class ProjectsViewModel @Inject constructor(
         it.map { it.toUser() }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    private val _uiEvents = MutableSharedFlow<UiEvent>()
+    private val _uiEvents = MutableSharedFlow<UiEvent>(replay = 1)
     val uiEvents = _uiEvents.asSharedFlow()
 
     val pageSize = 20
