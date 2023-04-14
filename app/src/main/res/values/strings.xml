@@ -118,6 +118,7 @@
     <string name="projects_filter">Filter</string>
     <string name="projects_participated">With my participation</string>
     <string name="projects_managed">Managed by me</string>
+    <string name="project_version_archived_date">Last version archived on %1$s</string>
 
 
     <!--    Employees     -->

@@ -234,5 +234,6 @@
     <string name="projects_filter">Отфильтровать</string>
     <string name="projects_participated">С моим участием</string>
     <string name="projects_managed">Управляемые мной</string>
+    <string name="project_version_archived_date">Последняя версия архивирована %1$s</string>
 
 </resources>

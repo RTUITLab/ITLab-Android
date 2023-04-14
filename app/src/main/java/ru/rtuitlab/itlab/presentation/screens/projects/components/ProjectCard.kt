@@ -31,6 +31,7 @@ import coil.request.ImageRequest
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.common.extensions.fromIso8601
 import ru.rtuitlab.itlab.common.extensions.fromIso8601ToInstant
 import ru.rtuitlab.itlab.common.extensions.toIsoString
 import ru.rtuitlab.itlab.common.extensions.toUiString
@@ -138,87 +139,17 @@ fun ProjectCard(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f, false)
-                ) {
+            if (project.lastVersion?.archived?.archived != true) {
+                LastVersionInfo(lastVersion = project.lastVersion)
+            } else {
+                project.lastVersion.archived.archivedDate?.let {
                     Text(
-                        text = stringResource(R.string.project_version),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = LocalContentColor.current.copy(.8f)
+                        text = stringResource(
+                            R.string.project_version_archived_date,
+                            project.lastVersion.archived.archivedDate.fromIso8601(LocalContext.current, parseWithTime = false)
+                        ),
+                        style = MaterialTheme.typography.labelMedium
                     )
-
-                    if (project.lastVersion?.name != null) {
-                        Text(
-                            text = project.lastVersion.name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(R.string.unavailable),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = LocalContentColor.current.copy(.8f)
-                        )
-                    }
-
-                }
-                Column(
-                    modifier = Modifier.weight(1f, false)
-                ) {
-                    Text(
-                        text = stringResource(R.string.project_soft_deadline_abr),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = LocalContentColor.current.copy(.8f)
-                    )
-
-                    if (project.lastVersion?.deadlines?.soft != null) {
-                        Text(
-                            text = project.lastVersion.deadlines.soft.fromIso8601ToInstant().date.toUiString(),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(R.string.unavailable),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = LocalContentColor.current.copy(.8f)
-                        )
-                    }
-                }
-
-                Column(
-                    modifier = Modifier.weight(1f, false)
-                ) {
-                    Text(
-                        text = stringResource(R.string.project_progress),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = LocalContentColor.current.copy(.8f)
-                    )
-
-                    if (project.lastVersion != null) {
-                        Text(
-                            text = stringResource(
-                                R.string.percentage,
-                                (project.lastVersion.completeTaskCount.toFloat() / project.lastVersion.taskCount.coerceAtLeast(
-                                    1
-                                ) * 100).toInt()
-                            ),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(R.string.unavailable),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = LocalContentColor.current.copy(.8f)
-                        )
-                    }
                 }
             }
 
@@ -298,6 +229,96 @@ fun ProjectCard(
 
                     }
                 }
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun LastVersionInfo(
+    lastVersion: LastVersion?
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
+            modifier = Modifier.weight(1f, false)
+        ) {
+            Text(
+                text = stringResource(R.string.project_version),
+                style = MaterialTheme.typography.bodyMedium,
+                color = LocalContentColor.current.copy(.8f)
+            )
+
+            if (lastVersion?.name != null) {
+                Text(
+                    text = lastVersion.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.unavailable),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = LocalContentColor.current.copy(.8f)
+                )
+            }
+
+        }
+        Column(
+            modifier = Modifier.weight(1f, false)
+        ) {
+            Text(
+                text = stringResource(R.string.project_soft_deadline_abr),
+                style = MaterialTheme.typography.bodyMedium,
+                color = LocalContentColor.current.copy(.8f)
+            )
+
+            if (lastVersion?.deadlines?.soft != null) {
+                Text(
+                    text = lastVersion.deadlines.soft.fromIso8601ToInstant().date.toUiString(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.unavailable),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = LocalContentColor.current.copy(.8f)
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier.weight(1f, false)
+        ) {
+            Text(
+                text = stringResource(R.string.project_progress),
+                style = MaterialTheme.typography.bodyMedium,
+                color = LocalContentColor.current.copy(.8f)
+            )
+
+            if (lastVersion != null) {
+                Text(
+                    text = stringResource(
+                        R.string.percentage,
+                        (lastVersion.completeTaskCount.toFloat() / lastVersion.taskCount.coerceAtLeast(
+                            1
+                        ) * 100).toInt()
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.unavailable),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = LocalContentColor.current.copy(.8f)
+                )
             }
         }
     }
@@ -426,6 +447,7 @@ fun ShimmeredProjectCard(
         }
     }
 }
+
 
 @Preview
 @Composable
