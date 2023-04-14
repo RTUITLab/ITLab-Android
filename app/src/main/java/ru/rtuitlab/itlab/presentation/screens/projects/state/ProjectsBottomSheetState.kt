@@ -9,5 +9,5 @@ data class ProjectsBottomSheetState(
     val selectedSortingField: SortingField = SortingField.NAME,
     val selectedSortingDirection: SortingDirection = SortingDirection.DESC
 ) {
-    val sortingQuery: String = "${selectedSortingField.literal}:${selectedSortingDirection.literal}"
+    val sortingQuery: String = "${selectedSortingField.apiLiteral}:${selectedSortingDirection.literal}"
 }

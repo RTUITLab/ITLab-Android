@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.common.extensions.collectUntil
+import ru.rtuitlab.itlab.data.remote.api.projects.SortingDirection
 import ru.rtuitlab.itlab.data.remote.api.projects.SortingField
 import ru.rtuitlab.itlab.data.remote.pagination.Paginator
 import ru.rtuitlab.itlab.domain.use_cases.projects.GetProjectsPageUseCase
@@ -133,7 +134,7 @@ class ProjectsViewModel @Inject constructor(
                                     it.copy(
                                         projects = searchProjects(
                                             query = query,
-                                            sortingFieldLiteral = bottomSheetState.selectedSortingField.literal,
+                                            sortingFieldLiteral = bottomSheetState.selectedSortingField.localLiteral,
                                             sortingDirectionLiteral = bottomSheetState.selectedSortingDirection.literal,
                                             managedProjects = bottomSheetState.isManagedProjectsChecked,
                                             participatedProjects = bottomSheetState.isParticipatedProjectsChecked
@@ -221,6 +222,14 @@ class ProjectsViewModel @Inject constructor(
         _bottomSheetState.update {
             it.copy(
                 isParticipatedProjectsChecked = isChecked
+            )
+        }
+    }
+
+    fun onSortingOrderChange(isChecked: Boolean) {
+        _bottomSheetState.update {
+            it.copy(
+                selectedSortingDirection = if (isChecked) SortingDirection.ASC else SortingDirection.DESC
             )
         }
     }

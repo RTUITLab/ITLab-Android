@@ -9,15 +9,18 @@ enum class SortingDirection(val literal: String) {
 }
 
 enum class SortingField(
-    val literal: String,
+    val apiLiteral: String,
+    val localLiteral: String,
     @StringRes val nameResource: Int
 ) {
     NAME(
-        literal = "name",
+        apiLiteral = "name",
+        localLiteral = "name",
         nameResource = R.string.by_name
     ),
     DATE(
-        literal = "creationDateTime",
+        apiLiteral = "created_at",
+        localLiteral = "creationDateTime",
         nameResource = R.string.by_date
     )
 }

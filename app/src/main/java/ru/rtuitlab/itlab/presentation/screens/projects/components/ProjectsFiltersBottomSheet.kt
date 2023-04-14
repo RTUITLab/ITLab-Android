@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.data.remote.api.projects.SortingDirection
 import ru.rtuitlab.itlab.data.remote.api.projects.SortingField
 import ru.rtuitlab.itlab.presentation.screens.projects.ProjectsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.LabeledRadioButton
@@ -44,6 +45,12 @@ fun ProjectsFiltersBottomSheet(
                 label = stringResource(it.nameResource)
             )
         }
+
+        LabeledCheckBox(
+            checked = state.selectedSortingDirection == SortingDirection.ASC,
+            onCheckedChange = viewModel::onSortingOrderChange,
+            label = stringResource(R.string.sort_asc)
+        )
 
         Divider()
 
