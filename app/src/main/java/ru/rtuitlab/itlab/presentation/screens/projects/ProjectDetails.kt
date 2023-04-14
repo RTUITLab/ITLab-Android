@@ -346,13 +346,15 @@ fun VersionSelector(
                 .menuAnchor(),
             value = selectedVersion?.name ?: " ",
             onValueChange = {},
-            leadingIcon = if (versions == null) {{
-                ShimmerBox(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(.25f)
-                )
-            }} else null,
+            leadingIcon = if (versions == null) {
+                {
+                    ShimmerBox(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(.25f)
+                    )
+                }
+            } else null,
             trailingIcon = {
                 Icon(
                     modifier = Modifier
@@ -378,6 +380,9 @@ fun VersionSelector(
             val color = LocalContentColor.current
             versions.forEach {
                 DropdownMenuItem(
+                    modifier = if (selectedVersion?.id == it.id) Modifier
+                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(128.dp))
+                    else Modifier,
                     text = {
                         Text(
                             text = buildAnnotatedString {
@@ -530,7 +535,7 @@ fun Versions(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             state.selectedVersion.workers?.let {
                 WorkersTable(
                     modifier = Modifier
