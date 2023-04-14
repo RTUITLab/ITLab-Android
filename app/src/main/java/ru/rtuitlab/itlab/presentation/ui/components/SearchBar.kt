@@ -18,6 +18,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -101,6 +102,8 @@ private fun SearchBarContent(
 ) {
 	val focusRequester = remember { FocusRequester() }
 
+	val focusManager = LocalFocusManager.current
+
 	LaunchedEffect(Unit) {
 		focusRequester.requestFocus()
 	}
@@ -123,12 +126,17 @@ private fun SearchBarContent(
 				Text(text = hint)
 			},
 			leadingIcon = {
-				IconButton(onClick = onDismissRequest) {
+				IconButton(
+					onClick = {
+						onDismissRequest()
+						focusManager.clearFocus()
+					}
+				) {
 					Icon(Icons.Default.ArrowBack, null)
 				}
 			},
 			trailingIcon = {
-				IconButton(onClick = { onSearch("") }) {
+				IconButton(onClick = { onSearch("")  }) {
 					Icon(Icons.Default.Close, null)
 				}
 			},
