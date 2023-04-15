@@ -10,6 +10,7 @@ import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.projects.ProjectViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.BottomAppBar
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarOption
+import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.OptionBadge
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import ru.rtuitlab.itlab.presentation.utils.screenViewModel
@@ -35,7 +36,7 @@ fun ProjectBottomBar(
             ),
             AppBarOption.Clickable(
                 icon = Icons.Default.Newspaper,
-                badgeCount = state.selectedVersionNewsCount,
+                badge = OptionBadge(state.selectedVersionNewsCount),
                 onClick = {
                     if (state.selectedVersionNewsCount == 0) {
                         projectViewModel.onEmptyNewsClick()

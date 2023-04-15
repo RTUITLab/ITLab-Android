@@ -11,6 +11,7 @@ import ru.rtuitlab.itlab.presentation.screens.projects.ProjectsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.SearchBar
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.BottomAppBar
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarOption
+import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.OptionBadge
 import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
@@ -28,8 +29,10 @@ fun ProjectsBottomBar(
             AppBarOption.BottomSheet(
                 icon = Icons.Outlined.FilterAlt,
                 sheet = AppBottomSheet.ProjectsFilters,
-                badgeCount = filtersState.isManagedProjectsChecked.toInt() +
-                        filtersState.isParticipatedProjectsChecked.toInt()
+                badge = OptionBadge(
+                    filtersState.isManagedProjectsChecked.toInt() +
+                            filtersState.isParticipatedProjectsChecked.toInt()
+                )
             )
         ) + if (projectsViewModel.shouldShowNetworkAction) {
             listOf(
@@ -47,6 +50,7 @@ fun ProjectsBottomBar(
                 query = searchQuery,
                 onDismissRequest = it
             )
-        }
+        },
+        isSearchQueryApplied = searchQuery.isNotEmpty()
     )
 }

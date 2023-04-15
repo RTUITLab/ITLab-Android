@@ -239,13 +239,16 @@ fun OptionsRow(
 					) {
 						BadgedBox(
 							badge = {
-								if (option.badgeCount > 0)
+								if (option.badge.isActive || option.badge.count > 0)
 									Badge(
 										containerColor = MaterialTheme.colorScheme.primary,
-										contentColor = MaterialTheme.colorScheme.onPrimary
-									) {
-										Text(option.badgeCount.toString())
-									}
+										contentColor = MaterialTheme.colorScheme.onPrimary,
+										content = if (option.badge.count > 0) {
+											{
+												Text(option.badge.count.toString())
+											}
+										} else null
+									)
 							}
 						) {
 							Icon(
@@ -286,13 +289,16 @@ fun OptionsRow(
                     ) {
 	                    BadgedBox(
 		                    badge = {
-			                    if (option.badgeCount > 0)
+			                    if (option.badge.isActive || option.badge.count > 0)
 				                    Badge(
 					                    containerColor = MaterialTheme.colorScheme.primary,
-					                    contentColor = MaterialTheme.colorScheme.onPrimary
-				                    ) {
-					                    Text(option.badgeCount.toString())
-				                    }
+					                    contentColor = MaterialTheme.colorScheme.onPrimary,
+					                    content = if (option.badge.count > 0) {
+						                    {
+							                    Text(option.badge.count.toString())
+						                    }
+					                    } else null
+				                    )
 		                    }
 	                    ) {
 		                    Icon(
@@ -309,29 +315,40 @@ fun OptionsRow(
 	}
 }
 
+/**
+ * Displays a [Badge] above the option.
+ * If [isActive], but [count] is 0, displays a small badge.
+ * If [count] is greater than 0, displays it in a normal badge.
+ */
+data class OptionBadge(
+	val count: Int = 0,
+	val isActive: Boolean = false
+)
+
 sealed class AppBarOption(
-	open val icon: ImageVector,
-	open val contentDescription: String? = null
+	val icon: ImageVector,
+	val contentDescription: String? = null,
+	val badge: OptionBadge = OptionBadge()
 ) {
 	class Clickable(
-		override val icon: ImageVector,
-		override val contentDescription: String? = null,
-		val badgeCount: Int = 0,
+		icon: ImageVector,
+		contentDescription: String? = null,
+		badge: OptionBadge = OptionBadge(),
 		val onClick: () -> Unit
-	) : AppBarOption(icon, contentDescription)
+	) : AppBarOption(icon, contentDescription, badge)
 
 	class Dropdown(
-		override val icon: ImageVector,
-		override val contentDescription: String? = null,
+		icon: ImageVector,
+		contentDescription: String? = null,
 		val dropdownMenuContent: @Composable (collapseAction: () -> Unit) -> Unit
 	) : AppBarOption(icon, contentDescription)
 
 	class BottomSheet(
 		icon: ImageVector,
 		contentDescription: String? = null,
-		val badgeCount: Int = 0,
+		badge: OptionBadge = OptionBadge(),
 		val sheet: AppBottomSheet
-	): AppBarOption(icon, contentDescription)
+	): AppBarOption(icon, contentDescription, badge)
 }
 
 val emptyBackAction: () -> Unit = {}
