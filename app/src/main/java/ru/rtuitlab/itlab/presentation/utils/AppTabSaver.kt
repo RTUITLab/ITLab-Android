@@ -21,7 +21,7 @@ sealed class AppTab(
     object Projects: AppTab("projects_tab", AppScreen.Projects.route, R.string.projects, Icons.Default.Widgets)
     object Devices: AppTab("devices_tab", AppScreen.Devices.route, R.string.devices, Icons.Default.DevicesOther)
     object Employees: AppTab("employees_tab", AppScreen.Employees.route, R.string.employees, Icons.Default.People)
-    object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback)
+    object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback, false)
     object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, false)
     object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description)
     object Purchases: AppTab("purchases_tab", AppScreen.Purchases.route, R.string.purchases, Icons.Default.Payments)
@@ -55,7 +55,8 @@ sealed class AppTab(
             )
 
         private fun applyClaims(claims: List<Any>) {
-            Feedback.accessible = claims.contains(UserClaimCategories.FEEDBACK.ADMIN)
+            // Feedback is no longer used
+//            Feedback.accessible = claims.contains(UserClaimCategories.FEEDBACK.ADMIN)
             Purchases.accessible = claims.contains(UserClaimCategories.PURCHASES.USER)
         }
 
