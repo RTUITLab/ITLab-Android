@@ -235,9 +235,6 @@ fun OptionsRow(
 			when (option) {
 				is AppBarOption.Clickable -> {
 					IconButton(
-						modifier = Modifier
-							.height(36.dp)
-							.width(36.dp),
 						onClick = option.onClick
 					) {
 						BadgedBox(
@@ -264,9 +261,6 @@ fun OptionsRow(
 					AppDropdownMenu(
 						anchor = {
 							IconButton(
-								modifier = Modifier
-									.height(36.dp)
-									.width(36.dp),
 								onClick = it
 							) {
 								Icon(
@@ -285,9 +279,6 @@ fun OptionsRow(
                     val coroutineScope = rememberCoroutineScope()
                     val bottomSheetViewModel: BottomSheetViewModel = singletonViewModel()
                     IconButton(
-                        modifier = Modifier
-                            .height(36.dp)
-                            .width(36.dp),
                         onClick = {
                             bottomSheetViewModel.show(option.sheet, coroutineScope)
                         }
