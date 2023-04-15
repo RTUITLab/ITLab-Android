@@ -6,6 +6,7 @@ import androidx.compose.material.icons.outlined.FilterAlt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import ru.rtuitlab.itlab.common.extensions.toInt
 import ru.rtuitlab.itlab.presentation.screens.projects.ProjectsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.SearchBar
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.BottomAppBar
@@ -19,13 +20,16 @@ fun ProjectsBottomBar(
     projectsViewModel: ProjectsViewModel = singletonViewModel()
 ) {
     val searchQuery by projectsViewModel.searchQuery.collectAsState()
+    val filtersState by projectsViewModel.bottomSheetState.collectAsState()
 
     BottomAppBar(
         mainFloatingActionButton = mainFloatingActionButton,
         options = listOf(
             AppBarOption.BottomSheet(
                 icon = Icons.Outlined.FilterAlt,
-                sheet = AppBottomSheet.ProjectsFilters
+                sheet = AppBottomSheet.ProjectsFilters,
+                badgeCount = filtersState.isManagedProjectsChecked.toInt() +
+                        filtersState.isParticipatedProjectsChecked.toInt()
             )
         ) + if (projectsViewModel.shouldShowNetworkAction) {
             listOf(

@@ -278,16 +278,29 @@ fun OptionsRow(
 				is AppBarOption.BottomSheet -> {
                     val coroutineScope = rememberCoroutineScope()
                     val bottomSheetViewModel: BottomSheetViewModel = singletonViewModel()
+
                     IconButton(
                         onClick = {
                             bottomSheetViewModel.show(option.sheet, coroutineScope)
                         }
                     ) {
-                        Icon(
-                            imageVector = option.icon,
-                            contentDescription = option.contentDescription,
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
+	                    BadgedBox(
+		                    badge = {
+			                    if (option.badgeCount > 0)
+				                    Badge(
+					                    containerColor = MaterialTheme.colorScheme.primary,
+					                    contentColor = MaterialTheme.colorScheme.onPrimary
+				                    ) {
+					                    Text(option.badgeCount.toString())
+				                    }
+		                    }
+	                    ) {
+		                    Icon(
+			                    imageVector = option.icon,
+			                    contentDescription = option.contentDescription,
+			                    tint = MaterialTheme.colorScheme.onSurface
+		                    )
+	                    }
                     }
                 }
 			}
@@ -316,6 +329,7 @@ sealed class AppBarOption(
 	class BottomSheet(
 		icon: ImageVector,
 		contentDescription: String? = null,
+		val badgeCount: Int = 0,
 		val sheet: AppBottomSheet
 	): AppBarOption(icon, contentDescription)
 }
