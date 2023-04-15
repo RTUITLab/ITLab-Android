@@ -148,7 +148,8 @@ fun ProjectCard(
                             R.string.project_version_archived_date,
                             project.lastVersion.archived.archivedDate.fromIso8601(LocalContext.current, parseWithTime = false)
                         ),
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium,
+                        color = LocalContentColor.current.copy(.8f)
                     )
                 }
             }
