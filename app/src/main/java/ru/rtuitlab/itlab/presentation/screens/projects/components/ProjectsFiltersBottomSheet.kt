@@ -47,6 +47,8 @@ fun ProjectsFiltersBottomSheet(
         }
 
         LabeledCheckBox(
+            modifier = Modifier
+                .fillMaxWidth(),
             checked = state.selectedSortingDirection == SortingDirection.ASC,
             onCheckedChange = viewModel::onSortingOrderChange,
             label = stringResource(R.string.sort_asc)
