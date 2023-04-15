@@ -235,5 +235,6 @@
     <string name="projects_participated">С моим участием</string>
     <string name="projects_managed">Управляемые мной</string>
     <string name="project_version_archived_date">Последняя версия архивирована %1$s</string>
+    <string name="project_version_workers_no_data">Нет данных об исполнителях</string>
 
 </resources>

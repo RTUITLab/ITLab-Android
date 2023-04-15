@@ -536,7 +536,7 @@ fun Versions(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            state.selectedVersion.workers?.let {
+            if (state.selectedVersion.workers != null && state.selectedVersion.workers.isNotEmpty()) {
                 WorkersTable(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -553,7 +553,12 @@ fun Versions(
                         }
                         .horizontalScroll(rememberScrollState())
                         .padding(horizontal = 16.dp),
-                    workers = it
+                    workers = state.selectedVersion.workers
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.project_version_workers_no_data),
+                    color = LocalContentColor.current.copy(.6f)
                 )
             }
         }
