@@ -236,5 +236,7 @@
     <string name="projects_managed">Управляемые мной</string>
     <string name="project_version_archived_date">Последняя версия архивирована %1$s</string>
     <string name="project_version_workers_no_data">Нет данных об исполнителях</string>
+    <string name="expand">Развернуть</string>
+    <string name="collapse">Свернуть</string>
 
 </resources>

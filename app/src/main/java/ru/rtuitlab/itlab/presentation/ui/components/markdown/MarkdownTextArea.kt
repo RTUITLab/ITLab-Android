@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
+import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.core.MarkwonTheme
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.image.DefaultDownScalingMediaDecoder
@@ -54,6 +55,7 @@ fun MarkdownTextArea(
 			}
 		)
 		.usePlugin(TablePlugin.create(LocalContext.current))
+		.usePlugin(SoftBreakAddsNewLinePlugin.create())
 		.build()
 
 	Box(

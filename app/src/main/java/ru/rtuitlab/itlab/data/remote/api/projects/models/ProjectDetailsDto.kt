@@ -22,6 +22,7 @@ data class ProjectDetailsDto(
     val owners: List<Owner>,
     @SerialName("short_description")
     val shortDescription: String,
+    val description: String,
     @SerialName("updated_at")
     val updatedAt: String?
 ) {
@@ -33,6 +34,7 @@ data class ProjectDetailsDto(
         creationDateTime = createdAt.toZonedDateTime(),
         logoUrl = logoUrl,
         name = name,
-        shortDescription = shortDescription
+        shortDescription = shortDescription,
+        description = description.replace("\n", "\\n")
     )
 }

@@ -21,7 +21,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -31,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.SubcomposeAsyncImage
@@ -38,12 +42,14 @@ import coil.request.ImageRequest
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.rtuitlab.itlab.R
+import ru.rtuitlab.itlab.common.extensions.unescaped
 import ru.rtuitlab.itlab.data.local.projects.models.ProjectFileType
 import ru.rtuitlab.itlab.data.local.projects.models.Version
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.projects.components.TasksTable
 import ru.rtuitlab.itlab.presentation.screens.projects.components.WorkersTable
 import ru.rtuitlab.itlab.presentation.screens.projects.state.ProjectScreenState
+import ru.rtuitlab.itlab.presentation.ui.components.InteractiveField
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
@@ -282,26 +288,70 @@ private fun ProjectHeader(
             }
             Spacer(modifier = Modifier.height(8.dp))
 
-            SharedElement(
-                key = "${state.projectInfo.project.id}/description",
-                screenKey = AppScreen.ProjectDetails
-            ) {
-                if (state.projectInfo.project.shortDescription.isNotBlank()) {
+
+
+            val surfaceColor = MaterialTheme.colorScheme.surface
+            if (!state.projectInfo.project.description.isNullOrBlank()) {
+                var isExpanded by remember {mutableStateOf(false)}
+                val maxDescriptionHeight = 100.dp
+                var descriptionHeight by remember { mutableStateOf(maxDescriptionHeight) }
+                Column {
                     MarkdownTextArea(
                         modifier = Modifier
-                            .wrapContentWidth(),
-                        textMd = if (!state.projectInfo.project.description.isNullOrBlank()) state.projectInfo.project.description else state.projectInfo.project.shortDescription,
+                            .wrapContentWidth()
+                            .heightIn(max = if (isExpanded) Dp.Unspecified else 100.dp)
+                            .drawWithContent {
+                                descriptionHeight = size.height.toDp()
+                                drawContent()
+                                if (!isExpanded && descriptionHeight >= maxDescriptionHeight) {
+                                    drawRect(
+                                        brush = Brush.verticalGradient(
+                                            colors = listOf(Color.Transparent, surfaceColor),
+                                            startY = this.size.height * .6f,
+                                            endY = this.size.height * .9f
+                                        )
+                                    )
+                                }
+                            },
+                        textMd = state.projectInfo.project.description.unescaped(),
                         noDescriptionTextAlignment = Alignment.CenterStart,
                         paddingValues = PaddingValues(0.dp)
                     )
-                } else {
-                    Text(
-                        text = stringResource(R.string.event_no_description),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = LocalContentColor.current.copy(.5f)
-                    )
+
+                    if (descriptionHeight >= maxDescriptionHeight) {
+                        InteractiveField(
+                            value = stringResource(
+                                id = if (isExpanded) R.string.collapse else R.string.expand
+                            ),
+                            hasPadding = false
+                        ) {
+                            isExpanded = !isExpanded
+                        }
+                    }
+                }
+            } else {
+                SharedElement(
+                    key = "${state.projectInfo.project.id}/description",
+                    screenKey = AppScreen.ProjectDetails
+                ) {
+                    if (state.projectInfo.project.shortDescription.isNotBlank()) {
+                        MarkdownTextArea(
+                            modifier = Modifier
+                                .wrapContentWidth(),
+                            textMd = if (!state.projectInfo.project.description.isNullOrBlank()) state.projectInfo.project.description else state.projectInfo.project.shortDescription,
+                            noDescriptionTextAlignment = Alignment.CenterStart,
+                            paddingValues = PaddingValues(0.dp)
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.event_no_description),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = LocalContentColor.current.copy(.5f)
+                        )
+                    }
                 }
             }
+
 
             Spacer(modifier = Modifier.height(8.dp))
 

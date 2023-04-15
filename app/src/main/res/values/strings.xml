@@ -36,6 +36,8 @@
     <string name="local_copy_inaccessible">Local copy of this resource is not present</string>
     <string name="unavailable">Unavailable</string>
     <string name="percentage" translatable="false">%d\%%</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
 
 
     <!--    Events    -->
