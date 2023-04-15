@@ -32,18 +32,19 @@ fun ProjectBottomBar(
                 sheet = AppBottomSheet.ProjectRepos(
                     repos = state.projectInfo?.repos
                 )
-            )
-        ) + if (state.selectedVersionNewsCount != 0) {
-            listOf(
-                AppBarOption.Clickable(
-                    icon = Icons.Default.Newspaper,
-                    badgeCount = state.selectedVersionNewsCount,
-                    onClick = {
-                        navController
-                            .navigate("${AppScreen.VersionNews.navLink}/${projectViewModel.projectId}/${state.selectedVersion?.version?.id}/news")
+            ),
+            AppBarOption.Clickable(
+                icon = Icons.Default.Newspaper,
+                badgeCount = state.selectedVersionNewsCount,
+                onClick = {
+                    if (state.selectedVersionNewsCount == 0) {
+                        projectViewModel.onEmptyNewsClick()
+                        return@Clickable
                     }
-                )
+                    navController
+                        .navigate("${AppScreen.VersionNews.navLink}/${projectViewModel.projectId}/${state.selectedVersion?.version?.id}/news")
+                }
             )
-        } else emptyList()
+        )
     )
 }

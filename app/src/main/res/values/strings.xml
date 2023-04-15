@@ -122,6 +122,7 @@
     <string name="projects_managed">Managed by me</string>
     <string name="project_version_archived_date">Last version archived on %1$s</string>
     <string name="project_version_workers_no_data">No data about workers</string>
+    <string name="version_news_empty">There are no news for this version</string>
 
 
     <!--    Employees     -->

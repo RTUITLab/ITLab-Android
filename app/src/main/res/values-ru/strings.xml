@@ -238,5 +238,6 @@
     <string name="project_version_workers_no_data">Нет данных об исполнителях</string>
     <string name="expand">Развернуть</string>
     <string name="collapse">Свернуть</string>
+    <string name="version_news_empty">В этой версии нет новостей</string>
 
 </resources>

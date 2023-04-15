@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.data.local.projects.models.ProjectWithVersionsOwnersAndRepos
 import ru.rtuitlab.itlab.data.local.projects.models.Version
 import ru.rtuitlab.itlab.data.local.projects.models.VersionWithEverything
@@ -156,6 +157,14 @@ class ProjectViewModel @Inject constructor(
                     )
                 }
             }
+        )
+    }
+
+    fun onEmptyNewsClick() = viewModelScope.launch {
+        _uiEvents.emit(
+            UiEvent.Snackbar(
+                resId = R.string.version_news_empty
+            )
         )
     }
 }
