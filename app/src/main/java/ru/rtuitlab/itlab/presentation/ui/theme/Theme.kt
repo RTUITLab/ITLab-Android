@@ -107,12 +107,17 @@ fun ITLabTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable 
 		shapes = ru.rtuitlab.itlab.presentation.ui.theme.md3.shapes
 	) {
 		val systemUiController = rememberSystemUiController()
-		val colorScheme = androidx.compose.material3.MaterialTheme.colorScheme
 		SideEffect {
-			systemUiController.setStatusBarColor(
-				color = colorScheme.primaryContainer,
-				darkIcons = !darkTheme
-			)
+			systemUiController.apply {
+				setStatusBarColor(
+					color = Color.Transparent,
+					darkIcons = !darkTheme
+				)
+				setNavigationBarColor(
+					color = Color.Transparent,
+					darkIcons = !darkTheme
+				)
+			}
 		}
 
 		MaterialTheme(

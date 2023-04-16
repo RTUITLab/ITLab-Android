@@ -6,6 +6,7 @@ package ru.rtuitlab.itlab.presentation.ui
 import androidx.compose.animation.*
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.animateIntOffsetAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -123,9 +124,13 @@ fun ITLabApp(
         scrimColor = MaterialTheme.colorScheme.scrim.copy(.25f)
     ) {
         Scaffold(
+            modifier = Modifier.imePadding(),
             topBar = {
                 Box(
-                    modifier = Modifier.animateContentSize()
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surface)
+                        .statusBarsPadding()
+                        .animateContentSize()
                 ) {
                     when (currentScreen) {
                         AppScreen.Events -> EventsTopBar()
