@@ -36,6 +36,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.IconizedRow
 import ru.rtuitlab.itlab.presentation.ui.components.backdrop.BackdropScaffold
 import ru.rtuitlab.itlab.presentation.ui.components.backdrop.BackdropValue
 import ru.rtuitlab.itlab.presentation.ui.components.backdrop.rememberBackdropScaffoldState
+import java.lang.Integer.min
 
 @ExperimentalPagerApi
 @ExperimentalMaterialApi
@@ -60,13 +61,18 @@ fun Employee(
             user?.let { user ->
                 SubcomposeAsyncImage(
                     modifier = Modifier.offset {
-                        IntOffset(0, (backdropScaffoldState.offset.value.toInt() - screenWidth + 16.dp.toPx().toInt()) / 2)
-                    },
+                        IntOffset(
+                            0,
+                            (backdropScaffoldState.offset.value.toInt() - min(screenWidth, screenHeightDp.toPx().toInt()) + 16.dp.toPx().toInt()) / 2
+                        )
+                    }
+                        .fillMaxWidth(),
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(user.getGravatarWithSize(screenWidth))
                         .crossfade(true)
                         .build(),
                     contentDescription = stringResource(R.string.gravatar),
+                    contentScale = ContentScale.FillWidth,
                     loading = {
                         AsyncImage(
                             modifier = Modifier.fillMaxWidth(),

@@ -36,6 +36,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.*
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MarkdownTextArea
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MdAction
 import ru.rtuitlab.itlab.presentation.ui.components.markdown.MdAction.Companion.asTextActionsOn
+import ru.rtuitlab.itlab.presentation.ui.components.modifier.fabAwarePadding
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.FadeMode
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.utils.ProgressThresholds
@@ -125,7 +126,7 @@ fun NewReport(
                 color = MaterialTheme.colorScheme.background
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.fabAwarePadding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
