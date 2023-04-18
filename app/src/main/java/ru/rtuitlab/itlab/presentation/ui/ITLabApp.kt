@@ -49,6 +49,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedE
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CenterAlignedTopAppBar
+import ru.rtuitlab.itlab.presentation.ui.insets.horizontalNavigationBarsPadding
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import kotlin.math.roundToInt
 
@@ -99,7 +100,9 @@ fun ITLabApp(
 
     val mainFloatingActionButton: @Composable () -> Unit = {
         FloatingActionButton(
-            modifier = Modifier.offset { mainFabOffset },
+            modifier = Modifier
+                .offset { mainFabOffset }
+                .navigationBarsPadding(),
             onClick = { isNavigationOpen = true },
             containerColor = ITLabBottomBarDefaults.mainFloatingActionButtonContainerColor,
             elevation = ITLabBottomBarDefaults.floatingActionButtonsElevation
@@ -130,6 +133,7 @@ fun ITLabApp(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.surface)
                         .statusBarsPadding()
+                        .horizontalNavigationBarsPadding()
                         .animateContentSize()
                 ) {
                     when (currentScreen) {
@@ -183,6 +187,7 @@ fun ITLabApp(
                         bottom = if (currentScreen.hasBottomBar) it.calculateBottomPadding() else 0.dp,
                         top = it.calculateTopPadding()
                     )
+                        .horizontalNavigationBarsPadding()
                 ) {
                     AppNavigation(navController)
                 }
