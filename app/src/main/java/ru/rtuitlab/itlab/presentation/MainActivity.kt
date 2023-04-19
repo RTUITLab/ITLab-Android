@@ -16,9 +16,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import ru.rtuitlab.itlab.presentation.navigation.LocalNavController
 import ru.rtuitlab.itlab.presentation.screens.auth.AuthViewModel
@@ -72,6 +74,21 @@ class MainActivity : AppCompatActivity() {
 		filesViewModel.provideFileSelectionContract(fileSelectionContract)
 
 		authViewModel.provideLogoutLauncher(logoutPageLauncher)
+
+		lifecycleScope.launch {
+			authViewModel.authStateFlow.collect {
+				if (!it.isAuthorized) {
+					val loginActivityIntent = Intent(
+						this@MainActivity,
+						LoginActivity::class.java
+					)
+					startActivity(loginActivityIntent)
+					overridePendingTransition(0, 0)
+					finish()
+				}
+			}
+		}
+
 		installSplashScreen()
 		setContent {
 			val authState by authViewModel.authStateFlow.collectAsState(null)

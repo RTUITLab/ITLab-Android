@@ -68,6 +68,12 @@ android {
         buildConfigField("String[]", API_SCOPES, CONFIG_RAW("api.scopes"))
         buildConfigField("String", GRAVATAR_URI, CONFIG("gravatar.uri"))
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/room_schemas".toString()]
+            }
+        }
+
     }
 
     flavorDimensions "api"
@@ -104,6 +110,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
         useIR = true
+        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
     }
     buildFeatures {
         compose true

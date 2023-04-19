@@ -13,18 +13,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun InteractiveField(
+	modifier: Modifier = Modifier,
+	style: TextStyle = MaterialTheme.typography.bodyLarge,
 	value: String,
 	hasArrow: Boolean = false,
 	hasPadding: Boolean = true,
 	onClick: () -> Unit
 ) {
 	Row(
-		modifier = Modifier
+		modifier = modifier
 			.clip(MaterialTheme.shapes.extraSmall)
 			.clickable { onClick() }
 			.padding(horizontal = if (hasPadding) 8.dp else 0.dp),
@@ -34,7 +37,7 @@ fun InteractiveField(
 		Text(
 			text = value,
 			color = MaterialTheme.colorScheme.primary,
-			style = MaterialTheme.typography.bodyLarge,
+			style = style,
 			maxLines = 1,
 			overflow = TextOverflow.Ellipsis
 		)

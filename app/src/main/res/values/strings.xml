@@ -30,9 +30,14 @@
     <string name="details_name">%1$s</string>
     <string name="time_parsing_error">Time parsing error</string>
     <string name="retry">Retry</string>
+    <string name="switch_to_cache">Switch to cache</string>
     <string name="sort_asc">In ascending order</string>
     <string name="send">Send</string>
     <string name="local_copy_inaccessible">Local copy of this resource is not present</string>
+    <string name="unavailable">Unavailable</string>
+    <string name="percentage" translatable="false">%d\%%</string>
+    <string name="expand">Expand</string>
+    <string name="collapse">Collapse</string>
 
 
     <!--    Events    -->
@@ -80,6 +85,44 @@
 
     <!--    Projects     -->
     <string name="projects">Projects</string>
+    <string name="project_version">Version</string>
+    <string name="project_soft_deadline_abr">Soft deadline</string>
+    <string name="project_progress">Progress</string>
+    <string name="project">Project</string>
+    <string name="projects_empty">No projects found with selected filters</string>
+    <string name="project_no_owners">No managers</string>
+    <string name="project_in_dev_since">Project in development since %1$s</string>
+    <string name="project_soft_deadline">Soft deadline</string>
+    <string name="project_hard_deadline">Hard deadline</string>
+    <string name="hours">Hours</string>
+    <string name="cost">Cost</string>
+    <string name="project_version_task">Task</string>
+    <string name="project_version_total">Total</string>
+    <string name="project_version_select">Project version</string>
+    <string name="project_version_tasks_no_data">No data about tasks</string>
+    <string name="projects_back_online_prompt">You are back online! Switch to newest projects?</string>
+    <string name="projects_switch">Switch</string>
+    <string name="version_archived">archived</string>
+    <string name="project_repos">Project repositories</string>
+    <string name="project_no_repos">This project has no repositories</string>
+    <string name="version_functional_task">Functional task</string>
+    <string name="version_no_functional_tasks">This version has no functional task files attached</string>
+    <string name="version_links">Links</string>
+    <string name="version_no_links">This version has no links</string>
+    <string name="version_files">Files</string>
+    <string name="version_no_files">This version has no files attached</string>
+    <string name="version_employee">Employee</string>
+    <string name="version_role">Role</string>
+    <string name="version_salary">Salary</string>
+    <string name="version_hourly_rate">Hourly wage</string>
+    <string name="version_news">Version news</string>
+    <string name="projects_sorting">Sorting</string>
+    <string name="projects_filter">Filter</string>
+    <string name="projects_participated">With my participation</string>
+    <string name="projects_managed">Managed by me</string>
+    <string name="project_version_archived_date">Last version archived on %1$s</string>
+    <string name="project_version_workers_no_data">No data about workers</string>
+    <string name="version_news_empty">There are no news for this version</string>
 
 
     <!--    Employees     -->

@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarOption
+import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.OptionBadge
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.OptionsRow
 
 /**
@@ -39,6 +40,7 @@ fun BottomAppBar(
     tonalElevation: Dp = BottomAppBarDefaults.ContainerElevation,
     contentPadding: PaddingValues = BottomAppBarDefaults.ContentPadding,
     windowInsets: WindowInsets = BottomAppBarDefaults.windowInsets,
+    isSearchQueryApplied: Boolean = false,
     searchBar: @Composable ((onDismissRequest: () -> Unit) -> Unit)? = null
 ) {
 
@@ -75,6 +77,7 @@ fun BottomAppBar(
             options = if (searchBar != null)
                 listOf(AppBarOption.Clickable(
                     icon = Icons.Default.Search,
+                    badge = OptionBadge(isActive = isSearchQueryApplied),
                     onClick = { isSearchActivated = true }
                 )) + options
             else options

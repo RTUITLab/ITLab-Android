@@ -12,9 +12,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import ru.rtuitlab.itlab.data.local.AppDatabase
 import ru.rtuitlab.itlab.data.repository.EventsRepositoryImpl
+import ru.rtuitlab.itlab.data.repository.ProjectsRepositoryImpl
 import ru.rtuitlab.itlab.data.repository.ReportsRepositoryImpl
 import ru.rtuitlab.itlab.data.repository.UsersRepositoryImpl
 import ru.rtuitlab.itlab.domain.repository.EventsRepository
+import ru.rtuitlab.itlab.domain.repository.ProjectsRepository
 import ru.rtuitlab.itlab.domain.repository.ReportsRepository
 import ru.rtuitlab.itlab.domain.repository.UsersRepository
 import javax.inject.Singleton
@@ -54,4 +56,10 @@ object RepositoriesModule {
     fun provideReportsRepository(
         reportsRepo: ReportsRepositoryImpl
     ) = reportsRepo as ReportsRepository
+
+    @Provides
+    @Singleton
+    fun provideProjectsRepository(
+        projectsRepo: ProjectsRepositoryImpl
+    ) = projectsRepo as ProjectsRepository
 }

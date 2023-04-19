@@ -18,6 +18,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -92,19 +93,19 @@ fun SearchBar(
 }
 
 @Composable
-fun SearchBar(
+private fun SearchBarContent(
 	modifier: Modifier = Modifier,
 	hint: String = stringResource(R.string.search),
+	query: String,
 	onSearch: (String) -> Unit,
 	onDismissRequest: () -> Unit
 ) {
-	var text by rememberSaveable {
-		mutableStateOf("")
-	}
 	val focusRequester = remember { FocusRequester() }
 
-	LaunchedEffect(text) {
-		onSearch(text)
+	val focusManager = LocalFocusManager.current
+
+	LaunchedEffect(Unit) {
+		focusRequester.requestFocus()
 	}
 
 	CompositionLocalProvider(
@@ -119,18 +120,23 @@ fun SearchBar(
 				.fillMaxWidth()
 				.focusRequester(focusRequester)
 				.then(modifier),
-			value = text,
-			onValueChange = { text = it },
+			value = query,
+			onValueChange = onSearch,
 			placeholder = {
 				Text(text = hint)
 			},
 			leadingIcon = {
-				IconButton(onClick = onDismissRequest) {
+				IconButton(
+					onClick = {
+						onDismissRequest()
+						focusManager.clearFocus()
+					}
+				) {
 					Icon(Icons.Default.ArrowBack, null)
 				}
 			},
 			trailingIcon = {
-				IconButton(onClick = { text = "" }) {
+				IconButton(onClick = { onSearch("")  }) {
 					Icon(Icons.Default.Close, null)
 				}
 			},
@@ -145,8 +151,49 @@ fun SearchBar(
 		)
 	}
 
+
+}
+
+@Composable
+fun SearchBar(
+	modifier: Modifier = Modifier,
+	hint: String = stringResource(R.string.search),
+	query: String,
+	onSearch: (String) -> Unit,
+	onDismissRequest: () -> Unit
+) {
+	SearchBarContent(
+		modifier = modifier,
+		hint = hint,
+		query = query,
+		onSearch = onSearch,
+		onDismissRequest = onDismissRequest
+	)
+}
+
+@Composable
+fun SearchBar(
+	modifier: Modifier = Modifier,
+	hint: String = stringResource(R.string.search),
+	onSearch: (String) -> Unit,
+	onDismissRequest: () -> Unit
+) {
+	var text by rememberSaveable {
+		mutableStateOf("")
+	}
+
+	LaunchedEffect(text) {
+		onSearch(text)
+	}
+
+	SearchBarContent(
+		modifier = modifier,
+		hint = hint,
+		query = text,
+		onSearch = { text = it },
+		onDismissRequest = onDismissRequest
+	)
 	DisposableEffect(Unit) {
-		focusRequester.requestFocus()
 		onDispose {
 			onSearch("")
 		}

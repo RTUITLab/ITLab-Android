@@ -22,11 +22,12 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener
 import ru.rtuitlab.itlab.R
 import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
-import ru.rtuitlab.itlab.presentation.ui.components.LabelledCheckBox
+import ru.rtuitlab.itlab.presentation.ui.components.LabeledCheckBox
 import ru.rtuitlab.itlab.presentation.ui.components.SearchBar
 import ru.rtuitlab.itlab.presentation.ui.components.bottom_app_bar.BottomAppBar
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarOption
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
+import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.OptionBadge
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 
 @Composable
@@ -56,7 +57,7 @@ fun EventsBottomBar(
             AppBarOption.Dropdown(
                 icon = Icons.Default.FilterList,
                 dropdownMenuContent = { collapseAction ->
-                    LabelledCheckBox(
+                    LabeledCheckBox(
                         checked = showPastEventsChecked,
                         onCheckedChange = {
                             eventsViewModel.toggleShowPastEvents(it)
@@ -102,7 +103,7 @@ fun EventsBottomBar(
                     appBarViewModel.onNavigate(AppScreen.EventsNotifications)
                     navController?.navigate(AppScreen.EventsNotifications.route)
                 },
-                badgeCount = eventsViewModel.invitationsCount.collectAsState().value
+                badge = OptionBadge(count = eventsViewModel.invitationsCount.collectAsState().value)
             )
         ),
         searchBar = {

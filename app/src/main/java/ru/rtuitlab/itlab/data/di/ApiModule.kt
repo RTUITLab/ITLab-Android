@@ -23,6 +23,7 @@ import ru.rtuitlab.itlab.data.remote.api.events.EventsApi
 import ru.rtuitlab.itlab.data.remote.api.feedback.FeedbackApi
 import ru.rtuitlab.itlab.data.remote.api.micro_file_service.MfsApi
 import ru.rtuitlab.itlab.data.remote.api.notifications.NotificationsApi
+import ru.rtuitlab.itlab.data.remote.api.projects.ProjectsApi
 import ru.rtuitlab.itlab.data.remote.api.purchases.PurchasesApi
 import ru.rtuitlab.itlab.data.remote.api.reports.ReportsApi
 import ru.rtuitlab.itlab.data.remote.api.users.UsersApi
@@ -117,4 +118,8 @@ object ApiModule {
     @Singleton
     @Provides
     fun providePurchasesApi(retrofit: Retrofit): PurchasesApi = retrofit.create()
+
+    @Singleton
+    @Provides
+    fun provideProjectsApi(retrofit: Retrofit): ProjectsApi = retrofit.create()
 }

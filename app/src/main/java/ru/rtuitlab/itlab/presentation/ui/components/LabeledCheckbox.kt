@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LabelledCheckBox(
+fun LabeledCheckBox(
 	checked: Boolean,
 	onCheckedChange: ((Boolean) -> Unit),
 	label: String,

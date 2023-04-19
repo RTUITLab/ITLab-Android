@@ -130,7 +130,7 @@ fun NewReport(
                 ) {
                     Text(
                         text = stringResource(R.string.report_new_disclaimer),
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyMedium
                     )
 
                     DropdownUserPicker(

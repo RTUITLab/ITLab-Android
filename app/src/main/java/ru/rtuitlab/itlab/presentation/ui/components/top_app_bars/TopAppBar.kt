@@ -22,9 +22,12 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import kotlinx.coroutines.launch
 import ru.rtuitlab.itlab.presentation.ui.components.AppDropdownMenu
+import ru.rtuitlab.itlab.presentation.ui.components.bottom_sheet.BottomSheetViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.SharedElement
 import ru.rtuitlab.itlab.presentation.ui.components.tabs.pagerTabIndicatorOffset
 import ru.rtuitlab.itlab.presentation.utils.AppBarTab
+import ru.rtuitlab.itlab.presentation.utils.AppBottomSheet
+import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 import java.util.*
 
 @Composable
@@ -41,7 +44,10 @@ fun BasicTopAppBar(
 	) {
 		TopAppBar(
 			title = {
-				SharedElement(key = titleSharedElementKey.toString(), screenKey = "Whatever") {
+				SharedElement(
+					key = titleSharedElementKey.toString(),
+					screenKey = "Whatever"
+				) {
 					Text(
 						text = text,
 						maxLines = 1,
@@ -229,20 +235,20 @@ fun OptionsRow(
 			when (option) {
 				is AppBarOption.Clickable -> {
 					IconButton(
-						modifier = Modifier
-							.height(36.dp)
-							.width(36.dp),
 						onClick = option.onClick
 					) {
 						BadgedBox(
 							badge = {
-								if (option.badgeCount > 0)
+								if (option.badge.isActive || option.badge.count > 0)
 									Badge(
 										containerColor = MaterialTheme.colorScheme.primary,
-										contentColor = MaterialTheme.colorScheme.onPrimary
-									) {
-										Text(option.badgeCount.toString())
-									}
+										contentColor = MaterialTheme.colorScheme.onPrimary,
+										content = if (option.badge.count > 0) {
+											{
+												Text(option.badge.count.toString())
+											}
+										} else null
+									)
 							}
 						) {
 							Icon(
@@ -258,9 +264,6 @@ fun OptionsRow(
 					AppDropdownMenu(
 						anchor = {
 							IconButton(
-								modifier = Modifier
-									.height(36.dp)
-									.width(36.dp),
 								onClick = it
 							) {
 								Icon(
@@ -275,28 +278,77 @@ fun OptionsRow(
 						}
 					)
 				}
+				is AppBarOption.BottomSheet -> {
+                    val coroutineScope = rememberCoroutineScope()
+                    val bottomSheetViewModel: BottomSheetViewModel = singletonViewModel()
+
+                    IconButton(
+                        onClick = {
+                            bottomSheetViewModel.show(option.sheet, coroutineScope)
+                        }
+                    ) {
+	                    BadgedBox(
+		                    badge = {
+			                    if (option.badge.isActive || option.badge.count > 0)
+				                    Badge(
+					                    containerColor = MaterialTheme.colorScheme.primary,
+					                    contentColor = MaterialTheme.colorScheme.onPrimary,
+					                    content = if (option.badge.count > 0) {
+						                    {
+							                    Text(option.badge.count.toString())
+						                    }
+					                    } else null
+				                    )
+		                    }
+	                    ) {
+		                    Icon(
+			                    imageVector = option.icon,
+			                    contentDescription = option.contentDescription,
+			                    tint = MaterialTheme.colorScheme.onSurface
+		                    )
+	                    }
+                    }
+                }
 			}
 
 		}
 	}
 }
 
+/**
+ * Displays a [Badge] above the option.
+ * If [isActive], but [count] is 0, displays a small badge.
+ * If [count] is greater than 0, displays it in a normal badge.
+ */
+data class OptionBadge(
+	val count: Int = 0,
+	val isActive: Boolean = false
+)
+
 sealed class AppBarOption(
-	open val icon: ImageVector,
-	open val contentDescription: String? = null
+	val icon: ImageVector,
+	val contentDescription: String? = null,
+	val badge: OptionBadge = OptionBadge()
 ) {
 	class Clickable(
-		override val icon: ImageVector,
-		override val contentDescription: String? = null,
-		val badgeCount: Int = 0,
+		icon: ImageVector,
+		contentDescription: String? = null,
+		badge: OptionBadge = OptionBadge(),
 		val onClick: () -> Unit
-	) : AppBarOption(icon, contentDescription)
+	) : AppBarOption(icon, contentDescription, badge)
 
 	class Dropdown(
-		override val icon: ImageVector,
-		override val contentDescription: String? = null,
+		icon: ImageVector,
+		contentDescription: String? = null,
 		val dropdownMenuContent: @Composable (collapseAction: () -> Unit) -> Unit
 	) : AppBarOption(icon, contentDescription)
+
+	class BottomSheet(
+		icon: ImageVector,
+		contentDescription: String? = null,
+		badge: OptionBadge = OptionBadge(),
+		val sheet: AppBottomSheet
+	): AppBarOption(icon, contentDescription, badge)
 }
 
 val emptyBackAction: () -> Unit = {}

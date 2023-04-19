@@ -18,10 +18,10 @@ sealed class AppTab(
     var accessible: Boolean = true
 ) {
     object Events: AppTab("events_tab", AppScreen.Events.route, R.string.events, Icons.Default.EventNote)
-    object Projects: AppTab("projects_tab", AppScreen.Projects.route, R.string.projects, Icons.Default.Widgets, false)
+    object Projects: AppTab("projects_tab", AppScreen.Projects.route, R.string.projects, Icons.Default.Widgets)
     object Devices: AppTab("devices_tab", AppScreen.Devices.route, R.string.devices, Icons.Default.DevicesOther)
     object Employees: AppTab("employees_tab", AppScreen.Employees.route, R.string.employees, Icons.Default.People)
-    object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback)
+    object Feedback: AppTab("feedback_tab", AppScreen.Feedback.route, R.string.feedback, Icons.Default.Feedback, false)
     object Profile: AppTab("profile_tab", AppScreen.Profile.route, R.string.profile, Icons.Default.AccountCircle, false)
     object Reports: AppTab("reports_tab", AppScreen.Reports.route, R.string.reports, Icons.Default.Description)
     object Purchases: AppTab("purchases_tab", AppScreen.Purchases.route, R.string.purchases, Icons.Default.Payments)
@@ -55,7 +55,8 @@ sealed class AppTab(
             )
 
         private fun applyClaims(claims: List<Any>) {
-            Feedback.accessible = claims.contains(UserClaimCategories.FEEDBACK.ADMIN)
+            // Feedback is no longer used
+//            Feedback.accessible = claims.contains(UserClaimCategories.FEEDBACK.ADMIN)
             Purchases.accessible = claims.contains(UserClaimCategories.PURCHASES.USER)
         }
 
@@ -96,6 +97,13 @@ open class AppScreen(
 
     // Projects-related
     object Projects: AppScreen(R.string.projects, "projects", true)
+    class ProjectDetails(val title: String): AppScreen(R.string.project, "projects/{projectId}/{projectName}", true) {
+        companion object {
+            const val route = "projects/{projectId}/{projectName}"
+            val navLink: String = route.substringBefore("/{")
+        }
+    }
+    object VersionNews: AppScreen(R.string.version_news, "projects/{projectId}/{versionId}/news")
 
     // Devices-related
     object Devices: AppScreen(R.string.devices, "devices", true)
@@ -127,7 +135,6 @@ open class AppScreen(
     }
     object NewPurchase: AppScreen(R.string.purchase_new, "purchases/new")
 
-
     companion object {
         fun getAll(context: Context) = listOf(
             Employees,
@@ -137,6 +144,8 @@ open class AppScreen(
             EventDetails(context.resources.getString(R.string.event)),
             EventsNotifications,
             Projects,
+            ProjectDetails(context.resources.getString(R.string.project)),
+            VersionNews,
             Devices,
             Profile,
             Reports,

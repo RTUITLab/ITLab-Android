@@ -1,10 +1,14 @@
 package ru.rtuitlab.itlab.data.local
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import ru.rtuitlab.itlab.data.local.events.EventsDao
 import ru.rtuitlab.itlab.data.local.events.models.*
 import ru.rtuitlab.itlab.data.local.events.models.salary.EventSalaryEntity
+import ru.rtuitlab.itlab.data.local.projects.ProjectsDao
+import ru.rtuitlab.itlab.data.local.projects.models.*
 import ru.rtuitlab.itlab.data.local.reports.ReportsDao
 import ru.rtuitlab.itlab.data.local.reports.models.ReportEntity
 import ru.rtuitlab.itlab.data.local.users.UsersDao
@@ -19,18 +23,36 @@ import ru.rtuitlab.itlab.data.remote.api.users.models.UserPropertyTypeModel
 
 @Database(
     entities = [
-        UserEntity::class, UserPropertyEntity::class, UserPropertyTypeModel::class, // Users
-        EventEntity::class, EventDetailEntity::class, UserEventRoleEntity::class, PlaceEntity::class, ShiftEntity::class, EventRoleModel::class, EventTypeModel::class, // Events
-        EventInvitationEntity::class, UserEventEntity::class, EventSalaryEntity::class, EventShiftSalary::class, EventPlaceSalary::class, // Events
-        ReportEntity::class, ReportSalary::class // Reports
+        // Users
+        UserEntity::class,          UserPropertyEntity::class,          UserPropertyTypeModel::class,
+
+        // Events
+        EventEntity::class,         EventDetailEntity::class,           UserEventRoleEntity::class,
+        PlaceEntity::class,         ShiftEntity::class,                 EventRoleModel::class,
+        EventTypeModel::class,      EventInvitationEntity::class,       UserEventEntity::class,
+        EventSalaryEntity::class,   EventShiftSalary::class,            EventPlaceSalary::class,
+
+        // Reports
+        ReportEntity::class,        ReportSalary::class,
+
+        // Projects
+        Project::class,             Version::class,                     TaskWorkerEntity::class,
+        ProjectOwner::class,        VersionTask::class,                 MilestoneEntity::class,
+        ProjectRepoEntity::class,   Worker::class,                      VersionFileEntity::class,
+                                    BudgetCertificationEntity::class,   VersionRoleTotalEntity::class
     ],
-    version = 1,
-    exportSchema = false
+    version = 2,
+    autoMigrations = [
+        AutoMigration(1, 2)
+    ],
+    exportSchema = true
 )
-abstract class AppDatabase: RoomDatabase() {
+@TypeConverters(TypeConverter::class)
+abstract class AppDatabase : RoomDatabase() {
     abstract val usersDao: UsersDao
     abstract val eventsDao: EventsDao
     abstract val reportsDao: ReportsDao
+    abstract val projectsDao: ProjectsDao
 
     companion object {
         const val NAME = "ITLAB_DATABASE"

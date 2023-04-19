@@ -6,10 +6,7 @@ package ru.rtuitlab.itlab.presentation.ui
 import androidx.compose.animation.*
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.animateIntOffsetAsState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -37,6 +34,9 @@ import ru.rtuitlab.itlab.presentation.screens.events.components.EventsTopBar
 import ru.rtuitlab.itlab.presentation.screens.feedback.components.FeedbackTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.files.componets.FilesBottomBar
 import ru.rtuitlab.itlab.presentation.screens.profile.components.ProfileBottomBar
+import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectBottomBar
+import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectTopAppBar
+import ru.rtuitlab.itlab.presentation.screens.projects.components.ProjectsBottomBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchaseTopAppBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchasesBottomBar
 import ru.rtuitlab.itlab.presentation.screens.purchases.components.PurchasesTopAppBar
@@ -149,6 +149,7 @@ fun ITLabApp(
                         AppScreen.Purchases,
                         AppScreen.Devices,
                         AppScreen.Files,
+                        AppScreen.Projects,
                         AppScreen.Reports ->
                             CenterAlignedTopAppBar(title = stringResource(currentScreen.screenNameResource))
 
@@ -163,6 +164,7 @@ fun ITLabApp(
                         )
                         AppScreen.Purchases -> PurchasesTopAppBar()
                         is AppScreen.PurchaseDetails -> PurchaseTopAppBar()
+                        is AppScreen.ProjectDetails -> ProjectTopAppBar()
                         else -> BasicTopAppBar(
                             text = stringResource(currentScreen.screenNameResource),
                             onBackAction = onBackAction
@@ -187,13 +189,15 @@ fun ITLabApp(
             bottomBar = {
                 if (!currentScreen.hasBottomBar) return@Scaffold
                 when (currentScreen) {
-                    is AppScreen.Events -> EventsBottomBar(mainFloatingActionButton)
-                    is AppScreen.Employees -> EmployeesBottomBar(mainFloatingActionButton)
-                    is AppScreen.Profile -> ProfileBottomBar(mainFloatingActionButton)
-                    is AppScreen.Reports -> ReportsBottomBar(mainFloatingActionButton)
-                    is AppScreen.Purchases -> PurchasesBottomBar(mainFloatingActionButton)
-                    is AppScreen.Devices -> DevicesBottomBar(mainFloatingActionButton)
-                    is AppScreen.Files -> FilesBottomBar(mainFloatingActionButton)
+                    AppScreen.Events -> EventsBottomBar(mainFloatingActionButton)
+                    AppScreen.Employees -> EmployeesBottomBar(mainFloatingActionButton)
+                    AppScreen.Profile -> ProfileBottomBar(mainFloatingActionButton)
+                    AppScreen.Reports -> ReportsBottomBar(mainFloatingActionButton)
+                    AppScreen.Purchases -> PurchasesBottomBar(mainFloatingActionButton)
+                    AppScreen.Devices -> DevicesBottomBar(mainFloatingActionButton)
+                    AppScreen.Files -> FilesBottomBar(mainFloatingActionButton)
+                    AppScreen.Projects -> ProjectsBottomBar(mainFloatingActionButton)
+                    is AppScreen.ProjectDetails -> ProjectBottomBar(mainFloatingActionButton)
                 }
             }
         )

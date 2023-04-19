@@ -3,7 +3,6 @@ package ru.rtuitlab.itlab.presentation.ui.components.markdown
 import android.widget.TextView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
+import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.core.MarkwonTheme
 import io.noties.markwon.ext.tables.TablePlugin
 import io.noties.markwon.image.DefaultDownScalingMediaDecoder
@@ -30,6 +30,7 @@ import ru.rtuitlab.itlab.R
 fun MarkdownTextArea(
 	modifier: Modifier = Modifier,
 	textMd: String,
+	noDescriptionTextAlignment: Alignment = Alignment.Center,
 	paddingValues: PaddingValues = PaddingValues(bottom = 32.dp)
 ) {
 
@@ -54,18 +55,19 @@ fun MarkdownTextArea(
 			}
 		)
 		.usePlugin(TablePlugin.create(LocalContext.current))
+		.usePlugin(SoftBreakAddsNewLinePlugin.create())
 		.build()
 
 	Box(
 		modifier = Modifier
-			.fillMaxWidth()
+//			.fillMaxWidth()
 			.padding(paddingValues)
 			.then(modifier)
 	) {
 		if (textMd.isNotEmpty()) {
 			AndroidView(
 				modifier = Modifier
-					.fillMaxWidth()
+//					.fillMaxWidth()
 					.align(Alignment.TopStart),
 				factory = {
 					TextView(it).apply {
@@ -77,7 +79,7 @@ fun MarkdownTextArea(
 			}
 		} else {
 			Text(
-				modifier = Modifier.align(Alignment.Center),
+				modifier = Modifier.align(noDescriptionTextAlignment),
 				text = stringResource(R.string.event_no_description),
 				color = LocalContentColor.current.copy(.6f)
 			)
