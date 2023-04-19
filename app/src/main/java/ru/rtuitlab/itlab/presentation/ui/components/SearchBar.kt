@@ -147,7 +147,8 @@ private fun SearchBarContent(
 				disabledBorderColor = Color.Transparent,
 				errorBorderColor = Color.Transparent,
 				focusedBorderColor = Color.Transparent
-			)
+			),
+			singleLine = true
 		)
 	}
 

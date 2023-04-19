@@ -39,7 +39,7 @@ fun BottomAppBar(
     contentColor: Color = contentColorFor(containerColor),
     tonalElevation: Dp = BottomAppBarDefaults.ContainerElevation,
     contentPadding: PaddingValues = BottomAppBarDefaults.ContentPadding,
-    windowInsets: WindowInsets = BottomAppBarDefaults.windowInsets,
+    windowInsets: WindowInsets = WindowInsets.navigationBars,
     isSearchQueryApplied: Boolean = false,
     searchBar: @Composable ((onDismissRequest: () -> Unit) -> Unit)? = null
 ) {

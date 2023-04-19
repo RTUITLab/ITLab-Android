@@ -35,6 +35,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import ru.rtuitlab.itlab.presentation.screens.events.EventsViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppTabsViewModel
+import ru.rtuitlab.itlab.presentation.ui.insets.horizontalNavigationBarsPadding
 import ru.rtuitlab.itlab.presentation.utils.AppTab
 import ru.rtuitlab.itlab.presentation.utils.singletonViewModel
 
@@ -81,7 +82,8 @@ fun NavigationControl(
     // If total amount of tabs is odd, we want the leftmost column to hold the least amount of children
     Box(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .horizontalNavigationBarsPadding(),
         contentAlignment = Alignment.BottomEnd
     ) {
         // Scrim for navigation

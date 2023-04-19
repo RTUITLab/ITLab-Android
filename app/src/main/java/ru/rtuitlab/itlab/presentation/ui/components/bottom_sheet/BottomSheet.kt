@@ -61,6 +61,7 @@ fun BottomSheet(
 					start = 15.dp,
 					end = 15.dp
 				)
+				.navigationBarsPadding()
 				.fillMaxWidth(),
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {

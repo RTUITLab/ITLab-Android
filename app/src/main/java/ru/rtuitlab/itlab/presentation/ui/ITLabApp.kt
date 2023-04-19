@@ -6,6 +6,7 @@ package ru.rtuitlab.itlab.presentation.ui
 import androidx.compose.animation.*
 import androidx.compose.animation.core.ExperimentalTransitionApi
 import androidx.compose.animation.core.animateIntOffsetAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -48,6 +49,7 @@ import ru.rtuitlab.itlab.presentation.ui.components.shared_elements.LocalSharedE
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.AppBarViewModel
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.BasicTopAppBar
 import ru.rtuitlab.itlab.presentation.ui.components.top_app_bars.CenterAlignedTopAppBar
+import ru.rtuitlab.itlab.presentation.ui.insets.horizontalNavigationBarsPadding
 import ru.rtuitlab.itlab.presentation.utils.AppScreen
 import kotlin.math.roundToInt
 
@@ -98,7 +100,9 @@ fun ITLabApp(
 
     val mainFloatingActionButton: @Composable () -> Unit = {
         FloatingActionButton(
-            modifier = Modifier.offset { mainFabOffset },
+            modifier = Modifier
+                .offset { mainFabOffset }
+                .navigationBarsPadding(),
             onClick = { isNavigationOpen = true },
             containerColor = ITLabBottomBarDefaults.mainFloatingActionButtonContainerColor,
             elevation = ITLabBottomBarDefaults.floatingActionButtonsElevation
@@ -123,9 +127,14 @@ fun ITLabApp(
         scrimColor = MaterialTheme.colorScheme.scrim.copy(.25f)
     ) {
         Scaffold(
+            modifier = Modifier.imePadding(),
             topBar = {
                 Box(
-                    modifier = Modifier.animateContentSize()
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surface)
+                        .statusBarsPadding()
+                        .horizontalNavigationBarsPadding()
+                        .animateContentSize()
                 ) {
                     when (currentScreen) {
                         AppScreen.Events -> EventsTopBar()
@@ -178,6 +187,7 @@ fun ITLabApp(
                         bottom = if (currentScreen.hasBottomBar) it.calculateBottomPadding() else 0.dp,
                         top = it.calculateTopPadding()
                     )
+                        .horizontalNavigationBarsPadding()
                 ) {
                     AppNavigation(navController)
                 }
