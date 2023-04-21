@@ -1,0 +1,15 @@
+services:
+  android-builder:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      args:
+      - ANDROID_HOME=${ITLAB_MOBILE_ANDROID_HOME:-/itlab_mobile}
+    command: ${ITLAB_MOBILE_ANDROID_BUILD_COMMAND:-./gradlew :app:assembleProdApiRelease --stacktrace}
+    volumes:
+    - ./keystore.jks:${ITLAB_MOBILE_ANDROID_HOME:-/itlab_mobile}/keystore.jks:ro
+    - ./output-release/:${ITLAB_MOBILE_ANDROID_HOME:-/itlab_mobile}/app/build/outputs/apk/
+    environment:
+    - SIGNING_KEY_ALIAS=${SIGNING_KEY_ALIAS?Set environment variable for key alias SIGNING_KEY_ALIAS}
+    - SIGNING_KEY_PASSWORD=${SIGNING_KEY_PASSWORD?Set environment variable for key password SIGNING_KEY_PASSWORD}
+    - SIGNING_STORE_PASSWORD=${SIGNING_STORE_PASSWORD?Set environment variable for store password SIGNING_STORE_PASSWORD}
