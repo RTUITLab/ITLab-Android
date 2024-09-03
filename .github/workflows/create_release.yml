@@ -62,7 +62,7 @@ jobs:
           prerelease: false
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4.1.7
         with:
           name: Release_Build
           path: app/artifacts
